@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'screens/splash_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/signup_screen.dart';
+import 'router.dart'; // ✅ use AppRouter
+import 'services/auth_state_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,25 +16,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = GoRouter(
-      routes: [
-        GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: '/signup',
-          builder: (context, state) => const SignUpScreen(),
-        ),
-        GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-      ],
-    );
+    return ChangeNotifierProvider(
+      create: (_) => AuthStateNotifier(),
+      child: Builder(
+        builder: (context) {
+          final router = AppRouter.router(context);
 
-    return MaterialApp.router(
-      title: 'CycleSync',
-      theme: ThemeData(primarySwatch: Colors.pink),
-      routerConfig: router,
+          return MaterialApp.router(
+            title: 'CycleSync',
+            theme: ThemeData(primarySwatch: Colors.pink),
+            routerConfig: router,
+          );
+        },
+      ),
     );
   }
 }
