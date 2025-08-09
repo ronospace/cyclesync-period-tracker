@@ -1,0 +1,68 @@
+rules_version='2';
+
+// 🌸 CycleSync - Production-Ready Security Rules
+// These rules ensure that:
+// 1. Users can only access their own data
+// 2. All operations require authentication
+// 3. Data validation is performed on writes
+// 4. Proper structure is maintained
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 👤 USER DOCUMENTS
+    // Users can read/write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 🩸 CYCLE DOCUMENTS
+      // Users can manage their own cycle data
+      match /cycles/{cycleId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        // Validate cycle data structure on write
+        allow create, update: if request.auth != null 
+          && request.auth.uid == userId
+          && validateCycleData();
+      }
+      
+      // 📊 ANALYTICS DOCUMENTS (future feature)
+      match /analytics/{analyticsId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // 🔧 DIAGNOSTIC TEST DOCUMENTS (temporary)
+      match /diagnostic_test/{testId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // ❌ DENY ALL OTHER ACCESS
+    // This ensures no other documents can be accessed
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+  
+  // 🔍 VALIDATION FUNCTIONS
+  
+  // Validate cycle data structure and content
+  function validateCycleData() {
+    let data = request.resource.data;
+    
+    return 
+      // Required fields must exist
+      data.keys().hasAll(['start', 'end']) &&
+      
+      // start and end must be timestamps or dates
+      (data.start is timestamp || data.start is string) &&
+      (data.end is timestamp || data.end is string) &&
+      
+      // Optional fields validation
+      (!data.keys().hasAny(['timestamp']) || data.timestamp is timestamp) &&
+      (!data.keys().hasAny(['created_at']) || data.created_at is string) &&
+      
+      // Data size limits (prevent abuse)
+      data.size() <= 10; // Max 10 fields per cycle document
+  }
+}

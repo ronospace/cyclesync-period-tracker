@@ -1,1 +1,47 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"cyclesync-app","appId":"1:730237632589:android:d7d214c876da6a51fb9c04","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"cyclesync-app","appId":"1:730237632589:ios:ef54993e2578decffb9c04","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"cyclesync-app","appId":"1:730237632589:ios:ef54993e2578decffb9c04","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"cyclesync-app","configurations":{"android":"1:730237632589:android:d7d214c876da6a51fb9c04","ios":"1:730237632589:ios:ef54993e2578decffb9c04","macos":"1:730237632589:ios:ef54993e2578decffb9c04","web":"1:730237632589:web:ad0b281989285ce2fb9c04","windows":"1:730237632589:web:ad0b281989285ce2fb9c04"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "cyclesync-app",
+          "appId": "1:730237632589:android:d7d214c876da6a51fb9c04",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "cyclesync-app",
+          "appId": "1:730237632589:ios:ef54993e2578decffb9c04",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "cyclesync-app",
+          "appId": "1:730237632589:ios:ef54993e2578decffb9c04",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "cyclesync-app",
+          "configurations": {
+            "android": "1:730237632589:android:d7d214c876da6a51fb9c04",
+            "ios": "1:730237632589:ios:ef54993e2578decffb9c04",
+            "macos": "1:730237632589:ios:ef54993e2578decffb9c04",
+            "web": "1:730237632589:web:ad0b281989285ce2fb9c04",
+            "windows": "1:730237632589:web:ad0b281989285ce2fb9c04"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "eur3",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
