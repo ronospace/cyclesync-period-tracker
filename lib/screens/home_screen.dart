@@ -118,6 +118,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.science,
+                    label: 'Diagnostics',
+                    color: Colors.orange,
+                    onTap: () => context.go('/diagnostics'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(Icons.more_horiz, color: Colors.grey.shade400, size: 32),
+                        const SizedBox(height: 8),
+                        Text(
+                          'More Soon',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
