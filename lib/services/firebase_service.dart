@@ -168,6 +168,50 @@ class FirebaseService {
     }
   }
 
+  /// Update an existing cycle entry with robust error handling
+  static Future<void> updateCycle({
+    required String cycleId,
+    required DateTime startDate,
+    required DateTime endDate,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      print('🔥 FirebaseService: Starting update for cycle $cycleId');
+      print('🔥 FirebaseService: User: ${user.uid}');
+      print('🔥 FirebaseService: New Start: $startDate, New End: $endDate');
+
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('cycles')
+          .doc(cycleId)
+          .update({
+            'start': startDate,
+            'end': endDate,
+            'updated_at': FieldValue.serverTimestamp(),
+          })
+          .timeout(timeout);
+
+      print('🔥 FirebaseService: Update completed successfully');
+    } catch (e) {
+      print('🔥 FirebaseService: Error updating cycle: $e');
+      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      
+      // Re-throw with more context
+      if (e is FirebaseException) {
+        throw FirebaseException(
+          plugin: e.plugin,
+          code: e.code,
+          message: 'Failed to update cycle: ${e.message}',
+        );
+      } else {
+        throw Exception('Failed to update cycle: $e');
+      }
+    }
+  }
+
   /// Initialize user document if it doesn't exist
   static Future<void> initializeUser() async {
     try {
