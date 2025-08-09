@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screens/cycle_logging_screen.dart'; // ✅ NEW
+import 'screens/cycle_logging_screen.dart';
+import 'screens/cycle_history_screen.dart'; // ✅ NEW
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -42,8 +43,12 @@ class AppRouter {
         ),
         GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
         GoRoute(
-          path: '/log-cycle', // ✅ NEW ROUTE
+          path: '/log-cycle',
           builder: (context, state) => const CycleLoggingScreen(),
+        ),
+        GoRoute(
+          path: '/cycle-history',
+          builder: (context, state) => const CycleHistoryScreen(),
         ),
       ],
     );
