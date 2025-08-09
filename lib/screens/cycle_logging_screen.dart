@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import '../services/firebase_service.dart';
 
 class CycleLoggingScreen extends StatefulWidget {
   const CycleLoggingScreen({super.key});
@@ -23,43 +22,76 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
       return;
     }
 
+    // Prevent double-saving
+    if (_isSaving) {
+      print('⚠️ Save already in progress, ignoring duplicate request');
+      return;
+    }
+
     setState(() => _isSaving = true);
+    print('🟡 Starting save operation...');
 
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception("User not authenticated");
+      // Use the robust FirebaseService with shorter timeout for better UX
+      await FirebaseService.saveCycle(
+        startDate: _startDate!,
+        endDate: _endDate!,
+        timeout: const Duration(seconds: 15), // Shorter timeout for quicker feedback
+      );
+
+      print('✅ Save successful!');
+
+      if (!mounted) {
+        print('⚠️ Widget unmounted, skipping UI updates');
+        return;
       }
 
-      print('✅ Saving for user: ${user.uid}');
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('cycles')
-          .add({
-            'start': _startDate,
-            'end': _endDate,
-            'timestamp': FieldValue.serverTimestamp(),
-          });
-
-      if (!mounted) return;
+      // Clear the form after successful save
+      _startDate = null;
+      _endDate = null;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cycle logged successfully!')),
+        const SnackBar(
+          content: Text('Cycle logged successfully!'),
+          backgroundColor: Colors.green,
+        ),
       );
     } catch (e) {
       print('❌ Error saving cycle: $e');
+      print('❌ Error type: ${e.runtimeType}');
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        String userMessage;
+        if (e.toString().contains('timeout')) {
+          userMessage = 'Save timed out. Please check your internet connection and try again.';
+        } else if (e.toString().contains('permission-denied')) {
+          userMessage = 'Permission denied. Please check your account settings.';
+        } else if (e.toString().contains('network')) {
+          userMessage = 'Network error. Please check your internet connection.';
+        } else {
+          userMessage = 'Failed to save: ${e.toString().split(':').last.trim()}';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(userMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: () => _saveCycle(),
+            ),
+          ),
+        );
       }
     } finally {
+      print('🔁 Cleaning up save operation...');
       if (mounted) {
         setState(() => _isSaving = false);
-        print('🔁 UI reset complete');
+        print('🔁 UI reset complete - isSaving: $_isSaving');
+      } else {
+        print('⚠️ Widget unmounted during cleanup');
       }
     }
   }
@@ -115,7 +147,16 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: _isSaving ? null : _saveCycle,
-              icon: const Icon(Icons.save),
+              icon: _isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.save),
               label: _isSaving
                   ? const Text('Saving...')
                   : const Text('Save Cycle'),
