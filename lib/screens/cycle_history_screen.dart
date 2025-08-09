@@ -159,14 +159,53 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
 
   Future<void> _deleteCycle(String cycleId) async {
     try {
-      // We'll implement this in FirebaseService later
+      // Show loading state
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Delete functionality coming soon!')),
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              SizedBox(width: 12),
+              Text('Deleting cycle...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+        ),
       );
+      
+      // Delete the cycle using FirebaseService
+      await FirebaseService.deleteCycle(cycleId: cycleId);
+      
+      // Remove from local list for immediate UI update
+      setState(() {
+        _cycles.removeWhere((cycle) => cycle['id'] == cycleId);
+      });
+      
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cycle deleted successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete: $e')),
-      );
+      print('Error deleting cycle: $e');
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete: ${e.toString().split(':').last.trim()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
     }
   }
 

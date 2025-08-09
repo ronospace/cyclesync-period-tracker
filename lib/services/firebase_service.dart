@@ -131,6 +131,43 @@ class FirebaseService {
     }
   }
 
+  /// Delete a cycle entry with robust error handling
+  static Future<void> deleteCycle({
+    required String cycleId,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      print('🔥 FirebaseService: Starting delete for cycle $cycleId');
+      print('🔥 FirebaseService: User: ${user.uid}');
+
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('cycles')
+          .doc(cycleId)
+          .delete()
+          .timeout(timeout);
+
+      print('🔥 FirebaseService: Delete completed successfully');
+    } catch (e) {
+      print('🔥 FirebaseService: Error deleting cycle: $e');
+      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      
+      // Re-throw with more context
+      if (e is FirebaseException) {
+        throw FirebaseException(
+          plugin: e.plugin,
+          code: e.code,
+          message: 'Failed to delete cycle: ${e.message}',
+        );
+      } else {
+        throw Exception('Failed to delete cycle: $e');
+      }
+    }
+  }
+
   /// Initialize user document if it doesn't exist
   static Future<void> initializeUser() async {
     try {
