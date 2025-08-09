@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 import '../services/firebase_service.dart';
 
 class CycleAnalyticsScreen extends StatefulWidget {
@@ -137,7 +139,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> {
     double variance = _cycleLengths
         .map((length) => (length - mean) * (length - mean))
         .reduce((a, b) => a + b) / _cycleLengths.length;
-    double stdDev = variance.sqrt();
+    double stdDev = sqrt(variance);
 
     if (stdDev <= 1.5) {
       _regularityStatus = 'Very Regular';
@@ -372,7 +374,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> {
                                 title: 'Next Cycle Prediction',
                                 description: 'Estimated around ${DateFormat.MMMMd().format(_nextPredictedDate!)} '
                                     '(${_nextPredictedDate!.difference(DateTime.now()).inDays} days from now)',
-                                icon: Icons.predictions,
+                                icon: Icons.calendar_month,
                                 color: Colors.blue,
                               ),
                             
