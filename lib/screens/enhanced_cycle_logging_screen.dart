@@ -596,10 +596,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🌸 Enhanced Cycle Logging'),
+        title: const Text('🌸 Log Cycle'),
         backgroundColor: Colors.pink.shade50,
+        foregroundColor: Colors.pink.shade700,
+        iconTheme: IconThemeData(color: Colors.pink.shade700),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.pink.shade700),
           onPressed: () => context.go('/home'),
         ),
         bottom: TabBar(

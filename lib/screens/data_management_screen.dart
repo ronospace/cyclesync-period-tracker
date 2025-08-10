@@ -344,9 +344,12 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('📤 Data Management'),
+        title: const Text('📋 Data Management'),
+        backgroundColor: Colors.blue.shade50,
+        foregroundColor: Colors.blue.shade700,
+        iconTheme: IconThemeData(color: Colors.blue.shade700),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.blue.shade700),
           onPressed: () => context.pop(),
         ),
       ),

@@ -493,13 +493,15 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
       appBar: AppBar(
         title: const Text('📋 Cycle History'),
         backgroundColor: Colors.blue.shade50,
+        foregroundColor: Colors.blue.shade700,
+        iconTheme: IconThemeData(color: Colors.blue.shade700),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.blue.shade700),
           onPressed: () => context.go('/home'),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: Colors.blue.shade700),
             onPressed: _loadCycles,
           ),
         ],

@@ -751,15 +751,17 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('📊 Advanced Analytics'),
+        title: const Text('📁 Advanced Analytics'),
         backgroundColor: Colors.purple.shade50,
+        foregroundColor: Colors.purple.shade700,
+        iconTheme: IconThemeData(color: Colors.purple.shade700),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.purple.shade700),
           onPressed: () => context.go('/home'),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: Colors.purple.shade700),
             onPressed: _loadCycles,
           ),
         ],
