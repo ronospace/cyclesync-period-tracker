@@ -14,6 +14,7 @@ import 'screens/edit_cycle_screen.dart'; // ✏️ NEW
 import 'screens/data_management_screen.dart';
 import 'screens/notification_settings_screen.dart';
 import 'screens/calendar_screen.dart'; // 📅 NEW
+import 'screens/symptom_trends_screen.dart'; // 📈 NEW
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -80,6 +81,10 @@ class AppRouter {
         GoRoute(
           path: '/calendar',
           builder: (context, state) => const CalendarScreen(),
+        ),
+        GoRoute(
+          path: '/symptom-trends',
+          builder: (context, state) => const SymptomTrendsScreen(),
         ),
       ],
     );
