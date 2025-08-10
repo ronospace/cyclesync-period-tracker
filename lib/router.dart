@@ -5,12 +5,15 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screens/cycle_logging_screen.dart';
-import 'screens/cycle_history_screen.dart';
+import 'screens/enhanced_cycle_logging_screen.dart';
+import 'screens/enhanced_cycle_history_screen.dart';
 import 'screens/diagnostic_screen.dart';
-import 'screens/cycle_analytics_screen.dart'; // 📈 NEW
+import 'screens/advanced_analytics_screen.dart'; // 📊 NEW
 import 'screens/settings_screen.dart'; // ⚙️ NEW
 import 'screens/edit_cycle_screen.dart'; // ✏️ NEW
+import 'screens/data_management_screen.dart';
+import 'screens/notification_settings_screen.dart';
+import 'screens/calendar_screen.dart'; // 📅 NEW
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -48,11 +51,11 @@ class AppRouter {
         GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
         GoRoute(
           path: '/log-cycle',
-          builder: (context, state) => const CycleLoggingScreen(),
+          builder: (context, state) => const EnhancedCycleLoggingScreen(),
         ),
         GoRoute(
           path: '/cycle-history',
-          builder: (context, state) => const CycleHistoryScreen(),
+          builder: (context, state) => const EnhancedCycleHistoryScreen(),
         ),
         GoRoute(
           path: '/diagnostics',
@@ -60,11 +63,23 @@ class AppRouter {
         ),
         GoRoute(
           path: '/analytics',
-          builder: (context, state) => const CycleAnalyticsScreen(),
+          builder: (context, state) => const AdvancedAnalyticsScreen(),
         ),
         GoRoute(
           path: '/settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: '/data-management',
+          builder: (context, state) => const DataManagementScreen(),
+        ),
+        GoRoute(
+          path: '/notification-settings',
+          builder: (context, state) => const NotificationSettingsScreen(),
+        ),
+        GoRoute(
+          path: '/calendar',
+          builder: (context, state) => const CalendarScreen(),
         ),
       ],
     );

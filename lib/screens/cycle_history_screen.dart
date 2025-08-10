@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
 
 class CycleHistoryScreen extends StatefulWidget {
@@ -214,6 +215,11 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('🩸 Cycle History'),
+        backgroundColor: Colors.blue.shade50,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/home'),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

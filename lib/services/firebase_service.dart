@@ -22,6 +22,62 @@ class FirebaseService {
     return user;
   }
 
+  /// Save a cycle with enhanced symptom data
+  static Future<void> saveCycleWithSymptoms({
+    required Map<String, dynamic> cycleData,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      print('🔥 FirebaseService: Starting enhanced save for user ${user.uid}');
+      print('🔥 FirebaseService: Data keys: ${cycleData.keys.join(", ")}');
+
+      // Create the document reference first
+      final docRef = _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('cycles');
+      
+      // Add metadata to the cycle data
+      final enhancedData = {
+        ...cycleData,
+        'user_id': user.uid,
+        'timestamp': FieldValue.serverTimestamp(),
+      };
+      
+      // Add with explicit timeout and proper error handling
+      await docRef
+          .add(enhancedData)
+          .timeout(
+            timeout,
+            onTimeout: () {
+              throw FirebaseException(
+                plugin: 'cloud_firestore',
+                code: 'timeout',
+                message: 'Operation timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
+              );
+            },
+          );
+
+      print('🔥 FirebaseService: Enhanced save completed successfully');
+    } catch (e) {
+      print('🔥 FirebaseService: Error in enhanced save: $e');
+      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      
+      // Re-throw with more context
+      if (e is FirebaseException) {
+        throw FirebaseException(
+          plugin: e.plugin,
+          code: e.code,
+          message: 'Failed to save cycle with symptoms: ${e.message}',
+        );
+      } else {
+        throw Exception('Failed to save cycle with symptoms: $e');
+      }
+    }
+  }
+
   /// Save a cycle entry with robust error handling
   static Future<void> saveCycle({
     required DateTime startDate,

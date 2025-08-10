@@ -5,14 +5,18 @@ import 'firebase_options.dart';
 import 'router.dart'; // ✅ use AppRouter
 import 'services/auth_state_notifier.dart';
 import 'services/theme_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   
-  // Initialize theme service
+  // Initialize services
   final themeService = ThemeService();
   await themeService.init();
+  
+  // Initialize notifications (don't await - let it initialize in background)
+  NotificationService.initialize();
   
   runApp(MyApp(themeService: themeService));
 }

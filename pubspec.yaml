@@ -30,10 +30,24 @@ dependencies:
   # Local storage for settings
   shared_preferences: ^2.3.4
 
+  # File handling and sharing
+  path_provider: ^2.1.5
+  share_plus: ^10.1.2
+  file_picker: ^8.1.7
+  permission_handler: ^12.0.1
+
+  # JSON handling
+  csv: ^6.0.0
+
+  # Calendar view
+  table_calendar: ^3.1.5
+
   # Localization
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
+  flutter_local_notifications: ^19.4.0
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   flutter_test:

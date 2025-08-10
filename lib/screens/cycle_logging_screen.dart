@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/firebase_service.dart';
+import '../services/notification_service.dart';
 
 class CycleLoggingScreen extends StatefulWidget {
   const CycleLoggingScreen({super.key});
@@ -13,6 +14,14 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
   bool _isSaving = false;
+  
+  // Symptom tracking
+  String _flow = 'Medium';
+  double _moodLevel = 3.0; // 1-5 scale
+  double _energyLevel = 3.0; // 1-5 scale
+  double _painLevel = 1.0; // 1-5 scale
+  Set<String> _symptoms = <String>{};
+  String _notes = '';
 
   Future<void> _saveCycle() async {
     if (_startDate == null || _endDate == null) {
@@ -44,6 +53,15 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
       if (!mounted) {
         print('⚠️ Widget unmounted, skipping UI updates');
         return;
+      }
+
+      // Update notifications with latest cycle data
+      try {
+        final cycles = await FirebaseService.getCycles();
+        await NotificationService.updateCycleNotifications(cycles);
+        print('✅ Notifications updated successfully');
+      } catch (e) {
+        print('⚠️ Failed to update notifications: $e');
       }
 
       // Clear the form after successful save

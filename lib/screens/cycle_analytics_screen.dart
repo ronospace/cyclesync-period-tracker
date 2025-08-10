@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:go_router/go_router.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import 'dart:math';
+import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
+import '../services/analytics_service.dart';
 
 class CycleAnalyticsScreen extends StatefulWidget {
   const CycleAnalyticsScreen({super.key});
@@ -12,144 +12,49 @@ class CycleAnalyticsScreen extends StatefulWidget {
   State<CycleAnalyticsScreen> createState() => _CycleAnalyticsScreenState();
 }
 
-class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> {
+class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> _cycles = [];
+  CycleStatistics? _statistics;
+  CyclePrediction? _prediction;
   bool _isLoading = true;
   String? _error;
-  
-  // Analytics data
-  double? _averageCycleLength;
-  int _totalCycles = 0;
-  DateTime? _lastCycleDate;
-  DateTime? _nextPredictedDate;
-  List<int> _cycleLengths = [];
-  String _regularityStatus = 'Unknown';
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _loadAndAnalyzeCycles();
+    _tabController = TabController(length: 3, vsync: this);
+    _loadCycles();
   }
 
-  Future<void> _loadAndAnalyzeCycles() async {
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadCycles() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      final cycles = await FirebaseService.getCycles();
+      final cycles = await FirebaseService.getCycles(limit: 100);
+      final statistics = AnalyticsService.calculateStatistics(cycles);
+      final prediction = AnalyticsService.predictNextCycle(cycles);
+      
       setState(() {
         _cycles = cycles;
+        _statistics = statistics;
+        _prediction = prediction;
         _isLoading = false;
       });
-      
-      _calculateAnalytics();
     } catch (e) {
       setState(() {
         _error = e.toString();
         _isLoading = false;
       });
-    }
-  }
-
-  void _calculateAnalytics() {
-    if (_cycles.isEmpty) return;
-
-    _totalCycles = _cycles.length;
-    _cycleLengths = [];
-
-    // Parse and sort cycles by date
-    List<Map<String, dynamic>> validCycles = [];
-    
-    for (var cycle in _cycles) {
-      DateTime? startDate;
-      DateTime? endDate;
-      
-      try {
-        // Parse start date
-        if (cycle['start'] != null) {
-          if (cycle['start'] is DateTime) {
-            startDate = cycle['start'];
-          } else if (cycle['start'].toString().contains('Timestamp')) {
-            startDate = (cycle['start'] as dynamic).toDate();
-          } else {
-            startDate = DateTime.parse(cycle['start'].toString());
-          }
-        }
-        
-        // Parse end date
-        if (cycle['end'] != null) {
-          if (cycle['end'] is DateTime) {
-            endDate = cycle['end'];
-          } else if (cycle['end'].toString().contains('Timestamp')) {
-            endDate = (cycle['end'] as dynamic).toDate();
-          } else {
-            endDate = DateTime.parse(cycle['end'].toString());
-          }
-        }
-        
-        if (startDate != null && endDate != null) {
-          cycle['parsed_start'] = startDate;
-          cycle['parsed_end'] = endDate;
-          validCycles.add(cycle);
-          
-          // Calculate cycle length
-          int cycleLength = endDate.difference(startDate).inDays + 1;
-          _cycleLengths.add(cycleLength);
-        }
-      } catch (e) {
-        print('Error parsing cycle dates: $e');
-      }
-    }
-
-    if (validCycles.isEmpty) return;
-
-    // Sort by start date (most recent first)
-    validCycles.sort((a, b) => 
-      (b['parsed_start'] as DateTime).compareTo(a['parsed_start'] as DateTime));
-
-    // Calculate average cycle length
-    if (_cycleLengths.isNotEmpty) {
-      _averageCycleLength = _cycleLengths.reduce((a, b) => a + b) / _cycleLengths.length;
-    }
-
-    // Get last cycle date
-    _lastCycleDate = validCycles.first['parsed_end'] as DateTime;
-
-    // Predict next cycle (rough estimate)
-    if (_averageCycleLength != null && _lastCycleDate != null) {
-      // Assume average cycle interval is 28 days (can be made more sophisticated)
-      _nextPredictedDate = _lastCycleDate!.add(Duration(days: 28));
-    }
-
-    // Calculate regularity
-    _calculateRegularity();
-
-    setState(() {});
-  }
-
-  void _calculateRegularity() {
-    if (_cycleLengths.length < 2) {
-      _regularityStatus = 'Need more data';
-      return;
-    }
-
-    // Calculate standard deviation of cycle lengths
-    double mean = _averageCycleLength ?? 0;
-    double variance = _cycleLengths
-        .map((length) => (length - mean) * (length - mean))
-        .reduce((a, b) => a + b) / _cycleLengths.length;
-    double stdDev = sqrt(variance);
-
-    if (stdDev <= 1.5) {
-      _regularityStatus = 'Very Regular';
-    } else if (stdDev <= 3.0) {
-      _regularityStatus = 'Regular';
-    } else if (stdDev <= 5.0) {
-      _regularityStatus = 'Somewhat Irregular';
-    } else {
-      _regularityStatus = 'Irregular';
     }
   }
 
@@ -233,7 +138,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadAndAnalyzeCycles,
+        onPressed: _loadCycles,
           ),
         ],
       ),

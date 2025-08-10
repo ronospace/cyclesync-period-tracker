@@ -123,10 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                   child: _buildActionButton(
-                    icon: Icons.science,
-                    label: 'Diagnostics',
-                    color: Colors.orange,
-                    onTap: () => context.go('/diagnostics'),
+                    icon: Icons.calendar_month,
+                    label: 'Calendar',
+                    color: Colors.green,
+                    onTap: () => context.go('/calendar'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -335,14 +335,23 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('🌸 CycleSync'),
         backgroundColor: Colors.pink.shade50,
         elevation: 0,
+        iconTheme: IconThemeData(
+          color: Colors.pink.shade700, // Make icons darker and more visible
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(
+              Icons.settings,
+              color: Colors.pink.shade700,
+            ),
             onPressed: () => context.push('/settings'),
             tooltip: 'Settings',
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: Icon(
+              Icons.logout,
+              color: Colors.pink.shade700,
+            ),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               if (context.mounted) {

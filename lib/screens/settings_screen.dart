@@ -150,6 +150,14 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
+                    leading: const Icon(Icons.notifications),
+                    title: const Text('Notifications'),
+                    subtitle: const Text('Manage cycle reminders and alerts'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/notification-settings'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
                     leading: const Icon(Icons.science),
                     title: const Text('Diagnostics'),
                     subtitle: const Text('Test Firebase connection'),
@@ -192,10 +200,10 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.backup, color: Colors.blue),
-                    title: const Text('Export Data'),
-                    subtitle: const Text('Download your cycle data'),
+                    title: const Text('Data Management'),
+                    subtitle: const Text('Export, import, and backup your data'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () => _showComingSoonDialog(context, 'Export Data'),
+                    onTap: () => context.push('/data-management'),
                   ),
                   const Divider(height: 1),
                   ListTile(
