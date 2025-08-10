@@ -9,6 +9,8 @@ import 'screens/cycle_logging_screen.dart';
 import 'screens/cycle_history_screen.dart';
 import 'screens/diagnostic_screen.dart';
 import 'screens/cycle_analytics_screen.dart'; // 📈 NEW
+import 'screens/settings_screen.dart'; // ⚙️ NEW
+import 'screens/edit_cycle_screen.dart'; // ✏️ NEW
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -59,6 +61,10 @@ class AppRouter {
         GoRoute(
           path: '/analytics',
           builder: (context, state) => const CycleAnalyticsScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingsScreen(),
         ),
       ],
     );

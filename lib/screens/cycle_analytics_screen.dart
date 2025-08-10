@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 import '../services/firebase_service.dart';
@@ -427,7 +428,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => Navigator.of(context).pushReplacementNamed('/cycle-history'),
+                                    onPressed: () => context.pushReplacement('/cycle-history'),
                                     icon: const Icon(Icons.history),
                                     label: const Text('View History'),
                                     style: ElevatedButton.styleFrom(

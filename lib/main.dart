@@ -4,27 +4,41 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'router.dart'; // ✅ use AppRouter
 import 'services/auth_state_notifier.dart';
+import 'services/theme_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  
+  // Initialize theme service
+  final themeService = ThemeService();
+  await themeService.init();
+  
+  runApp(MyApp(themeService: themeService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ThemeService themeService;
+  
+  const MyApp({super.key, required this.themeService});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthStateNotifier(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthStateNotifier()),
+        ChangeNotifierProvider.value(value: themeService),
+      ],
       child: Builder(
         builder: (context) {
           final router = AppRouter.router(context);
+          final themeService = Provider.of<ThemeService>(context);
 
           return MaterialApp.router(
             title: 'CycleSync',
-            theme: ThemeData(primarySwatch: Colors.pink),
+            theme: ThemeService.lightTheme,
+            darkTheme: ThemeService.darkTheme,
+            themeMode: themeService.themeMode,
             routerConfig: router,
           );
         },

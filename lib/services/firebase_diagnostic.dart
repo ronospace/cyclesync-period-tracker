@@ -191,12 +191,24 @@ class FirebaseDiagnostic {
     print('⚙️  Testing Network Configuration...');
     
     try {
-      // Test with different timeout values
+      final user = _auth.currentUser;
+      if (user == null) {
+        results['tests']['network_config'] = {
+          'status': 'skipped',
+          'reason': 'no_authenticated_user',
+          'success': false,
+        };
+        print('   ⚠️  Skipped - no authenticated user');
+        print('');
+        return;
+      }
+
+      // Test network configuration by reading user's own document
       final stopwatch = Stopwatch()..start();
       
       await _firestore
           .collection('users')
-          .limit(1)
+          .doc(user.uid)
           .get()
           .timeout(const Duration(seconds: 5));
       

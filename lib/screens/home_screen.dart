@@ -337,6 +337,11 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.push('/settings'),
+            tooltip: 'Settings',
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
@@ -344,6 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.go('/login');
               }
             },
+            tooltip: 'Sign Out',
           ),
         ],
       ),
