@@ -252,7 +252,7 @@ build_web() {
     cd "$PROJECT_ROOT"
     
     log_info "Building Flutter web..."
-    flutter build web --release --web-renderer html
+    flutter build web --release
     
     log_success "Web build completed!"
     log_info "📁 Web build location: build/web/"
