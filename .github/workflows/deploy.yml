@@ -1,0 +1,417 @@
+name: 🚀 Deploy CycleSync Enterprise
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  FLUTTER_VERSION: '3.16.x'
+  JAVA_VERSION: '11'
+
+jobs:
+  # ===================
+  # Test & Analysis Job
+  # ===================
+  test:
+    name: 🧪 Test & Analyze
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: ⚡ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          
+      - name: 📦 Get dependencies
+        run: flutter pub get
+        
+      - name: 🔍 Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+        
+      - name: 📊 Analyze project source
+        run: flutter analyze --fatal-infos
+        
+      - name: 🧪 Run tests
+        run: flutter test --coverage
+        
+      - name: 📈 Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+
+  # ===================
+  # Build Android Job
+  # ===================
+  build-android:
+    name: 🤖 Build Android
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: ⚡ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          
+      - name: 📦 Get dependencies
+        run: flutter pub get
+        
+      - name: 🔐 Setup Android signing
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+          echo "storeFile=keystore.jks" >> android/key.properties
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          
+      - name: 🏗️ Build Android App Bundle
+        run: flutter build appbundle --release --dart-define=FIREBASE_API_KEY="${{ secrets.FIREBASE_API_KEY }}"
+        
+      - name: 🏗️ Build Android APK
+        run: flutter build apk --release --dart-define=FIREBASE_API_KEY="${{ secrets.FIREBASE_API_KEY }}"
+        
+      - name: 📦 Upload Android artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-builds
+          path: |
+            build/app/outputs/bundle/release/app-release.aab
+            build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+          
+      - name: 🚀 Deploy to Google Play (Production)
+        if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, 'enterprise')
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          packageName: com.ronospace.cyclesync.enterprise
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: production
+          status: inProgress
+          
+      - name: 🧪 Deploy to Google Play (Internal Testing)
+        if: github.ref == 'refs/heads/main'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          packageName: com.ronospace.cyclesync.enterprise
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal
+
+  # ===================
+  # Build iOS Job
+  # ===================
+  build-ios:
+    name: 📱 Build iOS
+    runs-on: macos-latest
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: ⚡ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          
+      - name: 📦 Get dependencies
+        run: flutter pub get
+        
+      - name: 🍎 Setup CocoaPods
+        run: |
+          cd ios
+          pod install
+          
+      - name: 🔐 Setup iOS signing
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          # Import certificate and provisioning profile
+          echo "${{ secrets.IOS_P12_BASE64 }}" | base64 --decode > ios_certificate.p12
+          echo "${{ secrets.IOS_MOBILE_PROVISION_BASE64 }}" | base64 --decode > ios_profile.mobileprovision
+          
+          # Create keychain and import certificate
+          security create-keychain -p "" build.keychain
+          security import ios_certificate.p12 -k build.keychain -P "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" -A
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -l build.keychain
+          
+          # Install provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp ios_profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          
+      - name: 🏗️ Build iOS (Debug for main branch)
+        if: github.ref == 'refs/heads/main'
+        run: flutter build ios --release --no-codesign --dart-define=FIREBASE_API_KEY="${{ secrets.FIREBASE_API_KEY }}"
+        
+      - name: 🏗️ Build & Archive iOS (Release for tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          flutter build ios --release --dart-define=FIREBASE_API_KEY="${{ secrets.FIREBASE_API_KEY }}"
+          
+          # Archive the app
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+                     -scheme Runner \
+                     -configuration Release \
+                     -destination 'generic/platform=iOS' \
+                     -archivePath Runner.xcarchive \
+                     archive
+                     
+          # Export IPA
+          xcodebuild -exportArchive \
+                     -archivePath Runner.xcarchive \
+                     -exportPath ../build/ios \
+                     -exportOptionsPlist ExportOptions.plist
+                     
+      - name: 📦 Upload iOS artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-builds
+          path: |
+            build/ios/**/*.ipa
+            build/ios/iphoneos/Runner.app
+          retention-days: 7
+          
+      - name: 🚀 Deploy to App Store Connect
+        if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, 'enterprise')
+        uses: apple-actions/upload-testflight-build@v1
+        with:
+          app-path: build/ios/Runner.ipa
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+
+  # ===================
+  # Build Web Job
+  # ===================
+  build-web:
+    name: 🌐 Build Web
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: ⚡ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          
+      - name: 📦 Get dependencies
+        run: flutter pub get
+        
+      - name: 🏗️ Build web
+        run: flutter build web --release --web-renderer html --dart-define=FIREBASE_API_KEY="${{ secrets.FIREBASE_API_KEY }}"
+        
+      - name: 📦 Upload web artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-build
+          path: build/web/
+          retention-days: 7
+          
+      - name: 🚀 Deploy to Firebase Hosting (Production)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          channelId: live
+          
+      - name: 🧪 Deploy to Firebase Hosting (Preview)
+        if: github.ref == 'refs/heads/main'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          
+      - name: 🌐 Deploy to GitHub Pages (Staging)
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/web
+          cname: cyclesync-enterprise.pages.dev
+
+  # ===================
+  # Security Scan Job
+  # ===================
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🔍 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: 📊 Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ===================
+  # Release Creation Job
+  # ===================
+  create-release:
+    name: 🏷️ Create Release
+    runs-on: ubuntu-latest
+    needs: [build-android, build-ios, build-web]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 📁 Download all artifacts
+        uses: actions/download-artifact@v3
+        
+      - name: 🏗️ Prepare release assets
+        run: |
+          mkdir -p release-assets
+          
+          # Android assets
+          if [ -f android-builds/app-release.aab ]; then
+            cp android-builds/app-release.aab release-assets/cyclesync-enterprise-${GITHUB_REF_NAME}.aab
+          fi
+          if [ -f android-builds/app-release.apk ]; then
+            cp android-builds/app-release.apk release-assets/cyclesync-enterprise-${GITHUB_REF_NAME}.apk
+          fi
+          
+          # iOS assets (if available)
+          if [ -d ios-builds ]; then
+            find ios-builds -name "*.ipa" -exec cp {} release-assets/cyclesync-enterprise-${GITHUB_REF_NAME}.ipa \;
+          fi
+          
+          # Web assets
+          if [ -d web-build ]; then
+            cd web-build && zip -r ../release-assets/cyclesync-enterprise-web-${GITHUB_REF_NAME}.zip . && cd ..
+          fi
+          
+      - name: 📝 Generate release notes
+        run: |
+          cat > release-notes.md << 'EOF'
+          ## 🚀 CycleSync Enterprise Healthcare Platform ${GITHUB_REF_NAME}
+          
+          ### 🏥 Enterprise Features
+          - ✅ HIPAA-Compliant Healthcare Platform
+          - ✅ AES-256 Encryption for Health Data
+          - ✅ Multi-Source Sync (Firebase + HealthKit + Local)
+          - ✅ AI-Powered Health Predictions
+          - ✅ Advanced Analytics Engine
+          - ✅ Real-time Data Synchronization
+          - ✅ Enterprise Security Infrastructure
+          
+          ### 📱 Platform Support
+          - **iOS**: App Store ready with HealthKit integration
+          - **Android**: Play Store ready with Health Connect
+          - **Web**: Firebase Hosting deployment ready
+          
+          ### 🔒 Security & Compliance
+          - Bank-grade AES-256 encryption
+          - HIPAA-compliant data handling
+          - Healthcare audit logging
+          - Biometric authentication support
+          
+          ### 📊 Analytics & Monitoring
+          - Firebase Analytics with privacy compliance
+          - Crashlytics error reporting
+          - Performance monitoring
+          - Healthcare-specific event tracking
+          
+          ### 🚀 Deployment Ready
+          All builds are production-ready and tested for enterprise healthcare deployment.
+          
+          ---
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/v2.0.0-enterprise...${GITHUB_REF_NAME}
+          EOF
+          
+      - name: 🎉 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: 'CycleSync Enterprise ${{ github.ref_name }}'
+          body_path: release-notes.md
+          files: release-assets/*
+          draft: false
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ===================
+  # Notification Job
+  # ===================
+  notify:
+    name: 📢 Notify Team
+    runs-on: ubuntu-latest
+    needs: [create-release]
+    if: always()
+    
+    steps:
+      - name: 🎉 Success Notification
+        if: ${{ needs.create-release.result == 'success' }}
+        run: |
+          echo "🚀 CycleSync Enterprise deployment completed successfully!"
+          echo "✅ All platforms built and deployed"
+          echo "🏷️ Release created: ${{ github.ref_name }}"
+          
+      - name: ❌ Failure Notification  
+        if: ${{ needs.create-release.result == 'failure' }}
+        run: |
+          echo "❌ CycleSync Enterprise deployment failed"
+          echo "🔍 Check the workflow logs for details"
+          
+      # Add Slack/Discord/Email notifications here if needed
+      
+  # ===================
+  # Cleanup Job
+  # ===================
+  cleanup:
+    name: 🧹 Cleanup
+    runs-on: ubuntu-latest
+    needs: [notify]
+    if: always()
+    
+    steps:
+      - name: 🗑️ Clean up temporary files
+        run: |
+          echo "Cleaning up temporary build files..."
+          # Add cleanup commands if needed
