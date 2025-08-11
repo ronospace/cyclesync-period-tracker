@@ -10,11 +10,15 @@ import 'screens/enhanced_cycle_history_screen.dart';
 import 'screens/diagnostic_screen.dart';
 import 'screens/advanced_analytics_screen.dart'; // 📊 NEW
 import 'screens/settings_screen.dart'; // ⚙️ NEW
-import 'screens/edit_cycle_screen.dart'; // ✏️ NEW
 import 'screens/data_management_screen.dart';
 import 'screens/notification_settings_screen.dart';
+import 'screens/smart_notification_settings_screen.dart';
 import 'screens/calendar_screen.dart'; // 📅 NEW
 import 'screens/symptom_trends_screen.dart'; // 📈 NEW
+import 'screens/health_integration_screen.dart'; // 🏥 NEW
+import 'screens/social/simple_social_sharing_screen.dart'; // 🤝 NEW
+import 'screens/ai_insights_screen.dart'; // 🔮 AI
+import 'screens/daily_log_screen.dart'; // 📝 NEW
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -79,12 +83,32 @@ class AppRouter {
           builder: (context, state) => const NotificationSettingsScreen(),
         ),
         GoRoute(
+          path: '/smart-notifications',
+          builder: (context, state) => const SmartNotificationSettingsScreen(),
+        ),
+        GoRoute(
           path: '/calendar',
           builder: (context, state) => const CalendarScreen(),
         ),
         GoRoute(
           path: '/symptom-trends',
           builder: (context, state) => const SymptomTrendsScreen(),
+        ),
+        GoRoute(
+          path: '/health-integration',
+          builder: (context, state) => const HealthIntegrationScreen(),
+        ),
+        GoRoute(
+          path: '/social-sharing',
+          builder: (context, state) => const SimpleSocialSharingScreen(),
+        ),
+        GoRoute(
+          path: '/ai-insights',
+          builder: (context, state) => const AIInsightsScreen(),
+        ),
+        GoRoute(
+          path: '/daily-log',
+          builder: (context, state) => const DailyLogScreen(),
         ),
       ],
     );

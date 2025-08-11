@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
 import '../services/notification_service.dart';
+import '../services/health_service.dart';
+import '../models/cycle_models.dart';
 
 class EnhancedCycleLoggingScreen extends StatefulWidget {
   const EnhancedCycleLoggingScreen({super.key});
@@ -12,7 +14,8 @@ class EnhancedCycleLoggingScreen extends StatefulWidget {
 }
 
 class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
+  late PageController _pageController;
+  int _currentStep = 0;
   final _notesController = TextEditingController();
   
   // Basic cycle data
@@ -56,14 +59,51 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _pageController = PageController();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _pageController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+
+  void _nextStep() {
+    if (_currentStep < 3) {
+      setState(() {
+        _currentStep++;
+      });
+      _pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _previousStep() {
+    if (_currentStep > 0) {
+      setState(() {
+        _currentStep--;
+      });
+      _pageController.animateToPage(
+        _currentStep,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  bool get _canContinueFromDates => _startDate != null && _endDate != null;
+  bool get _isCurrentStepComplete {
+    switch (_currentStep) {
+      case 0: return _canContinueFromDates;
+      case 1: return true; // Wellbeing always has defaults
+      case 2: return true; // Symptoms are optional
+      case 3: return true; // Notes are optional
+      default: return false;
+    }
   }
 
   Future<void> _saveCycle() async {
@@ -96,6 +136,37 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
         cycleData: cycleData,
         timeout: const Duration(seconds: 15),
       );
+
+      // Sync to health platforms if enabled
+      try {
+        final healthStatus = await HealthService.getIntegrationStatus();
+        if (healthStatus.canSync) {
+          final cycle = CycleData(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            startDate: _startDate!,
+            endDate: _endDate,
+            flowIntensity: _parseFlowIntensity(_flowIntensity),
+            wellbeing: WellbeingData(
+              mood: _moodLevel,
+              energy: _energyLevel,
+              pain: _painLevel,
+            ),
+            symptoms: _selectedSymptoms.map((s) => Symptom.fromName(s)).whereType<Symptom>().toList(),
+            notes: _notesController.text.trim(),
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          
+          final syncResult = await HealthService.syncCycleToHealth(cycle);
+          if (syncResult.success) {
+            debugPrint('✅ Cycle synced to health platform: ${syncResult.summary}');
+          } else {
+            debugPrint('⚠️ Health sync failed: ${syncResult.summary}');
+          }
+        }
+      } catch (e) {
+        debugPrint('Health sync error: $e');
+      }
 
       // Update notifications
       try {
@@ -159,6 +230,18 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
     });
   }
 
+  FlowIntensity _parseFlowIntensity(String flow) {
+    switch (flow.toLowerCase()) {
+      case 'light':
+        return FlowIntensity.light;
+      case 'heavy':
+      case 'very heavy':
+        return FlowIntensity.heavy;
+      default:
+        return FlowIntensity.medium;
+    }
+  }
+
   Future<void> _pickDate(bool isStart) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -186,103 +269,370 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
     }
   }
 
-  Widget _buildBasicsTab() {
+  Widget _buildDateStep() {
     final dateFormat = DateFormat.yMMMd();
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Text(
-            'Cycle Dates',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+            'Step 1 of 4',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.pink.shade400,
+              fontWeight: FontWeight.w500,
             ),
           ),
+          const SizedBox(height: 8),
+          Text(
+            'When was your cycle?',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.pink.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Let\'s start with the basic dates for this cycle.',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+          ),
+          const SizedBox(height: 32),
+          
+          // Start Date - Prominent Button
+          Container(
+            width: double.infinity,
+            child: Card(
+              elevation: _startDate != null ? 0 : 2,
+              color: _startDate != null ? Colors.pink.shade50 : null,
+              child: InkWell(
+                onTap: () async {
+                  await _pickDate(true);
+                  if (_startDate != null && _endDate == null) {
+                    // Auto-suggest end date after start date is selected
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Now select your end date 👇'),
+                          backgroundColor: Colors.pink.shade600,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    });
+                  }
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.pink.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.play_arrow,
+                          color: Colors.pink.shade600,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Start Date',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: _startDate != null ? Colors.pink.shade700 : null,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _startDate != null 
+                                  ? dateFormat.format(_startDate!)
+                                  : 'Tap to select when your cycle started',
+                              style: TextStyle(
+                                color: _startDate != null ? Colors.pink.shade600 : Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        _startDate != null ? Icons.check_circle : Icons.calendar_today,
+                        color: _startDate != null ? Colors.green : Colors.grey.shade400,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
           const SizedBox(height: 16),
           
-          // Start Date
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.play_arrow, color: Colors.pink.shade600),
-              title: const Text('Start Date'),
-              subtitle: Text(
-                _startDate != null 
-                    ? dateFormat.format(_startDate!)
-                    : 'Tap to select start date',
+          // End Date - Prominent Button
+          Container(
+            width: double.infinity,
+            child: Card(
+              elevation: _endDate != null ? 0 : 2,
+              color: _endDate != null ? Colors.pink.shade50 : null,
+              child: InkWell(
+                onTap: () async {
+                  if (_startDate == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please select start date first'),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                    return;
+                  }
+                  await _pickDate(false);
+                  if (_canContinueFromDates) {
+                    // Auto-advance after both dates are selected
+                    Future.delayed(const Duration(milliseconds: 800), () {
+                      if (mounted) {
+                        _nextStep();
+                      }
+                    });
+                  }
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.pink.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.stop,
+                          color: Colors.pink.shade400,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'End Date',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: _endDate != null ? Colors.pink.shade700 : null,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _endDate != null 
+                                  ? dateFormat.format(_endDate!)
+                                  : _startDate != null 
+                                      ? 'Tap to select when your cycle ended'
+                                      : 'Select start date first',
+                              style: TextStyle(
+                                color: _endDate != null ? Colors.pink.shade600 : Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        _endDate != null ? Icons.check_circle : Icons.calendar_today,
+                        color: _endDate != null ? Colors.green : Colors.grey.shade400,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: () => _pickDate(true),
             ),
           ),
           
-          const SizedBox(height: 8),
-          
-          // End Date
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.stop, color: Colors.pink.shade400),
-              title: const Text('End Date'),
-              subtitle: Text(
-                _endDate != null 
-                    ? dateFormat.format(_endDate!)
-                    : 'Tap to select end date',
-              ),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: () => _pickDate(false),
-            ),
-          ),
-          
-          const SizedBox(height: 24),
-          
-          // Flow Intensity
-          Text(
-            'Flow Intensity',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          Card(
-            child: Padding(
+          // Cycle length display
+          if (_startDate != null && _endDate != null) ...[
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
-              child: Column(
-                children: _flowOptions.map((flow) {
-                  return RadioListTile<String>(
-                    title: Text(flow),
-                    value: flow,
-                    groupValue: _flowIntensity,
-                    onChanged: (value) {
-                      setState(() {
-                        _flowIntensity = value!;
-                      });
-                    },
-                    activeColor: Colors.pink.shade600,
-                  );
-                }).toList(),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.timeline, color: Colors.green.shade600),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Cycle Length: ${_endDate!.difference(_startDate!).inDays + 1} days',
+                    style: TextStyle(
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
+            const SizedBox(height: 16),
+            Text(
+              '✨ Great! Moving to flow intensity in a moment...',
+              style: TextStyle(
+                color: Colors.green.shade600,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+          
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildWellbeingTab() {
+  Widget _buildFlowStep() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Text(
-            'How are you feeling?',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+            'Step 2 of 4',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.pink.shade400,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          Text(
+            'Flow Intensity',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.pink.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'How would you describe your flow during this cycle?',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+          ),
+          const SizedBox(height: 32),
+          
+          // Flow Options as Cards
+          ...List.generate(_flowOptions.length, (index) {
+            final flow = _flowOptions[index];
+            final isSelected = _flowIntensity == flow;
+            
+            return Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Card(
+                elevation: isSelected ? 0 : 1,
+                color: isSelected ? Colors.pink.shade50 : null,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _flowIntensity = flow;
+                    });
+                    // Auto-advance after selection
+                    Future.delayed(const Duration(milliseconds: 800), () {
+                      if (mounted) {
+                        _nextStep();
+                      }
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isSelected ? Colors.pink.shade600 : Colors.transparent,
+                            border: Border.all(
+                              color: isSelected ? Colors.pink.shade600 : Colors.grey.shade400,
+                              width: 2,
+                            ),
+                          ),
+                          child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 16) : null,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            flow,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected ? Colors.pink.shade700 : null,
+                            ),
+                          ),
+                        ),
+                        if (isSelected)
+                          Text(
+                            '✨ Selected',
+                            style: TextStyle(
+                              color: Colors.pink.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWellbeingStep() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Text(
+            'Step 3 of 4',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.pink.shade400,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'How are you feeling?',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.pink.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Help us understand your wellbeing during this cycle.',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+          ),
+          const SizedBox(height: 32),
           
           // Mood Level
           _buildLevelCard(
@@ -316,6 +666,26 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             value: _painLevel,
             labels: _painLabels,
             onChanged: (value) => setState(() => _painLevel = value),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Continue Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _nextStep(),
+              icon: const Icon(Icons.arrow_forward),
+              label: const Text('Continue to Symptoms'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade600,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -404,21 +774,47 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
     );
   }
 
-  Widget _buildSymptomsTab() {
+  Widget _buildSymptomsStep() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Text(
-            'Symptoms',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+            'Step 4 of 4',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.pink.shade400,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Select any symptoms you\'re experiencing:',
+            'Symptoms & Notes',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.pink.shade700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Select any symptoms and add optional notes (both are optional).',
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+          ),
+          const SizedBox(height: 32),
+          
+          // Symptoms Section
+          Text(
+            'Symptoms (Optional)',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tap any symptoms you experienced:',
             style: TextStyle(color: Colors.grey.shade600),
           ),
           const SizedBox(height: 16),
@@ -502,6 +898,86 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                 ),
               );
             },
+          ),
+          
+          const SizedBox(height: 32),
+          
+          // Notes Section
+          Text(
+            'Notes (Optional)',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Add any additional notes about this cycle:',
+            style: TextStyle(color: Colors.grey.shade600),
+          ),
+          const SizedBox(height: 16),
+          
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: _notesController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText: 'e.g., Had unusual stress, traveled, medication changes...',
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Summary Card
+          Card(
+            color: Colors.pink.shade50,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.summarize, color: Colors.pink.shade600),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Cycle Summary',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pink.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  if (_startDate != null && _endDate != null)
+                    Text(
+                      'Duration: ${_endDate!.difference(_startDate!).inDays + 1} days (${DateFormat.yMMMd().format(_startDate!)} - ${DateFormat.yMMMd().format(_endDate!)})',
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  
+                  const SizedBox(height: 4),
+                  Text('Flow: $_flowIntensity'),
+                  Text('Mood: ${_moodLabels[_moodLevel.round() - 1]}'),
+                  Text('Energy: ${_energyLabels[_energyLevel.round() - 1]}'),
+                  Text('Pain: ${_painLabels[_painLevel.round() - 1]}'),
+                  
+                  if (_selectedSymptoms.isNotEmpty)
+                    Text('Symptoms: ${_selectedSymptoms.length} selected'),
+                  
+                  if (_notesController.text.trim().isNotEmpty)
+                    Text('Notes: ${_notesController.text.length} characters'),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -595,52 +1071,169 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('🌸 Log Cycle'),
         backgroundColor: Colors.pink.shade50,
         foregroundColor: Colors.pink.shade700,
-        iconTheme: IconThemeData(color: Colors.pink.shade700),
+        elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.pink.shade700),
           onPressed: () => context.go('/home'),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Basics', icon: Icon(Icons.calendar_today, size: 16)),
-            Tab(text: 'Wellbeing', icon: Icon(Icons.favorite, size: 16)),
-            Tab(text: 'Symptoms', icon: Icon(Icons.healing, size: 16)),
-            Tab(text: 'Notes', icon: Icon(Icons.note, size: 16)),
-          ],
-        ),
+        actions: [
+          if (_currentStep > 0)
+            TextButton(
+              onPressed: _previousStep,
+              child: Text(
+                'Back',
+                style: TextStyle(color: Colors.pink.shade600),
+              ),
+            ),
+        ],
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          _buildBasicsTab(),
-          _buildWellbeingTab(),
-          _buildSymptomsTab(),
-          _buildNotesTab(),
+          // Progress indicator
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.pink.shade50,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: List.generate(4, (index) {
+                final isCompleted = index < _currentStep;
+                final isCurrent = index == _currentStep;
+                
+                return Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 6,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            color: isCompleted || isCurrent
+                                ? Colors.pink.shade600
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          ['Dates', 'Flow', 'Wellbeing', 'Finish'][index],
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isCompleted || isCurrent ? FontWeight.bold : FontWeight.normal,
+                            color: isCompleted || isCurrent
+                                ? Colors.pink.shade700
+                                : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          
+          // Page content
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(), // Disable swipe to control navigation
+              onPageChanged: (index) {
+                setState(() {
+                  _currentStep = index;
+                });
+              },
+              children: [
+                _buildDateStep(),
+                _buildFlowStep(),
+                _buildWellbeingStep(),
+                _buildSymptomsStep(),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        child: ElevatedButton.icon(
-          onPressed: _isSaving ? null : _saveCycle,
-          icon: _isSaving
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.save),
-          label: Text(_isSaving ? 'Saving...' : 'Save Cycle'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.pink.shade600,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, -2),
+            ),
+          ],
         ),
+        child: _currentStep < 3
+            ? Row(
+                children: [
+                  if (_currentStep > 0)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _previousStep,
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('Back'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.pink.shade600,
+                          side: BorderSide(color: Colors.pink.shade600),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                    ),
+                  if (_currentStep > 0) const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _isCurrentStepComplete ? _nextStep : null,
+                      icon: const Icon(Icons.arrow_forward),
+                      label: Text(_currentStep == 0 ? 'Continue' : 'Next'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink.shade600,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isSaving ? null : _saveCycle,
+                  icon: _isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.save),
+                  label: Text(_isSaving ? 'Saving...' : 'Save Cycle'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }

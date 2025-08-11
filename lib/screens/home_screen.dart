@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
+import '../services/smart_notification_service.dart';
+import '../widgets/health_integration_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,18 +16,37 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _recentCycles = [];
   bool _isLoading = true;
   String? _error;
+  Map<String, dynamic>? _cycleStatus;
+  Map<String, dynamic>? _predictions;
 
   @override
   void initState() {
     super.initState();
-    _loadRecentCycles();
+    _loadDashboardData();
+    // Trigger smart analysis after data loads
+    _runSmartAnalysis();
   }
 
-  Future<void> _loadRecentCycles() async {
+  Future<void> _runSmartAnalysis() async {
+    // Run smart notification analysis in background
     try {
-      final cycles = await FirebaseService.getCycles(limit: 3);
+      await SmartNotificationService.runSmartAnalysis();
+      debugPrint('🧠 Smart analysis completed on home screen');
+    } catch (e) {
+      debugPrint('❌ Smart analysis error: $e');
+    }
+  }
+
+  Future<void> _loadDashboardData() async {
+    try {
+      final cycles = await FirebaseService.getCycles(limit: 5);
+      final status = _calculateCycleStatus(cycles);
+      final predictions = _calculatePredictions(cycles);
+      
       setState(() {
         _recentCycles = cycles;
+        _cycleStatus = status;
+        _predictions = predictions;
         _isLoading = false;
       });
     } catch (e) {
@@ -34,6 +55,118 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Map<String, dynamic>? _calculateCycleStatus(List<Map<String, dynamic>> cycles) {
+    if (cycles.isEmpty) return null;
+    
+    final now = DateTime.now();
+    final lastCycle = cycles.first;
+    final startDate = (lastCycle['start'] as DateTime);
+    final endDate = (lastCycle['end'] as DateTime?);
+    
+    // Calculate days since last period
+    final daysSinceStart = now.difference(startDate).inDays;
+    
+    String phase;
+    String description;
+    Color color;
+    IconData icon;
+    
+    if (endDate != null) {
+      // Last cycle ended
+      final daysSinceEnd = now.difference(endDate).inDays;
+      
+      if (daysSinceEnd < 0) {
+        // Currently on period
+        phase = 'Menstrual';
+        description = 'Day ${daysSinceStart + 1} of your cycle';
+        color = Colors.red;
+        icon = Icons.water_drop;
+      } else if (daysSinceEnd <= 7) {
+        // Follicular phase
+        phase = 'Follicular';
+        description = 'Post-period recovery phase';
+        color = Colors.green;
+        icon = Icons.eco;
+      } else if (daysSinceEnd >= 10 && daysSinceEnd <= 16) {
+        // Ovulation window (assuming 28-day cycle)
+        phase = 'Ovulation';
+        description = 'Fertile window - ovulation likely';
+        color = Colors.orange;
+        icon = Icons.favorite;
+      } else {
+        // Luteal phase
+        phase = 'Luteal';
+        description = 'Pre-period phase';
+        color = Colors.purple;
+        icon = Icons.nightlight_round;
+      }
+    } else {
+      // Current cycle ongoing
+      phase = 'Menstrual';
+      description = 'Day ${daysSinceStart + 1} of current cycle';
+      color = Colors.red;
+      icon = Icons.water_drop;
+    }
+    
+    return {
+      'phase': phase,
+      'description': description,
+      'color': color,
+      'icon': icon,
+      'daysSinceStart': daysSinceStart,
+    };
+  }
+
+  Map<String, dynamic>? _calculatePredictions(List<Map<String, dynamic>> cycles) {
+    if (cycles.length < 2) return null;
+    
+    // Calculate average cycle length
+    int totalDays = 0;
+    int completedCycles = 0;
+    
+    for (var cycle in cycles) {
+      final start = cycle['start'] as DateTime;
+      final end = cycle['end'] as DateTime?;
+      if (end != null) {
+        totalDays += end.difference(start).inDays + 1;
+        completedCycles++;
+      }
+    }
+    
+    if (completedCycles == 0) return null;
+    
+    final avgCycleLength = totalDays / completedCycles;
+    final lastCycle = cycles.first;
+    final lastStart = lastCycle['start'] as DateTime;
+    final lastEnd = lastCycle['end'] as DateTime?;
+    
+    DateTime? nextPeriodDate;
+    DateTime? ovulationDate;
+    DateTime? fertileWindowStart;
+    DateTime? fertileWindowEnd;
+    
+    if (lastEnd != null) {
+      // Calculate based on completed last cycle
+      nextPeriodDate = lastEnd.add(Duration(days: avgCycleLength.round()));
+    } else {
+      // Current cycle ongoing, predict based on start
+      nextPeriodDate = lastStart.add(Duration(days: avgCycleLength.round()));
+    }
+    
+    // Ovulation typically 14 days before next period
+    ovulationDate = nextPeriodDate.subtract(const Duration(days: 14));
+    fertileWindowStart = ovulationDate.subtract(const Duration(days: 5));
+    fertileWindowEnd = ovulationDate.add(const Duration(days: 1));
+    
+    return {
+      'nextPeriod': nextPeriodDate,
+      'ovulation': ovulationDate,
+      'fertileStart': fertileWindowStart,
+      'fertileEnd': fertileWindowEnd,
+      'avgCycleLength': avgCycleLength.round(),
+    };
   }
 
   Widget _buildWelcomeCard() {
@@ -80,6 +213,243 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildCycleStatusCard() {
+    if (_isLoading) {
+      return const Card(
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
+    if (_cycleStatus == null) {
+      return Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Icon(Icons.calendar_today, size: 48, color: Colors.grey.shade400),
+              const SizedBox(height: 16),
+              Text(
+                'Start Tracking Your Cycle',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Log your first cycle to see personalized insights and predictions.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => context.go('/log-cycle'),
+                icon: const Icon(Icons.add),
+                label: const Text('Log First Cycle'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink.shade600,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final status = _cycleStatus!;
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            colors: [
+              (status['color'] as Color).withOpacity(0.1),
+              (status['color'] as Color).withOpacity(0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: (status['color'] as Color).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      status['icon'] as IconData,
+                      color: status['color'] as Color,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${status['phase']} Phase',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: status['color'] as Color,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          status['description'] as String,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPredictionsCard() {
+    if (_isLoading || _predictions == null) {
+      return const SizedBox.shrink();
+    }
+
+    final predictions = _predictions!;
+    final now = DateTime.now();
+    
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Upcoming Events',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            
+            // Next Period
+            _buildPredictionItem(
+              icon: Icons.water_drop,
+              color: Colors.red,
+              title: 'Next Period',
+              date: predictions['nextPeriod'] as DateTime,
+              now: now,
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Ovulation
+            _buildPredictionItem(
+              icon: Icons.favorite,
+              color: Colors.orange,
+              title: 'Ovulation',
+              date: predictions['ovulation'] as DateTime,
+              now: now,
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Fertile Window
+            Row(
+              children: [
+                Icon(Icons.eco, color: Colors.green, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Fertile Window',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        '${_formatPredictionDate(predictions['fertileStart'] as DateTime, now)} - ${_formatPredictionDate(predictions['fertileEnd'] as DateTime, now)}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPredictionItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required DateTime date,
+    required DateTime now,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+        Text(
+          _formatPredictionDate(date, now),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatPredictionDate(DateTime date, DateTime now) {
+    final difference = date.difference(now).inDays;
+    
+    if (difference == 0) {
+      return 'Today';
+    } else if (difference == 1) {
+      return 'Tomorrow';
+    } else if (difference > 0) {
+      return 'In $difference days';
+    } else {
+      final pastDays = -difference;
+      if (pastDays == 1) {
+        return 'Yesterday';
+      } else {
+        return '$pastDays days ago';
+      }
+    }
   }
 
   Widget _buildQuickActions() {
@@ -136,6 +506,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     label: 'Analytics',
                     color: Colors.purple,
                     onTap: () => context.go('/analytics'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.psychology,
+                    label: 'AI Insights',
+                    color: Colors.deepPurple,
+                    onTap: () => context.go('/ai-insights'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.edit_note,
+                    label: 'Daily Log',
+                    color: Colors.teal,
+                    onTap: () => context.go('/daily-log'),
                   ),
                 ),
               ],
@@ -225,7 +617,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(height: 8),
                               const Text('Unable to load recent cycles'),
                               TextButton(
-                                onPressed: _loadRecentCycles,
+                                onPressed: _loadDashboardData,
                                 child: const Text('Try Again'),
                               ),
                             ],
@@ -363,13 +755,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _loadRecentCycles,
+        onRefresh: _loadDashboardData,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildWelcomeCard(),
+              _buildCycleStatusCard(),
+              _buildPredictionsCard(),
               _buildQuickActions(),
               _buildRecentCycles(),
               const SizedBox(height: 20),

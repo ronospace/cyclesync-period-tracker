@@ -161,6 +161,14 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   ListTile(
+                    leading: const Icon(Icons.psychology, color: Colors.purple),
+                    title: const Text('Smart Notifications'),
+                    subtitle: const Text('AI-powered insights and predictions'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/smart-notifications'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
                     leading: const Icon(Icons.science),
                     title: const Text('Diagnostics'),
                     subtitle: const Text('Test Firebase connection'),
@@ -210,11 +218,27 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
+                    leading: const Icon(Icons.health_and_safety, color: Colors.purple),
+                    title: const Text('Health Integration'),
+                    subtitle: const Text('Sync with HealthKit and Google Fit'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/health-integration'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
                     leading: const Icon(Icons.backup, color: Colors.blue),
                     title: const Text('Data Management'),
                     subtitle: const Text('Export, import, and backup your data'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/data-management'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.share, color: Colors.orange),
+                    title: const Text('Social Sharing'),
+                    subtitle: const Text('Share data with providers and partners'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/social-sharing'),
                   ),
                   const Divider(height: 1),
                   ListTile(

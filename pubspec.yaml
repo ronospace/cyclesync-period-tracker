@@ -47,12 +47,23 @@ dependencies:
     sdk: flutter
   intl: ^0.20.2
   flutter_local_notifications: ^19.4.0
-  fl_chart: ^1.0.0
+  
+  # Charts for provider dashboard
+  fl_chart: ^0.66.2
+  
+  # Health platform integration (using custom implementation)
+  # health: ^13.1.1  # Removed to avoid minSdk conflicts
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  
+  # Testing dependencies
+  fake_cloud_firestore: ^3.1.0
+  firebase_auth_mocks: 0.14.2
+  mockito: ^5.4.3
+  build_runner: ^2.4.7
 
 flutter:
   uses-material-design: true

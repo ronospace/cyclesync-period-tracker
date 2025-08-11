@@ -1,5 +1,54 @@
 import 'package:flutter/material.dart';
 
+// Health integration result classes
+class HealthIntegrationStatus {
+  final bool isSupported;
+  final bool hasPermissions;
+  final String message;
+  final bool canSync;
+
+  const HealthIntegrationStatus({
+    required this.isSupported,
+    required this.hasPermissions,
+    required this.message,
+    required this.canSync,
+  });
+}
+
+class HealthSyncResult {
+  final bool success;
+  final List<String> syncedDataTypes;
+  final List<String> failedDataTypes;
+  final List<String> errors;
+  final String summary;
+  final int syncedCount;
+  final Map<String, dynamic> exportedData;
+
+  const HealthSyncResult({
+    required this.success,
+    required this.syncedDataTypes,
+    required this.failedDataTypes,
+    required this.errors,
+    required this.summary,
+    this.syncedCount = 0,
+    this.exportedData = const {},
+  });
+}
+
+class HealthImportResult {
+  final bool success;
+  final int importedCount;
+  final String summary;
+  final List<CycleData> cycles;
+
+  const HealthImportResult({
+    required this.success,
+    required this.importedCount,
+    required this.summary,
+    required this.cycles,
+  });
+}
+
 /// Core cycle data model with comprehensive symptom tracking
 class CycleData {
   final String id;

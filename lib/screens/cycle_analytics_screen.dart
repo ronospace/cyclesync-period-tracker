@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
@@ -129,6 +128,101 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
     );
   }
 
+  // Computed properties based on loaded data
+  int get _totalCycles => _cycles.length;
+  
+  double? get _averageCycleLength {
+    if (_statistics?.averageCycleLength != null) {
+      return _statistics!.averageCycleLength;
+    }
+    if (_cycles.length < 2) return null;
+    
+    double totalDays = 0;
+    int validCycles = 0;
+    
+    for (int i = 0; i < _cycles.length - 1; i++) {
+      final currentCycle = _cycles[i];
+      final nextCycle = _cycles[i + 1];
+      
+      try {
+        DateTime currentStart = _parseDate(currentCycle['start']);
+        DateTime nextStart = _parseDate(nextCycle['start']);
+        
+        int days = nextStart.difference(currentStart).inDays;
+        if (days > 0 && days < 60) { // Reasonable cycle length
+          totalDays += days;
+          validCycles++;
+        }
+      } catch (e) {
+        // Skip invalid dates
+        continue;
+      }
+    }
+    
+    return validCycles > 0 ? totalDays / validCycles : null;
+  }
+  
+  String get _regularityStatus {
+    if (_statistics?.regularity != null) {
+      return _statistics!.regularity!;
+    }
+    if (_cycles.length < 3) return 'Insufficient Data';
+    if (_averageCycleLength == null) return 'Irregular';
+    
+    // Simple regularity check
+    double variance = 0;
+    int validCycles = 0;
+    
+    for (int i = 0; i < _cycles.length - 1; i++) {
+      try {
+        DateTime currentStart = _parseDate(_cycles[i]['start']);
+        DateTime nextStart = _parseDate(_cycles[i + 1]['start']);
+        
+        int days = nextStart.difference(currentStart).inDays;
+        if (days > 0 && days < 60) {
+          variance += (days - _averageCycleLength!).abs();
+          validCycles++;
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+    
+    if (validCycles == 0) return 'Irregular';
+    double avgVariance = variance / validCycles;
+    
+    if (avgVariance <= 3) return 'Very Regular';
+    if (avgVariance <= 6) return 'Regular';
+    if (avgVariance <= 10) return 'Somewhat Irregular';
+    return 'Irregular';
+  }
+  
+  DateTime? get _lastCycleDate {
+    if (_cycles.isEmpty) return null;
+    try {
+      return _parseDate(_cycles.first['start']);
+    } catch (e) {
+      return null;
+    }
+  }
+  
+  DateTime? get _nextPredictedDate {
+    if (_prediction?.nextCycleDate != null) {
+      return _prediction!.nextCycleDate;
+    }
+    if (_lastCycleDate == null || _averageCycleLength == null) return null;
+    
+    return _lastCycleDate!.add(Duration(days: _averageCycleLength!.round()));
+  }
+  
+  DateTime _parseDate(dynamic date) {
+    if (date is DateTime) return date;
+    if (date.toString().contains('Timestamp')) {
+      return (date as dynamic).toDate();
+    }
+    return DateTime.parse(date.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +266,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
                       const Text('Please try again'),
                       const SizedBox(height: 24),
                       ElevatedButton.icon(
-                        onPressed: _loadAndAnalyzeCycles,
+                        onPressed: _loadCycles,
                         icon: const Icon(Icons.refresh),
                         label: const Text('Retry'),
                       ),
@@ -198,14 +292,14 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
                           const Text('Log some cycles to see your analytics'),
                           const SizedBox(height: 24),
                           ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => context.go('/log-cycle'),
                             child: const Text('Log Your Cycles'),
                           ),
                         ],
                       ),
                     )
                   : RefreshIndicator(
-                      onRefresh: _loadAndAnalyzeCycles,
+                      onRefresh: _loadCycles,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.all(16),
@@ -321,7 +415,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
                               children: [
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => Navigator.of(context).pop(),
+                                    onPressed: () => context.go('/log-cycle'),
                                     icon: const Icon(Icons.add),
                                     label: const Text('Log New Cycle'),
                                     style: ElevatedButton.styleFrom(
@@ -333,7 +427,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => context.pushReplacement('/cycle-history'),
+                                    onPressed: () => context.go('/cycle-history'),
                                     icon: const Icon(Icons.history),
                                     label: const Text('View History'),
                                     style: ElevatedButton.styleFrom(

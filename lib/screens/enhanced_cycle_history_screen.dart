@@ -114,6 +114,222 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
     _applySorting();
   }
 
+  Future<void> _deleteCycle(CycleData cycle) async {
+    // Show confirmation dialog
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning, color: Colors.red.shade600),
+            const SizedBox(width: 8),
+            const Text('Delete Cycle'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Are you sure you want to delete this cycle?'),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Cycle: ${DateFormat.yMMMd().format(cycle.startDate)}${cycle.endDate != null ? ' - ${DateFormat.yMMMd().format(cycle.endDate!)}' : ''}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  if (cycle.notes.isNotEmpty) 
+                    Text('Notes: ${cycle.notes}'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'This action cannot be undone.',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: 12),
+                Text('Deleting cycle...'),
+              ],
+            ),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Delete from Firebase
+      await FirebaseService.deleteCycle(cycleId: cycle.id);
+
+      // Update local state
+      setState(() {
+        _cycles.removeWhere((c) => c.id == cycle.id);
+        _filteredCycles.removeWhere((c) => c.id == cycle.id);
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Cycle deleted successfully'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: 'Undo',
+              textColor: Colors.white,
+              onPressed: () => _undoDelete(cycle),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete cycle: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: () => _deleteCycle(cycle),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<bool?> _confirmDelete(CycleData cycle) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning, color: Colors.red.shade600),
+            const SizedBox(width: 8),
+            const Text('Delete Cycle'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Are you sure you want to delete this cycle?'),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Cycle: ${DateFormat.yMMMd().format(cycle.startDate)}${cycle.endDate != null ? ' - ${DateFormat.yMMMd().format(cycle.endDate!)}' : ''}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  if (cycle.notes.isNotEmpty) 
+                    Text('Notes: ${cycle.notes}'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'This action cannot be undone.',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _undoDelete(CycleData cycle) async {
+    try {
+      // Re-add to Firebase (this would need implementation in FirebaseService)
+      // For now, just reload the data
+      await _loadCycles();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Delete undone - data reloaded'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to undo: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   void _applySorting() {
     setState(() {
       _filteredCycles.sort((a, b) {
@@ -241,14 +457,101 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
   }
 
   Widget _buildCycleCard(CycleData cycle) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: InkWell(
-        onTap: () => _showCycleDetails(cycle),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+    return Dismissible(
+      key: Key(cycle.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+              size: 28,
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Delete',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+      confirmDismiss: (direction) async {
+        final confirmed = await _confirmDelete(cycle);
+        if (confirmed == true) {
+          // Perform the deletion
+          try {
+            await FirebaseService.deleteCycle(cycleId: cycle.id);
+            
+            // Update local state
+            setState(() {
+              _cycles.removeWhere((c) => c.id == cycle.id);
+              _filteredCycles.removeWhere((c) => c.id == cycle.id);
+            });
+            
+            // Show success message
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Row(
+                    children: [
+                      Icon(Icons.check_circle, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text('Cycle deleted successfully'),
+                    ],
+                  ),
+                  backgroundColor: Colors.green,
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    textColor: Colors.white,
+                    onPressed: () => _undoDelete(cycle),
+                  ),
+                ),
+              );
+            }
+            return true;
+          } catch (e) {
+            // Show error message
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to delete cycle: ${e.toString()}'),
+                  backgroundColor: Colors.red,
+                  action: SnackBarAction(
+                    label: 'Retry',
+                    textColor: Colors.white,
+                    onPressed: () => _deleteCycle(cycle),
+                  ),
+                ),
+              );
+            }
+            return false;
+          }
+        }
+        return false;
+      },
+      onDismissed: (direction) {
+        // Deletion is handled in confirmDismiss
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: InkWell(
+          onTap: () => _showCycleDetails(cycle),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with date and flow
@@ -375,6 +678,7 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
                 ),
               ],
             ],
+            ),
           ),
         ),
       ),

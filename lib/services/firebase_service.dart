@@ -289,4 +289,167 @@ class FirebaseService {
       // Don't throw here - this is optional initialization
     }
   }
+
+  // DAILY LOGGING METHODS
+
+  /// Save or update a daily log entry
+  static Future<void> saveDailyLog({
+    required DateTime date,
+    double? mood,
+    double? energy,
+    double? pain,
+    List<String>? symptoms,
+    String? notes,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      // Create date-based document ID for easy querying
+      final dateString = date.toIso8601String().split('T')[0]; // YYYY-MM-DD format
+      
+      print('🔥 FirebaseService: Saving daily log for date $dateString');
+      print('🔥 FirebaseService: User: ${user.uid}');
+      print('🔥 FirebaseService: Data: mood=$mood, energy=$energy, pain=$pain');
+
+      final data = <String, dynamic>{
+        'date': date.toIso8601String().split('T')[0],
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+
+      // Only include non-null values
+      if (mood != null) data['mood'] = mood;
+      if (energy != null) data['energy'] = energy;
+      if (pain != null) data['pain'] = pain;
+      if (symptoms != null && symptoms.isNotEmpty) data['symptoms'] = symptoms;
+      if (notes != null && notes.isNotEmpty) data['notes'] = notes;
+
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('daily_logs')
+          .doc(dateString)
+          .set(data, SetOptions(merge: true))
+          .timeout(timeout);
+
+      print('🔥 FirebaseService: Daily log saved successfully');
+    } catch (e) {
+      print('🔥 FirebaseService: Error saving daily log: $e');
+      
+      if (e is FirebaseException) {
+        throw FirebaseException(
+          plugin: e.plugin,
+          code: e.code,
+          message: 'Failed to save daily log: ${e.message}',
+        );
+      } else {
+        throw Exception('Failed to save daily log: $e');
+      }
+    }
+  }
+
+  /// Get daily log entries for a date range
+  static Future<List<Map<String, dynamic>>> getDailyLogs({
+    DateTime? startDate,
+    DateTime? endDate,
+    int limit = 30,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      Query query = _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('daily_logs')
+          .orderBy('date', descending: true)
+          .limit(limit);
+
+      if (startDate != null) {
+        final startDateString = startDate.toIso8601String().split('T')[0];
+        query = query.where('date', isGreaterThanOrEqualTo: startDateString);
+      }
+
+      if (endDate != null) {
+        final endDateString = endDate.toIso8601String().split('T')[0];
+        query = query.where('date', isLessThanOrEqualTo: endDateString);
+      }
+
+      final QuerySnapshot snapshot = await query.get().timeout(timeout);
+      
+      return snapshot.docs.map((doc) => {
+        'id': doc.id,
+        ...doc.data() as Map<String, dynamic>,
+      }).toList();
+    } catch (e) {
+      print('🔥 FirebaseService: Error getting daily logs: $e');
+      throw Exception('Failed to fetch daily logs: $e');
+    }
+  }
+
+  /// Get daily log entry for a specific date
+  static Future<Map<String, dynamic>?> getDailyLogForDate({
+    required DateTime date,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      final dateString = date.toIso8601String().split('T')[0];
+      
+      final DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('daily_logs')
+          .doc(dateString)
+          .get()
+          .timeout(timeout);
+
+      if (doc.exists) {
+        return {
+          'id': doc.id,
+          ...doc.data() as Map<String, dynamic>,
+        };
+      }
+      
+      return null;
+    } catch (e) {
+      print('🔥 FirebaseService: Error getting daily log for date: $e');
+      throw Exception('Failed to fetch daily log: $e');
+    }
+  }
+
+  /// Delete a daily log entry
+  static Future<void> deleteDailyLog({
+    required DateTime date,
+    Duration timeout = _defaultTimeout,
+  }) async {
+    try {
+      final user = _requireAuth();
+      
+      final dateString = date.toIso8601String().split('T')[0];
+      
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('daily_logs')
+          .doc(dateString)
+          .delete()
+          .timeout(timeout);
+
+      print('🔥 FirebaseService: Daily log deleted successfully');
+    } catch (e) {
+      print('🔥 FirebaseService: Error deleting daily log: $e');
+      
+      if (e is FirebaseException) {
+        throw FirebaseException(
+          plugin: e.plugin,
+          code: e.code,
+          message: 'Failed to delete daily log: ${e.message}',
+        );
+      } else {
+        throw Exception('Failed to delete daily log: $e');
+      }
+    }
+  }
 }
