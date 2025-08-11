@@ -19,6 +19,8 @@ import 'screens/health_integration_screen.dart'; // 🏥 NEW
 import 'screens/social/simple_social_sharing_screen.dart'; // 🤝 NEW
 import 'screens/ai_insights_screen.dart'; // 🔮 AI
 import 'screens/daily_log_screen.dart'; // 📝 NEW
+import 'screens/export_screen.dart'; // 📤 Export & Backup
+import 'screens/ai_health_coach_screen.dart'; // 🤖 AI Health Coach
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -109,6 +111,14 @@ class AppRouter {
         GoRoute(
           path: '/daily-log',
           builder: (context, state) => const DailyLogScreen(),
+        ),
+        GoRoute(
+          path: '/export',
+          builder: (context, state) => const ExportScreen(),
+        ),
+        GoRoute(
+          path: '/ai-health-coach',
+          builder: (context, state) => const AIHealthCoachScreen(),
         ),
       ],
     );

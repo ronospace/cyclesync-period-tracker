@@ -51,6 +51,9 @@ dependencies:
   # Charts for provider dashboard
   fl_chart: ^0.66.2
   
+  # PDF generation for reports
+  pdf: ^3.11.1
+  
   # Health platform integration (using custom implementation)
   # health: ^13.1.1  # Removed to avoid minSdk conflicts
 

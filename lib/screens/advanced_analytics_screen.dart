@@ -4,6 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
 import '../services/analytics_service.dart';
+import '../services/enhanced_analytics_service.dart';
+import '../widgets/enhanced_chart_widgets.dart';
+import '../models/cycle_models.dart';
+import '../models/daily_log_models.dart';
 
 class AdvancedAnalyticsScreen extends StatefulWidget {
   const AdvancedAnalyticsScreen({super.key});
@@ -14,11 +18,18 @@ class AdvancedAnalyticsScreen extends StatefulWidget {
 
 class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> _cycles = [];
+  List<CycleData> _cycleModels = [];
+  List<DailyLogEntry> _dailyLogs = [];
   CycleStatistics? _statistics;
   CyclePrediction? _prediction;
+  WellbeingTrends? _wellbeingTrends;
+  SymptomCorrelationMatrix? _correlationMatrix;
+  AdvancedPrediction? _advancedPrediction;
+  HealthScore? _healthScore;
   bool _isLoading = true;
   String? _error;
   late TabController _tabController;
+  String _selectedWellbeingMetric = 'Mood';
 
   @override
   void initState() {
@@ -44,10 +55,41 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       final statistics = AnalyticsService.calculateStatistics(cycles);
       final prediction = AnalyticsService.predictNextCycle(cycles);
       
+      // Convert raw cycle data to models
+      final cycleModels = cycles.map((cycleMap) => CycleData(
+        id: cycleMap['id'] ?? '',
+        startDate: (cycleMap['start_date'] as DateTime?) ?? DateTime.now(),
+        endDate: cycleMap['end_date'] as DateTime?,
+        symptoms: (cycleMap['symptoms'] as List<dynamic>?)?.map((s) => 
+          Symptom(name: s['name'] ?? '', severity: s['severity'] ?? 1)
+        ).toList() ?? [],
+        wellbeing: WellbeingData(
+          mood: (cycleMap['mood'] as num?)?.toDouble() ?? 3.0,
+          energy: (cycleMap['energy'] as num?)?.toDouble() ?? 3.0,
+          pain: (cycleMap['pain'] as num?)?.toDouble() ?? 1.0,
+        ),
+        notes: cycleMap['notes'] as String? ?? '',
+      )).toList();
+      
+      // Load daily logs (in a real app, this would be a separate service call)
+      final dailyLogs = <DailyLogEntry>[];
+      
+      // Calculate enhanced analytics
+      final wellbeingTrends = EnhancedAnalyticsService.calculateWellbeingTrends(cycleModels, dailyLogs);
+      final correlationMatrix = EnhancedAnalyticsService.calculateSymptomCorrelations(cycleModels, dailyLogs);
+      final advancedPrediction = EnhancedAnalyticsService.generateAdvancedPredictions(cycleModels);
+      final healthScore = EnhancedAnalyticsService.calculateHealthScore(cycleModels, dailyLogs);
+      
       setState(() {
         _cycles = cycles;
+        _cycleModels = cycleModels;
+        _dailyLogs = dailyLogs;
         _statistics = statistics;
         _prediction = prediction;
+        _wellbeingTrends = wellbeingTrends;
+        _correlationMatrix = correlationMatrix;
+        _advancedPrediction = advancedPrediction;
+        _healthScore = healthScore;
         _isLoading = false;
       });
     } catch (e) {
@@ -747,6 +789,405 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         word[0].toUpperCase() + word.substring(1)).join(' ');
   }
 
+  // 🚀 Mission Alpha Enhanced Tabs
+  Widget _buildWellbeingTab() {
+    if (_wellbeingTrends == null) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.psychology, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('No wellbeing data available yet'),
+            Text(
+              'Log cycles with mood, energy, and pain data to see trends',
+              style: TextStyle(color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Health Score Card
+          if (_healthScore != null) _buildHealthScoreCard(),
+          const SizedBox(height: 24),
+          
+          // Interactive Wellbeing Trends Chart
+          WellbeingTrendChart(
+            trends: _wellbeingTrends!,
+            selectedMetric: _selectedWellbeingMetric,
+            onMetricChanged: (metric) {
+              setState(() {
+                _selectedWellbeingMetric = metric;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCorrelationsTab() {
+    if (_correlationMatrix == null || _correlationMatrix!.symptoms.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.grid_view, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('No symptom correlation data available yet'),
+            Text(
+              'Log cycles with multiple symptoms to discover patterns',
+              style: TextStyle(color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Symptom Correlation Heatmap
+          SymptomCorrelationHeatmap(matrix: _correlationMatrix!),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdvancedPredictionsTab() {
+    if (_advancedPrediction == null || _advancedPrediction!.basedOnCycles == 0) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.auto_awesome, size: 64, color: Colors.grey.shade300),
+            const SizedBox(height: 16),
+            Text(
+              'Advanced Predictions Unavailable',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Log at least 3 completed cycles to unlock\nadvanced predictions with confidence intervals',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => context.go('/log-cycle'),
+              child: const Text('Log More Cycles'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Advanced Prediction Card with Confidence Intervals
+          _buildAdvancedPredictionCard(),
+          const SizedBox(height: 24),
+          
+          // Cycle Phase Analysis
+          _buildCyclePhaseCard(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHealthScoreCard() {
+    final score = _healthScore!;
+    
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            colors: [score.gradeColor.withOpacity(0.1), Colors.white],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.health_and_safety, color: score.gradeColor, size: 32),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Health Score',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${score.overall.toInt()}/100 • ${score.overallGrade}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: score.gradeColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  CircularProgressIndicator(
+                    value: score.overall / 100,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation(score.gradeColor),
+                    strokeWidth: 8,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (score.breakdown.isNotEmpty) ..[
+                Text(
+                  'Breakdown',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...score.breakdown.entries.map((entry) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.key,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Text(
+                        '${entry.value.toInt()}%',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: _getAccuracyColor(entry.value),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdvancedPredictionCard() {
+    final prediction = _advancedPrediction!;
+    
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.auto_awesome, color: Colors.indigo.shade600, size: 28),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Advanced Predictions',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Based on ${prediction.basedOnCycles} cycles with ${(prediction.confidence * 100).toInt()}% confidence',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            
+            // Next Cycle with Confidence Range
+            _buildAdvancedPredictionItem(
+              title: 'Next Cycle Start',
+              primaryDate: prediction.nextCycleStart,
+              confidenceRange: '${DateFormat.MMMd().format(prediction.confidenceLowerBound)} - ${DateFormat.MMMd().format(prediction.confidenceUpperBound)}',
+              icon: Icons.calendar_today,
+              color: Colors.blue,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Ovulation Prediction
+            _buildAdvancedPredictionItem(
+              title: 'Ovulation Date',
+              primaryDate: prediction.ovulationDate,
+              confidenceRange: '${DateFormat.MMMd().format(prediction.fertileWindowStart)} - ${DateFormat.MMMd().format(prediction.fertileWindowEnd)} fertile window',
+              icon: Icons.favorite,
+              color: Colors.pink,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdvancedPredictionItem({
+    required String title,
+    required DateTime primaryDate,
+    required String confidenceRange,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  DateFormat.yMMMd().format(primaryDate),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  confidenceRange,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCyclePhaseCard() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.timeline, color: Colors.purple.shade600, size: 28),
+                const SizedBox(width: 12),
+                Text(
+                  'Cycle Phase Analysis',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Discover patterns in your symptoms and wellbeing across cycle phases',
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // Phase breakdown (simplified for now)
+            _buildPhaseRow('Menstrual', '1-5 days', Colors.red),
+            _buildPhaseRow('Follicular', '6-13 days', Colors.green),
+            _buildPhaseRow('Ovulatory', '14-16 days', Colors.orange),
+            _buildPhaseRow('Luteal', '17-28 days', Colors.purple),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhaseRow(String name, String days, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              name,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Text(
+            days,
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -770,9 +1211,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             : TabBar(
                 controller: _tabController,
                 tabs: const [
-                  Tab(text: 'Overview', icon: Icon(Icons.dashboard, size: 16)),
-                  Tab(text: 'Trends', icon: Icon(Icons.trending_up, size: 16)),
-                  Tab(text: 'Insights', icon: Icon(Icons.lightbulb, size: 16)),
+                  Tab(text: 'Wellbeing', icon: Icon(Icons.psychology, size: 16)),
+                  Tab(text: 'Correlations', icon: Icon(Icons.grid_view, size: 16)),
+                  Tab(text: 'Predictions', icon: Icon(Icons.auto_awesome, size: 16)),
                 ],
               ),
       ),
@@ -841,9 +1282,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildOverviewTab(),
-                        _buildTrendsTab(),
-                        _buildInsightsTab(),
+                        _buildWellbeingTab(),
+                        _buildCorrelationsTab(),
+                        _buildAdvancedPredictionsTab(),
                       ],
                     ),
     );

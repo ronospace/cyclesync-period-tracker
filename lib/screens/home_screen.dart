@@ -532,6 +532,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.smart_toy,
+                    label: 'AI Health Coach',
+                    color: Colors.indigo,
+                    onTap: () => context.go('/ai-health-coach'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.trending_up,
+                    label: 'Symptom Trends',
+                    color: Colors.amber,
+                    onTap: () => context.go('/symptom-trends'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

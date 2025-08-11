@@ -234,6 +234,14 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   ListTile(
+                    leading: const Icon(Icons.file_download, color: Colors.indigo),
+                    title: const Text('Export & Backup'),
+                    subtitle: const Text('Generate reports and backup your data'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/export'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
                     leading: const Icon(Icons.share, color: Colors.orange),
                     title: const Text('Social Sharing'),
                     subtitle: const Text('Share data with providers and partners'),
