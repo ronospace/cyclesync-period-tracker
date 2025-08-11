@@ -1,8 +1,3 @@
-/// Production configuration for CycleSync Enterprise Healthcare Platform
-/// 
-/// This file contains production-ready configuration values for deployment
-/// to App Store, Google Play, and web platforms with enterprise-grade security.
-
 class ProductionConfig {
   // ===================
   // Firebase Configuration

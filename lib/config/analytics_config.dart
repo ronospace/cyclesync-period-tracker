@@ -1,8 +1,3 @@
-/// Analytics and monitoring configuration for CycleSync Enterprise
-/// 
-/// Provides healthcare-compliant analytics setup with privacy protection,
-/// performance monitoring, and comprehensive error tracking.
-
 import 'dart:async';
 import 'dart:developer' as developer;
 import 'package:firebase_analytics/firebase_analytics.dart';
