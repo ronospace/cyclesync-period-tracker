@@ -19,7 +19,13 @@ class SettingsScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.grey.shade700),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.grey.shade700),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/home');
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(

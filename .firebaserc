@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "cyclesync-app"
-  }
+    "default": "cyclesync-app",
+    "prod": "cyclesync-tracker"
+  },
+  "targets": {},
+  "etags": {}
 }

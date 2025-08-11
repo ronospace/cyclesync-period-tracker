@@ -8,7 +8,7 @@ import 'screens/signup_screen.dart';
 import 'screens/enhanced_cycle_logging_screen.dart';
 import 'screens/enhanced_cycle_history_screen.dart';
 import 'screens/diagnostic_screen.dart';
-import 'screens/advanced_analytics_screen.dart'; // 📊 NEW
+import 'screens/advanced_analytics_screen.dart'; // 📊 ANALYTICS
 import 'screens/settings_screen.dart'; // ⚙️ NEW
 import 'screens/data_management_screen.dart';
 import 'screens/notification_settings_screen.dart';
@@ -19,8 +19,9 @@ import 'screens/health_integration_screen.dart'; // 🏥 NEW
 import 'screens/social/simple_social_sharing_screen.dart'; // 🤝 NEW
 import 'screens/ai_insights_screen.dart'; // 🔮 AI
 import 'screens/daily_log_screen.dart'; // 📝 NEW
-import 'screens/export_screen.dart'; // 📤 Export & Backup
-import 'screens/ai_health_coach_screen.dart'; // 🤖 AI Health Coach
+import 'screens/health_insights_screen.dart'; // 🏥 ENHANCED
+// import 'screens/export_screen.dart'; // 📤 DISABLED FOR TESTING
+// import 'screens/ai_health_coach_screen.dart'; // 🤖 DISABLED FOR TESTING
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -30,6 +31,25 @@ class AppRouter {
     return GoRouter(
       initialLocation: '/login',
       refreshListenable: authState,
+      errorBuilder: (context, state) => Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text('Page Not Found', style: TextStyle(fontSize: 24)),
+              const SizedBox(height: 8),
+              Text('Path: ${state.uri.path}'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.go('/home'),
+                child: const Text('Go Home'),
+              ),
+            ],
+          ),
+        ),
+      ),
       redirect: (context, state) {
         final isLoggedIn = authState.isLoggedIn;
         final location = state.uri.toString();
@@ -47,6 +67,10 @@ class AppRouter {
         return null;
       },
       routes: [
+        GoRoute(
+          path: '/',
+          redirect: (context, state) => authState.isLoggedIn ? '/home' : '/login',
+        ),
         GoRoute(
           path: '/login',
           builder: (context, state) => const LoginScreen(),
@@ -113,13 +137,43 @@ class AppRouter {
           builder: (context, state) => const DailyLogScreen(),
         ),
         GoRoute(
-          path: '/export',
-          builder: (context, state) => const ExportScreen(),
+          path: '/health-insights',
+          builder: (context, state) => const HealthInsightsScreen(),
         ),
         GoRoute(
           path: '/ai-health-coach',
-          builder: (context, state) => const AIHealthCoachScreen(),
+          builder: (context, state) => Scaffold(
+            appBar: AppBar(
+              title: const Text('🤖 AI Health Coach'),
+              backgroundColor: Colors.indigo.shade50,
+              foregroundColor: Colors.indigo.shade700,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.indigo.shade700),
+                onPressed: () => context.go('/home'),
+              ),
+            ),
+            body: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.smart_toy, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text('AI Health Coach', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 8),
+                  Text('Coming Soon!', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  SizedBox(height: 16),
+                  Text('Your personal AI wellness advisor will be available soon',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                      textAlign: TextAlign.center),
+                ],
+              ),
+            ),
+          ),
         ),
+        // GoRoute(
+        //   path: '/export',
+        //   builder: (context, state) => const ExportScreen(),
+        // ),
       ],
     );
   }

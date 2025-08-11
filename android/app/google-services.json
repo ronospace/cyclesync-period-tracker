@@ -112,6 +112,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730237632589:android:1234567890abcdef",
+        "android_client_info": {
+          "package_name": "com.ronos.cyclesync"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "730237632589-eiom3k5luivsu1fdlv1uerv6ljjtiglp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYq1-JZXaHTUaSwWSjioqnSqsNTZX5UDY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "730237632589-eiom3k5luivsu1fdlv1uerv6ljjtiglp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

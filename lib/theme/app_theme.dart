@@ -262,6 +262,51 @@ class AppTheme {
     'predicted': Color(0xFFFF9800),
   };
 
+  // Chart Colors for Light Theme
+  static const Map<String, Color> lightChartColors = {
+    'heartRate': Color(0xFFE91E63),
+    'hrv': Color(0xFF2196F3), 
+    'sleep': Color(0xFF9C27B0),
+    'temperature': Color(0xFFFF9800),
+    'activity': Color(0xFF4CAF50),
+    'background': Color(0xFFFAFAFA),
+    'surface': Colors.white,
+    'grid': Color(0xFFE0E0E0),
+    'text': Color(0xFF424242),
+    'textSecondary': Color(0xFF757575),
+  };
+
+  // Chart Colors for Dark Theme
+  static const Map<String, Color> darkChartColors = {
+    'heartRate': Color(0xFFFF4081),
+    'hrv': Color(0xFF40C4FF), 
+    'sleep': Color(0xFFE040FB),
+    'temperature': Color(0xFFFFAB40),
+    'activity': Color(0xFF69F0AE),
+    'background': Color(0xFF121212),
+    'surface': Color(0xFF1E1E1E),
+    'grid': Color(0xFF424242),
+    'text': Color(0xFFE0E0E0),
+    'textSecondary': Color(0xFFB0B0B0),
+  };
+
+  // Calendar Theme Colors
+  static const Map<String, Color> calendarLightColors = {
+    'selectedDay': Color(0xFFE91E63),
+    'todayDay': Color(0xFF2196F3),
+    'weekendDay': Color(0xFFE91E63),
+    'marker': Color(0xFFE91E63),
+    'rangeHighlight': Color(0xFFE91E63),
+  };
+
+  static const Map<String, Color> calendarDarkColors = {
+    'selectedDay': Color(0xFFFF4081),
+    'todayDay': Color(0xFF40C4FF),
+    'weekendDay': Color(0xFFFF4081),
+    'marker': Color(0xFFFF4081),
+    'rangeHighlight': Color(0xFFFF4081),
+  };
+
   // Gradient Backgrounds
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primaryPink, primaryPurple],

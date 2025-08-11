@@ -172,6 +172,32 @@ class ThemeService extends ChangeNotifier {
   // Theme transition animation duration
   static const Duration transitionDuration = Duration(milliseconds: 300);
 
+  // Get chart colors based on current theme
+  Map<String, Color> getChartColors(BuildContext context) {
+    return isDarkModeEnabled(context) 
+        ? AppTheme.darkChartColors
+        : AppTheme.lightChartColors;
+  }
+
+  // Get calendar colors based on current theme
+  Map<String, Color> getCalendarColors(BuildContext context) {
+    return isDarkModeEnabled(context) 
+        ? AppTheme.calendarDarkColors
+        : AppTheme.calendarLightColors;
+  }
+
+  // Get health colors (theme independent)
+  Map<String, Color> getHealthColors() {
+    return AppTheme.healthColors;
+  }
+
+  // Get theme-appropriate gradient
+  LinearGradient getPrimaryGradient(BuildContext context) {
+    return isDarkModeEnabled(context) 
+        ? AppTheme.darkGradient
+        : AppTheme.primaryGradient;
+  }
+
   // Reset to default settings
   Future<void> resetToDefault() async {
     _themeMode = ThemeMode.system;

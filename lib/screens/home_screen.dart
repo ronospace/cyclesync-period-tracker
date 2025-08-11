@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import '../services/firebase_service.dart';
 import '../services/smart_notification_service.dart';
+import '../services/theme_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/health_integration_tile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,6 +40,37 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Helper method to parse DateTime from various formats
+  DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    
+    if (value is DateTime) {
+      return value;
+    }
+    
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (e) {
+        print('⚠️ Failed to parse DateTime from string: $value, error: $e');
+        return null;
+      }
+    }
+    
+    // Handle Firestore Timestamp objects if needed
+    if (value.runtimeType.toString().contains('Timestamp')) {
+      try {
+        return (value as dynamic).toDate();
+      } catch (e) {
+        print('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
+        return null;
+      }
+    }
+    
+    print('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
+    return null;
+  }
+
   Future<void> _loadDashboardData() async {
     try {
       final cycles = await FirebaseService.getCycles(limit: 5);
@@ -62,8 +96,39 @@ class _HomeScreenState extends State<HomeScreen> {
     
     final now = DateTime.now();
     final lastCycle = cycles.first;
-    final startDate = (lastCycle['start'] as DateTime);
-    final endDate = (lastCycle['end'] as DateTime?);
+    
+    // Safe date parsing
+    DateTime? startDate;
+    DateTime? endDate;
+    
+    try {
+      // Parse start date
+      if (lastCycle['start'] != null) {
+        if (lastCycle['start'] is DateTime) {
+          startDate = lastCycle['start'];
+        } else if (lastCycle['start_date'] != null) {
+          startDate = _parseDateTime(lastCycle['start_date']);
+        } else {
+          startDate = _parseDateTime(lastCycle['start']);
+        }
+      }
+      
+      // Parse end date
+      if (lastCycle['end'] != null) {
+        if (lastCycle['end'] is DateTime) {
+          endDate = lastCycle['end'];
+        } else if (lastCycle['end_date'] != null) {
+          endDate = _parseDateTime(lastCycle['end_date']);
+        } else {
+          endDate = _parseDateTime(lastCycle['end']);
+        }
+      }
+    } catch (e) {
+      print('Error parsing cycle dates in status calculation: $e');
+      return null;
+    }
+    
+    if (startDate == null) return null;
     
     // Calculate days since last period
     final daysSinceStart = now.difference(startDate).inDays;
@@ -81,25 +146,25 @@ class _HomeScreenState extends State<HomeScreen> {
         // Currently on period
         phase = 'Menstrual';
         description = 'Day ${daysSinceStart + 1} of your cycle';
-        color = Colors.red;
+        color = AppTheme.healthColors['menstruation']!;
         icon = Icons.water_drop;
       } else if (daysSinceEnd <= 7) {
         // Follicular phase
         phase = 'Follicular';
         description = 'Post-period recovery phase';
-        color = Colors.green;
+        color = AppTheme.healthColors['fertile']!;
         icon = Icons.eco;
       } else if (daysSinceEnd >= 10 && daysSinceEnd <= 16) {
         // Ovulation window (assuming 28-day cycle)
         phase = 'Ovulation';
         description = 'Fertile window - ovulation likely';
-        color = Colors.orange;
+        color = AppTheme.healthColors['ovulation']!;
         icon = Icons.favorite;
       } else {
         // Luteal phase
         phase = 'Luteal';
         description = 'Pre-period phase';
-        color = Colors.purple;
+        color = AppTheme.healthColors['luteal']!;
         icon = Icons.nightlight_round;
       }
     } else {
@@ -127,9 +192,9 @@ class _HomeScreenState extends State<HomeScreen> {
     int completedCycles = 0;
     
     for (var cycle in cycles) {
-      final start = cycle['start'] as DateTime;
-      final end = cycle['end'] as DateTime?;
-      if (end != null) {
+      final start = _parseDateTime(cycle['start']) ?? _parseDateTime(cycle['start_date']);
+      final end = _parseDateTime(cycle['end']) ?? _parseDateTime(cycle['end_date']);
+      if (start != null && end != null) {
         totalDays += end.difference(start).inDays + 1;
         completedCycles++;
       }
@@ -139,8 +204,10 @@ class _HomeScreenState extends State<HomeScreen> {
     
     final avgCycleLength = totalDays / completedCycles;
     final lastCycle = cycles.first;
-    final lastStart = lastCycle['start'] as DateTime;
-    final lastEnd = lastCycle['end'] as DateTime?;
+    final lastStart = _parseDateTime(lastCycle['start']) ?? _parseDateTime(lastCycle['start_date']);
+    final lastEnd = _parseDateTime(lastCycle['end']) ?? _parseDateTime(lastCycle['end_date']);
+    
+    if (lastStart == null) return null;
     
     DateTime? nextPeriodDate;
     DateTime? ovulationDate;
@@ -537,10 +604,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                   child: _buildActionButton(
-                    icon: Icons.smart_toy,
-                    label: 'AI Health Coach',
-                    color: Colors.indigo,
-                    onTap: () => context.go('/ai-health-coach'),
+                    icon: Icons.health_and_safety,
+                    label: 'Health Insights',
+                    color: Colors.red,
+                    onTap: () => context.go('/health-insights'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -550,6 +617,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     label: 'Symptom Trends',
                     color: Colors.amber,
                     onTap: () => context.go('/symptom-trends'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.smart_toy,
+                    label: 'AI Health Coach',
+                    color: Colors.indigo,
+                    onTap: () => context.go('/ai-health-coach'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.settings,
+                    label: 'Settings',
+                    color: Colors.grey,
+                    onTap: () => context.go('/settings'),
                   ),
                 ),
               ],

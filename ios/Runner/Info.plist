@@ -99,6 +99,18 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	
+	<!-- HealthKit Permissions -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>CycleSync needs access to your health data to provide personalized cycle insights and predictions based on your heart rate, sleep patterns, and body temperature.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>CycleSync will securely analyze your health data to improve cycle predictions and provide wellness recommendations.</string>
+	
+	<!-- Required HealthKit capability -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>healthkit</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -251,9 +251,14 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                             sideTitles: SideTitles(
                               showTitles: true,
                               reservedSize: 40,
+                              interval: 1.0,
                               getTitlesWidget: (value, meta) {
+                                // Only show whole numbers and avoid duplicates
+                                if (value % 1 != 0) return const Text('');
+                                final intValue = value.toInt();
+                                if (intValue < 0) return const Text('');
                                 return Text(
-                                  value.toInt().toString(),
+                                  intValue.toString(),
                                   style: const TextStyle(fontSize: 12),
                                 );
                               },
@@ -1124,7 +1129,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
         iconTheme: IconThemeData(color: Colors.purple.shade700),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.purple.shade700),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go('/home'),
         ),
         bottom: _isLoading || _error != null || _cycles.isEmpty
             ? null
