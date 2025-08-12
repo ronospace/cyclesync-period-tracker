@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../data/repositories/health_data_repository.dart';
 import '../data/providers/data_change_notifier.dart';
+import '../data/sync/data_sync_manager.dart';
 import '../models/cycle_models.dart';
 import '../models/daily_log_models.dart';
 import '../services/firebase_service.dart';
@@ -46,6 +47,18 @@ class EnterpriseDataProvider extends ChangeNotifier {
   CycleAnalytics? get analytics => _analytics;
   String? get error => _error;
   DateTime? get lastSyncTime => _lastSyncTime;
+  
+  // Additional getters for enterprise home screen
+  bool get isInitialized => !_isInitializing;
+  bool get hasData => _cycles.isNotEmpty || _dailyLogs.isNotEmpty;
+  bool get hasError => _error != null;
+  String? get errorMessage => _error;
+  int get totalCycles => _cycles.length;
+  CycleAnalytics? get predictions => _analytics;
+  List<CycleData> get recentCycles => _cycles.take(5).toList();
+  
+  // Mock sync status for now
+  SyncStatus get syncStatus => _isSyncing ? SyncStatus.syncing : SyncStatus.idle;
 
   // Computed properties
   CycleData? get currentCycle => _cycles.isNotEmpty ? _cycles.first : null;
@@ -343,6 +356,21 @@ class EnterpriseDataProvider extends ChangeNotifier {
     }
   }
 
+  /// Initialize method accessible from outside
+  Future<void> initialize() async {
+    await _initialize();
+  }
+  
+  /// Refresh data method for UI
+  Future<void> refreshData() async {
+    await forceRefresh();
+  }
+  
+  /// Force sync method for UI
+  Future<void> forceSync() async {
+    await forceRefresh();
+  }
+
   /// Force refresh all data
   Future<void> forceRefresh() async {
     try {
@@ -474,6 +502,15 @@ class EnterpriseDataProvider extends ChangeNotifier {
     // Clean up resources
     super.dispose();
   }
+}
+
+/// Sync status for UI feedback
+enum SyncStatus {
+  idle,
+  syncing,
+  synced,
+  success,
+  error,
 }
 
 /// Cycle phases for cycle tracking

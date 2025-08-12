@@ -721,20 +721,6 @@ extension CycleDataJson on CycleData {
     'notes': notes,
   };
 
-  static CycleData fromJson(Map<String, dynamic> json) => CycleData(
-    id: json['id'] as String,
-    startDate: DateTime.parse(json['start_date'] as String),
-    endDate: json['end_date'] != null ? DateTime.parse(json['end_date'] as String) : null,
-    symptoms: (json['symptoms'] as List<dynamic>)
-        .map((s) => Symptom(name: s['name'] as String, severity: s['severity'] as int))
-        .toList(),
-    wellbeing: WellbeingData(
-      mood: (json['wellbeing']['mood'] as num).toDouble(),
-      energy: (json['wellbeing']['energy'] as num).toDouble(),
-      pain: (json['wellbeing']['pain'] as num).toDouble(),
-    ),
-    notes: json['notes'] as String,
-  );
 }
 
 extension DailyLogEntryJson on DailyLogEntry {
@@ -747,14 +733,6 @@ extension DailyLogEntryJson on DailyLogEntry {
     'notes': notes,
   };
 
-  static DailyLogEntry fromJson(Map<String, dynamic> json) => DailyLogEntry(
-    date: DateTime.parse(json['date'] as String),
-    mood: (json['mood'] as num?)?.toDouble(),
-    energy: (json['energy'] as num?)?.toDouble(),
-    pain: (json['pain'] as num?)?.toDouble(),
-    symptoms: (json['symptoms'] as List<dynamic>).cast<String>(),
-    notes: json['notes'] as String,
-  );
 }
 
 extension HealthScoreJson on HealthScore {

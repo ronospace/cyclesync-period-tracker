@@ -1,0 +1,93 @@
+name: cyclesync
+description: A Flutter app for cycle tracking.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.8.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Routing package
+  go_router: ^16.0.0
+
+  # Firebase Core
+  firebase_core: ^3.13.1
+
+  # Firebase Authentication
+  firebase_auth: ^5.5.4
+
+  # Cloud Firestore (for period tracking data)
+  cloud_firestore: ^5.6.8
+  
+  # Firebase Analytics (for enterprise monitoring)
+  firebase_analytics: ^11.4.1
+  
+  # Firebase Crashlytics (for error reporting)
+  firebase_crashlytics: ^4.3.1
+  
+  # Firebase Performance (for performance monitoring)
+  firebase_performance: ^0.10.1+9
+
+  # State management
+  provider: ^6.1.2
+
+  # Local storage for settings
+  shared_preferences: ^2.3.4
+
+  # File handling and sharing
+  path_provider: ^2.1.5
+  share_plus: ^10.1.2
+  file_picker: ^8.1.7
+  permission_handler: ^12.0.1
+  
+  # Network connectivity
+  connectivity_plus: ^6.1.1
+  
+  # HTTP requests
+  http: ^1.2.2
+  
+  # Encryption
+  crypto: ^3.0.6
+
+  # JSON handling
+  csv: ^6.0.0
+
+  # Calendar view
+  table_calendar: ^3.1.5
+
+  # Localization
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+  flutter_local_notifications: ^19.4.0
+  
+  # Charts for provider dashboard
+  fl_chart: ^0.66.2
+  
+  # PDF generation for reports
+  pdf: ^3.11.1
+  
+  # Health platform integration (using custom implementation)
+  # health: ^13.1.1  # Removed to avoid minSdk conflicts
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  
+  # Testing dependencies
+  fake_cloud_firestore: ^3.1.0
+  firebase_auth_mocks: 0.14.2
+  mockito: ^5.4.3
+  build_runner: ^2.4.7
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/

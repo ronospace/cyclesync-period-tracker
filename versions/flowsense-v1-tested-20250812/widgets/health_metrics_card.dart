@@ -1,0 +1,462 @@
+import 'package:flutter/material.dart';
+import '../models/health_models.dart';
+
+class HealthMetricsCard extends StatelessWidget {
+  final HealthMetrics metrics;
+  final VoidCallback? onViewDetails;
+
+  const HealthMetricsCard({
+    super.key,
+    required this.metrics,
+    this.onViewDetails,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: onViewDetails,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 16),
+              _buildMetricsGrid(context),
+              const SizedBox(height: 12),
+              _buildFooter(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.green.withAlpha(20),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.health_and_safety,
+            color: Colors.green.shade600,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Health Metrics',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Today\'s wellness indicators',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                ),
+              ),
+            ],
+          ),
+        ),
+        _buildHealthScore(context),
+      ],
+    );
+  }
+
+  Widget _buildHealthScore(BuildContext context) {
+    final score = _calculateHealthScore();
+    final color = _getScoreColor(score);
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withAlpha(20),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withAlpha(60)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.star,
+            color: color,
+            size: 16,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            '$score',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricsGrid(BuildContext context) {
+    final metricItems = <Widget>[];
+
+    // Temperature metric
+    if (metrics.basalBodyTemperature != null) {
+      metricItems.add(_buildMetricItem(
+        context,
+        icon: Icons.thermostat,
+        iconColor: Colors.orange.shade400,
+        title: 'Temperature',
+        value: '${metrics.basalBodyTemperature!.toStringAsFixed(1)}°F',
+        trend: _getTemperatureTrend(),
+      ));
+    }
+
+    // Heart rate metric
+    if (metrics.restingHeartRate != null) {
+      metricItems.add(_buildMetricItem(
+        context,
+        icon: Icons.favorite,
+        iconColor: Colors.red.shade400,
+        title: 'Heart Rate',
+        value: '${metrics.restingHeartRate!.round()} bpm',
+        trend: _getHeartRateTrend(),
+      ));
+    }
+
+    // Sleep metric
+    if (metrics.sleepQuality != null) {
+      metricItems.add(_buildMetricItem(
+        context,
+        icon: Icons.bedtime,
+        iconColor: Colors.indigo.shade400,
+        title: 'Sleep Quality',
+        value: _getSleepQualityText(metrics.sleepQuality!),
+        trend: null, // Sleep quality doesn't have a numeric trend
+      ));
+    }
+
+    // Energy level metric
+    if (metrics.energyLevel != null) {
+      metricItems.add(_buildMetricItem(
+        context,
+        icon: Icons.battery_charging_full,
+        iconColor: Colors.green.shade400,
+        title: 'Energy Level',
+        value: _getEnergyLevelText(metrics.energyLevel!),
+        trend: null, // Energy level doesn't have a numeric trend
+      ));
+    }
+
+    // Mood metric
+    if (metrics.mood != null) {
+      metricItems.add(_buildMetricItem(
+        context,
+        icon: Icons.mood,
+        iconColor: Colors.purple.shade400,
+        title: 'Mood',
+        value: _getMoodText(metrics.mood!),
+        trend: null, // Mood doesn't have a numeric trend
+      ));
+    }
+
+    // Weight metric
+    if (metrics.weight != null) {
+      metricItems.add(_buildMetricItem(
+        context,
+        icon: Icons.monitor_weight,
+        iconColor: Colors.blue.shade400,
+        title: 'Weight',
+        value: '${metrics.weight!.toStringAsFixed(1)} lbs',
+        trend: _getWeightTrend(),
+      ));
+    }
+
+    if (metricItems.isEmpty) {
+      return _buildNoMetricsMessage(context);
+    }
+
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      childAspectRatio: 2.2,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      children: metricItems.take(4).toList(), // Show max 4 items in grid
+    );
+  }
+
+  Widget _buildMetricItem(
+    BuildContext context, {
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String value,
+    MetricTrend? trend,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withAlpha(40),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: iconColor,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                    fontSize: 12,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (trend != null) _buildTrendIcon(context, trend),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrendIcon(BuildContext context, MetricTrend trend) {
+    IconData icon;
+    Color color;
+
+    switch (trend) {
+      case MetricTrend.up:
+        icon = Icons.trending_up;
+        color = Colors.green;
+        break;
+      case MetricTrend.down:
+        icon = Icons.trending_down;
+        color = Colors.red;
+        break;
+      case MetricTrend.stable:
+        icon = Icons.trending_flat;
+        color = Colors.grey;
+        break;
+    }
+
+    return Icon(
+      icon,
+      color: color,
+      size: 16,
+    );
+  }
+
+  Widget _buildNoMetricsMessage(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.health_and_safety_outlined,
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+            size: 32,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'No Health Data',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Start logging symptoms to track your wellness',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    final lastUpdated = metrics.lastUpdated;
+    final timeAgo = lastUpdated != null ? _getTimeAgo(lastUpdated) : null;
+
+    return Row(
+      children: [
+        Icon(
+          Icons.update,
+          size: 14,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            timeAgo != null ? 'Updated $timeAgo' : 'No recent updates',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+              fontSize: 11,
+            ),
+          ),
+        ),
+        if (onViewDetails != null)
+          TextButton(
+            onPressed: onViewDetails,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              minimumSize: Size.zero,
+            ),
+            child: Text(
+              'View All',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // Helper methods
+  int _calculateHealthScore() {
+    int score = 0;
+    int factors = 0;
+
+    if (metrics.sleepQuality != null) {
+      score += (metrics.sleepQuality! * 20).round();
+      factors++;
+    }
+
+    if (metrics.energyLevel != null) {
+      score += (metrics.energyLevel! * 20).round();
+      factors++;
+    }
+
+    if (metrics.mood != null) {
+      score += (metrics.mood! * 20).round();
+      factors++;
+    }
+
+    if (metrics.basalBodyTemperature != null) {
+      // BBT in normal range (97-99°F) gets full points
+      final temp = metrics.basalBodyTemperature!;
+      if (temp >= 97.0 && temp <= 99.0) {
+        score += 20;
+      } else {
+        score += 10;
+      }
+      factors++;
+    }
+
+    if (metrics.restingHeartRate != null) {
+      // RHR in normal range (60-90 bpm) gets full points
+      final hr = metrics.restingHeartRate!;
+      if (hr >= 60 && hr <= 90) {
+        score += 20;
+      } else {
+        score += 10;
+      }
+      factors++;
+    }
+
+    return factors > 0 ? (score / factors).round() : 0;
+  }
+
+  Color _getScoreColor(int score) {
+    if (score >= 16) return Colors.green;
+    if (score >= 12) return Colors.orange;
+    return Colors.red;
+  }
+
+  MetricTrend? _getTemperatureTrend() {
+    // This would normally compare with historical data
+    // For now, return a mock trend
+    return MetricTrend.stable;
+  }
+
+  MetricTrend? _getHeartRateTrend() {
+    // This would normally compare with historical data
+    // For now, return a mock trend
+    return MetricTrend.down;
+  }
+
+  MetricTrend? _getWeightTrend() {
+    // This would normally compare with historical data
+    // For now, return a mock trend
+    return MetricTrend.stable;
+  }
+
+  String _getSleepQualityText(double quality) {
+    if (quality >= 4.0) return 'Excellent';
+    if (quality >= 3.0) return 'Good';
+    if (quality >= 2.0) return 'Fair';
+    return 'Poor';
+  }
+
+  String _getEnergyLevelText(double energy) {
+    if (energy >= 4.0) return 'High';
+    if (energy >= 3.0) return 'Good';
+    if (energy >= 2.0) return 'Moderate';
+    return 'Low';
+  }
+
+  String _getMoodText(double mood) {
+    if (mood >= 4.0) return 'Great';
+    if (mood >= 3.0) return 'Good';
+    if (mood >= 2.0) return 'Okay';
+    return 'Low';
+  }
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inMinutes < 1) {
+      return 'just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else {
+      return '${difference.inDays}d ago';
+    }
+  }
+}
+
+enum MetricTrend { up, down, stable }

@@ -1,0 +1,675 @@
+import 'dart:math';
+import '../models/ai_models.dart';
+
+class AIInsightsService {
+  static const int _minCyclesForPrediction = 3;
+  static const int _maxCyclesAnalyzed = 12;
+
+  /// Analyze cycles and generate AI-powered insights
+  static CycleInsights generateInsights(List<Map<String, dynamic>> cycles) {
+    if (cycles.isEmpty) {
+      return CycleInsights.empty();
+    }
+
+    // Parse and filter valid cycles
+    final parsedCycles = cycles
+        .map(_parseFirebaseCycle)
+        .where((cycle) => cycle != null)
+        .cast<_CycleData>()
+        .toList();
+
+    if (parsedCycles.isEmpty) {
+      return CycleInsights.empty();
+    }
+
+    // Sort by start date (newest first)
+    parsedCycles.sort((a, b) => b.startDate.compareTo(a.startDate));
+
+    // Take recent cycles for analysis
+    final recentCycles = parsedCycles.take(_maxCyclesAnalyzed).toList();
+
+    return CycleInsights(
+      cycleLengthAnalysis: _analyzeCycleLength(recentCycles),
+      nextCyclePrediction: _predictNextCycle(recentCycles),
+      fertilityInsights: _analyzeFertilityPatterns(recentCycles),
+      symptomPatterns: _analyzeSymptomPatterns(recentCycles),
+      healthRecommendations: _generateHealthRecommendations(recentCycles),
+      cycleRegularity: _assessCycleRegularity(recentCycles),
+      trendsAnalysis: _analyzeTrends(recentCycles),
+      totalCyclesAnalyzed: recentCycles.length,
+      dataQuality: _assessDataQuality(recentCycles),
+    );
+  }
+
+  static _CycleData? _parseFirebaseCycle(Map<String, dynamic> data) {
+    try {
+      DateTime? startDate = _parseDate(data['start']);
+      DateTime? endDate = _parseDate(data['end']);
+      
+      if (startDate == null) return null;
+
+      final symptoms = _parseSymptoms(data['symptoms']);
+      final mood = (data['mood'] as num?)?.toDouble() ?? 3.0;
+      final pain = (data['pain'] as num?)?.toDouble() ?? 1.0;
+      final energy = (data['energy'] as num?)?.toDouble() ?? 3.0;
+
+      return _CycleData(
+        startDate: startDate,
+        endDate: endDate,
+        symptoms: symptoms,
+        mood: mood,
+        pain: pain,
+        energy: energy,
+        notes: data['notes']?.toString() ?? '',
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static DateTime? _parseDate(dynamic date) {
+    if (date == null) return null;
+    try {
+      if (date is DateTime) return date;
+      if (date.toString().contains('Timestamp')) {
+        return (date as dynamic).toDate();
+      }
+      return DateTime.parse(date.toString());
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static List<String> _parseSymptoms(dynamic symptoms) {
+    if (symptoms == null) return [];
+    if (symptoms is List) {
+      return symptoms.map((s) => s.toString()).toList();
+    }
+    return [];
+  }
+
+  static CycleLengthAnalysis _analyzeCycleLength(List<_CycleData> cycles) {
+    if (cycles.isEmpty) return CycleLengthAnalysis.empty();
+
+    final completedCycles = cycles.where((c) => c.endDate != null).toList();
+    if (completedCycles.isEmpty) return CycleLengthAnalysis.empty();
+
+    final lengths = completedCycles.map((c) => c.lengthInDays).toList();
+    final average = lengths.reduce((a, b) => a + b) / lengths.length;
+    final shortest = lengths.reduce(min);
+    final longest = lengths.reduce(max);
+
+    // Calculate standard deviation
+    final variance = lengths.map((len) => pow(len - average, 2)).reduce((a, b) => a + b) / lengths.length;
+    final standardDeviation = sqrt(variance);
+
+    return CycleLengthAnalysis(
+      averageLength: average.round(),
+      shortestCycle: shortest,
+      longestCycle: longest,
+      standardDeviation: standardDeviation,
+      trend: _calculateLengthTrend(completedCycles),
+      consistency: _calculateConsistency(standardDeviation),
+    );
+  }
+
+  static NextCyclePrediction _predictNextCycle(List<_CycleData> cycles) {
+    final completedCycles = cycles.where((c) => c.endDate != null).toList();
+    if (completedCycles.length < _minCyclesForPrediction) {
+      return NextCyclePrediction.insufficient();
+    }
+
+    final lastCycle = cycles.first; // Most recent
+    final avgLength = completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a + b) / completedCycles.length;
+    
+    // Predict next cycle start
+    final predictedStart = lastCycle.endDate?.add(Duration(days: 1)) ?? 
+                          lastCycle.startDate.add(Duration(days: avgLength.round()));
+    
+    // Calculate confidence based on cycle regularity
+    final lengths = completedCycles.map((c) => c.lengthInDays).toList();
+    final variance = lengths.map((len) => pow(len - avgLength, 2)).reduce((a, b) => a + b) / lengths.length;
+    final standardDeviation = sqrt(variance);
+    final confidence = _calculatePredictionConfidence(standardDeviation, completedCycles.length);
+
+    return NextCyclePrediction(
+      predictedStartDate: predictedStart,
+      confidencePercentage: confidence,
+      estimatedLength: avgLength.round(),
+      fertilityWindowStart: predictedStart.add(Duration(days: avgLength.round() - 16)),
+      fertilityWindowEnd: predictedStart.add(Duration(days: avgLength.round() - 11)),
+      ovulationDay: predictedStart.add(Duration(days: avgLength.round() - 14)),
+    );
+  }
+
+  static FertilityInsights _analyzeFertilityPatterns(List<CycleModel> cycles) {
+    final cyclesWithSymptoms = cycles.where((c) => c.symptoms.isNotEmpty).toList();
+    
+    // Analyze ovulation signs
+    final ovulationSigns = <String, int>{};
+    final fertileSymptoms = ['cervical_mucus', 'ovulation_pain', 'breast_tenderness'];
+    
+    for (final cycle in cyclesWithSymptoms) {
+      for (final symptom in cycle.symptoms) {
+        if (fertileSymptoms.contains(symptom)) {
+          ovulationSigns[symptom] = (ovulationSigns[symptom] ?? 0) + 1;
+        }
+      }
+    }
+
+    return FertilityInsights(
+      averageOvulationDay: 14, // Standard, could be improved with temperature data
+      fertilitySignsFrequency: ovulationSigns,
+      lutealPhaseLength: _calculateAverageLutealPhase(cycles),
+      recommendations: _generateFertilityRecommendations(cyclesWithSymptoms),
+    );
+  }
+
+  static SymptomPatterns _analyzeSymptomPatterns(List<CycleModel> cycles) {
+    final allSymptoms = <String, int>{};
+    final moodPatterns = <String, List<int>>{};
+    
+    for (int i = 0; i < cycles.length; i++) {
+      final cycle = cycles[i];
+      
+      // Count symptom frequency
+      for (final symptom in cycle.symptoms) {
+        allSymptoms[symptom] = (allSymptoms[symptom] ?? 0) + 1;
+      }
+      
+      // Track mood patterns over time
+      if (cycle.moodLevel != null) {
+        final month = cycle.start.month;
+        moodPatterns['$month'] ??= [];
+        moodPatterns['$month']!.add(cycle.moodLevel!);
+      }
+    }
+
+    // Find most common symptoms
+    final sortedSymptoms = allSymptoms.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return SymptomPatterns(
+      mostCommonSymptoms: sortedSymptoms.take(5).map((e) => e.key).toList(),
+      symptomFrequency: allSymptoms,
+      moodTrends: _analyzeMoodTrends(moodPatterns),
+      painPatterns: _analyzePainPatterns(cycles),
+      correlations: _findSymptomCorrelations(cycles),
+    );
+  }
+
+  static List<HealthRecommendation> _generateHealthRecommendations(List<CycleModel> cycles) {
+    final recommendations = <HealthRecommendation>[];
+    
+    // Cycle length recommendations
+    final avgLength = cycles.map((c) => c.lengthInDays).reduce((a, b) => a + b) / cycles.length;
+    if (avgLength < 21 || avgLength > 35) {
+      recommendations.add(HealthRecommendation(
+        type: RecommendationType.medical,
+        priority: RecommendationPriority.high,
+        title: 'Irregular Cycle Length',
+        description: 'Your average cycle length is ${avgLength.round()} days. Consider consulting with a healthcare provider.',
+        actionable: 'Schedule an appointment with your gynecologist to discuss your cycle patterns.',
+      ));
+    }
+
+    // Symptom-based recommendations
+    final commonSymptoms = <String, int>{};
+    for (final cycle in cycles) {
+      for (final symptom in cycle.symptoms) {
+        commonSymptoms[symptom] = (commonSymptoms[symptom] ?? 0) + 1;
+      }
+    }
+
+    if (commonSymptoms['cramps'] != null && commonSymptoms['cramps']! > cycles.length * 0.7) {
+      recommendations.add(HealthRecommendation(
+        type: RecommendationType.lifestyle,
+        priority: RecommendationPriority.medium,
+        title: 'Frequent Cramping',
+        description: 'You experience cramps in ${(commonSymptoms['cramps']! / cycles.length * 100).round()}% of your cycles.',
+        actionable: 'Try gentle exercise, heat therapy, or magnesium supplements. Consider tracking triggers.',
+      ));
+    }
+
+    // Data tracking recommendations
+    if (cycles.where((c) => c.symptoms.isNotEmpty).length < cycles.length * 0.5) {
+      recommendations.add(HealthRecommendation(
+        type: RecommendationType.tracking,
+        priority: RecommendationPriority.low,
+        title: 'Improve Data Quality',
+        description: 'Track symptoms more consistently for better insights and predictions.',
+        actionable: 'Set daily reminders to log symptoms, mood, and energy levels.',
+      ));
+    }
+
+    return recommendations;
+  }
+
+  static CycleRegularity _assessCycleRegularity(List<CycleModel> cycles) {
+    if (cycles.length < 3) {
+      return CycleRegularity(
+        status: RegularityStatus.insufficient,
+        variationDays: 0,
+        consistency: 0,
+        description: 'Not enough cycles to assess regularity',
+      );
+    }
+
+    final lengths = cycles.map((c) => c.lengthInDays).toList();
+    final avgLength = lengths.reduce((a, b) => a + b) / lengths.length;
+    final maxVariation = lengths.map((len) => (len - avgLength).abs()).reduce(max);
+    
+    RegularityStatus status;
+    String description;
+    
+    if (maxVariation <= 3) {
+      status = RegularityStatus.regular;
+      description = 'Your cycles are very regular';
+    } else if (maxVariation <= 7) {
+      status = RegularityStatus.somewhatRegular;
+      description = 'Your cycles are fairly regular with some variation';
+    } else {
+      status = RegularityStatus.irregular;
+      description = 'Your cycles show significant variation';
+    }
+
+    return CycleRegularity(
+      status: status,
+      variationDays: maxVariation.round(),
+      consistency: (1 - (maxVariation / avgLength)).clamp(0, 1),
+      description: description,
+    );
+  }
+
+  static TrendsAnalysis _analyzeTrends(List<CycleModel> cycles) {
+    if (cycles.length < 6) {
+      return TrendsAnalysis.insufficient();
+    }
+
+    // Analyze last 6 months vs previous 6 months
+    final recent = cycles.take(6).toList();
+    final previous = cycles.skip(6).take(6).toList();
+
+    if (previous.isEmpty) {
+      return TrendsAnalysis.insufficient();
+    }
+
+    final recentAvgLength = recent.map((c) => c.lengthInDays).reduce((a, b) => a + b) / recent.length;
+    final previousAvgLength = previous.map((c) => c.lengthInDays).reduce((a, b) => a + b) / previous.length;
+
+    final lengthTrend = recentAvgLength - previousAvgLength;
+
+    return TrendsAnalysis(
+      cycleLengthTrend: lengthTrend,
+      moodTrend: _calculateMoodTrend(recent, previous),
+      symptomTrends: _calculateSymptomTrends(recent, previous),
+      overallHealthTrend: _calculateOverallHealthTrend(recent, previous),
+    );
+  }
+
+  static DataQuality _assessDataQuality(List<CycleModel> cycles) {
+    if (cycles.isEmpty) return DataQuality.poor();
+
+    final completeness = cycles.where((c) => 
+      c.end != null && 
+      c.symptoms.isNotEmpty &&
+      c.moodLevel != null
+    ).length / cycles.length;
+
+    final consistency = cycles.length >= 3 ? 1.0 : cycles.length / 3.0;
+
+    QualityLevel level;
+    if (completeness > 0.8 && consistency > 0.8) {
+      level = QualityLevel.excellent;
+    } else if (completeness > 0.6 && consistency > 0.6) {
+      level = QualityLevel.good;
+    } else if (completeness > 0.4 && consistency > 0.4) {
+      level = QualityLevel.fair;
+    } else {
+      level = QualityLevel.poor;
+    }
+
+    return DataQuality(
+      level: level,
+      completeness: completeness,
+      consistency: consistency,
+      suggestions: _generateDataQualitySuggestions(completeness, consistency),
+    );
+  }
+
+  // Helper methods
+  static String _calculateLengthTrend(List<CycleModel> cycles) {
+    if (cycles.length < 3) return 'stable';
+    
+    final recent = cycles.take(3).map((c) => c.lengthInDays).reduce((a, b) => a + b) / 3;
+    final older = cycles.skip(3).take(3).map((c) => c.lengthInDays).reduce((a, b) => a + b) / 3;
+    
+    final difference = recent - older;
+    
+    if (difference > 1) return 'increasing';
+    if (difference < -1) return 'decreasing';
+    return 'stable';
+  }
+
+  static double _calculateConsistency(double standardDeviation) {
+    return (1 - (standardDeviation / 10)).clamp(0, 1);
+  }
+
+  static int _calculatePredictionConfidence(double standardDeviation, int cycleCount) {
+    final baseConfidence = cycleCount >= 6 ? 0.8 : 0.5;
+    final variabilityPenalty = standardDeviation / 10;
+    return ((baseConfidence - variabilityPenalty) * 100).clamp(40, 95).round();
+  }
+
+  static int _calculateAverageLutealPhase(List<CycleModel> cycles) {
+    // Default to 14 days - would need temperature tracking for accuracy
+    return 14;
+  }
+
+  static List<String> _analyzeMoodTrends(Map<String, List<int>> moodPatterns) {
+    // Analyze mood trends over months
+    return ['Mood tends to be lower during winter months'];
+  }
+
+  static List<String> _analyzePainPatterns(List<CycleModel> cycles) {
+    final painCycles = cycles.where((c) => c.painLevel != null && c.painLevel! > 3).length;
+    if (painCycles > cycles.length * 0.5) {
+      return ['High pain levels in ${(painCycles / cycles.length * 100).round()}% of cycles'];
+    }
+    return [];
+  }
+
+  static List<String> _findSymptomCorrelations(List<CycleModel> cycles) {
+    // Find correlations between symptoms - simplified implementation
+    return ['Cramps often occur with headaches', 'Low energy correlates with mood changes'];
+  }
+
+  static double _calculateMoodTrend(List<CycleModel> recent, List<CycleModel> previous) {
+    final recentMood = recent.where((c) => c.moodLevel != null)
+        .map((c) => c.moodLevel!).fold(0, (a, b) => a + b) / recent.length;
+    final previousMood = previous.where((c) => c.moodLevel != null)
+        .map((c) => c.moodLevel!).fold(0, (a, b) => a + b) / previous.length;
+    return recentMood - previousMood;
+  }
+
+  static Map<String, double> _calculateSymptomTrends(List<CycleModel> recent, List<CycleModel> previous) {
+    // Compare symptom frequencies
+    return {'cramps': 0.1, 'headaches': -0.2}; // Simplified
+  }
+
+  static double _calculateOverallHealthTrend(List<CycleModel> recent, List<CycleModel> previous) {
+    // Overall health trend based on multiple factors
+    return 0.05; // Slightly improving
+  }
+
+  static List<String> _generateDataQualitySuggestions(double completeness, double consistency) {
+    final suggestions = <String>[];
+    
+    if (completeness < 0.7) {
+      suggestions.add('Track symptoms and mood more consistently');
+    }
+    if (consistency < 0.7) {
+      suggestions.add('Log cycles for at least 3 months for better predictions');
+    }
+    
+    return suggestions;
+  }
+}
+
+// Data Models for AI Insights
+class CycleInsights {
+  final CycleLengthAnalysis cycleLengthAnalysis;
+  final NextCyclePrediction nextCyclePrediction;
+  final FertilityInsights fertilityInsights;
+  final SymptomPatterns symptomPatterns;
+  final List<HealthRecommendation> healthRecommendations;
+  final CycleRegularity cycleRegularity;
+  final TrendsAnalysis trendsAnalysis;
+  final int totalCyclesAnalyzed;
+  final DataQuality dataQuality;
+
+  CycleInsights({
+    required this.cycleLengthAnalysis,
+    required this.nextCyclePrediction,
+    required this.fertilityInsights,
+    required this.symptomPatterns,
+    required this.healthRecommendations,
+    required this.cycleRegularity,
+    required this.trendsAnalysis,
+    required this.totalCyclesAnalyzed,
+    required this.dataQuality,
+  });
+
+  factory CycleInsights.empty() {
+    return CycleInsights(
+      cycleLengthAnalysis: CycleLengthAnalysis.empty(),
+      nextCyclePrediction: NextCyclePrediction.insufficient(),
+      fertilityInsights: FertilityInsights.empty(),
+      symptomPatterns: SymptomPatterns.empty(),
+      healthRecommendations: [],
+      cycleRegularity: CycleRegularity(
+        status: RegularityStatus.insufficient,
+        variationDays: 0,
+        consistency: 0,
+        description: 'No data available',
+      ),
+      trendsAnalysis: TrendsAnalysis.insufficient(),
+      totalCyclesAnalyzed: 0,
+      dataQuality: DataQuality.poor(),
+    );
+  }
+}
+
+class CycleLengthAnalysis {
+  final int averageLength;
+  final int shortestCycle;
+  final int longestCycle;
+  final double standardDeviation;
+  final String trend;
+  final double consistency;
+
+  CycleLengthAnalysis({
+    required this.averageLength,
+    required this.shortestCycle,
+    required this.longestCycle,
+    required this.standardDeviation,
+    required this.trend,
+    required this.consistency,
+  });
+
+  factory CycleLengthAnalysis.empty() {
+    return CycleLengthAnalysis(
+      averageLength: 0,
+      shortestCycle: 0,
+      longestCycle: 0,
+      standardDeviation: 0,
+      trend: 'unknown',
+      consistency: 0,
+    );
+  }
+}
+
+class NextCyclePrediction {
+  final DateTime? predictedStartDate;
+  final int confidencePercentage;
+  final int estimatedLength;
+  final DateTime? fertilityWindowStart;
+  final DateTime? fertilityWindowEnd;
+  final DateTime? ovulationDay;
+
+  NextCyclePrediction({
+    required this.predictedStartDate,
+    required this.confidencePercentage,
+    required this.estimatedLength,
+    required this.fertilityWindowStart,
+    required this.fertilityWindowEnd,
+    required this.ovulationDay,
+  });
+
+  factory NextCyclePrediction.insufficient() {
+    return NextCyclePrediction(
+      predictedStartDate: null,
+      confidencePercentage: 0,
+      estimatedLength: 0,
+      fertilityWindowStart: null,
+      fertilityWindowEnd: null,
+      ovulationDay: null,
+    );
+  }
+}
+
+class FertilityInsights {
+  final int averageOvulationDay;
+  final Map<String, int> fertilitySignsFrequency;
+  final int lutealPhaseLength;
+  final List<String> recommendations;
+
+  FertilityInsights({
+    required this.averageOvulationDay,
+    required this.fertilitySignsFrequency,
+    required this.lutealPhaseLength,
+    required this.recommendations,
+  });
+
+  factory FertilityInsights.empty() {
+    return FertilityInsights(
+      averageOvulationDay: 0,
+      fertilitySignsFrequency: {},
+      lutealPhaseLength: 0,
+      recommendations: [],
+    );
+  }
+}
+
+class SymptomPatterns {
+  final List<String> mostCommonSymptoms;
+  final Map<String, int> symptomFrequency;
+  final List<String> moodTrends;
+  final List<String> painPatterns;
+  final List<String> correlations;
+
+  SymptomPatterns({
+    required this.mostCommonSymptoms,
+    required this.symptomFrequency,
+    required this.moodTrends,
+    required this.painPatterns,
+    required this.correlations,
+  });
+
+  factory SymptomPatterns.empty() {
+    return SymptomPatterns(
+      mostCommonSymptoms: [],
+      symptomFrequency: {},
+      moodTrends: [],
+      painPatterns: [],
+      correlations: [],
+    );
+  }
+}
+
+class HealthRecommendation {
+  final RecommendationType type;
+  final RecommendationPriority priority;
+  final String title;
+  final String description;
+  final String actionable;
+
+  HealthRecommendation({
+    required this.type,
+    required this.priority,
+    required this.title,
+    required this.description,
+    required this.actionable,
+  });
+}
+
+class CycleRegularity {
+  final RegularityStatus status;
+  final int variationDays;
+  final double consistency;
+  final String description;
+
+  CycleRegularity({
+    required this.status,
+    required this.variationDays,
+    required this.consistency,
+    required this.description,
+  });
+}
+
+class TrendsAnalysis {
+  final double cycleLengthTrend;
+  final double moodTrend;
+  final Map<String, double> symptomTrends;
+  final double overallHealthTrend;
+
+  TrendsAnalysis({
+    required this.cycleLengthTrend,
+    required this.moodTrend,
+    required this.symptomTrends,
+    required this.overallHealthTrend,
+  });
+
+  factory TrendsAnalysis.insufficient() {
+    return TrendsAnalysis(
+      cycleLengthTrend: 0,
+      moodTrend: 0,
+      symptomTrends: {},
+      overallHealthTrend: 0,
+    );
+  }
+}
+
+class DataQuality {
+  final QualityLevel level;
+  final double completeness;
+  final double consistency;
+  final List<String> suggestions;
+
+  DataQuality({
+    required this.level,
+    required this.completeness,
+    required this.consistency,
+    required this.suggestions,
+  });
+
+  factory DataQuality.poor() {
+    return DataQuality(
+      level: QualityLevel.poor,
+      completeness: 0,
+      consistency: 0,
+      suggestions: ['Start tracking cycles regularly'],
+    );
+  }
+}
+
+enum RecommendationType { medical, lifestyle, tracking, nutrition }
+enum RecommendationPriority { low, medium, high, urgent }
+enum RegularityStatus { regular, somewhatRegular, irregular, insufficient }
+enum QualityLevel { poor, fair, good, excellent }
+
+// Internal data class for parsed cycles
+class _CycleData {
+  final DateTime startDate;
+  final DateTime? endDate;
+  final List<String> symptoms;
+  final double mood;
+  final double pain;
+  final double energy;
+  final String notes;
+
+  _CycleData({
+    required this.startDate,
+    this.endDate,
+    required this.symptoms,
+    required this.mood,
+    required this.pain,
+    required this.energy,
+    required this.notes,
+  });
+
+  int get lengthInDays {
+    if (endDate == null) return 0;
+    return endDate!.difference(startDate).inDays + 1;
+  }
+}

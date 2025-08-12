@@ -133,6 +133,45 @@ class CycleData {
     );
   }
 
+  /// Create from JSON
+  static CycleData fromJson(Map<String, dynamic> json) {
+    return CycleData(
+      id: json['id'] ?? '',
+      startDate: DateTime.parse(json['startDate']),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      flowIntensity: FlowIntensity.values.firstWhere(
+        (e) => e.name == json['flowIntensity'],
+        orElse: () => FlowIntensity.medium,
+      ),
+      wellbeing: WellbeingData(
+        mood: (json['mood'] ?? 3.0).toDouble(),
+        energy: (json['energy'] ?? 3.0).toDouble(),
+        pain: (json['pain'] ?? 1.0).toDouble(),
+      ),
+      symptoms: _parseSymptoms(json['symptoms']),
+      notes: json['notes'] ?? '',
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
+  }
+
+  /// Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+      'flowIntensity': flowIntensity.name,
+      'mood': wellbeing.mood,
+      'energy': wellbeing.energy,
+      'pain': wellbeing.pain,
+      'symptoms': symptoms.map((s) => s.name).toList(),
+      'notes': notes,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+
   static DateTime? _parseDate(dynamic date) {
     if (date == null) return null;
     try {
@@ -255,6 +294,7 @@ class Symptom {
   final IconData icon;
   final Color color;
   final String category;
+  final double severity; // 1-5 scale for severity
 
   const Symptom({
     required this.name,
@@ -262,6 +302,7 @@ class Symptom {
     required this.icon,
     required this.color,
     required this.category,
+    this.severity = 3.0, // Default moderate severity
   });
 
   static const List<Symptom> allSymptoms = [
