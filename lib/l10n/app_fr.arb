@@ -1,0 +1,87 @@
+{
+  "@@locale": "fr",
+  "appTitle": "CycleSync",
+  
+  "bottomNavHome": "Accueil",
+  "bottomNavCycle": "Cycle",
+  "bottomNavHealth": "Santé", 
+  "bottomNavSettings": "Paramètres",
+  
+  "settingsTitle": "Paramètres",
+  "settingsLanguage": "Langue",
+  "settingsLanguageSubtitle": "Choisissez votre langue préférée",
+  "settingsNotifications": "Notifications",
+  "settingsPrivacy": "Confidentialité et Sécurité",
+  "settingsTheme": "Thème",
+  "settingsHelp": "Aide et Support",
+  
+  "languageSelectorTitle": "Choisir la Langue",
+  "languageSelectorSubtitle": "Accessibilité mondiale pour tous",
+  "languageSelectorSearch": "Rechercher des langues...",
+  "languageSelectorResults": "{count, plural, =0{Aucune langue trouvée} =1{1 langue trouvée} other{{count} langues trouvées}}",
+  
+  "cycleTitle": "Suivi du Cycle",
+  "cycleCurrentPhase": "Phase Actuelle",
+  "cycleNextPeriod": "Prochaines Règles",
+  "cycleDaysLeft": "{days} jours restants",
+  
+  "healthTitle": "Informations Santé",
+  "healthSymptoms": "Symptômes",
+  "healthMood": "Humeur",
+  "healthEnergy": "Niveau d'Énergie",
+  
+  "profileTitle": "Profil",
+  "profilePersonalInfo": "Informations Personnelles",
+  "profileCycleHistory": "Historique des Cycles",
+  "profileDataExport": "Exporter les Données",
+  
+  "helpTitle": "Aide et Support",
+  "helpFaq": "Questions Fréquemment Posées",
+  "helpContactSupport": "Contacter le Support",
+  "helpUserGuide": "Guide d'Utilisateur",
+  "helpPrivacyPolicy": "Politique de Confidentialité",
+  "helpReportIssue": "Signaler un Problème",
+  
+  "commonSave": "Enregistrer",
+  "commonCancel": "Annuler",
+  "commonClose": "Fermer",
+  "commonBack": "Retour",
+  "commonNext": "Suivant",
+  "commonDone": "Terminé",
+  "commonError": "Erreur",
+  "commonSuccess": "Succès",
+  "commonLoading": "Chargement...",
+  
+  "todayTitle": "Aujourd'hui",
+  "yesterdayTitle": "Hier",
+  "tomorrowTitle": "Demain",
+  
+  "phaseFollicular": "Phase Folliculaire",
+  "phaseOvulation": "Ovulation",
+  "phaseLuteal": "Phase Lutéale",
+  "phaseMenstruation": "Menstruation",
+  
+  "symptomCramps": "Crampes",
+  "symptomHeadache": "Mal de Tête",
+  "symptomBackache": "Mal de Dos",
+  "symptomBloating": "Ballonnements",
+  "symptomFatigue": "Fatigue",
+  
+  "moodHappy": "Heureuse",
+  "moodSad": "Triste",
+  "moodAnxious": "Anxieuse",
+  "moodIrritated": "Irritée",
+  "moodCalm": "Calme",
+  
+  "energyHigh": "Énergie Élevée",
+  "energyMedium": "Énergie Moyenne",
+  "energyLow": "Énergie Faible",
+  
+  "notificationTitle": "Notification CycleSync",
+  "notificationPeriodReminder": "Vos règles devraient commencer bientôt",
+  "notificationOvulationReminder": "Vous approchez de votre fenêtre fertile",
+  
+  "accessibilityMenuButton": "Bouton menu",
+  "accessibilityCalendar": "Vue calendrier",
+  "accessibilitySettingsButton": "Bouton paramètres"
+}

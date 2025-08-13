@@ -88,6 +88,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # Enable generation of localized Dart files from ARB files
+  generate: true
+  
   assets:
     - assets/images/
     - assets/icons/

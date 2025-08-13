@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/theme_service.dart';
+import '../services/localization_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -107,6 +108,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             
+            // Theme settings
             Consumer<ThemeService>(
               builder: (context, themeService, child) {
                 return Card(
@@ -139,6 +141,45 @@ class SettingsScreen extends StatelessWidget {
                         onTap: () => themeService.setThemeMode(ThemeMode.system),
                       ),
                     ],
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Language settings
+            Consumer<LocalizationService>(
+              builder: (context, localizationService, child) {
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.language, color: Colors.blue),
+                    title: const Text('Language'),
+                    subtitle: Text('${localizationService.currentLanguageName} • 36 languages available'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                          ),
+                          child: Text(
+                            localizationService.currentLanguageNativeName,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward_ios, size: 16),
+                      ],
+                    ),
+                    onTap: () => context.push('/language-selector'),
                   ),
                 );
               },
@@ -285,7 +326,7 @@ class SettingsScreen extends StatelessWidget {
                     title: const Text('Help & Support'),
                     subtitle: const Text('Get help using CycleSync'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () => _showComingSoonDialog(context, 'Help & Support'),
+                    onTap: () => context.push('/help-support'),
                   ),
                   const Divider(height: 1),
                   ListTile(

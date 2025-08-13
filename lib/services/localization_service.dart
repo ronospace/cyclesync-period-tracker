@@ -7,36 +7,102 @@ class LocalizationService extends ChangeNotifier {
   Locale _currentLocale = const Locale('en', 'US');
   bool _isInitialized = false;
 
-  // Supported locales
+  // Supported locales - 28 languages for global coverage
   static const List<Locale> supportedLocales = [
-    Locale('en', 'US'), // English
-    Locale('es', 'ES'), // Spanish
+    // Major Languages
+    Locale('en', 'US'), // English (US)
+    Locale('en', 'GB'), // English (UK)
+    Locale('es', 'ES'), // Spanish (Spain)
+    Locale('es', 'MX'), // Spanish (Mexico)
     Locale('fr', 'FR'), // French
     Locale('de', 'DE'), // German
     Locale('it', 'IT'), // Italian
     Locale('pt', 'BR'), // Portuguese (Brazil)
+    Locale('pt', 'PT'), // Portuguese (Portugal)
+    
+    // Asian Languages
     Locale('zh', 'CN'), // Chinese (Simplified)
+    Locale('zh', 'TW'), // Chinese (Traditional)
     Locale('ja', 'JP'), // Japanese
     Locale('ko', 'KR'), // Korean
-    Locale('ar', 'SA'), // Arabic
     Locale('hi', 'IN'), // Hindi
+    Locale('th', 'TH'), // Thai
+    Locale('vi', 'VN'), // Vietnamese
+    Locale('id', 'ID'), // Indonesian
+    Locale('ms', 'MY'), // Malay
+    
+    // European Languages
     Locale('ru', 'RU'), // Russian
+    Locale('pl', 'PL'), // Polish
+    Locale('nl', 'NL'), // Dutch
+    Locale('sv', 'SE'), // Swedish
+    Locale('no', 'NO'), // Norwegian
+    Locale('da', 'DK'), // Danish
+    Locale('fi', 'FI'), // Finnish
+    Locale('cs', 'CZ'), // Czech
+    Locale('hu', 'HU'), // Hungarian
+    Locale('ro', 'RO'), // Romanian
+    
+    // Middle Eastern & African Languages
+    Locale('ar', 'SA'), // Arabic
+    Locale('tr', 'TR'), // Turkish
+    Locale('he', 'IL'), // Hebrew
+    Locale('sw', 'KE'), // Swahili
+    
+    // Other Important Languages
+    Locale('bn', 'BD'), // Bengali
+    Locale('ur', 'PK'), // Urdu
+    Locale('fa', 'IR'), // Persian/Farsi
+    Locale('uk', 'UA'), // Ukrainian
   ];
 
-  // Language display names
+  // Language display names for all 36 supported languages
   static const Map<String, Map<String, String>> _languageNames = {
-    'en_US': {'name': 'English', 'nativeName': 'English'},
-    'es_ES': {'name': 'Spanish', 'nativeName': 'Español'},
+    // Major Languages
+    'en_US': {'name': 'English (US)', 'nativeName': 'English (US)'},
+    'en_GB': {'name': 'English (UK)', 'nativeName': 'English (UK)'},
+    'es_ES': {'name': 'Spanish (Spain)', 'nativeName': 'Español (España)'},
+    'es_MX': {'name': 'Spanish (Mexico)', 'nativeName': 'Español (México)'},
     'fr_FR': {'name': 'French', 'nativeName': 'Français'},
     'de_DE': {'name': 'German', 'nativeName': 'Deutsch'},
     'it_IT': {'name': 'Italian', 'nativeName': 'Italiano'},
-    'pt_BR': {'name': 'Portuguese', 'nativeName': 'Português'},
-    'zh_CN': {'name': 'Chinese', 'nativeName': '中文'},
+    'pt_BR': {'name': 'Portuguese (Brazil)', 'nativeName': 'Português (Brasil)'},
+    'pt_PT': {'name': 'Portuguese (Portugal)', 'nativeName': 'Português (Portugal)'},
+    
+    // Asian Languages
+    'zh_CN': {'name': 'Chinese (Simplified)', 'nativeName': '中文 (简体)'},
+    'zh_TW': {'name': 'Chinese (Traditional)', 'nativeName': '中文 (繁體)'},
     'ja_JP': {'name': 'Japanese', 'nativeName': '日本語'},
     'ko_KR': {'name': 'Korean', 'nativeName': '한국어'},
-    'ar_SA': {'name': 'Arabic', 'nativeName': 'العربية'},
     'hi_IN': {'name': 'Hindi', 'nativeName': 'हिन्दी'},
+    'th_TH': {'name': 'Thai', 'nativeName': 'ไทย'},
+    'vi_VN': {'name': 'Vietnamese', 'nativeName': 'Tiếng Việt'},
+    'id_ID': {'name': 'Indonesian', 'nativeName': 'Bahasa Indonesia'},
+    'ms_MY': {'name': 'Malay', 'nativeName': 'Bahasa Melayu'},
+    
+    // European Languages
     'ru_RU': {'name': 'Russian', 'nativeName': 'Русский'},
+    'pl_PL': {'name': 'Polish', 'nativeName': 'Polski'},
+    'nl_NL': {'name': 'Dutch', 'nativeName': 'Nederlands'},
+    'sv_SE': {'name': 'Swedish', 'nativeName': 'Svenska'},
+    'no_NO': {'name': 'Norwegian', 'nativeName': 'Norsk'},
+    'da_DK': {'name': 'Danish', 'nativeName': 'Dansk'},
+    'fi_FI': {'name': 'Finnish', 'nativeName': 'Suomi'},
+    'cs_CZ': {'name': 'Czech', 'nativeName': 'Čeština'},
+    'hu_HU': {'name': 'Hungarian', 'nativeName': 'Magyar'},
+    'ro_RO': {'name': 'Romanian', 'nativeName': 'Română'},
+    
+    // Middle Eastern & African Languages
+    'ar_SA': {'name': 'Arabic', 'nativeName': 'العربية'},
+    'tr_TR': {'name': 'Turkish', 'nativeName': 'Türkçe'},
+    'he_IL': {'name': 'Hebrew', 'nativeName': 'עברית'},
+    'sw_KE': {'name': 'Swahili', 'nativeName': 'Kiswahili'},
+    
+    // Other Important Languages
+    'bn_BD': {'name': 'Bengali', 'nativeName': 'বাংলা'},
+    'ur_PK': {'name': 'Urdu', 'nativeName': 'اردو'},
+    'fa_IR': {'name': 'Persian', 'nativeName': 'فارسی'},
+    'uk_UA': {'name': 'Ukrainian', 'nativeName': 'Українська'},
   };
 
   Locale get currentLocale => _currentLocale;
@@ -137,7 +203,7 @@ class LocalizationService extends ChangeNotifier {
   String get currentLanguageNativeName => getLanguageName(_currentLocale, useNativeName: true);
 
   /// Check if current locale is RTL
-  bool get isRTL => _currentLocale.languageCode == 'ar';
+  bool get isRTL => ['ar', 'he', 'fa', 'ur'].contains(_currentLocale.languageCode);
 
   /// Get text direction
   TextDirection get textDirection => isRTL ? TextDirection.rtl : TextDirection.ltr;
@@ -160,33 +226,56 @@ class LocalizationService extends ChangeNotifier {
 
   /// Get flag emoji for locale
   String _getFlagEmoji(Locale locale) {
-    switch (locale.languageCode) {
-      case 'en':
-        return locale.countryCode == 'GB' ? '🇬🇧' : '🇺🇸';
-      case 'es':
-        return '🇪🇸';
-      case 'fr':
-        return '🇫🇷';
-      case 'de':
-        return '🇩🇪';
-      case 'it':
-        return '🇮🇹';
-      case 'pt':
-        return '🇧🇷';
-      case 'zh':
-        return '🇨🇳';
-      case 'ja':
-        return '🇯🇵';
-      case 'ko':
-        return '🇰🇷';
-      case 'ar':
-        return '🇸🇦';
-      case 'hi':
-        return '🇮🇳';
-      case 'ru':
-        return '🇷🇺';
-      default:
-        return '🌐';
+    final key = '${locale.languageCode}_${locale.countryCode}';
+    
+    switch (key) {
+      // Major Languages
+      case 'en_US': return '🇺🇸'; // United States
+      case 'en_GB': return '🇬🇧'; // United Kingdom
+      case 'es_ES': return '🇪🇸'; // Spain
+      case 'es_MX': return '🇲🇽'; // Mexico
+      case 'fr_FR': return '🇫🇷'; // France
+      case 'de_DE': return '🇩🇪'; // Germany
+      case 'it_IT': return '🇮🇹'; // Italy
+      case 'pt_BR': return '🇧🇷'; // Brazil
+      case 'pt_PT': return '🇵🇹'; // Portugal
+      
+      // Asian Languages
+      case 'zh_CN': return '🇨🇳'; // China
+      case 'zh_TW': return '🇹🇼'; // Taiwan
+      case 'ja_JP': return '🇯🇵'; // Japan
+      case 'ko_KR': return '🇰🇷'; // South Korea
+      case 'hi_IN': return '🇮🇳'; // India
+      case 'th_TH': return '🇹🇭'; // Thailand
+      case 'vi_VN': return '🇻🇳'; // Vietnam
+      case 'id_ID': return '🇮🇩'; // Indonesia
+      case 'ms_MY': return '🇲🇾'; // Malaysia
+      
+      // European Languages
+      case 'ru_RU': return '🇷🇺'; // Russia
+      case 'pl_PL': return '🇵🇱'; // Poland
+      case 'nl_NL': return '🇳🇱'; // Netherlands
+      case 'sv_SE': return '🇸🇪'; // Sweden
+      case 'no_NO': return '🇳🇴'; // Norway
+      case 'da_DK': return '🇩🇰'; // Denmark
+      case 'fi_FI': return '🇫🇮'; // Finland
+      case 'cs_CZ': return '🇨🇿'; // Czech Republic
+      case 'hu_HU': return '🇭🇺'; // Hungary
+      case 'ro_RO': return '🇷🇴'; // Romania
+      
+      // Middle Eastern & African Languages
+      case 'ar_SA': return '🇸🇦'; // Saudi Arabia
+      case 'tr_TR': return '🇹🇷'; // Turkey
+      case 'he_IL': return '🇮🇱'; // Israel
+      case 'sw_KE': return '🇰🇪'; // Kenya
+      
+      // Other Important Languages
+      case 'bn_BD': return '🇧🇩'; // Bangladesh
+      case 'ur_PK': return '🇵🇰'; // Pakistan
+      case 'fa_IR': return '🇮🇷'; // Iran
+      case 'uk_UA': return '🇺🇦'; // Ukraine
+      
+      default: return '🌐'; // Globe for unsupported
     }
   }
 

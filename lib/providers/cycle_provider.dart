@@ -61,14 +61,12 @@ class CycleProvider extends ChangeNotifier {
           id: 'current_cycle',
           startDate: DateTime.now().subtract(const Duration(days: 10)),
           symptoms: [],
-          userId: 'test_user',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           wellbeing: WellbeingData(
-            mood: 0.7,
-            energy: 0.6,
-            stress: 0.4,
-            sleep: 0.8,
+            mood: 3.5,
+            energy: 3.0,
+            pain: 2.0,
           ),
         );
         _cycles.add(testCycle);

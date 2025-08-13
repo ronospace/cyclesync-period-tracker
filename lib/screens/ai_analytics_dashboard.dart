@@ -109,7 +109,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       // Get cycle history from provider
       final cycleProvider = Provider.of<CycleProvider>(context, listen: false);
       _cycleHistory = cycleProvider.cycles.map((cycle) => {
-        'length': cycle.length,
+        'length': cycle.lengthInDays,
         'start_date': cycle.startDate.toIso8601String(),
         'symptoms': cycle.symptoms,
       }).toList();

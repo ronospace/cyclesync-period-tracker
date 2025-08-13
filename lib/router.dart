@@ -21,7 +21,10 @@ import 'screens/ai_insights_screen.dart'; // 🔮 AI
 import 'screens/daily_log_screen.dart'; // 📝 NEW
 import 'screens/health_insights_screen.dart'; // 🏥 ENHANCED
 import 'screens/export_screen.dart'; // 📤 EXPORT & BACKUP
+import 'screens/help_support_screen.dart'; // ❓ HELP & SUPPORT
+import 'screens/ai_analytics_dashboard.dart'; // 🧠 AI ANALYTICS
 // import 'screens/ai_health_coach_screen.dart'; // 🤖 DISABLED FOR TESTING
+import 'screens/settings/language_selector_screen.dart'; // 🌍 LANGUAGE SELECTOR
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -173,6 +176,18 @@ class AppRouter {
         GoRoute(
           path: '/export',
           builder: (context, state) => const ExportScreen(),
+        ),
+        GoRoute(
+          path: '/help-support',
+          builder: (context, state) => const HelpSupportScreen(),
+        ),
+        GoRoute(
+          path: '/ai-analytics-dashboard',
+          builder: (context, state) => const AIAnalyticsDashboard(),
+        ),
+        GoRoute(
+          path: '/language-selector',
+          builder: (context, state) => const LanguageSelectorScreen(),
         ),
       ],
     );

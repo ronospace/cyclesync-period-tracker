@@ -1,0 +1,304 @@
+{
+  "@@locale": "en",
+  "appTitle": "CycleSync",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "bottomNavHome": "Home",
+  "@bottomNavHome": {
+    "description": "Home tab in bottom navigation"
+  },
+  "bottomNavCycle": "Cycle",
+  "@bottomNavCycle": {
+    "description": "Cycle tab in bottom navigation"
+  },
+  "bottomNavHealth": "Health",
+  "@bottomNavHealth": {
+    "description": "Health tab in bottom navigation"
+  },
+  "bottomNavSettings": "Settings",
+  "@bottomNavSettings": {
+    "description": "Settings tab in bottom navigation"
+  },
+  
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Language settings option"
+  },
+  "settingsLanguageSubtitle": "Choose your preferred language",
+  "@settingsLanguageSubtitle": {
+    "description": "Subtitle for language settings"
+  },
+  "settingsNotifications": "Notifications",
+  "@settingsNotifications": {
+    "description": "Notifications settings option"
+  },
+  "settingsPrivacy": "Privacy & Security",
+  "@settingsPrivacy": {
+    "description": "Privacy settings option"
+  },
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "Theme settings option"
+  },
+  "settingsHelp": "Help & Support",
+  "@settingsHelp": {
+    "description": "Help and support option"
+  },
+  
+  "languageSelectorTitle": "Choose Language",
+  "@languageSelectorTitle": {
+    "description": "Title for language selection screen"
+  },
+  "languageSelectorSubtitle": "Global accessibility for everyone",
+  "@languageSelectorSubtitle": {
+    "description": "Subtitle for language selection screen"
+  },
+  "languageSelectorSearch": "Search languages...",
+  "@languageSelectorSearch": {
+    "description": "Placeholder text for language search"
+  },
+  "languageSelectorResults": "{count, plural, =0{No languages found} =1{1 language found} other{{count} languages found}}",
+  "@languageSelectorResults": {
+    "description": "Number of languages found in search",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "Cycle Tracking",
+  "@cycleTitle": {
+    "description": "Cycle tracking screen title"
+  },
+  "cycleCurrentPhase": "Current Phase",
+  "@cycleCurrentPhase": {
+    "description": "Label for current cycle phase"
+  },
+  "cycleNextPeriod": "Next Period",
+  "@cycleNextPeriod": {
+    "description": "Label for next period prediction"
+  },
+  "cycleDaysLeft": "{days} days left",
+  "@cycleDaysLeft": {
+    "description": "Days remaining until next period",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "Health Insights",
+  "@healthTitle": {
+    "description": "Health screen title"
+  },
+  "healthSymptoms": "Symptoms",
+  "@healthSymptoms": {
+    "description": "Health symptoms section"
+  },
+  "healthMood": "Mood",
+  "@healthMood": {
+    "description": "Mood tracking section"
+  },
+  "healthEnergy": "Energy Level",
+  "@healthEnergy": {
+    "description": "Energy level tracking"
+  },
+  
+  "profileTitle": "Profile",
+  "@profileTitle": {
+    "description": "Profile screen title"
+  },
+  "profilePersonalInfo": "Personal Information",
+  "@profilePersonalInfo": {
+    "description": "Personal information section"
+  },
+  "profileCycleHistory": "Cycle History",
+  "@profileCycleHistory": {
+    "description": "Cycle history section"
+  },
+  "profileDataExport": "Export Data",
+  "@profileDataExport": {
+    "description": "Data export option"
+  },
+  
+  "helpTitle": "Help & Support",
+  "@helpTitle": {
+    "description": "Help and support screen title"
+  },
+  "helpFaq": "Frequently Asked Questions",
+  "@helpFaq": {
+    "description": "FAQ section title"
+  },
+  "helpContactSupport": "Contact Support",
+  "@helpContactSupport": {
+    "description": "Contact support option"
+  },
+  "helpUserGuide": "User Guide",
+  "@helpUserGuide": {
+    "description": "User guide option"
+  },
+  "helpPrivacyPolicy": "Privacy Policy",
+  "@helpPrivacyPolicy": {
+    "description": "Privacy policy option"
+  },
+  "helpReportIssue": "Report Issue",
+  "@helpReportIssue": {
+    "description": "Report issue option"
+  },
+  
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "Common save button"
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Common cancel button"
+  },
+  "commonClose": "Close",
+  "@commonClose": {
+    "description": "Common close button"
+  },
+  "commonBack": "Back",
+  "@commonBack": {
+    "description": "Common back button"
+  },
+  "commonNext": "Next",
+  "@commonNext": {
+    "description": "Common next button"
+  },
+  "commonDone": "Done",
+  "@commonDone": {
+    "description": "Common done button"
+  },
+  "commonError": "Error",
+  "@commonError": {
+    "description": "Common error message"
+  },
+  "commonSuccess": "Success",
+  "@commonSuccess": {
+    "description": "Common success message"
+  },
+  "commonLoading": "Loading...",
+  "@commonLoading": {
+    "description": "Common loading message"
+  },
+  
+  "todayTitle": "Today",
+  "@todayTitle": {
+    "description": "Today section title"
+  },
+  "yesterdayTitle": "Yesterday",
+  "@yesterdayTitle": {
+    "description": "Yesterday section title"
+  },
+  "tomorrowTitle": "Tomorrow",
+  "@tomorrowTitle": {
+    "description": "Tomorrow section title"
+  },
+  
+  "phaseFollicular": "Follicular Phase",
+  "@phaseFollicular": {
+    "description": "Follicular phase of menstrual cycle"
+  },
+  "phaseOvulation": "Ovulation",
+  "@phaseOvulation": {
+    "description": "Ovulation phase of menstrual cycle"
+  },
+  "phaseLuteal": "Luteal Phase",
+  "@phaseLuteal": {
+    "description": "Luteal phase of menstrual cycle"
+  },
+  "phaseMenstruation": "Menstruation",
+  "@phaseMenstruation": {
+    "description": "Menstruation phase of menstrual cycle"
+  },
+  
+  "symptomCramps": "Cramps",
+  "@symptomCramps": {
+    "description": "Menstrual cramps symptom"
+  },
+  "symptomHeadache": "Headache",
+  "@symptomHeadache": {
+    "description": "Headache symptom"
+  },
+  "symptomBackache": "Backache",
+  "@symptomBackache": {
+    "description": "Backache symptom"
+  },
+  "symptomBloating": "Bloating",
+  "@symptomBloating": {
+    "description": "Bloating symptom"
+  },
+  "symptomFatigue": "Fatigue",
+  "@symptomFatigue": {
+    "description": "Fatigue symptom"
+  },
+  
+  "moodHappy": "Happy",
+  "@moodHappy": {
+    "description": "Happy mood"
+  },
+  "moodSad": "Sad",
+  "@moodSad": {
+    "description": "Sad mood"
+  },
+  "moodAnxious": "Anxious",
+  "@moodAnxious": {
+    "description": "Anxious mood"
+  },
+  "moodIrritated": "Irritated",
+  "@moodIrritated": {
+    "description": "Irritated mood"
+  },
+  "moodCalm": "Calm",
+  "@moodCalm": {
+    "description": "Calm mood"
+  },
+  
+  "energyHigh": "High Energy",
+  "@energyHigh": {
+    "description": "High energy level"
+  },
+  "energyMedium": "Medium Energy",
+  "@energyMedium": {
+    "description": "Medium energy level"
+  },
+  "energyLow": "Low Energy",
+  "@energyLow": {
+    "description": "Low energy level"
+  },
+  
+  "notificationTitle": "CycleSync Notification",
+  "@notificationTitle": {
+    "description": "Default notification title"
+  },
+  "notificationPeriodReminder": "Your period is expected to start soon",
+  "@notificationPeriodReminder": {
+    "description": "Period reminder notification"
+  },
+  "notificationOvulationReminder": "You're approaching your fertile window",
+  "@notificationOvulationReminder": {
+    "description": "Ovulation reminder notification"
+  },
+  
+  "accessibilityMenuButton": "Menu button",
+  "@accessibilityMenuButton": {
+    "description": "Accessibility label for menu button"
+  },
+  "accessibilityCalendar": "Calendar view",
+  "@accessibilityCalendar": {
+    "description": "Accessibility label for calendar"
+  },
+  "accessibilitySettingsButton": "Settings button",
+  "@accessibilitySettingsButton": {
+    "description": "Accessibility label for settings button"
+  }
+}
