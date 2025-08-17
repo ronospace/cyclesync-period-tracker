@@ -200,6 +200,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
           if (shareInfo.personalMessage != null && shareInfo.personalMessage!.isNotEmpty)
             _buildInfoRow('Message', shareInfo.personalMessage!),
         ],
+        ),
       ),
     );
   }
@@ -209,7 +210,9 @@ class _ProviderDashboardState extends State<ProviderDashboard>
       color: Colors.blue.shade50,
       child: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Row(
             children: [
               Icon(Icons.summarize, color: Colors.blue.shade700),
@@ -226,7 +229,8 @@ class _ProviderDashboardState extends State<ProviderDashboard>
           ),
           const SizedBox(height: 12),
           Text(summary),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -235,7 +239,9 @@ class _ProviderDashboardState extends State<ProviderDashboard>
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           const Text(
             'Quick Statistics',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -261,7 +267,8 @@ class _ProviderDashboardState extends State<ProviderDashboard>
               ),
             ],
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -270,7 +277,9 @@ class _ProviderDashboardState extends State<ProviderDashboard>
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Row(
             children: [
               const Icon(Icons.security, color: Colors.green),
@@ -293,7 +302,8 @@ class _ProviderDashboardState extends State<ProviderDashboard>
                     ))
                 .toList(),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

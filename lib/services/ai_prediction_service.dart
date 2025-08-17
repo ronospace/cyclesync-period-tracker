@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import '../models/cycle_models.dart';
+import '../models/ai_prediction_models.dart';
 import 'firebase_service.dart';
 import 'error_service.dart';
 

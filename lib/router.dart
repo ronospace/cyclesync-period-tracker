@@ -25,6 +25,11 @@ import 'screens/help_support_screen.dart'; // ❓ HELP & SUPPORT
 import 'screens/ai_analytics_dashboard.dart'; // 🧠 AI ANALYTICS
 // import 'screens/ai_health_coach_screen.dart'; // 🤖 DISABLED FOR TESTING
 import 'screens/settings/language_selector_screen.dart'; // 🌍 LANGUAGE SELECTOR
+import 'screens/smart_daily_log_screen.dart'; // 🌸 SMART DAILY LOG
+import 'screens/social/social_feed_screen.dart'; // 📱 SOCIAL FEED
+import 'screens/social/gamification_screen.dart'; // 🎮 GAMIFICATION
+import 'screens/splash_screen.dart'; // 🌟 SPLASH SCREEN
+import 'screens/onboarding/display_name_setup_screen.dart'; // 👤 DISPLAY NAME SETUP
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -32,7 +37,7 @@ class AppRouter {
     final authState = Provider.of<AuthStateNotifier>(context, listen: false);
 
     return GoRouter(
-      initialLocation: '/login',
+      initialLocation: '/splash',
       refreshListenable: authState,
       errorBuilder: (context, state) => Scaffold(
         body: Center(
@@ -57,6 +62,16 @@ class AppRouter {
         final isLoggedIn = authState.isLoggedIn;
         final location = state.uri.toString();
 
+        // Allow splash screen to show without redirect
+        if (location == '/splash') {
+          return null;
+        }
+
+        // Allow onboarding screens for authenticated users
+        if (location == '/display-name-setup' && isLoggedIn) {
+          return null;
+        }
+
         final loggingIn = location == '/login' || location == '/signup';
 
         if (!isLoggedIn) {
@@ -72,7 +87,11 @@ class AppRouter {
       routes: [
         GoRoute(
           path: '/',
-          redirect: (context, state) => authState.isLoggedIn ? '/home' : '/login',
+          redirect: (context, state) => '/splash',
+        ),
+        GoRoute(
+          path: '/splash',
+          builder: (context, state) => const SplashScreen(),
         ),
         GoRoute(
           path: '/login',
@@ -81,6 +100,10 @@ class AppRouter {
         GoRoute(
           path: '/signup',
           builder: (context, state) => const SignUpScreen(),
+        ),
+        GoRoute(
+          path: '/display-name-setup',
+          builder: (context, state) => const DisplayNameSetupScreen(),
         ),
         GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
         GoRoute(
@@ -188,6 +211,18 @@ class AppRouter {
         GoRoute(
           path: '/language-selector',
           builder: (context, state) => const LanguageSelectorScreen(),
+        ),
+        GoRoute(
+          path: '/smart-daily-log',
+          builder: (context, state) => const SmartDailyLogScreen(),
+        ),
+        GoRoute(
+          path: '/social-feed',
+          builder: (context, state) => const SocialFeedScreen(),
+        ),
+        GoRoute(
+          path: '/gamification',
+          builder: (context, state) => const GamificationScreen(),
         ),
       ],
     );

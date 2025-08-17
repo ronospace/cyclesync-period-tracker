@@ -1,0 +1,577 @@
+{
+  "@@locale": "ar",
+  "appTitle": "FlowSense",
+  
+  "bottomNavHome": "الرئيسية",
+  "bottomNavCycle": "الدورة",
+  "bottomNavHealth": "الصحة",
+  "bottomNavSettings": "الإعدادات",
+  
+  "settingsTitle": "الإعدادات",
+  "settingsLanguage": "اللغة",
+  "settingsLanguageSubtitle": "اختر لغتك المفضلة",
+  "settingsNotifications": "الإشعارات",
+  "settingsPrivacy": "الخصوصية والأمان",
+  "settingsTheme": "المظهر",
+  "settingsHelp": "المساعدة والدعم",
+  
+  "languageSelectorTitle": "اختيار اللغة",
+  "languageSelectorSubtitle": "إمكانية الوصول العالمي للجميع",
+  "languageSelectorSearch": "البحث عن اللغات...",
+  "languageSelectorResults": "{count, plural, =0{لا توجد لغات} =1{تم العثور على لغة واحدة} other{تم العثور على {count} لغة}}",
+  
+  "cycleTitle": "تتبع الدورة",
+  "cycleCurrentPhase": "المرحلة الحالية",
+  "cycleNextPeriod": "الدورة التالية",
+  "cycleDaysLeft": "{days} أيام متبقية",
+  
+  "healthTitle": "نصائح صحية",
+  "healthSymptoms": "الأعراض",
+  "healthMood": "الحالة المزاجية",
+  "healthEnergy": "مستوى الطاقة",
+  
+  "profileTitle": "الملف الشخصي",
+  "profilePersonalInfo": "المعلومات الشخصية",
+  "profileCycleHistory": "تاريخ الدورات",
+  "profileDataExport": "تصدير البيانات",
+  
+  "helpTitle": "المساعدة والدعم",
+  "helpFaq": "الأسئلة الشائعة",
+  "helpContactSupport": "التواصل مع الدعم",
+  "helpUserGuide": "دليل المستخدم",
+  "helpPrivacyPolicy": "سياسة الخصوصية",
+  "helpReportIssue": "الإبلاغ عن مشكلة",
+  
+  "commonSave": "حفظ",
+  "commonCancel": "إلغاء",
+  "commonClose": "إغلاق",
+  "commonBack": "رجوع",
+  "commonNext": "التالي",
+  "commonDone": "تم",
+  "commonError": "خطأ",
+  "commonSuccess": "نجح",
+  "commonLoading": "جاري التحميل...",
+  
+  "todayTitle": "اليوم",
+  "yesterdayTitle": "أمس",
+  "tomorrowTitle": "غداً",
+  
+  "phaseFollicular": "المرحلة الجريبية",
+  "phaseOvulation": "التبويض",
+  "phaseLuteal": "المرحلة الصفراء",
+  "phaseMenstruation": "الحيض",
+  
+  "symptomCramps": "تقلصات",
+  "symptomHeadache": "صداع",
+  "symptomBackache": "ألم في الظهر",
+  "symptomBloating": "انتفاخ",
+  "symptomFatigue": "تعب",
+  
+  "moodHappy": "سعيدة",
+  "moodSad": "حزينة",
+  "moodAnxious": "قلقة",
+  "moodIrritated": "منزعجة",
+  "moodCalm": "هادئة",
+  
+  "energyHigh": "طاقة عالية",
+  "energyMedium": "طاقة متوسطة",
+  "energyLow": "طاقة منخفضة",
+  
+  "notificationTitle": "إشعار CycleSync",
+  "notificationPeriodReminder": "من المتوقع أن تبدأ دورتك قريباً",
+  "notificationOvulationReminder": "أنت تقتربين من فترة الخصوبة",
+  
+  "accessibilityMenuButton": "زر القائمة",
+  "accessibilityCalendar": "عرض التقويم",
+  "accessibilitySettingsButton": "زر الإعدادات",
+
+  "homeTitle": "CycleSync",
+  "homeWelcomeMessage": "مرحباً، {name}!",
+  "homeWelcomeSubtitle": "تتبعي دورتك بثقة",
+  "homeMenstrualPhase": "مرحلة الحيض",
+  "homeCycleDayInfo": "اليوم {day} من دورتك",
+  "homeUpcomingEvents": "الأحداث القادمة",
+  "homeNextPeriod": "الدورة التالية",
+  "homeOvulation": "التبويض",
+  "homeFertileWindow": "نافذة الخصوبة",
+  "homeQuickActions": "إجراءات سريعة",
+  "homeLogCycle": "تسجيل الدورة",
+  "homeViewHistory": "عرض التاريخ",
+  "homeCalendar": "التقويم",
+  "homeAnalytics": "التحليلات",
+  "homeAIInsights": "رؤى الذكاء الاصطناعي",
+  "homeDailyLog": "السجل اليومي",
+  "homeTomorrow": "غداً",
+  "homeDaysAgo": "منذ {days} أيام",
+
+  "appearanceTitle": "المظهر",
+  "lightMode": "الوضع الفاتح",
+  "lightModeDescription": "استخدام المظهر الفاتح",
+  "darkMode": "الوضع الداكن",
+  "darkModeDescription": "استخدام المظهر الداكن",
+  "systemDefault": "افتراضي النظام",
+  "systemDefaultDescription": "اتباع إعدادات النظام",
+  "languageTitle": "اللغة",
+  "languageSubtitle": "العربية • 36 لغة متاحة",
+  "swahiliLanguage": "السواحيلية",
+  "toolsTitle": "الأدوات",
+  "notificationsManage": "إدارة تذكيرات الدورة والتنبيهات",
+  "smartNotifications": "الإشعارات الذكية",
+  "smartNotificationsDescription": "رؤى وتوقعات مدعومة بالذكاء الاصطناعي",
+  "diagnosticsTitle": "التشخيص",
+  "diagnosticsDescription": "اختبار اتصال Firebase",
+  "userTitle": "المستخدم",
+  
+  "homeHealthInsights": "رؤى صحية",
+  "homeSymptomTrends": "اتجاهات الأعراض",
+  "homeAIHealthCoach": "مدرب الصحة الذكي",
+  "homeInDays": "خلال {days} أيام",
+  "homeToday": "اليوم",
+  "homeYesterday": "أمس",
+  "homeRecentCycles": "الدورات الأخيرة",
+  "homeViewAll": "عرض الكل",
+  "homeStartTracking": "ابدئي تتبع دورتك",
+  "homeStartTrackingDescription": "سجلي دورتك الأولى لرؤية رؤى وتوقعات شخصية.",
+  "homeLogFirstCycle": "تسجيل الدورة الأولى",
+  "homeUnableToLoad": "لا يمكن تحميل الدورات الأخيرة",
+  "homeTryAgain": "حاولي مرة أخرى",
+  "homeNoCycles": "لا توجد دورات مسجلة بعد. ابدئي التتبع!",
+
+  "dailyLogTitle": "السجل اليومي",
+  "logToday": "سجل اليوم",
+  "history": "التاريخ",
+  "selectedDate": "التاريخ المحدد",
+  "quickLogTemplates": "قوالب سريعة للتسجيل",
+  "greatDay": "يوم رائع",
+  "goodDay": "يوم جيد",
+  "okayDay": "يوم عادي",
+  "toughDay": "يوم صعب",
+  "periodDay": "يوم الدورة",
+  "pms": "متلازمة ما قبل الحيض",
+  "mood": "المزاج",
+  "energy": "الطاقة",
+  "painLevel": "مستوى الألم",
+  "notesOptional": "ملاحظات (اختيارية)",
+  "saveDailyLog": "حفظ السجل اليومي",
+  "loggingFor": "تسجيل لـ",
+  "change": "تغيير",
+  "moodLevel": "مستوى المزاج",
+  "energyLevel": "مستوى الطاقة",
+  "stressLevel": "مستوى التوتر",
+  "sleepQuality": "جودة النوم",
+  "waterIntake": "كمية الماء",
+  "exercise": "التمارين",
+  "symptomsToday": "أعراض اليوم",
+  "dailyNotes": "ملاحظات يومية",
+  "wellbeing": "الرفاهية",
+  "lifestyle": "نمط الحياة",
+  "symptoms": "الأعراض",
+  "aiInsights": "رؤى الذكاء الاصطناعي",
+  "aiPredictions": "توقعات الذكاء الاصطناعي",
+  "personalInsights": "رؤى شخصية",
+  "nextPeriod": "الدورة التالية",
+  "ovulation": "التبويض",
+  "cycleRegularity": "انتظام الدورة",
+  "confidence": "ثقة",
+  "glasses": "أكواب",
+  "minutes": "دقائق",
+  "dailyGoalAchieved": "🎉 تم تحقيق الهدف اليومي!",
+  "minToReachDailyGoal": "{minutes} دقيقة للوصول للهدف اليومي",
+  "tapSymptomsExperienced": "انقري على الأعراض التي واجهتها اليوم:",
+  "symptomSelected": "{count, plural, =1{عرض واحد محدد} other{{count} أعراض محددة}}",
+  "howFeelingToday": "كيف تشعرين اليوم؟ أي أفكار أو ملاحظات؟",
+  "feelingGreatToday": "مثال، أشعر بالرائع اليوم، مارست تمريناً جيداً...",
+  "generatingAIInsights": "جاري توليد رؤى الذكاء الاصطناعي...",
+  "noInsightsYet": "لا توجد رؤى بعد",
+  "keepTrackingForInsights": "استمري في تتبع بياناتك اليومية للحصول على رؤى مخصصة من الذكاء الاصطناعي!",
+  "smartDailyLog": "السجل اليومي الذكي",
+  "save": "حفظ",
+  "saving": "جاري الحفظ...",
+  "dailyLogSavedFor": "تم حفظ السجل اليومي لـ {date}",
+  "errorSavingDailyLog": "خطأ في حفظ السجل اليومي: {error}",
+  "retry": "إعادة المحاولة",
+  "veryLow": "منخفض جداً",
+  "low": "منخفض",
+  "neutral": "محايد",
+  "good": "جيد",
+  "excellent": "ممتاز",
+  "exhausted": "مرهقة",
+  "normal": "عادي",
+  "high": "عالي",
+  "energetic": "نشيطة",
+  "none": "لا يوجد",
+  "mild": "خفيف",
+  "moderate": "متوسط",
+  "severe": "شديد",
+  "verySevere": "شديد جداً",
+  "unbearable": "لا يُطاق",
+  "poor": "ضعيف",
+  "fair": "عادل",
+  "veryGood": "جيد جداً",
+  "peaceful": "هادئ",
+  "restless": "قلق",
+  "interrupted": "متقطع",
+  "refreshing": "منعش",
+  "deep": "عميق",
+  "light": "خفيف",
+  "cardio": "قلبي",
+  "strength": "قوة",
+  "yoga": "يوغا",
+  "walking": "مشي",
+  "running": "جري",
+  "swimming": "سباحة",
+  "cycling": "دراجة",
+  "dancing": "رقص",
+  "pilates": "بيلاتس",
+  "sports": "رياضة",
+  "hiking": "تسلق",
+  "workoutComplete": "تمرين مكتمل!",
+  "workoutMinutes": "{minutes} دقيقة من التمرين",
+  "waterGlasses": "أكواب الماء",
+  "waterGoal": "هدف الماء: {glasses} أكواب",
+  "waterGoalReached": "🎉 تم الوصول لهدف الماء!",
+  
+  "authTitle": "مرحباً بك في CycleSync",
+  "authSubtitle": "تتبعي دورتك بثقة وذكاء",
+  "loginTitle": "تسجيل الدخول",
+  "signupTitle": "إنشاء حساب",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "forgotPassword": "نسيت كلمة المرور؟",
+  "login": "تسجيل الدخول",
+  "signup": "إنشاء حساب",
+  "createAccount": "إنشاء حساب جديد",
+  "alreadyHaveAccount": "لديك حساب بالفعل؟",
+  "dontHaveAccount": "ليس لديك حساب؟",
+  "loginWithGoogle": "تسجيل الدخول بـ Google",
+  "loginWithApple": "تسجيل الدخول بـ Apple",
+  "or": "أو",
+  "termsAndConditions": "الشروط والأحكام",
+  "privacyPolicy": "سياسة الخصوصية",
+  "agreeToTerms": "أوافق على {terms} و{privacy}",
+  "emailRequired": "البريد الإلكتروني مطلوب",
+  "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
+  "passwordRequired": "كلمة المرور مطلوبة",
+  "passwordTooShort": "كلمة المرور قصيرة جداً (6 أحرف على الأقل)",
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+  "loginSuccess": "تم تسجيل الدخول بنجاح",
+  "signupSuccess": "تم إنشاء الحساب بنجاح",
+  "loginError": "خطأ في تسجيل الدخول",
+  "signupError": "خطأ في إنشاء الحساب",
+  "resetPassword": "إعادة تعيين كلمة المرور",
+  "resetPasswordInstructions": "أدخلي بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور",
+  "sendResetLink": "إرسال رابط الإعادة",
+  "resetEmailSent": "تم إرسال رابط إعادة تعيين كلمة المرور لبريدك الإلكتروني",
+  "backToLogin": "العودة لتسجيل الدخول",
+  
+  "onboardingWelcome": "مرحباً بك في CycleSync!",
+  "onboardingWelcomeSubtitle": "تطبيقك الذكي لتتبع الدورة الشهرية",
+  "onboardingTrack": "تتبعي دورتك",
+  "onboardingTrackSubtitle": "سجلي أعراضك ومزاجك بسهولة",
+  "onboardingPredict": "توقعات ذكية",
+  "onboardingPredictSubtitle": "احصلي على رؤى مدعومة بالذكاء الاصطناعي",
+  "onboardingInsights": "رؤى شخصية",
+  "onboardingInsightsSubtitle": "فهمي جسمك بشكل أفضل",
+  "onboardingNext": "التالي",
+  "onboardingSkip": "تخطي",
+  "onboardingGetStarted": "ابدئي",
+  
+  "cycleLoggingTitle": "تسجيل الدورة",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية",
+  "cycleLength": "طول الدورة",
+  "periodLength": "طول فترة الحيض",
+  "flow": "التدفق",
+  "flowLight": "خفيف",
+  "flowMedium": "متوسط",
+  "flowHeavy": "غزير",
+  "flowSpotting": "تنقيط",
+  "selectDate": "اختاري التاريخ",
+  "logCycle": "تسجيل الدورة",
+  "editCycle": "تعديل الدورة",
+  "deleteCycle": "حذف الدورة",
+  "confirmDelete": "تأكيد الحذف",
+  "deleteCycleConfirm": "هل أنت متأكدة من حذف هذه الدورة؟",
+  "cycleLogged": "تم تسجيل الدورة بنجاح",
+  "cycleUpdated": "تم تحديث الدورة بنجاح",
+  "cycleDeleted": "تم حذف الدورة بنجاح",
+  
+  "calendarTitle": "التقويم",
+  "calendarToday": "اليوم",
+  "calendarPeriodDay": "يوم الدورة",
+  "calendarOvulationDay": "يوم التبويض",
+  "calendarFertileWindow": "فترة الخصوبة",
+  "calendarPredictedPeriod": "دورة متوقعة",
+  "calendarPredictedOvulation": "تبويض متوقع",
+  "monthView": "عرض الشهر",
+  "weekView": "عرض الأسبوع",
+  "dayView": "عرض اليوم",
+  
+  "analyticsTitle": "التحليلات",
+  "cycleAnalytics": "تحليلات الدورة",
+  "averageCycleLength": "متوسط طول الدورة",
+  "averagePeriodLength": "متوسط طول فترة الحيض",
+  "cycleRegularityScore": "نقاط انتظام الدورة",
+  "regularityExcellent": "ممتاز",
+  "regularityGood": "جيد",
+  "regularityFair": "مقبول",
+  "regularityPoor": "ضعيف",
+  "symptomTrends": "اتجاهات الأعراض",
+  "moodPatterns": "أنماط المزاج",
+  "energyPatterns": "أنماط الطاقة",
+  "painPatterns": "أنماط الألم",
+  "chartView": "عرض الرسم البياني",
+  "listView": "عرض القائمة",
+  "last3Months": "آخر 3 أشهر",
+  "last6Months": "آخر 6 أشهر",
+  "lastYear": "السنة الماضية",
+  "allTime": "كل الوقت",
+  
+  "healthInsightsTitle": "الرؤى الصحية",
+  "overallHealth": "الصحة العامة",
+  "recentTrends": "الاتجاهات الأخيرة",
+  "recommendations": "التوصيات",
+  "riskFactors": "عوامل الخطر",
+  "lifestyle": "نمط الحياة",
+  "nutrition": "التغذية",
+  "exerciseRecommendations": "توصيات التمارين",
+  "sleepHygiene": "نظافة النوم",
+  "stressManagement": "إدارة التوتر",
+  "supplementation": "المكملات الغذائية",
+  "hydrogenation": "الترطيب",
+  "mindfulness": "اليقظة الذهنية",
+  "socialSupport": "الدعم الاجتماعي",
+  "professionalCare": "الرعاية المتخصصة",
+  
+  "aiInsightsTitle": "رؤى الذكاء الاصطناعي",
+  "aiAnalysisComplete": "تم إكمال تحليل الذكاء الاصطناعي",
+  "aiConfidenceScore": "نقاط ثقة الذكاء الاصطناعي",
+  "personalizedRecommendations": "توصيات شخصية",
+  "predictiveAlerts": "تنبيهات تنبؤية",
+  "cycleOptimization": "تحسين الدورة",
+  "symptomCorrelations": "ارتباطات الأعراض",
+  "hormonalInsights": "رؤى هرمونية",
+  "fertilityPredictions": "توقعات الخصوبة",
+  "wellnessRecommendations": "توصيات العافية",
+  "lifeStyleOptimization": "تحسين نمط الحياة",
+  "nutritionGuidance": "إرشادات التغذية",
+  "exercisePlanning": "تخطيط التمارين",
+  "sleepOptimization": "تحسين النوم",
+  "stressReduction": "تقليل التوتر",
+  
+  "exportTitle": "تصدير البيانات",
+  "exportDescription": "صدري بياناتك الشخصية",
+  "exportPDF": "تصدير PDF",
+  "exportCSV": "تصدير CSV",
+  "exportJSON": "تصدير JSON",
+  "exportDateRange": "نطاق التاريخ للتصدير",
+  "exportLastMonth": "الشهر الماضي",
+  "exportLast3Months": "آخر 3 أشهر",
+  "exportLast6Months": "آخر 6 أشهر",
+  "exportLastYear": "السنة الماضية",
+  "exportAllData": "جميع البيانات",
+  "exportCustomRange": "نطاق مخصص",
+  "exportStartDate": "تاريخ البداية للتصدير",
+  "exportEndDate": "تاريخ النهاية للتصدير",
+  "exportIncludeCycles": "تضمين الدورات",
+  "exportIncludeSymptoms": "تضمين الأعراض",
+  "exportIncludeMood": "تضمين المزاج",
+  "exportIncludeNotes": "تضمين الملاحظات",
+  "exportGenerating": "جاري إنشاء التصدير...",
+  "exportComplete": "تم التصدير بنجاح",
+  "exportError": "خطأ في التصدير",
+  "exportShare": "مشاركة التصدير",
+  "exportSave": "حفظ التصدير",
+  
+  "notificationSettings": "إعدادات الإشعارات",
+  "periodReminders": "تذكيرات الدورة",
+  "ovulationReminders": "تذكيرات التبويض",
+  "pillReminders": "تذكيرات الحبوب",
+  "appointmentReminders": "تذكيرات المواعيد",
+  "dailyLogReminders": "تذكيرات السجل اليومي",
+  "customReminders": "تذكيرات مخصصة",
+  "notificationTime": "وقت الإشعار",
+  "notificationFrequency": "تكرار الإشعار",
+  "notificationEnabled": "الإشعارات مفعلة",
+  "notificationDisabled": "الإشعارات معطلة",
+  "notificationPermission": "إذن الإشعارات",
+  "notificationPermissionDenied": "تم رفض إذن الإشعارات",
+  "enableNotifications": "تفعيل الإشعارات",
+  "disableNotifications": "تعطيل الإشعارات",
+  
+  "privacySettings": "إعدادات الخصوصية",
+  "dataEncryption": "تشفير البيانات",
+  "localDataOnly": "البيانات المحلية فقط",
+  "cloudSync": "المزامنة السحابية",
+  "anonymousAnalytics": "التحليلات المجهولة",
+  "shareDataForResearch": "مشاركة البيانات للبحث",
+  "deleteAccount": "حذف الحساب",
+  "deleteAccountWarning": "تحذير: سيتم حذف جميع بياناتك نهائياً",
+  "confirmDeleteAccount": "تأكيد حذف الحساب",
+  "accountDeleted": "تم حذف الحساب",
+  "dataBackup": "نسخ احتياطي للبيانات",
+  "dataRestore": "استعادة البيانات",
+  "securitySettings": "إعدادات الأمان",
+  "biometricLock": "قفل بيومتري",
+  "pinLock": "قفل PIN",
+  "autoLock": "قفل تلقائي",
+  "lockTimeout": "مهلة القفل",
+  
+  "supportTitle": "الدعم",
+  "contactUs": "اتصلي بنا",
+  "reportBug": "الإبلاغ عن خلل",
+  "requestFeature": "طلب ميزة",
+  "faqTitle": "الأسئلة الشائعة",
+  "userGuideTitle": "دليل المستخدم",
+  "aboutApp": "حول التطبيق",
+  "appVersion": "إصدار التطبيق",
+  "termsOfService": "شروط الخدمة",
+  "privacyPolicyTitle": "سياسة الخصوصية",
+  "licenses": "التراخيص",
+  "acknowledgments": "الشكر والتقدير",
+  "rateApp": "تقييم التطبيق",
+  "shareApp": "مشاركة التطبيق",
+  "feedback": "تعليقات",
+  "suggestions": "اقتراحات",
+  
+  "errorTitle": "خطأ",
+  "errorGeneric": "حدث خطأ غير متوقع",
+  "errorNetwork": "خطأ في الشبكة",
+  "errorNoInternet": "لا يوجد اتصال بالإنترنت",
+  "errorServer": "خطأ في الخادم",
+  "errorTimeout": "انتهت مهلة الطلب",
+  "errorUnauthorized": "غير مصرح",
+  "errorForbidden": "ممنوع",
+  "errorNotFound": "غير موجود",
+  "errorTooManyRequests": "طلبات كثيرة جداً",
+  "errorInternalServer": "خطأ داخلي في الخادم",
+  "tryAgainLater": "حاولي مرة أخرى لاحقاً",
+  "refreshData": "تحديث البيانات",
+  "checkConnection": "تحققي من الاتصال",
+  
+  "validationEmailRequired": "البريد الإلكتروني مطلوب",
+  "validationEmailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
+  "validationPasswordRequired": "كلمة المرور مطلوبة",
+  "validationPasswordLength": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+  "validationPasswordsMatch": "كلمات المرور يجب أن تتطابق",
+  "validationNameRequired": "الاسم مطلوب",
+  "validationNameLength": "الاسم يجب أن يكون حرفين على الأقل",
+  "validationDateRequired": "التاريخ مطلوب",
+  "validationDateInvalid": "تاريخ غير صحيح",
+  "validationRangeInvalid": "نطاق غير صحيح",
+  "validationFieldRequired": "هذا الحقل مطلوب",
+  
+  "accessibilityHome": "الصفحة الرئيسية",
+  "accessibilityCycle": "تتبع الدورة",
+  "accessibilityHealth": "الصحة",
+  "accessibilitySettings": "الإعدادات",
+  "accessibilityBack": "رجوع",
+  "accessibilityNext": "التالي",
+  "accessibilityClose": "إغلاق",
+  "accessibilityMenu": "القائمة",
+  "accessibilitySearch": "بحث",
+  "accessibilityFilter": "تصفية",
+  "accessibilitySort": "ترتيب",
+  "accessibilityRefresh": "تحديث",
+  "accessibilityEdit": "تعديل",
+  "accessibilityDelete": "حذف",
+  "accessibilityAdd": "إضافة",
+  "accessibilityShare": "مشاركة",
+  "accessibilitySave": "حفظ",
+  "accessibilityCancel": "إلغاء",
+  "accessibilityConfirm": "تأكيد",
+  "energetic": "نشيطة",
+  "none": "لا شيء",
+  "mild": "خفيف",
+  "moderate": "متوسط",
+  "severe": "شديد",
+  "extreme": "مفرط",
+  "veryCalm": "هادئة جداً",
+  "relaxed": "مسترخية",
+  "stressed": "متوترة",
+  "veryStressed": "متوترة جداً",
+  "poor": "ضعيف",
+  "fair": "مقبول",
+  "veryGood": "جيد جداً",
+  "cramps": "تقلصات",
+  "headache": "صداع",
+  "moodSwings": "تقلبات مزاجية",
+  "fatigue": "إرهاق",
+  "bloating": "انتفاخ",
+  "breastTenderness": "حساسية الثدي",
+  "nausea": "غثيان",
+  "backPain": "ألم الظهر",
+  "acne": "حب الشباب",
+  "foodCravings": "اشتهاء الطعام",
+  "sleepIssues": "مشاكل النوم",
+  "hotFlashes": "هبات ساخنة",
+  "noDailyLogsYet": "لا توجد سجلات يومية بعد",
+  "startLoggingDailyMood": "ابدئي بتسجيل مزاجك وطاقتك اليومية",
+  "failedToLoadLogs": "فشل في تحميل السجلات: {error}",
+  "notes": "ملاحظات",
+  "more": "المزيد",
+  "dailyLogSaved": "تم حفظ السجل اليومي!",
+  "failedToSaveLog": "فشل في حفظ السجل: {error}",
+  "failedToLoadExistingLog": "فشل في تحميل السجل الموجود: {error}",
+  "howAreYouFeelingToday": "كيف تشعرين اليوم؟",
+  "updated": "محدث",
+  "okay": "حسناً",
+
+  "tools": "الأدوات",
+  "dataManagement": "إدارة البيانات",
+  "account": "الحساب",
+  "verified": "موثق",
+  "healthIntegration": "التكامل الصحي",
+  "healthIntegrationDescription": "المزامنة مع HealthKit و Google Fit",
+  "dataManagementDescription": "تصدير واستيراد ونسخ بياناتك احتياطياً",
+  "exportBackup": "تصدير ونسخ احتياطي",
+  "exportBackupDescription": "إنشاء تقارير ونسخ بياناتك احتياطياً",
+  "socialSharing": "المشاركة الاجتماعية",
+  "socialSharingDescription": "مشاركة البيانات مع مقدمي الخدمة والشركاء",
+  "syncStatus": "حالة المزامنة",
+  "syncStatusDescription": "فحص مزامنة السحابة",
+  "about": "حول",
+  "aboutDescription": "إصدار التطبيق والاعتمادات",
+  "signOut": "تسجيل الخروج",
+  "signOutDescription": "تسجيل الخروج من حسابك",
+  "getHelpUsingCycleSync": "احصلي على المساعدة باستخدام CycleSync",
+  "viewSymptomPatterns": "عرض أنماط الأعراض والرؤى",
+  "viewAllCycles": "عرض جميع الدورات",
+  "viewCycleInsights": "عرض رؤى الدورة",
+  "testFirebaseConnection": "اختبار اتصال Firebase",
+  "comingSoon": "قريباً",
+  "featureAvailableInFuture": "{feature} ستكون متاحة في تحديث مستقبلي.",
+  "ok": "موافق",
+  "aboutCycleSync": "حول CycleSync",
+  "cycleSyncVersion": "CycleSync الإصدار 1.0.0",
+  "modernCycleTrackingApp": "تطبيق حديث لتتبع الدورة الشهرية مبني بـ Flutter.",
+  "features": "الميزات:",
+  "cycleLoggingTracking": "• تسجيل وتتبع الدورة",
+  "analyticsInsights": "• التحليلات والرؤى",
+  "darkModeSupport": "• دعم الوضع الداكن",
+  "cloudSynchronization": "• مزامنة السحابة",
+  "privacyFocusedDesign": "• تصميم يركز على الخصوصية",
+  "areYouSureSignOut": "هل أنت متأكدة من رغبتك في تسجيل الخروج؟",
+  "firebaseAuthentication": "مصادقة Firebase",
+  "connected": "متصل",
+  "cloudFirestore": "Cloud Firestore",
+  "syncedMinutesAgo": "متزامن منذ {minutes} دقيقة",
+  "healthData": "البيانات الصحية",
+  "pendingSync": "في انتظار المزامنة",
+  "analyticsData": "بيانات التحليلات",
+  "upToDate": "محدث",
+  "totalSyncedRecords": "إجمالي السجلات المتزامنة:",
+  "lastFullSync": "آخر مزامنة كاملة:",
+  "todayAt": "اليوم في {time}",
+  "storageUsed": "التخزين المستخدم:",
+  "syncNow": "زامن الآن",
+  "manualSyncCompleted": "اكتملت المزامنة اليدوية بنجاح!",
+
+  "poweredByAI": "مدعوم بالذكاء الاصطناعي",
+  "flowSenseAI": "FlowSense AI",
+  "aiPoweredInsights": "رؤى مدعومة بالذكاء الاصطناعي",
+  "smartPredictions": "توقعات ذكية",
+  "personalizedRecommendations": "توصيات مخصصة",
+  "advancedAnalytics": "تحليلات متقدمة"
+}

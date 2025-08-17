@@ -116,7 +116,7 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.1),
+          backgroundColor: color.withValues(alpha: 0.1),
           child: Icon(icon, color: color),
         ),
         title: Text(
@@ -132,8 +132,8 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
   int get _totalCycles => _cycles.length;
   
   double? get _averageCycleLength {
-    if (_statistics?.averageCycleLength != null) {
-      return _statistics!.averageCycleLength;
+    if (_statistics?.averageLength != null) {
+      return _statistics!.averageLength;
     }
     if (_cycles.length < 2) return null;
     
@@ -163,8 +163,12 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
   }
   
   String get _regularityStatus {
-    if (_statistics?.regularity != null) {
-      return _statistics!.regularity!;
+    if (_statistics != null) {
+      double score = _statistics!.regularityScore;
+      if (score >= 80) return 'Very Regular';
+      if (score >= 65) return 'Regular';
+      if (score >= 40) return 'Somewhat Irregular';
+      return 'Irregular';
     }
     if (_cycles.length < 3) return 'Insufficient Data';
     if (_averageCycleLength == null) return 'Irregular';
@@ -207,8 +211,8 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
   }
   
   DateTime? get _nextPredictedDate {
-    if (_prediction?.nextCycleDate != null) {
-      return _prediction!.nextCycleDate;
+    if (_prediction?.nextCycleStart != null) {
+      return _prediction!.nextCycleStart;
     }
     if (_lastCycleDate == null || _averageCycleLength == null) return null;
     
@@ -381,13 +385,13 @@ class _CycleAnalyticsScreenState extends State<CycleAnalyticsScreen> with Ticker
                             if (_averageCycleLength != null)
                               _buildInsightCard(
                                 title: 'Cycle Length Analysis',
-                                description: _averageCycleLength! >= 3 && _averageCycleLength! <= 7
-                                    ? 'Your average cycle length is within the typical range.'
-                                    : _averageCycleLength! < 3
+                                description: _averageCycleLength! >= 21 && _averageCycleLength! <= 35
+                                    ? 'Your average cycle length is within the typical range (21-35 days).'
+                                    : _averageCycleLength! < 21
                                     ? 'Your cycles appear shorter than typical. Consider consulting a healthcare provider.'
                                     : 'Your cycles appear longer than typical. This can be normal, but consider tracking more data.',
                                 icon: Icons.insights,
-                                color: _averageCycleLength! >= 3 && _averageCycleLength! <= 7
+                                color: _averageCycleLength! >= 21 && _averageCycleLength! <= 35
                                     ? Colors.green : Colors.orange,
                               ),
                             

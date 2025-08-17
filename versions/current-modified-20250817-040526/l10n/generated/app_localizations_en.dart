@@ -1,0 +1,998 @@
+// Generated file. Do not edit.
+
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'CycleSync';
+
+  @override
+  String get bottomNavHome => 'Home';
+
+  @override
+  String get bottomNavCycle => 'Cycle';
+
+  @override
+  String get bottomNavHealth => 'Health';
+
+  @override
+  String get bottomNavSettings => 'Settings';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get settingsLanguageSubtitle => 'Choose your preferred language';
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get settingsPrivacy => 'Privacy & Security';
+
+  @override
+  String get settingsTheme => 'Theme';
+
+  @override
+  String get settingsHelp => 'Help & Support';
+
+  @override
+  String get languageSelectorTitle => 'Choose Language';
+
+  @override
+  String get languageSelectorSubtitle => 'Global accessibility for everyone';
+
+  @override
+  String get languageSelectorSearch => 'Search languages...';
+
+  @override
+  String languageSelectorResults(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count languages found',
+      one: '1 language found',
+      zero: 'No languages found',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cycleTitle => 'Cycle Tracking';
+
+  @override
+  String get cycleCurrentPhase => 'Current Phase';
+
+  @override
+  String get cycleNextPeriod => 'Next Period';
+
+  @override
+  String cycleDaysLeft(int days) {
+    return '$days days left';
+  }
+
+  @override
+  String get healthTitle => 'Health Insights';
+
+  @override
+  String get healthSymptoms => 'Symptoms';
+
+  @override
+  String get healthMood => 'Mood';
+
+  @override
+  String get healthEnergy => 'Energy Level';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profilePersonalInfo => 'Personal Information';
+
+  @override
+  String get profileCycleHistory => 'Cycle History';
+
+  @override
+  String get profileDataExport => 'Export Data';
+
+  @override
+  String get helpTitle => 'Help & Support';
+
+  @override
+  String get helpFaq => 'Frequently Asked Questions';
+
+  @override
+  String get helpContactSupport => 'Contact Support';
+
+  @override
+  String get helpUserGuide => 'User Guide';
+
+  @override
+  String get helpPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get helpReportIssue => 'Report Issue';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get commonBack => 'Back';
+
+  @override
+  String get commonNext => 'Next';
+
+  @override
+  String get commonDone => 'Done';
+
+  @override
+  String get commonError => 'Error';
+
+  @override
+  String get commonSuccess => 'Success';
+
+  @override
+  String get commonLoading => 'Loading...';
+
+  @override
+  String get todayTitle => 'Today';
+
+  @override
+  String get yesterdayTitle => 'Yesterday';
+
+  @override
+  String get tomorrowTitle => 'Tomorrow';
+
+  @override
+  String get phaseFollicular => 'Follicular Phase';
+
+  @override
+  String get phaseOvulation => 'Ovulation';
+
+  @override
+  String get phaseLuteal => 'Luteal Phase';
+
+  @override
+  String get phaseMenstruation => 'Menstruation';
+
+  @override
+  String get symptomCramps => 'Cramps';
+
+  @override
+  String get symptomHeadache => 'Headache';
+
+  @override
+  String get symptomBackache => 'Backache';
+
+  @override
+  String get symptomBloating => 'Bloating';
+
+  @override
+  String get symptomFatigue => 'Fatigue';
+
+  @override
+  String get moodHappy => 'Happy';
+
+  @override
+  String get moodSad => 'Sad';
+
+  @override
+  String get moodAnxious => 'Anxious';
+
+  @override
+  String get moodIrritated => 'Irritated';
+
+  @override
+  String get moodCalm => 'Calm';
+
+  @override
+  String get energyHigh => 'High Energy';
+
+  @override
+  String get energyMedium => 'Medium Energy';
+
+  @override
+  String get energyLow => 'Low Energy';
+
+  @override
+  String get notificationTitle => 'CycleSync Notification';
+
+  @override
+  String get notificationPeriodReminder =>
+      'Your period is expected to start soon';
+
+  @override
+  String get notificationOvulationReminder =>
+      'You\'re approaching your fertile window';
+
+  @override
+  String get accessibilityMenuButton => 'Menu button';
+
+  @override
+  String get accessibilityCalendar => 'Calendar view';
+
+  @override
+  String get accessibilitySettingsButton => 'Settings button';
+
+  @override
+  String get homeTitle => 'CycleSync';
+
+  @override
+  String homeWelcomeMessage(String name) {
+    return 'Hello, $name!';
+  }
+
+  @override
+  String get homeWelcomeSubtitle => 'Track your cycle with clinical precision';
+
+  @override
+  String get homeMenstrualPhase => 'Menstrual Phase';
+
+  @override
+  String homeCycleDayInfo(int day) {
+    return 'Day $day of your cycle';
+  }
+
+  @override
+  String get homeUpcomingEvents => 'Upcoming Events';
+
+  @override
+  String get homeNextPeriod => 'Next Period';
+
+  @override
+  String get homeOvulation => 'Ovulation';
+
+  @override
+  String get homeFertileWindow => 'Fertile Window';
+
+  @override
+  String get homeQuickActions => 'Quick Actions';
+
+  @override
+  String get homeLogCycle => 'Log Cycle';
+
+  @override
+  String get homeViewHistory => 'View History';
+
+  @override
+  String get homeCalendar => 'Calendar';
+
+  @override
+  String get homeAnalytics => 'Analytics';
+
+  @override
+  String get homeAIInsights => 'AI Insights';
+
+  @override
+  String get homeDailyLog => 'Daily Log';
+
+  @override
+  String get homeTomorrow => 'Tomorrow';
+
+  @override
+  String homeDaysAgo(int days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get appearanceTitle => 'Appearance';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get lightModeDescription => 'Use light theme';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get darkModeDescription => 'Use dark theme';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get systemDefaultDescription => 'Follow system settings';
+
+  @override
+  String get languageTitle => 'Language';
+
+  @override
+  String get languageSubtitle => 'Swahili • 36 languages available';
+
+  @override
+  String get swahiliLanguage => 'Kiswahili';
+
+  @override
+  String get toolsTitle => 'Tools';
+
+  @override
+  String get notificationsManage => 'Manage cycle reminders and alerts';
+
+  @override
+  String get smartNotifications => 'Smart Notifications';
+
+  @override
+  String get smartNotificationsDescription =>
+      'AI-powered insights and predictions';
+
+  @override
+  String get diagnosticsTitle => 'Diagnostics';
+
+  @override
+  String get diagnosticsDescription => 'Test Firebase connection';
+
+  @override
+  String get userTitle => 'User';
+
+  @override
+  String get homeHealthInsights => 'Health Insights';
+
+  @override
+  String get homeSymptomTrends => 'Symptom Trends';
+
+  @override
+  String get homeAIHealthCoach => 'AI Health Coach';
+
+  @override
+  String homeInDays(int days) {
+    return 'In $days days';
+  }
+
+  @override
+  String get homeToday => 'Today';
+
+  @override
+  String get homeYesterday => 'Yesterday';
+
+  @override
+  String get homeRecentCycles => 'Recent Cycles';
+
+  @override
+  String get homeViewAll => 'View All';
+
+  @override
+  String get homeStartTracking => 'Start Tracking Your Cycle';
+
+  @override
+  String get homeStartTrackingDescription =>
+      'Log your first cycle to see personalized insights and predictions.';
+
+  @override
+  String get homeLogFirstCycle => 'Log First Cycle';
+
+  @override
+  String get homeUnableToLoad => 'Unable to load recent cycles';
+
+  @override
+  String get homeTryAgain => 'Try Again';
+
+  @override
+  String get homeNoCycles => 'No cycles logged yet. Start tracking!';
+
+  @override
+  String get dailyLogTitle => 'Daily Log';
+
+  @override
+  String get logToday => 'Log Today';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get selectedDate => 'Selected Date';
+
+  @override
+  String get quickLogTemplates => 'Quick Log Templates';
+
+  @override
+  String get greatDay => 'Great Day';
+
+  @override
+  String get goodDay => 'Good Day';
+
+  @override
+  String get okayDay => 'Okay Day';
+
+  @override
+  String get toughDay => 'Tough Day';
+
+  @override
+  String get periodDay => 'Period Day';
+
+  @override
+  String get pms => 'PMS';
+
+  @override
+  String get mood => 'Mood';
+
+  @override
+  String get energy => 'Energy';
+
+  @override
+  String get painLevel => 'Pain Level';
+
+  @override
+  String get notesOptional => 'Notes (optional)';
+
+  @override
+  String get saveDailyLog => 'Save Daily Log';
+
+  @override
+  String get loggingFor => 'Logging for';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get moodLevel => 'Mood Level';
+
+  @override
+  String get energyLevel => 'Energy Level';
+
+  @override
+  String get stressLevel => 'Stress Level';
+
+  @override
+  String get sleepQuality => 'Sleep Quality';
+
+  @override
+  String get waterIntake => 'Water Intake';
+
+  @override
+  String get exercise => 'Exercise';
+
+  @override
+  String get symptomsToday => 'Symptoms Today';
+
+  @override
+  String get dailyNotes => 'Daily Notes';
+
+  @override
+  String get wellbeing => 'Wellbeing';
+
+  @override
+  String get lifestyle => 'Lifestyle';
+
+  @override
+  String get symptoms => 'Symptoms';
+
+  @override
+  String get aiInsights => 'AI Insights';
+
+  @override
+  String get aiPredictions => 'AI Predictions';
+
+  @override
+  String get personalInsights => 'Personal Insights';
+
+  @override
+  String get nextPeriod => 'Next Period';
+
+  @override
+  String get ovulation => 'Ovulation';
+
+  @override
+  String get cycleRegularity => 'Cycle Regularity';
+
+  @override
+  String get confidence => 'confidence';
+
+  @override
+  String get glasses => 'glasses';
+
+  @override
+  String get minutes => 'minutes';
+
+  @override
+  String get dailyGoalAchieved => '🎉 Daily goal achieved!';
+
+  @override
+  String minToReachDailyGoal(int minutes) {
+    return '$minutes min to reach daily goal';
+  }
+
+  @override
+  String get tapSymptomsExperienced =>
+      'Tap any symptoms you experienced today:';
+
+  @override
+  String symptomSelected(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count symptoms selected',
+      one: '1 symptom selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get howFeelingToday =>
+      'How are you feeling today? Any thoughts or observations?';
+
+  @override
+  String get feelingGreatToday =>
+      'e.g., Feeling great today, had a good workout...';
+
+  @override
+  String get generatingAIInsights => 'Generating AI insights...';
+
+  @override
+  String get noInsightsYet => 'No insights yet';
+
+  @override
+  String get keepTrackingForInsights =>
+      'Keep tracking your daily data to get personalized AI insights!';
+
+  @override
+  String get smartDailyLog => 'Smart Daily Log';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String dailyLogSavedFor(String date) {
+    return 'Daily log saved for $date';
+  }
+
+  @override
+  String errorSavingDailyLog(String error) {
+    return 'Error saving daily log: $error';
+  }
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get veryLow => 'Very Low';
+
+  @override
+  String get low => 'Low';
+
+  @override
+  String get neutral => 'Neutral';
+
+  @override
+  String get good => 'Good';
+
+  @override
+  String get excellent => 'Excellent';
+
+  @override
+  String get exhausted => 'Exhausted';
+
+  @override
+  String get normal => 'Normal';
+
+  @override
+  String get high => 'High';
+
+  @override
+  String get energetic => 'Energetic';
+
+  @override
+  String get none => 'None';
+
+  @override
+  String get mild => 'Mild';
+
+  @override
+  String get moderate => 'Moderate';
+
+  @override
+  String get severe => 'Severe';
+
+  @override
+  String get extreme => 'Extreme';
+
+  @override
+  String get veryCalm => 'Very Calm';
+
+  @override
+  String get relaxed => 'Relaxed';
+
+  @override
+  String get stressed => 'Stressed';
+
+  @override
+  String get veryStressed => 'Very Stressed';
+
+  @override
+  String get poor => 'Poor';
+
+  @override
+  String get fair => 'Fair';
+
+  @override
+  String get veryGood => 'Very Good';
+
+  @override
+  String get cramps => 'Cramps';
+
+  @override
+  String get headache => 'Headache';
+
+  @override
+  String get moodSwings => 'Mood Swings';
+
+  @override
+  String get fatigue => 'Fatigue';
+
+  @override
+  String get bloating => 'Bloating';
+
+  @override
+  String get breastTenderness => 'Breast Tenderness';
+
+  @override
+  String get nausea => 'Nausea';
+
+  @override
+  String get backPain => 'Back Pain';
+
+  @override
+  String get acne => 'Acne';
+
+  @override
+  String get foodCravings => 'Food Cravings';
+
+  @override
+  String get sleepIssues => 'Sleep Issues';
+
+  @override
+  String get hotFlashes => 'Hot Flashes';
+
+  @override
+  String get noDailyLogsYet => 'No daily logs yet';
+
+  @override
+  String get startLoggingDailyMood =>
+      'Start logging your daily mood and energy';
+
+  @override
+  String failedToLoadLogs(String error) {
+    return 'Failed to load logs: $error';
+  }
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get more => 'more';
+
+  @override
+  String get dailyLogSaved => 'Daily log saved!';
+
+  @override
+  String failedToSaveLog(String error) {
+    return 'Failed to save log: $error';
+  }
+
+  @override
+  String failedToLoadExistingLog(String error) {
+    return 'Failed to load existing log: $error';
+  }
+
+  @override
+  String get howAreYouFeelingToday => 'How are you feeling today?';
+
+  @override
+  String get updated => 'Updated';
+
+  @override
+  String get okay => 'Okay';
+
+  @override
+  String get tools => 'Tools';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get verified => 'Verified';
+
+  @override
+  String get healthIntegration => 'Health Integration';
+
+  @override
+  String get healthIntegrationDescription =>
+      'Sync with HealthKit and Google Fit';
+
+  @override
+  String get dataManagementDescription =>
+      'Export, import, and backup your data';
+
+  @override
+  String get exportBackup => 'Export & Backup';
+
+  @override
+  String get exportBackupDescription => 'Generate reports and backup your data';
+
+  @override
+  String get socialSharing => 'Social Sharing';
+
+  @override
+  String get socialSharingDescription =>
+      'Share data with providers and partners';
+
+  @override
+  String get syncStatus => 'Sync Status';
+
+  @override
+  String get syncStatusDescription => 'Check cloud synchronization';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get aboutDescription => 'App version and credits';
+
+  @override
+  String get signOut => 'Sign Out';
+
+  @override
+  String get signOutDescription => 'Sign out of your account';
+
+  @override
+  String get getHelpUsingCycleSync => 'Get help using CycleSync';
+
+  @override
+  String get viewSymptomPatterns => 'View symptom patterns and insights';
+
+  @override
+  String get viewAllCycles => 'View all cycles';
+
+  @override
+  String get viewCycleInsights => 'View cycle insights';
+
+  @override
+  String get testFirebaseConnection => 'Test Firebase connection';
+
+  @override
+  String get comingSoon => 'Coming Soon';
+
+  @override
+  String featureAvailableInFuture(String feature) {
+    return '$feature will be available in a future update.';
+  }
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get aboutCycleSync => 'About CycleSync';
+
+  @override
+  String get cycleSyncVersion => 'CycleSync v1.0.0';
+
+  @override
+  String get modernCycleTrackingApp =>
+      'A modern cycle tracking app built with Flutter.';
+
+  @override
+  String get features => 'Features:';
+
+  @override
+  String get cycleLoggingTracking => '• Cycle logging and tracking';
+
+  @override
+  String get analyticsInsights => '• Analytics and insights';
+
+  @override
+  String get darkModeSupport => '• Dark mode support';
+
+  @override
+  String get cloudSynchronization => '• Cloud synchronization';
+
+  @override
+  String get privacyFocusedDesign => '• Privacy-focused design';
+
+  @override
+  String get areYouSureSignOut => 'Are you sure you want to sign out?';
+
+  @override
+  String get firebaseAuthentication => 'Firebase Authentication';
+
+  @override
+  String get connected => 'Connected';
+
+  @override
+  String get cloudFirestore => 'Cloud Firestore';
+
+  @override
+  String syncedMinutesAgo(int minutes) {
+    return 'Synced $minutes minutes ago';
+  }
+
+  @override
+  String get healthData => 'Health Data';
+
+  @override
+  String get pendingSync => 'Pending sync';
+
+  @override
+  String get analyticsData => 'Analytics Data';
+
+  @override
+  String get upToDate => 'Up to date';
+
+  @override
+  String get totalSyncedRecords => 'Total synced records:';
+
+  @override
+  String get lastFullSync => 'Last full sync:';
+
+  @override
+  String todayAt(String time) {
+    return 'Today at $time';
+  }
+
+  @override
+  String get storageUsed => 'Storage used:';
+
+  @override
+  String get syncNow => 'Sync Now';
+
+  @override
+  String get manualSyncCompleted => 'Manual sync completed successfully!';
+
+  @override
+  String get appSubtitle => 'Your Smart Clinical Period Tracker';
+
+  @override
+  String get smartTracking => 'Smart Tracking';
+
+  @override
+  String get clinicalInsights => 'Clinical Insights';
+
+  @override
+  String get personalizedForYou => 'Personalized for you';
+
+  @override
+  String get viewAllInsights => 'View All Insights';
+
+  @override
+  String get expectedOn => 'Expected on';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get brandingAI => 'AI & Branding';
+
+  @override
+  String get advanced => 'Advanced';
+
+  @override
+  String get themeSettings => 'Theme Settings';
+
+  @override
+  String get displaySettings => 'Display Settings';
+
+  @override
+  String get compactView => 'Compact View';
+
+  @override
+  String get compactViewDescription =>
+      'Reduce spacing and use smaller elements';
+
+  @override
+  String get appBrandingTitle => 'App Branding';
+
+  @override
+  String get appBrandingDescription =>
+      'Choose how you want to see the app name and branding';
+
+  @override
+  String get flowSenseDescription =>
+      'Advanced AI-powered menstrual health insights';
+
+  @override
+  String get cycleSyncDescription => 'Simple, reliable cycle tracking';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get customBrandingDescription => 'Set your own display name';
+
+  @override
+  String get classic => 'Classic';
+
+  @override
+  String get personal => 'Personal';
+
+  @override
+  String get appConnection => 'App Connection';
+
+  @override
+  String get appConnectionDescription =>
+      'FlowSense AI and CycleSync share the same data and account, just with different branding and AI features.';
+
+  @override
+  String get dataSync =>
+      'All your cycle data, settings, and preferences sync automatically between both app versions.';
+
+  @override
+  String get aiFeatures => 'AI Features';
+
+  @override
+  String get aiFeaturesList =>
+      'Enhanced with advanced AI capabilities including cycle prediction, symptom pattern analysis, personalized insights, and health recommendations.';
+
+  @override
+  String get getHelpUsing => 'Get help using the app';
+
+  @override
+  String get signOutConfirmation => 'Are you sure you want to sign out?';
+
+  @override
+  String get customDisplayName => 'Custom Display Name';
+
+  @override
+  String get customDisplayNameDescription =>
+      'Enter a custom name for the app display:';
+
+  @override
+  String get enterCustomName => 'Enter custom name';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String aboutTitle(String appName) {
+    return 'About $appName';
+  }
+
+  @override
+  String get appDescription =>
+      'A modern cycle tracking app built with Flutter.';
+
+  @override
+  String get featureCycleTracking => 'Cycle logging and tracking';
+
+  @override
+  String get featureAnalytics => 'Analytics and insights';
+
+  @override
+  String get featureAI => 'AI-powered predictions';
+
+  @override
+  String get featureSmartInsights => 'Smart health insights';
+
+  @override
+  String get featureDarkMode => 'Dark mode support';
+
+  @override
+  String get featureCloudSync => 'Cloud synchronization';
+
+  @override
+  String get featurePrivacy => 'Privacy-focused design';
+
+  @override
+  String get close => 'Close';
+}
