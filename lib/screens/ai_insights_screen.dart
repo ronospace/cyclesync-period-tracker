@@ -323,35 +323,90 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
     }
 
     return Card(
-      child: Padding(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: qualityColor.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Container(
+        width: double.infinity,
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
+              mainAxisSize: MainAxisSize.max,
               children: [
-                Icon(qualityIcon, color: qualityColor),
-                const SizedBox(width: 8),
-                Text(
-                  'Data Quality: $qualityText',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: qualityColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    qualityIcon, 
                     color: qualityColor,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Data Quality: $qualityText',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: qualityColor,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            LinearProgressIndicator(
-              value: (quality.completeness + quality.consistency) / 2,
-              backgroundColor: Colors.grey.shade200,
-              valueColor: AlwaysStoppedAnimation<Color>(qualityColor),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                height: 6,
+                width: double.infinity,
+                child: LinearProgressIndicator(
+                  value: (quality.completeness + quality.consistency) / 2,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(qualityColor),
+                ),
+              ),
             ),
             const SizedBox(height: 8),
-            Text(
-              '${(_insights!.totalCyclesAnalyzed)} cycles analyzed • '
-              '${(quality.completeness * 100).round()}% complete data',
-              style: Theme.of(context).textTheme.bodySmall,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    '${(_insights!.totalCyclesAnalyzed)} cycles analyzed',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    '${(quality.completeness * 100).round()}% complete data',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

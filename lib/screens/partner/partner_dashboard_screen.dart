@@ -82,7 +82,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Widget _buildPartnersTab() {
     return StreamBuilder<List<PartnerRelationship>>(
-      stream: PartnerSharingService().getPartnersStream(),
+      stream: PartnerSharingService.instance.getPartnersStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -160,8 +160,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                 CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                   child: Text(
-                    partner.partnerName.isNotEmpty 
-                        ? partner.partnerName[0].toUpperCase()
+                    (partner.partnerName?.isNotEmpty == true)
+                        ? partner.partnerName![0].toUpperCase()
                         : '?',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -175,14 +175,14 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        partner.partnerName.isEmpty 
+                        (partner.partnerName?.isEmpty ?? true) 
                             ? partner.partnerEmail
-                            : partner.partnerName,
+                            : partner.partnerName!,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (partner.partnerName.isNotEmpty)
+                      if (partner.partnerName?.isNotEmpty == true)
                         Text(
                           partner.partnerEmail,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -220,7 +220,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Last activity: ${_getTimeAgo(partner.lastActivity)}',
+                  'Last activity: ${_getTimeAgo(partner.lastActivity ?? partner.createdAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -264,7 +264,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     );
   }
 
-  Widget _buildDataTypeChips(List<DataType> dataTypes) {
+  Widget _buildDataTypeChips(List<SharedDataType> dataTypes) {
     return Wrap(
       spacing: 8,
       runSpacing: 4,
@@ -316,7 +316,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Widget _buildSentInvitations() {
     return StreamBuilder<List<PartnerInvitation>>(
-      stream: PartnerSharingService().getSentInvitationsStream(),
+      stream: PartnerSharingService.instance.getSentInvitationsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -340,7 +340,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Widget _buildReceivedInvitations() {
     return StreamBuilder<List<PartnerInvitation>>(
-      stream: PartnerSharingService().getReceivedInvitationsStream(),
+      stream: PartnerSharingService.instance.getReceivedInvitationsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -383,7 +383,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
           Text(
             type == 'sent'
                 ? 'Invite someone to start sharing your cycle data'
-                : 'You haven\\'t received any partner invitations yet',
+                : "You haven't received any partner invitations yet",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -506,7 +506,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Widget _buildSharedDataTab() {
     return StreamBuilder<List<SharedDataEntry>>(
-      stream: PartnerSharingService().getSharedDataStream(),
+      stream: PartnerSharingService.instance.getSharedData('all'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -594,68 +594,100 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     }
   }
 
-  String _getPermissionText(SharedDataPermission permission) {
+  String _getPermissionText(SharingPermissionLevel permission) {
     switch (permission) {
-      case SharedDataPermission.viewOnly:
+      case SharingPermissionLevel.view:
         return 'View Only';
-      case SharedDataPermission.comment:
+      case SharingPermissionLevel.viewOnly:
+        return 'View Only';
+      case SharingPermissionLevel.comment:
         return 'Comment';
-      case SharedDataPermission.edit:
+      case SharingPermissionLevel.remind:
+        return 'Remind';
+      case SharingPermissionLevel.edit:
         return 'Edit';
     }
   }
 
-  String _getDataTypeTitle(DataType dataType) {
+  String _getDataTypeTitle(SharedDataType dataType) {
     switch (dataType) {
-      case DataType.cycleLength:
+      case SharedDataType.cycleStart:
+        return 'Cycle Start';
+      case SharedDataType.cycleLength:
         return 'Cycle Length';
-      case DataType.periodDates:
+      case SharedDataType.periodDates:
         return 'Period Dates';
-      case DataType.symptoms:
+      case SharedDataType.symptoms:
         return 'Symptoms';
-      case DataType.moods:
+      case SharedDataType.mood:
+        return 'Mood';
+      case SharedDataType.moods:
         return 'Moods';
-      case DataType.flowIntensity:
+      case SharedDataType.flowIntensity:
         return 'Flow Intensity';
-      case DataType.medications:
+      case SharedDataType.fertility:
+        return 'Fertility';
+      case SharedDataType.intimacy:
+        return 'Intimacy';
+      case SharedDataType.medications:
         return 'Medications';
-      case DataType.temperature:
+      case SharedDataType.appointments:
+        return 'Appointments';
+      case SharedDataType.temperature:
         return 'Temperature';
-      case DataType.cervicalMucus:
+      case SharedDataType.cervicalMucus:
         return 'Cervical Mucus';
-      case DataType.sexualActivity:
+      case SharedDataType.sexualActivity:
         return 'Sexual Activity';
-      case DataType.notes:
+      case SharedDataType.notes:
         return 'Personal Notes';
-      case DataType.predictions:
+      case SharedDataType.predictions:
         return 'Cycle Predictions';
+      case SharedDataType.analytics:
+        return 'Analytics';
+      case SharedDataType.reminders:
+        return 'Reminders';
     }
   }
 
-  IconData _getDataTypeIcon(DataType dataType) {
+  IconData _getDataTypeIcon(SharedDataType dataType) {
     switch (dataType) {
-      case DataType.cycleLength:
-        return Icons.timeline;
-      case DataType.periodDates:
+      case SharedDataType.cycleStart:
         return Icons.calendar_today;
-      case DataType.symptoms:
+      case SharedDataType.cycleLength:
+        return Icons.timeline;
+      case SharedDataType.periodDates:
+        return Icons.calendar_today;
+      case SharedDataType.symptoms:
         return Icons.healing;
-      case DataType.moods:
+      case SharedDataType.mood:
         return Icons.mood;
-      case DataType.flowIntensity:
+      case SharedDataType.moods:
+        return Icons.mood;
+      case SharedDataType.flowIntensity:
         return Icons.opacity;
-      case DataType.medications:
-        return Icons.medication;
-      case DataType.temperature:
-        return Icons.thermostat;
-      case DataType.cervicalMucus:
-        return Icons.water_drop;
-      case DataType.sexualActivity:
+      case SharedDataType.fertility:
+        return Icons.child_care;
+      case SharedDataType.intimacy:
         return Icons.favorite;
-      case DataType.notes:
+      case SharedDataType.medications:
+        return Icons.medication;
+      case SharedDataType.appointments:
+        return Icons.medical_services;
+      case SharedDataType.temperature:
+        return Icons.thermostat;
+      case SharedDataType.cervicalMucus:
+        return Icons.water_drop;
+      case SharedDataType.sexualActivity:
+        return Icons.favorite;
+      case SharedDataType.notes:
         return Icons.note;
-      case DataType.predictions:
+      case SharedDataType.predictions:
         return Icons.insights;
+      case SharedDataType.analytics:
+        return Icons.analytics;
+      case SharedDataType.reminders:
+        return Icons.notifications;
     }
   }
 
@@ -669,6 +701,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
         return Colors.red;
       case InvitationStatus.expired:
         return Colors.grey;
+      case InvitationStatus.cancelled:
+        return Colors.red;
     }
   }
 
@@ -682,6 +716,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
         return Icons.close;
       case InvitationStatus.expired:
         return Icons.timer_off;
+      case InvitationStatus.cancelled:
+        return Icons.cancel;
     }
   }
 
@@ -695,6 +731,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
         return 'Declined';
       case InvitationStatus.expired:
         return 'Expired';
+      case InvitationStatus.cancelled:
+        return 'Cancelled';
     }
   }
 
@@ -703,7 +741,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     // Implementation would show detailed shared data for this partner
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Viewing shared data with ${partner.partnerName}'),
+      content: Text('Viewing shared data with ${partner.partnerName ?? partner.partnerEmail}'),
       ),
     );
   }
@@ -725,7 +763,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
       builder: (context) => AlertDialog(
         title: const Text('Remove Partner'),
         content: Text(
-          'Are you sure you want to remove ${partner.partnerName}? '
+          'Are you sure you want to remove ${partner.partnerName ?? partner.partnerEmail}? '
           'They will no longer have access to your shared data.',
         ),
         actions: [

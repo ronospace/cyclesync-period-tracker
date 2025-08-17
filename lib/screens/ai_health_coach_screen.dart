@@ -1,20 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../services/ai_insights_engine.dart';
-import '../services/firebase_service.dart';
-import '../models/cycle_models.dart';
-import '../models/daily_log_models.dart';
-import '../services/enhanced_analytics_service.dart';
 
-/// 🚀 Mission Gamma: AI-Powered Health Coach Screen
-/// Intelligent personal health assistant with ML-powered insights and coaching
+/// 🚀 AI-Powered Health Coach Screen
+/// Intelligent personal health assistant with personalized insights and coaching
 class AIHealthCoachScreen extends StatefulWidget {
   const AIHealthCoachScreen({super.key});
 
   @override
   State<AIHealthCoachScreen> createState() => _AIHealthCoachScreenState();
 }
+
+// Mock data models for AI Health Coach
+class AIHealthInsights {
+  final double confidenceScore;
+  final WellbeingCoaching wellbeingCoaching;
+  final List<SymptomInsight> symptomInsights;
+  final List<PersonalizedRecommendation> personalizedRecommendations;
+  final List<PredictiveAlert> predictiveAlerts;
+  final CycleOptimization cycleOptimization;
+
+  AIHealthInsights({
+    required this.confidenceScore,
+    required this.wellbeingCoaching,
+    required this.symptomInsights,
+    required this.personalizedRecommendations,
+    required this.predictiveAlerts,
+    required this.cycleOptimization,
+  });
+}
+
+class WellbeingCoaching {
+  final String motivationalMessage;
+  final List<String> progressInsights;
+  final List<String> weeklyGoals;
+  final List<String> dailyHabits;
+
+  WellbeingCoaching({
+    required this.motivationalMessage,
+    required this.progressInsights,
+    required this.weeklyGoals,
+    required this.dailyHabits,
+  });
+}
+
+class SymptomInsight {
+  final String symptomName;
+  final int frequency;
+  final SymptomTrend trend;
+  final String recommendation;
+  final List<String> correlatedSymptoms;
+
+  SymptomInsight({
+    required this.symptomName,
+    required this.frequency,
+    required this.trend,
+    required this.recommendation,
+    required this.correlatedSymptoms,
+  });
+}
+
+class PersonalizedRecommendation {
+  final String title;
+  final String description;
+  final RecommendationCategory category;
+  final RecommendationPriority priority;
+  final double aiConfidence;
+  final List<String> suggestedActions;
+
+  PersonalizedRecommendation({
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.priority,
+    required this.aiConfidence,
+    required this.suggestedActions,
+  });
+}
+
+class PredictiveAlert {
+  final String title;
+  final String description;
+  final AlertSeverity severity;
+  final DateTime predictedDate;
+  final List<String> recommendedActions;
+
+  PredictiveAlert({
+    required this.title,
+    required this.description,
+    required this.severity,
+    required this.predictedDate,
+    required this.recommendedActions,
+  });
+}
+
+class CycleOptimization {
+  final Map<String, double> energyPredictions;
+  final Map<String, List<String>> optimalActivities;
+  final Map<String, List<String>> nutritionTiming;
+  final List<String> lifestyleAdjustments;
+
+  CycleOptimization({
+    required this.energyPredictions,
+    required this.optimalActivities,
+    required this.nutritionTiming,
+    required this.lifestyleAdjustments,
+  });
+}
+
+enum SymptomTrend { increasing, stable, decreasing }
+enum RecommendationCategory { lifestyle, nutrition, exercise, mentalHealth, painRelief, tracking, medical }
+enum RecommendationPriority { low, medium, high, urgent }
+enum AlertSeverity { low, medium, high, critical }
 
 class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerProviderStateMixin {
   bool _isLoading = true;
@@ -23,10 +120,6 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
   late TabController _tabController;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-
-  // Mock user data for now
-  List<CycleData> _cycles = [];
-  List<DailyLogEntry> _dailyLogs = [];
 
   @override
   void initState() {
@@ -50,50 +143,32 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
   }
 
   Future<void> _loadAIInsights() async {
+    if (!mounted) return;
+    
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      // Load cycle data
-      final cycleData = await FirebaseService.getCycles(limit: 100);
-      final cycles = cycleData.map((cycleMap) => CycleData(
-        id: cycleMap['id'] ?? '',
-        startDate: (cycleMap['start_date'] as DateTime?) ?? DateTime.now(),
-        endDate: cycleMap['end_date'] as DateTime?,
-        symptoms: (cycleMap['symptoms'] as List<dynamic>?)?.map((s) => 
-          Symptom.fromName(s['name'] ?? '') ?? Symptom.allSymptoms.first
-        ).toList() ?? [],
-        wellbeing: WellbeingData(
-          mood: (cycleMap['mood'] as num?)?.toDouble() ?? 3.0,
-          energy: (cycleMap['energy'] as num?)?.toDouble() ?? 3.0,
-          pain: (cycleMap['pain'] as num?)?.toDouble() ?? 1.0,
-        ),
-        notes: cycleMap['notes'] as String? ?? '',
-        createdAt: (cycleMap['created_at'] as DateTime?) ?? DateTime.now(),
-        updatedAt: (cycleMap['updated_at'] as DateTime?) ?? DateTime.now(),
-      )).toList();
+      // Simulate AI processing delay
+      await Future.delayed(const Duration(seconds: 2));
 
-      // For now, daily logs are empty but structure is ready
-      final dailyLogs = <DailyLogEntry>[];
+      if (!mounted) return;
 
-      // Generate AI insights
-      final insights = await AIInsightsEngine.generateInsights(
-        cycles: cycles,
-        dailyLogs: dailyLogs,
-        userId: 'current_user_id', // Replace with actual user ID
-      );
+      // Generate mock AI insights
+      final insights = _generateMockInsights();
 
       setState(() {
-        _cycles = cycles;
-        _dailyLogs = dailyLogs;
         _insights = insights;
         _isLoading = false;
       });
 
-      _animationController.forward();
+      if (mounted) {
+        _animationController.forward();
+      }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -101,68 +176,164 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
     }
   }
 
+  AIHealthInsights _generateMockInsights() {
+    return AIHealthInsights(
+      confidenceScore: 0.85,
+      wellbeingCoaching: WellbeingCoaching(
+        motivationalMessage: "You're doing great with your tracking! Your consistent data helps our AI provide better insights for your health journey.",
+        progressInsights: [
+          "Your cycle regularity has improved by 15% over the past 3 months",
+          "You've successfully reduced symptom severity through lifestyle changes",
+          "Your wellness tracking consistency is excellent - 92% completion rate"
+        ],
+        weeklyGoals: [
+          "Track daily mood and energy levels",
+          "Maintain consistent sleep schedule",
+          "Practice stress-reduction techniques 3x this week",
+          "Stay hydrated with 8+ glasses of water daily"
+        ],
+        dailyHabits: [
+          "Morning stretching or yoga (10 minutes)",
+          "Mindful check-in with body signals",
+          "Evening reflection and symptom logging",
+          "Limit caffeine after 2 PM for better sleep"
+        ],
+      ),
+      symptomInsights: [
+        SymptomInsight(
+          symptomName: "Headaches",
+          frequency: 65,
+          trend: SymptomTrend.decreasing,
+          recommendation: "Your headaches are showing a positive decreasing trend. Consider continuing your current stress management routine.",
+          correlatedSymptoms: ["fatigue", "mood_changes"],
+        ),
+        SymptomInsight(
+          symptomName: "Energy Levels",
+          frequency: 80,
+          trend: SymptomTrend.stable,
+          recommendation: "Your energy levels are stable. Focus on maintaining your current sleep and nutrition habits.",
+          correlatedSymptoms: ["sleep_quality", "exercise"],
+        ),
+      ],
+      personalizedRecommendations: [
+        PersonalizedRecommendation(
+          title: "Optimize Sleep Schedule",
+          description: "Your energy patterns suggest better sleep could improve your overall wellbeing.",
+          category: RecommendationCategory.lifestyle,
+          priority: RecommendationPriority.high,
+          aiConfidence: 0.85,
+          suggestedActions: [
+            "Set a consistent bedtime 30 minutes earlier",
+            "Create a wind-down routine",
+            "Limit screen time before bed",
+            "Track sleep quality in daily logs"
+          ],
+        ),
+        PersonalizedRecommendation(
+          title: "Stress Management Techniques",
+          description: "Based on your mood patterns, stress reduction could help improve your cycle experience.",
+          category: RecommendationCategory.mentalHealth,
+          priority: RecommendationPriority.medium,
+          aiConfidence: 0.78,
+          suggestedActions: [
+            "Practice 10-minute daily meditation",
+            "Try deep breathing exercises",
+            "Consider journaling before bed",
+            "Schedule regular breaks during the day"
+          ],
+        ),
+      ],
+      predictiveAlerts: [
+        PredictiveAlert(
+          title: "High Symptom Day Predicted",
+          description: "Based on your patterns, you may experience increased symptoms in 3-4 days.",
+          severity: AlertSeverity.medium,
+          predictedDate: DateTime.now().add(const Duration(days: 3)),
+          recommendedActions: [
+            "Ensure adequate rest",
+            "Stay hydrated",
+            "Have pain relief options ready",
+            "Consider lighter activities"
+          ],
+        ),
+      ],
+      cycleOptimization: CycleOptimization(
+        energyPredictions: {
+          "Menstrual": 2.5,
+          "Follicular": 4.0,
+          "Ovulatory": 4.5,
+          "Luteal": 3.0,
+        },
+        optimalActivities: {
+          "Menstrual": ["Gentle yoga", "Walking", "Meditation", "Rest"],
+          "Follicular": ["Cardio", "Dancing", "Social activities", "Planning"],
+          "Ovulatory": ["High-intensity workouts", "Presentations", "Social events"],
+          "Luteal": ["Strength training", "Organizing", "Self-care", "Preparation"],
+        },
+        nutritionTiming: {
+          "Menstrual": ["Iron-rich foods", "Warm beverages", "Comfort foods", "Magnesium"],
+          "Follicular": ["Fresh fruits", "Lean proteins", "Complex carbs", "Probiotics"],
+          "Ovulatory": ["Antioxidant-rich foods", "Healthy fats", "Fiber", "Hydration"],
+          "Luteal": ["B-vitamins", "Calcium", "Omega-3s", "Limit caffeine"],
+        },
+        lifestyleAdjustments: [
+          "Adjust exercise intensity based on cycle phase",
+          "Schedule important meetings during high-energy phases",
+          "Plan self-care activities during low-energy periods",
+          "Maintain consistent sleep schedule throughout cycle"
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: false,
-            pinned: true,
-            backgroundColor: Colors.deepPurple.shade50,
-            foregroundColor: Colors.deepPurple.shade700,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.deepPurple.shade700),
-              onPressed: () => context.go('/home'),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade50,
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Icon(Icons.psychology, color: Colors.deepPurple.shade700, size: 24),
+              const SizedBox(width: 8),
+              const Text('AI Health Coach'),
+            ],
+          ),
+          backgroundColor: Colors.deepPurple.shade50,
+          foregroundColor: Colors.deepPurple.shade700,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.deepPurple.shade700),
+            onPressed: () => context.go('/home'),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh, color: Colors.deepPurple.shade700),
+              onPressed: _loadAIInsights,
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.psychology, color: Colors.deepPurple.shade700, size: 24),
-                  const SizedBox(width: 8),
-                  const Text('AI Health Coach'),
+          ],
+          bottom: _isLoading || _error != null 
+            ? null 
+            : TabBar(
+                controller: _tabController,
+                labelColor: Colors.deepPurple.shade700,
+                unselectedLabelColor: Colors.deepPurple.shade400,
+                indicatorColor: Colors.deepPurple.shade600,
+                indicatorWeight: 3,
+                labelStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+                tabs: const [
+                  Tab(text: 'Coach', icon: Icon(Icons.psychology, size: 16)),
+                  Tab(text: 'Insights', icon: Icon(Icons.lightbulb, size: 16)),
+                  Tab(text: 'Alerts', icon: Icon(Icons.warning_amber, size: 16)),
+                  Tab(text: 'Optimize', icon: Icon(Icons.tune, size: 16)),
                 ],
               ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.deepPurple.shade100,
-                      Colors.purple.shade50,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.refresh, color: Colors.deepPurple.shade700),
-                onPressed: _loadAIInsights,
-              ),
-            ],
-            bottom: _isLoading || _error != null 
-              ? null 
-              : TabBar(
-                  controller: _tabController,
-                  labelColor: Colors.deepPurple.shade700,
-                  unselectedLabelColor: Colors.deepPurple.shade400,
-                  indicatorColor: Colors.deepPurple.shade600,
-                  tabs: const [
-                    Tab(text: 'Coach', icon: Icon(Icons.psychology, size: 16)),
-                    Tab(text: 'Insights', icon: Icon(Icons.lightbulb, size: 16)),
-                    Tab(text: 'Alerts', icon: Icon(Icons.warning_amber, size: 16)),
-                    Tab(text: 'Optimize', icon: Icon(Icons.tune, size: 16)),
-                  ],
-                ),
-          ),
-          SliverFillRemaining(
-            child: _buildBody(),
-          ),
-        ],
+        ),
+        body: _buildBody(),
       ),
     );
   }

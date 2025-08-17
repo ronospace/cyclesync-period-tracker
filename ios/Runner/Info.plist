@@ -70,6 +70,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>CycleSync needs health data access to provide personalized cycle tracking and health insights.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>CycleSync would like to read your health data to provide better cycle insights and tracking.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

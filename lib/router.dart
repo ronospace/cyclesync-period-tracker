@@ -23,7 +23,7 @@ import 'screens/health_insights_screen.dart'; // 🏥 ENHANCED
 import 'screens/export_screen.dart'; // 📤 EXPORT & BACKUP
 import 'screens/help_support_screen.dart'; // ❓ HELP & SUPPORT
 import 'screens/ai_analytics_dashboard.dart'; // 🧠 AI ANALYTICS
-// import 'screens/ai_health_coach_screen.dart'; // 🤖 DISABLED FOR TESTING
+import 'screens/ai_health_coach_screen.dart'; // 🤖 AI HEALTH COACH
 import 'screens/settings/language_selector_screen.dart'; // 🌍 LANGUAGE SELECTOR
 import 'screens/smart_daily_log_screen.dart'; // 🌸 SMART DAILY LOG
 import 'screens/social/social_feed_screen.dart'; // 📱 SOCIAL FEED
@@ -168,33 +168,7 @@ class AppRouter {
         ),
         GoRoute(
           path: '/ai-health-coach',
-          builder: (context, state) => Scaffold(
-            appBar: AppBar(
-              title: const Text('🤖 AI Health Coach'),
-              backgroundColor: Colors.indigo.shade50,
-              foregroundColor: Colors.indigo.shade700,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.indigo.shade700),
-                onPressed: () => context.go('/home'),
-              ),
-            ),
-            body: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.smart_toy, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('AI Health Coach', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
-                  Text('Coming Soon!', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  SizedBox(height: 16),
-                  Text('Your personal AI wellness advisor will be available soon',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                      textAlign: TextAlign.center),
-                ],
-              ),
-            ),
-          ),
+          builder: (context, state) => const AIHealthCoachScreen(),
         ),
         GoRoute(
           path: '/export',

@@ -874,19 +874,6 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () => context.push('/settings'),
             tooltip: 'Settings',
           ),
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.pink.shade700,
-            ),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              if (context.mounted) {
-                context.go('/login');
-              }
-            },
-            tooltip: 'Sign Out',
-          ),
         ],
       ),
       body: RefreshIndicator(

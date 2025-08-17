@@ -94,6 +94,38 @@ class SettingsScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                      IconButton(
+                        icon: const Icon(Icons.logout, color: Colors.red),
+                        onPressed: () async {
+                          // Show confirmation dialog
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Sign Out'),
+                              content: const Text('Are you sure you want to sign out?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  child: const Text('Sign Out', style: TextStyle(color: Colors.white)),
+                                ),
+                              ],
+                            ),
+                          );
+                          
+                          if (confirmed == true) {
+                            await FirebaseAuth.instance.signOut();
+                            if (context.mounted) {
+                              context.go('/login');
+                            }
+                          }
+                        },
+                        tooltip: 'Sign Out',
+                      ),
                     ],
                   ),
                 ),
