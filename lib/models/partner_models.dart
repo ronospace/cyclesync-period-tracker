@@ -33,6 +33,14 @@ enum SharedDataType {
   analytics,            // Cycle analytics
   reminders,            // Shared reminders
   notes,                // Personal notes
+  
+  // Legacy compatibility aliases
+  periodDates,          // Alias for cycleStart
+  moods,               // Alias for mood
+  flowIntensity,       // Flow intensity data
+  temperature,         // Basal body temperature
+  cervicalMucus,       // Cervical mucus observations
+  sexualActivity,      // Sexual activity tracking
 }
 
 /// Permission levels for shared data
@@ -41,6 +49,9 @@ enum SharingPermissionLevel {
   comment,              // Can view and add comments
   remind,               // Can view, comment, and send reminders
   edit,                 // Full access (rare, mainly for healthcare providers)
+  
+  // Legacy compatibility alias
+  viewOnly,            // Alias for view
 }
 
 /// Main partner relationship model
@@ -258,6 +269,11 @@ class PartnerRelationship {
       case PartnerType.custom: return 'Contact';
     }
   }
+
+  // Compatibility getters for dashboard screens
+  SharingPermissionLevel get permission => SharingPermissionLevel.view;
+  List<SharedDataType> get sharedDataTypes => sharingPermissions.keys.toList();
+  DateTime? get lastActivity => lastActiveAt;
 }
 
 /// Actions that partners can perform
@@ -295,6 +311,14 @@ class PartnerInvitation {
     this.status = InvitationStatus.pending,
     this.proposedPermissions = const {},
   });
+
+  // Compatibility getters for dashboard screens
+  String get inviteeEmail => toEmail;
+  String get inviterEmail => fromUserEmail;
+  String? get personalMessage => customMessage;
+  SharingPermissionLevel get permission => SharingPermissionLevel.view;
+  List<SharedDataType> get dataTypes => proposedPermissions.keys.toList();
+  DateTime get sentAt => createdAt;
 
   Map<String, dynamic> toMap() {
     return {
@@ -366,6 +390,10 @@ class SharedDataEntry {
     this.comments = const [],
     this.isPrivate = false,
   });
+
+  // Compatibility getters for dashboard screens
+  List<String> get sharedWithEmails => [];
+  DateTime get sharedAt => timestamp;
 
   Map<String, dynamic> toMap() {
     return {
@@ -522,6 +550,11 @@ enum PartnerNotificationType {
   comment,
   general,
 }
+
+// Type aliases for compatibility
+typedef DataType = SharedDataType;
+typedef SharedDataPermission = SharingPermissionLevel;
+typedef SharingTemplate = SharingTemplates;
 
 /// Default sharing templates for different partner types
 class SharingTemplates {

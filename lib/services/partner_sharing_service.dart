@@ -104,6 +104,18 @@ class PartnerSharingService {
             .toList());
   }
 
+  /// Alias for getSentInvitations for compatibility
+  Stream<List<PartnerInvitation>> getSentInvitationsStream() => getSentInvitations();
+
+  /// Alias for getPendingInvitations for compatibility
+  Stream<List<PartnerInvitation>> getReceivedInvitationsStream() => getPendingInvitations();
+
+  /// Alias for getPartnerRelationships for compatibility
+  Stream<List<PartnerRelationship>> getPartnersStream() => getPartnerRelationships();
+
+  /// Alias for getSharedData for compatibility
+  Stream<List<SharedDataEntry>> getSharedDataStream(String relationshipId) => getSharedData(relationshipId);
+
   /// Accept partner invitation
   Future<bool> acceptPartnerInvitation(String invitationId) async {
     try {
@@ -640,5 +652,49 @@ class PartnerSharingService {
     } catch (e) {
       ErrorService.logError(e, context: 'Cleanup expired invitations');
     }
+  }
+
+  /// Send invitation (alias for sendPartnerInvitation)
+  Future<bool> sendInvitation({
+    required String partnerEmail,
+    required PartnerType relationshipType,
+    String? customMessage,
+    Map<SharedDataType, SharingPermissionLevel>? customPermissions,
+  }) async {
+    final result = await sendPartnerInvitation(
+      partnerEmail: partnerEmail,
+      relationshipType: relationshipType,
+      customMessage: customMessage,
+      customPermissions: customPermissions,
+    );
+    return result != null;
+  }
+
+  /// Accept invitation (alias for acceptPartnerInvitation)
+  Future<bool> acceptInvitation(String invitationId) async {
+    return await acceptPartnerInvitation(invitationId);
+  }
+
+  /// Decline invitation (alias for declinePartnerInvitation)
+  Future<bool> declineInvitation(String invitationId) async {
+    return await declinePartnerInvitation(invitationId);
+  }
+
+  /// Cancel invitation
+  Future<bool> cancelInvitation(String invitationId) async {
+    try {
+      await _invitationsCollection.doc(invitationId).update({
+        'status': InvitationStatus.cancelled.name,
+      });
+      return true;
+    } catch (e) {
+      ErrorService.logError(e, context: 'Cancel invitation');
+      return false;
+    }
+  }
+
+  /// Remove partner (alias for removePartnerRelationship)
+  Future<bool> removePartner(String relationshipId) async {
+    return await removePartnerRelationship(relationshipId);
   }
 }

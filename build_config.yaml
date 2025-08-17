@@ -1,0 +1,106 @@
+# Flutter Build Configuration for Production Optimizations
+# This file configures advanced build settings for optimal production performance
+
+build:
+  # Enable tree shaking to remove unused code
+  tree_shake_icons: true
+  
+  # Enable deferred component loading
+  deferred_components: true
+  
+  # Split debug info for smaller app size
+  split_debug_info: true
+  
+  # Obfuscate Dart code for security
+  obfuscate: true
+  
+  # Enable code shrinking
+  shrink: true
+
+# Android specific optimizations
+android:
+  # Enable ProGuard for additional optimization
+  enable_proguard: true
+  
+  # Enable R8 for better code optimization
+  enable_r8: true
+  
+  # Minimize resources
+  shrink_resources: true
+  
+  # Enable app bundle for smaller download size
+  build_app_bundle: true
+  
+  # Multi-APK support for different architectures
+  split_per_abi: true
+
+# iOS specific optimizations  
+ios:
+  # Bitcode for app store optimization
+  enable_bitcode: true
+  
+  # Strip debug symbols
+  strip_debug_symbols: true
+  
+  # Enable link time optimization
+  enable_lto: true
+
+# Web specific optimizations
+web:
+  # Enable code splitting
+  code_splitting: true
+  
+  # Enable service worker for caching
+  service_worker: true
+  
+  # Compress assets
+  compress_assets: true
+  
+  # PWA optimization
+  pwa_optimization: true
+
+# Performance optimizations
+performance:
+  # Enable lazy loading
+  lazy_loading: true
+  
+  # Image optimization
+  image_optimization:
+    enabled: true
+    quality: 85
+    progressive: true
+  
+  # Font optimization
+  font_optimization:
+    enabled: true
+    subset: true
+  
+  # Cache optimization
+  cache_optimization:
+    enabled: true
+    max_age: 31536000  # 1 year
+  
+# Security enhancements
+security:
+  # Enable certificate pinning
+  certificate_pinning: true
+  
+  # Encrypt sensitive data
+  encrypt_sensitive_data: true
+  
+  # Enable runtime application self-protection
+  rasp: true
+
+# Analytics and monitoring
+monitoring:
+  # Performance monitoring
+  performance_monitoring: true
+  
+  # Crash reporting
+  crash_reporting: true
+  
+  # Usage analytics
+  usage_analytics: true
+  
+  # Error boundary
+  error_boundary: true
