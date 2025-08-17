@@ -130,6 +130,16 @@ class ContactIntegrationService {
   // Platform method channels (would need native implementation)
   static const MethodChannel _whatsappChannel = MethodChannel('cyclesync/whatsapp');
   static const MethodChannel _telegramChannel = MethodChannel('cyclesync/telegram');
+  
+  // Predefined important contacts
+  static const List<ContactInfo> _predefinedContacts = [
+    ContactInfo(
+      id: 'whatsapp_support',
+      name: 'CycleSync Support',
+      phoneNumber: '+4917627702411',
+      platform: ContactPlatform.whatsapp,
+    ),
+  ];
 
   /// Request necessary permissions
   Future<bool> requestPermissions() async {
@@ -236,12 +246,38 @@ class ContactIntegrationService {
     }
   }
 
+  /// Get predefined important contacts
+  List<ContactInfo> getPredefinedContacts() {
+    return List.from(_predefinedContacts);
+  }
+
+  /// Add predefined contact to user's contacts
+  Future<bool> addPredefinedContact(String contactId) async {
+    if (currentUserId == null) return false;
+    
+    try {
+      final contact = _predefinedContacts.firstWhere(
+        (c) => c.id == contactId,
+        orElse: () => throw Exception('Predefined contact not found'),
+      );
+      
+      await _saveContactToFirestore(contact);
+      return true;
+    } catch (e) {
+      debugPrint('Error adding predefined contact: $e');
+      return false;
+    }
+  }
+
   /// Sync all contacts from all platforms
   Future<List<ContactInfo>> syncAllContacts({bool forceRefresh = false}) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
       final List<ContactInfo> allContacts = [];
+
+      // Add predefined important contacts first
+      allContacts.addAll(_predefinedContacts);
 
       // Get contacts from all platforms
       final deviceContacts = await getDeviceContacts();
@@ -252,8 +288,17 @@ class ContactIntegrationService {
       allContacts.addAll(whatsappContacts);
       allContacts.addAll(telegramContacts);
 
+      // Remove duplicates based on phone number
+      final Map<String, ContactInfo> uniqueContacts = {};
+      for (final contact in allContacts) {
+        final key = contact.phoneNumber ?? contact.email ?? contact.id;
+        if (!uniqueContacts.containsKey(key)) {
+          uniqueContacts[key] = contact;
+        }
+      }
+
       // Check which contacts are app users
-      final updatedContacts = await _checkAppUsers(allContacts);
+      final updatedContacts = await _checkAppUsers(uniqueContacts.values.toList());
 
       // Save to Firestore
       await _saveContactsToFirestore(updatedContacts, forceRefresh);
@@ -295,6 +340,15 @@ class ContactIntegrationService {
       debugPrint('Error getting synced contacts: $e');
       return [];
     }
+  }
+
+  /// Quick share to CycleSync support via WhatsApp
+  Future<bool> shareToSupport(ShareMessage message) async {
+    const supportContact = '+4917627702411';
+    return await shareViaWhatsApp(
+      phoneNumber: supportContact,
+      message: message,
+    );
   }
 
   /// Share cycle data via WhatsApp
@@ -427,6 +481,37 @@ class ContactIntegrationService {
              (contact.phoneNumber?.contains(query) ?? false) ||
              (contact.email?.toLowerCase().contains(queryLower) ?? false);
     }).toList();
+  }
+
+  /// Create support/help message
+  static ShareMessage createSupportMessage({
+    required String subject,
+    required String message,
+    Map<String, dynamic>? diagnosticInfo,
+  }) {
+    final content = '''
+🆘 Support Request
+
+Subject: $subject
+
+Message: $message
+
+${diagnosticInfo != null ? 'Diagnostic Info: ${diagnosticInfo.toString()}' : ''}
+
+Sent from CycleSync App 💜
+''';
+
+    return ShareMessage(
+      title: 'Support Request',
+      content: content.trim(),
+      type: ShareType.custom,
+      data: {
+        'subject': subject,
+        'message': message,
+        'diagnosticInfo': diagnosticInfo,
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
   }
 
   /// Create quick share messages
@@ -565,6 +650,25 @@ Shared from CycleSync 💜
     }
   }
 
+  Future<void> _saveContactToFirestore(ContactInfo contact) async {
+    if (currentUserId == null) return;
+
+    try {
+      final userContactsRef = _firestore
+          .collection(_contactsCollection)
+          .doc(currentUserId)
+          .collection('contacts');
+
+      final contactWithTimestamp = contact.copyWith(
+        lastSynced: DateTime.now(),
+      );
+      
+      await userContactsRef.doc(contact.id).set(contactWithTimestamp.toMap());
+    } catch (e) {
+      debugPrint('Error saving contact to Firestore: $e');
+    }
+  }
+
   Future<void> _saveContactsToFirestore(
     List<ContactInfo> contacts, 
     bool forceRefresh,
@@ -608,6 +712,7 @@ Shared from CycleSync 💜
         'lastSynced': DateTime.now().toIso8601String(),
         'totalContacts': contacts.length,
         'appUsers': contacts.where((c) => c.isAppUser).length,
+        'predefinedContacts': _predefinedContacts.length,
       }, SetOptions(merge: true));
     } catch (e) {
       debugPrint('Error saving contacts to Firestore: $e');
