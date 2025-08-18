@@ -116,6 +116,10 @@ class PartnerSharingService {
   /// Alias for getSharedData for compatibility
   Stream<List<SharedDataEntry>> getSharedDataStream(String relationshipId) => getSharedData(relationshipId);
 
+  /// Alias methods for dashboard compatibility
+  Future<bool> removePartner(String relationshipId) => removePartnerRelationship(relationshipId);
+  Future<bool> cancelPartnerInvitation(String invitationId) => declinePartnerInvitation(invitationId);
+
   /// Accept partner invitation
   Future<bool> acceptPartnerInvitation(String invitationId) async {
     try {

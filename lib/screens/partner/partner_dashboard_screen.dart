@@ -268,25 +268,25 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     return Wrap(
       spacing: 8,
       runSpacing: 4,
-      children: dataTypes.take(3).map((dataType) {
-        return Chip(
-          label: Text(
-            _getDataTypeTitle(dataType),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-        );
-      }).toList()
-        ..add(
-          if (dataTypes.length > 3)
-            Chip(
-              label: Text(
-                '+${dataTypes.length - 3} more',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      children: [
+        ...dataTypes.take(3).map((dataType) {
+          return Chip(
+            label: Text(
+              _getDataTypeTitle(dataType),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
-        ),
+            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+          );
+        }),
+        if (dataTypes.length > 3)
+          Chip(
+            label: Text(
+              '+${dataTypes.length - 3} more',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+          ),
+      ],
     );
   }
 
@@ -782,7 +782,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
     if (confirmed == true) {
       try {
-        final success = await PartnerSharingService().removePartner(partner.id);
+        final success = await PartnerSharingService.instance.removePartner(partner.id);
         if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -805,7 +805,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Future<void> _acceptInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService().acceptInvitation(invitationId);
+      final success = await PartnerSharingService.instance.acceptPartnerInvitation(invitationId);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -827,7 +827,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Future<void> _declineInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService().declineInvitation(invitationId);
+      final success = await PartnerSharingService.instance.declinePartnerInvitation(invitationId);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -849,7 +849,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Future<void> _cancelInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService().cancelInvitation(invitationId);
+      final success = await PartnerSharingService.instance.cancelPartnerInvitation(invitationId);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
