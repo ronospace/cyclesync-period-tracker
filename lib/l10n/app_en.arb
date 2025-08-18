@@ -1155,5 +1155,62 @@
   "manualSyncCompleted": "Manual sync completed successfully!",
   "@manualSyncCompleted": {
     "description": "Manual sync success message"
+  },
+
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "signInWithGoogle": "Continue with Google",
+  "@signInWithGoogle": {
+    "description": "Google sign-in button"
+  },
+  "signInWithApple": "Continue with Apple",
+  "@signInWithApple": {
+    "description": "Apple sign-in button"
+  },
+  "tryAsGuest": "Try as Guest",
+  "@tryAsGuest": {
+    "description": "Guest sign-in button"
+  },
+  "orContinueWithEmail": "or email",
+  "@orContinueWithEmail": {
+    "description": "Email option divider"
+  },
+  "dontHaveAccount": "Don't have an account? ",
+  "@dontHaveAccount": {
+    "description": "Sign up prompt"
+  },
+  "alreadyHaveAccount": "Already have an account? ",
+  "@alreadyHaveAccount": {
+    "description": "Sign in prompt"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account title"
+  },
+  "joinCycleSyncCommunity": "Join the CycleSync community",
+  "@joinCycleSyncCommunity": {
+    "description": "Sign up subtitle"
+  },
+  "passwordHelp": "At least 6 characters",
+  "@passwordHelp": {
+    "description": "Password field help text"
+  },
+  "termsAgreement": "By creating an account, you agree to our Terms of Service and Privacy Policy",
+  "@termsAgreement": {
+    "description": "Terms agreement text"
   }
 }

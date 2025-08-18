@@ -227,56 +227,56 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.template_outlined),
+            leading: const Icon(Icons.article_outlined),
             title: const Text('Quick Share Templates'),
             subtitle: const Text('Create templates for common sharing scenarios'),
             trailing: const Icon(Icons.chevron_right),
             onTap: _manageSharingTemplates,
           ),
           const Divider(height: 1),
-          ...SharingTemplate.defaults.map((template) {
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                child: Icon(
-                  _getTemplateIcon(template.name),
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+          // Sharing templates would be loaded from a service
+          // For now, show placeholder templates
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              child: Icon(
+                _getTemplateIcon('Basic Sharing Template'),
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
+            ),
+            title: const Text('Basic Sharing Template'),
+            subtitle: const Text('Core cycle data'),
+            trailing: PopupMenuButton<String>(
+              onSelected: (action) => _handleTemplateAction(action, 'basic'),
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text('Edit'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ),
-              ),
-              title: Text(template.name),
-              subtitle: Text('${template.dataTypes.length} data types'),
-              trailing: PopupMenuButton<String>(
-                onSelected: (action) => _handleTemplateAction(action, template),
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: ListTile(
-                      leading: Icon(Icons.edit),
-                      title: Text('Edit'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
+                const PopupMenuItem(
+                  value: 'duplicate',
+                  child: ListTile(
+                    leading: Icon(Icons.copy),
+                    title: Text('Duplicate'),
+                    contentPadding: EdgeInsets.zero,
                   ),
-                  const PopupMenuItem(
-                    value: 'duplicate',
-                    child: ListTile(
-                      leading: Icon(Icons.copy),
-                      title: Text('Duplicate'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
+                ),
+                // Show delete option for custom templates
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: ListTile(
+                    leading: Icon(Icons.delete, color: Colors.red),
+                    title: Text('Delete'),
+                    contentPadding: EdgeInsets.zero,
                   ),
-                  if (!template.isDefault)
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: ListTile(
-                        leading: Icon(Icons.delete, color: Colors.red),
-                        title: Text('Delete'),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                ],
-              ),
-            );
-          }),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -328,6 +328,8 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
         return 'Personal Notes';
       case DataType.predictions:
         return 'Cycle Predictions';
+      default:
+        return 'Unknown';
     }
   }
 
@@ -355,6 +357,8 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
         return 'Personal notes and observations';
       case DataType.predictions:
         return 'AI-generated cycle predictions';
+      default:
+        return 'Data type';
     }
   }
 
@@ -383,7 +387,7 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
       case 'full transparency':
         return Icons.visibility;
       default:
-        return Icons.template_outlined;
+        return Icons.article_outlined;
     }
   }
 
@@ -525,43 +529,43 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
     );
   }
 
-  void _handleTemplateAction(String action, SharingTemplate template) {
+  void _handleTemplateAction(String action, String templateId) {
     switch (action) {
       case 'edit':
-        _editTemplate(template);
+        _editTemplate(templateId);
         break;
       case 'duplicate':
-        _duplicateTemplate(template);
+        _duplicateTemplate(templateId);
         break;
       case 'delete':
-        _deleteTemplate(template);
+        _deleteTemplate(templateId);
         break;
     }
   }
 
-  void _editTemplate(SharingTemplate template) {
+  void _editTemplate(String templateId) {
     // Navigate to template editor
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Editing template: ${template.name}'),
+        content: Text('Editing template: $templateId'),
       ),
     );
   }
 
-  void _duplicateTemplate(SharingTemplate template) {
+  void _duplicateTemplate(String templateId) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Template "${template.name}" duplicated'),
+        content: Text('Template "$templateId" duplicated'),
       ),
     );
   }
 
-  void _deleteTemplate(SharingTemplate template) async {
+  void _deleteTemplate(String templateId) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Template'),
-        content: Text('Are you sure you want to delete "${template.name}"?'),
+        content: Text('Are you sure you want to delete "$templateId"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -579,7 +583,7 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
     if (confirmed == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Template "${template.name}" deleted'),
+          content: Text('Template "$templateId" deleted'),
           backgroundColor: Colors.orange,
         ),
       );

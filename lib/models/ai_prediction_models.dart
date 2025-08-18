@@ -102,31 +102,31 @@ class NextCyclePrediction {
 
 /// Flow intensity prediction
 class FlowIntensityPrediction {
-  final FlowIntensity predictedIntensity;
+  final FlowIntensity predicted;
   final double confidence;
-  final Map<FlowIntensity, double> probabilityDistribution;
+  final Map<FlowIntensity, double> probabilities;
 
   FlowIntensityPrediction({
-    required this.predictedIntensity,
+    required this.predicted,
     required this.confidence,
-    required this.probabilityDistribution,
+    required this.probabilities,
   });
 }
 
 /// Fertility window prediction
 class FertilityWindow {
   final int cycleNumber;
-  final DateTime startDate;
-  final DateTime endDate;
+  final DateTime windowStart;
+  final DateTime windowEnd;
+  final DateTime peakFertility;
   final double confidence;
-  final FertilityPhase phase;
 
   FertilityWindow({
     required this.cycleNumber,
-    required this.startDate,
-    required this.endDate,
+    required this.windowStart,
+    required this.windowEnd,
+    required this.peakFertility,
     required this.confidence,
-    required this.phase,
   });
 }
 
@@ -189,17 +189,15 @@ class WellbeingPrediction {
   final WellbeingType type;
   final double predictedValue;
   final double confidence;
-  final List<int> peakDays;
-  final List<int> lowDays;
   final WellbeingTrend trend;
+  final Map<int, double> cycleDayVariations;
 
   WellbeingPrediction({
     required this.type,
     required this.predictedValue,
     required this.confidence,
-    required this.peakDays,
-    required this.lowDays,
     required this.trend,
+    required this.cycleDayVariations,
   });
 }
 
@@ -216,54 +214,70 @@ class WellbeingTrend {
     required this.magnitude,
     required this.confidence,
   });
+
+  static WellbeingTrend get stable => WellbeingTrend(
+    direction: TrendDirection.stable,
+    magnitude: 0.0,
+    confidence: 1.0,
+  );
+
+  static WellbeingTrend get improving => WellbeingTrend(
+    direction: TrendDirection.increasing,
+    magnitude: 0.5,
+    confidence: 0.8,
+  );
+
+  static WellbeingTrend get declining => WellbeingTrend(
+    direction: TrendDirection.decreasing,
+    magnitude: 0.5,
+    confidence: 0.8,
+  );
 }
 
 /// Personalized insight from AI analysis
 class PersonalizedInsight {
   final String title;
-  final String description;
+  final String message;
   final InsightType type;
-  final InsightPriority priority;
   final double confidence;
-  final List<String> actionItems;
-  final DateTime? relevantDate;
+  final InsightSeverity severity;
+  final bool actionable;
+  final List<String> recommendations;
 
   PersonalizedInsight({
     required this.title,
-    required this.description,
+    required this.message,
     required this.type,
-    required this.priority,
     required this.confidence,
-    this.actionItems = const [],
-    this.relevantDate,
+    required this.severity,
+    required this.actionable,
+    required this.recommendations,
   });
 }
 
-enum InsightType { cycle, symptom, wellness, prediction }
-enum InsightPriority { low, medium, high, urgent }
+enum InsightType { cycle, symptom, wellness, prediction, cycleRegularity, symptomPattern }
+enum InsightSeverity { positive, neutral, warning, critical }
 
 /// AI-generated recommendation
 class AIRecommendation {
   final String title;
   final String description;
+  final String action;
+  final double confidence;
   final RecommendationType type;
   final RecommendationPriority priority;
-  final List<String> actionSteps;
-  final DateTime? dueDate;
-  final bool isPersonalized;
 
   AIRecommendation({
     required this.title,
     required this.description,
+    required this.action,
+    required this.confidence,
     required this.type,
     required this.priority,
-    required this.actionSteps,
-    this.dueDate,
-    this.isPersonalized = true,
   });
 }
 
-enum RecommendationType { lifestyle, medical, tracking, wellness }
+enum RecommendationType { lifestyle, medical, tracking, wellness, dataCollection, healthIntegration }
 enum RecommendationPriority { low, medium, high }
 
 /// Flow intensity enum for cycle tracking

@@ -857,4 +857,47 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get manualSyncCompleted => 'Manual sync completed successfully!';
+
+  @override
+  String get signIn => 'Sign In';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get signInWithGoogle => 'Continue with Google';
+
+  @override
+  String get signInWithApple => 'Continue with Apple';
+
+  @override
+  String get tryAsGuest => 'Try as Guest';
+
+  @override
+  String get orContinueWithEmail => 'or email';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? ';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? ';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get joinCycleSyncCommunity => 'Join the CycleSync community';
+
+  @override
+  String get passwordHelp => 'At least 6 characters';
+
+  @override
+  String get termsAgreement =>
+      'By creating an account, you agree to our Terms of Service and Privacy Policy';
 }

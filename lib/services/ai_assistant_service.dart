@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'cache_service.dart';
 import 'navigation_service.dart';
 
 /// Message types for the AI Assistant
@@ -455,7 +454,8 @@ class AIAssistantService extends ChangeNotifier {
 
   Future<String> _generateAIResponse(String userMessage, Map<String, dynamic> metadata) async {
     // Simulate AI processing delay
-    await Future.delayed(const Duration(milliseconds: 1500 + (500 * (DateTime.now().millisecond % 3))));
+    final randomDelay = 1500 + (500 * (DateTime.now().millisecond % 3));
+    await Future.delayed(Duration(milliseconds: randomDelay));
 
     final context = await _buildCurrentContext();
     final lowerMessage = userMessage.toLowerCase();
@@ -722,23 +722,6 @@ class AIAssistantService extends ChangeNotifier {
     }
   }
 
-  AIConversationSession copyWith({
-    String? id,
-    List<AIMessage>? messages,
-    DateTime? startedAt,
-    DateTime? lastActivityAt,
-    String? title,
-    Map<String, dynamic>? metadata,
-  }) {
-    return AIConversationSession(
-      id: id ?? this.id,
-      messages: messages ?? this.messages,
-      startedAt: startedAt ?? this.startedAt,
-      lastActivityAt: lastActivityAt ?? this.lastActivityAt,
-      title: title ?? this.title,
-      metadata: metadata ?? this.metadata,
-    );
-  }
 }
 
 // Extension methods for AIConversationSession

@@ -461,13 +461,14 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
             ],
           ),
           ],
+        ),
       ),
     );
   }
 
   Widget _buildCommunityInsightsCard() {
     final insights = _communityInsights!.insights!;
-    final participantCount = _communityInsights!.participantCount ?? 0;
+    final participantCount = (_communityInsights as dynamic)?.participantCount ?? 0;
 
     return Card(
       child: Padding(
@@ -509,7 +510,7 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
           ),
           const SizedBox(height: 4),
           Text(
-            insight.value,
+            (insight as dynamic).value ?? '',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -714,5 +715,3 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
   }
 }
 
-// Enum used by dialogs
-enum ShareType { healthcare, partner }

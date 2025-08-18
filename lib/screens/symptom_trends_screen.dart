@@ -142,7 +142,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
           children: [
             Row(
               children: [
-                Icon(Icons.trending_up, color: Colors.purple.shade600, size: 28),
+                Icon(Icons.trending_up, color: Theme.of(context).colorScheme.primary, size: 28),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -160,12 +160,12 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                       Text(
                         _selectedTimeRange,
                         style: TextStyle(
-                          color: Colors.purple.shade600,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Icon(Icons.expand_more, color: Colors.purple.shade600, size: 20),
+                      Icon(Icons.expand_more, color: Theme.of(context).colorScheme.primary, size: 20),
                     ],
                   ),
                   onSelected: (value) {
@@ -186,7 +186,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
             Text(
               'Track patterns in your symptoms and wellbeing over time',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),

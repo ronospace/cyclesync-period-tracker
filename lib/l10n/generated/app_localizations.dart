@@ -1712,6 +1712,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manual sync completed successfully!'**
   String get manualSyncCompleted;
+
+  /// Sign in button
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signIn;
+
+  /// Sign up button
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// Password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// Google sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get signInWithGoogle;
+
+  /// Apple sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get signInWithApple;
+
+  /// Guest sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Try as Guest'**
+  String get tryAsGuest;
+
+  /// Email option divider
+  ///
+  /// In en, this message translates to:
+  /// **'or email'**
+  String get orContinueWithEmail;
+
+  /// Sign up prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get dontHaveAccount;
+
+  /// Sign in prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get alreadyHaveAccount;
+
+  /// Create account title
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccount;
+
+  /// Sign up subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Join the CycleSync community'**
+  String get joinCycleSyncCommunity;
+
+  /// Password field help text
+  ///
+  /// In en, this message translates to:
+  /// **'At least 6 characters'**
+  String get passwordHelp;
+
+  /// Terms agreement text
+  ///
+  /// In en, this message translates to:
+  /// **'By creating an account, you agree to our Terms of Service and Privacy Policy'**
+  String get termsAgreement;
 }
 
 class _AppLocalizationsDelegate

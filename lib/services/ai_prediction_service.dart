@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
-import '../models/cycle_models.dart';
+import '../models/cycle_models.dart' hide InsightType, FlowIntensity;
 import '../models/ai_prediction_models.dart';
 import 'firebase_service.dart';
 import 'error_service.dart';
@@ -235,9 +235,10 @@ class AIPredictionService {
           final symptomName = symptom.toString();
           symptomOccurrences.putIfAbsent(symptomName, () => []);
           symptomOccurrences[symptomName]!.add(SymptomOccurrence(
-            cycleIndex: i,
-            cycleStart: startDate,
+            symptomName: symptomName,
+            date: startDate,
             dayInCycle: 1, // Simplified - would be more complex in real implementation
+            intensity: 1.0, // Simplified - would be actual intensity data
           ));
         }
       }
@@ -257,7 +258,8 @@ class AIPredictionService {
           symptomName: symptomName,
           frequency: frequency,
           confidence: confidence,
-          typicalDayInCycle: _calculateTypicalDay(occurrences),
+          typicalDays: [_calculateTypicalDay(occurrences)],
+          trend: TrendDirection.stable, // Simplified - would analyze actual trend
           seasonalPattern: _analyzeSeasonalPattern(occurrences),
         ));
       }
@@ -426,15 +428,16 @@ class AIPredictionService {
   }
 
   static FlowIntensity _parseFlowIntensity(dynamic flow) {
-    if (flow == null) return FlowIntensity.medium;
+    if (flow == null) return FlowIntensity.normal;
     if (flow is String) {
       switch (flow.toLowerCase()) {
         case 'light': return FlowIntensity.light;
         case 'heavy': return FlowIntensity.heavy;
-        default: return FlowIntensity.medium;
+        case 'very heavy': return FlowIntensity.veryHeavy;
+        default: return FlowIntensity.normal;
       }
     }
-    return FlowIntensity.medium;
+    return FlowIntensity.normal;
   }
 
   static double _calculateLengthVariation(List<CycleDataPoint> cycles) {
@@ -456,11 +459,11 @@ class AIPredictionService {
     
     if (flowCounts.isEmpty) {
       return FlowIntensityPrediction(
-        predicted: FlowIntensity.medium,
+        predicted: FlowIntensity.normal,
         confidence: 0.3,
         probabilities: {
           FlowIntensity.light: 0.33,
-          FlowIntensity.medium: 0.34,
+          FlowIntensity.normal: 0.34,
           FlowIntensity.heavy: 0.33,
         },
       );
@@ -559,9 +562,9 @@ class AIPredictionService {
     return occurrences.map((o) => o.dayInCycle).reduce((a, b) => a + b) ~/ occurrences.length;
   }
 
-  static SeasonalPattern _analyzeSeasonalPattern(List<SymptomOccurrence> occurrences) {
-    // Simplified seasonal analysis
-    return SeasonalPattern.none; // Would implement actual seasonal analysis
+  static SeasonalPattern? _analyzeSeasonalPattern(List<SymptomOccurrence> occurrences) {
+    // Simplified seasonal analysis - return null for no seasonal pattern
+    return null; // Would implement actual seasonal analysis
   }
 
   static double _calculateWellbeingConfidence(List<double> data) {
@@ -595,61 +598,3 @@ class AIPredictionService {
     return {1: 3.0, 7: 2.5, 14: 4.0, 21: 3.5, 28: 3.0};
   }
 }
-
-// Data models for AI predictions
-class AIPredictionResult {
-  final bool success;
-  final String? error;
-  final double confidence;
-  final String modelVersion;
-  final CycleLengthPrediction? cycleLengthPrediction;
-  final List<NextCyclePrediction> nextCycles;
-  final List<FertilityWindow> fertilityWindows;
-  final List<SymptomPattern> symptomPatterns;
-  final List<WellbeingPrediction> wellbeingPredictions;
-  final List<PersonalizedInsight> insights;
-  final List<AIRecommendation> recommendations;
-
-  AIPredictionResult({
-    required this.success,
-    this.error,
-    required this.confidence,
-    required this.modelVersion,
-    this.cycleLengthPrediction,
-    required this.nextCycles,
-    required this.fertilityWindows,
-    required this.symptomPatterns,
-    required this.wellbeingPredictions,
-    required this.insights,
-    required this.recommendations,
-  });
-
-  factory AIPredictionResult.insufficient(String message) => AIPredictionResult(
-    success: false,
-    error: message,
-    confidence: 0.0,
-    modelVersion: AIPredictionService._modelVersion,
-    nextCycles: [],
-    fertilityWindows: [],
-    symptomPatterns: [],
-    wellbeingPredictions: [],
-    insights: [],
-    recommendations: [],
-  );
-
-  factory AIPredictionResult.error(String error) => AIPredictionResult(
-    success: false,
-    error: error,
-    confidence: 0.0,
-    modelVersion: AIPredictionService._modelVersion,
-    nextCycles: [],
-    fertilityWindows: [],
-    symptomPatterns: [],
-    wellbeingPredictions: [],
-    insights: [],
-    recommendations: [],
-  );
-}
-
-// Additional data models would continue here...
-// (I'll create the remaining models in the next file to keep this manageable)

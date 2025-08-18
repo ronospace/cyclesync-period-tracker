@@ -284,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Text(
                         l10n?.homeWelcomeSubtitle ?? 'Track your cycle with confidence',
-                        style: TextStyle(color: Colors.grey.shade600),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Icon(Icons.calendar_today, size: 48, color: Colors.grey.shade400),
+              Icon(Icons.calendar_today, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(height: 16),
               Text(
                 l10n?.homeStartTracking ?? 'Start Tracking Your Cycle',
@@ -397,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           status['description'] as String,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -475,7 +475,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         '${_formatPredictionDate(predictions['fertileStart'] as DateTime, now)} - ${_formatPredictionDate(predictions['fertileEnd'] as DateTime, now)}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -510,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _formatPredictionDate(date, now),
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey.shade600,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -814,7 +814,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Icon(
             Icons.circle,
             size: 8,
-            color: Colors.pink.shade300,
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -830,7 +830,7 @@ class _HomeScreenState extends State<HomeScreen> {
               '${endDate.difference(startDate).inDays + 1} days',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey.shade600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
         ],

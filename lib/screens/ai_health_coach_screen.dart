@@ -291,25 +291,25 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         appBar: AppBar(
           title: Row(
             children: [
-              Icon(Icons.psychology, color: Colors.deepPurple.shade700, size: 24),
+              Icon(Icons.psychology, color: Theme.of(context).colorScheme.primary, size: 24),
               const SizedBox(width: 8),
               const Text('AI Health Coach'),
             ],
           ),
-          backgroundColor: Colors.deepPurple.shade50,
-          foregroundColor: Colors.deepPurple.shade700,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.deepPurple.shade700),
+            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
             onPressed: () => context.go('/home'),
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh, color: Colors.deepPurple.shade700),
+              icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onSurface),
               onPressed: _loadAIInsights,
             ),
           ],
@@ -317,9 +317,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             ? null 
             : TabBar(
                 controller: _tabController,
-                labelColor: Colors.deepPurple.shade700,
-                unselectedLabelColor: Colors.deepPurple.shade400,
-                indicatorColor: Colors.deepPurple.shade600,
+                labelColor: Theme.of(context).colorScheme.primary,
+                unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                indicatorColor: Theme.of(context).colorScheme.primary,
                 indicatorWeight: 3,
                 labelStyle: const TextStyle(
                   fontSize: 12,
@@ -340,17 +340,17 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('AI is analyzing your health patterns...'),
-            SizedBox(height: 8),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            const Text('AI is analyzing your health patterns...'),
+            const SizedBox(height: 8),
             Text(
               'This may take a moment',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -362,7 +362,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error.withOpacity(0.7)),
             const SizedBox(height: 16),
             const Text('Failed to load AI insights'),
             const SizedBox(height: 8),
@@ -476,20 +476,20 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle_outline, size: 64, color: Colors.green.shade300),
+            Icon(Icons.check_circle_outline, size: 64, color: Theme.of(context).colorScheme.primary.withOpacity(0.7)),
             const SizedBox(height: 16),
             Text(
               'All Clear!',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.green.shade600,
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'No predictive health alerts at this time.\nKeep up the great tracking!',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -810,7 +810,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 ),
                 Text(
                   rec.description,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -872,7 +872,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 4),
@@ -883,7 +883,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                     _formatSymptomName(symptom),
                     style: const TextStyle(fontSize: 10),
                   ),
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                   side: BorderSide.none,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 )).toList(),
@@ -935,7 +935,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                         '${(rec.aiConfidence * 100).round()}% AI Confidence',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -966,7 +966,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 'Suggested Actions:',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -1045,7 +1045,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               Text(
                 'Expected: ${DateFormat.MMMd().format(alert.predictedDate)}',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1056,7 +1056,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 'Recommended Actions:',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -1112,7 +1112,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                     flex: 3,
                     child: LinearProgressIndicator(
                       value: entry.value / 5.0,
-                      backgroundColor: Colors.grey.shade200,
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                       valueColor: AlwaysStoppedAnimation(_getEnergyColor(entry.value)),
                     ),
                   ),

@@ -738,14 +738,14 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
           children: [
             Row(
               children: [
-                Icon(icon, color: color.shade700),
+                Icon(icon, color: Colors.orange.shade700),
                 const SizedBox(width: 8),
                 Text(
                   title,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: color.shade700,
+                    color: Colors.orange.shade700,
                   ),
                 ),
               ],

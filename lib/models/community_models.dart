@@ -33,7 +33,7 @@ class Community {
   final Map<String, dynamic>? settings;
   final CommunityStats stats;
 
-  const Community({
+  Community({
     required this.id,
     required this.name,
     required this.description,
@@ -47,8 +47,8 @@ class Community {
     this.requiresApproval = false,
     this.tags = const [],
     this.settings,
-    this.stats = const CommunityStats(),
-  });
+    CommunityStats? stats,
+  }) : stats = stats ?? CommunityStats();
 
   Map<String, dynamic> toMap() {
     return {
@@ -134,13 +134,13 @@ class CommunityStats {
   final int dailyMessages;
   final double engagementRate;
 
-  const CommunityStats({
+  CommunityStats({
     this.totalMessages = 0,
     this.activeMembers = 0,
     DateTime? lastActivity,
     this.dailyMessages = 0,
     this.engagementRate = 0.0,
-  }) : lastActivity = lastActivity ?? const DateTime.fromMillisecondsSinceEpoch(0);
+  }) : lastActivity = lastActivity ?? DateTime.fromMillisecondsSinceEpoch(0);
 
   Map<String, dynamic> toMap() {
     return {
@@ -542,18 +542,19 @@ class SocialProfile {
   final Map<String, dynamic>? preferences;
   final PrivacySettings privacySettings;
 
-  const SocialProfile({
+  SocialProfile({
     required this.userId,
     required this.displayName,
     this.bio,
     this.photoUrl,
     required this.joinedDate,
     this.isPublic = true,
-    this.stats = const SocialStats(),
+    SocialStats? stats,
     this.badges = const [],
     this.preferences,
-    this.privacySettings = const PrivacySettings(),
-  });
+    PrivacySettings? privacySettings,
+  }) : stats = stats ?? SocialStats(),
+       privacySettings = privacySettings ?? PrivacySettings();
 
   Map<String, dynamic> toMap() {
     return {
@@ -595,14 +596,14 @@ class SocialStats {
   final double averageRating;
   final DateTime lastActive;
 
-  const SocialStats({
+  SocialStats({
     this.messagesPosted = 0,
     this.communitiesJoined = 0,
     this.helpfulVotes = 0,
     this.reviewsWritten = 0,
     this.averageRating = 0.0,
     DateTime? lastActive,
-  }) : lastActive = lastActive ?? const DateTime.fromMillisecondsSinceEpoch(0);
+  }) : lastActive = lastActive ?? DateTime.fromMillisecondsSinceEpoch(0);
 
   Map<String, dynamic> toMap() {
     return {
@@ -763,7 +764,7 @@ class PollOption {
 
 /// Default community templates
 class CommunityTemplates {
-  static final List<Community> defaultCommunities = [
+  static List<Community> get defaultCommunities => [
     Community(
       id: 'general',
       name: 'General Discussion',
@@ -772,7 +773,6 @@ class CommunityTemplates {
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
       tags: const ['general', 'discussion', 'support'],
-      stats: const CommunityStats(),
     ),
     Community(
       id: 'ttc',
@@ -782,7 +782,6 @@ class CommunityTemplates {
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
       tags: const ['ttc', 'fertility', 'pregnancy'],
-      stats: const CommunityStats(),
     ),
     Community(
       id: 'pcos',
@@ -792,7 +791,6 @@ class CommunityTemplates {
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
       tags: const ['pcos', 'hormonal', 'support'],
-      stats: const CommunityStats(),
     ),
     Community(
       id: 'teens',
@@ -802,7 +800,6 @@ class CommunityTemplates {
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
       tags: const ['teens', 'education', 'first-period'],
-      stats: const CommunityStats(),
     ),
   ];
 }

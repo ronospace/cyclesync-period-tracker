@@ -185,9 +185,9 @@ class _RemindersScreenState extends State<RemindersScreen>
           return EmptyState(
             icon: Icons.alarm_off,
             title: 'No Reminders Yet',
-            message: 'Create your first reminder to stay on track with your cycle.',
-            actionLabel: 'Add Reminder',
-            onActionTap: () => _navigateToAddReminder(context),
+            subtitle: 'Create your first reminder to stay on track with your cycle.',
+            actionText: 'Add Reminder',
+            onActionPressed: () => _navigateToAddReminder(context),
           );
         }
 
@@ -208,7 +208,7 @@ class _RemindersScreenState extends State<RemindersScreen>
           return EmptyState(
             icon: Icons.today,
             title: 'No Reminders Today',
-            message: 'You\'re all set for today! Check back tomorrow.',
+            subtitle: 'You\'re all set for today! Check back tomorrow.',
           );
         }
 

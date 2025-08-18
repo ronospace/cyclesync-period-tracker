@@ -57,10 +57,10 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
     return Scaffold(
       appBar: AppBar(
         title: const Text('🔮 AI Insights'),
-        backgroundColor: Colors.purple.shade50,
-        foregroundColor: Colors.purple.shade700,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.purple.shade700),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -71,9 +71,9 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.purple.shade700,
-          unselectedLabelColor: Colors.purple.shade300,
-          indicatorColor: Colors.purple.shade700,
+          labelColor: Theme.of(context).colorScheme.primary,
+          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+          indicatorColor: Theme.of(context).colorScheme.primary,
           tabs: const [
             Tab(icon: Icon(Icons.calendar_today), text: 'Predictions'),
             Tab(icon: Icon(Icons.insights), text: 'Patterns'),
@@ -149,7 +149,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
             Icon(
               Icons.psychology,
               size: 80,
-              color: Colors.purple.shade300,
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
             ),
             const SizedBox(height: 24),
             Text(
@@ -157,7 +157,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.purple.shade700,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(height: 16),
