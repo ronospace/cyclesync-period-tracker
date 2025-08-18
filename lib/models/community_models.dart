@@ -140,7 +140,7 @@ class CommunityStats {
     DateTime? lastActivity,
     this.dailyMessages = 0,
     this.engagementRate = 0.0,
-  }) : lastActivity = lastActivity ?? const DateTime(2024, 1, 1);
+  }) : lastActivity = lastActivity ?? const DateTime.fromMillisecondsSinceEpoch(0);
 
   Map<String, dynamic> toMap() {
     return {
@@ -602,7 +602,7 @@ class SocialStats {
     this.reviewsWritten = 0,
     this.averageRating = 0.0,
     DateTime? lastActive,
-  }) : lastActive = lastActive ?? const DateTime(2024, 1, 1);
+  }) : lastActive = lastActive ?? const DateTime.fromMillisecondsSinceEpoch(0);
 
   Map<String, dynamic> toMap() {
     return {
@@ -763,7 +763,7 @@ class PollOption {
 
 /// Default community templates
 class CommunityTemplates {
-  static const List<Community> defaultCommunities = [
+  static final List<Community> defaultCommunities = [
     Community(
       id: 'general',
       name: 'General Discussion',
@@ -771,7 +771,8 @@ class CommunityTemplates {
       type: CommunityType.general,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
-      tags: ['general', 'discussion', 'support'],
+      tags: const ['general', 'discussion', 'support'],
+      stats: const CommunityStats(),
     ),
     Community(
       id: 'ttc',
@@ -780,7 +781,8 @@ class CommunityTemplates {
       type: CommunityType.ttc,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
-      tags: ['ttc', 'fertility', 'pregnancy'],
+      tags: const ['ttc', 'fertility', 'pregnancy'],
+      stats: const CommunityStats(),
     ),
     Community(
       id: 'pcos',
@@ -789,7 +791,8 @@ class CommunityTemplates {
       type: CommunityType.pcos,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
-      tags: ['pcos', 'hormonal', 'support'],
+      tags: const ['pcos', 'hormonal', 'support'],
+      stats: const CommunityStats(),
     ),
     Community(
       id: 'teens',
@@ -798,7 +801,8 @@ class CommunityTemplates {
       type: CommunityType.teenagers,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
-      tags: ['teens', 'education', 'first-period'],
+      tags: const ['teens', 'education', 'first-period'],
+      stats: const CommunityStats(),
     ),
   ];
 }

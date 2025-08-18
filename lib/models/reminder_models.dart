@@ -412,74 +412,64 @@ class ReminderTemplate {
 
 /// Predefined reminder templates
 class ReminderTemplates {
-  static const List<ReminderTemplate> templates = [
+  static final List<ReminderTemplate> templates = [
     // Cycle predictions
-    ReminderTemplate(
+    const ReminderTemplate(
       name: 'period_start',
       type: ReminderType.cyclePrediction,
       title: 'Period Starting Soon',
       description: 'Your period is expected to start in the next few days',
       frequency: ReminderFrequency.cycleStart,
       priority: ReminderPriority.high,
-      defaultTimes: [DateTime(2024, 1, 1, 8, 0)], // 8 AM
       sound: NotificationSound.gentle,
     ),
     
-    ReminderTemplate(
+    const ReminderTemplate(
       name: 'fertile_window',
       type: ReminderType.cyclePrediction,
       title: 'Fertile Window',
       description: 'You are entering your most fertile period',
       frequency: ReminderFrequency.ovulation,
       priority: ReminderPriority.medium,
-      defaultTimes: [DateTime(2024, 1, 1, 9, 0)], // 9 AM
     ),
     
     // Daily tracking
-    ReminderTemplate(
+    const ReminderTemplate(
       name: 'daily_log',
       type: ReminderType.symptomTracking,
       title: 'Daily Cycle Log',
       description: 'Time to log your daily symptoms and mood',
       frequency: ReminderFrequency.daily,
-      defaultTimes: [DateTime(2024, 1, 1, 20, 0)], // 8 PM
     ),
     
     // Birth control
-    ReminderTemplate(
+    const ReminderTemplate(
       name: 'birth_control',
       type: ReminderType.medication,
       title: 'Birth Control Pill',
       description: 'Time to take your daily birth control pill',
       frequency: ReminderFrequency.daily,
       priority: ReminderPriority.critical,
-      defaultTimes: [DateTime(2024, 1, 1, 21, 0)], // 9 PM
       sound: NotificationSound.chime,
     ),
     
     // Water intake
-    ReminderTemplate(
+    const ReminderTemplate(
       name: 'hydration',
       type: ReminderType.waterIntake,
       title: 'Stay Hydrated',
       description: 'Remember to drink water throughout the day',
       frequency: ReminderFrequency.daily,
-      defaultTimes: [
-        DateTime(2024, 1, 1, 9, 0),   // 9 AM
-        DateTime(2024, 1, 1, 13, 0),  // 1 PM
-        DateTime(2024, 1, 1, 17, 0),  // 5 PM
-      ],
       sound: NotificationSound.nature,
     ),
     
     // Self-care
-    ReminderTemplate(
+    const ReminderTemplate(
       name: 'self_care',
       type: ReminderType.selfCare,
       title: 'Self-Care Time',
       description: 'Take a few minutes for yourself today',
       frequency: ReminderFrequency.daily,
-      defaultTimes: [DateTime(2024, 1, 1, 19, 0)], // 7 PM
       sound: NotificationSound.gentle,
     ),
   ];

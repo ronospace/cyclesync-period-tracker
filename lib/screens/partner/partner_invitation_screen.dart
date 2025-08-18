@@ -316,6 +316,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         return 'View & Comment';
       case SharedDataPermission.edit:
         return 'View, Comment & Edit';
+      default:
+        return 'View Only';
     }
   }
 
@@ -327,6 +329,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         return 'Partner can view and add comments';
       case SharedDataPermission.edit:
         return 'Partner can view, comment, and make edits';
+      default:
+        return 'Partner can only view shared data';
     }
   }
 
@@ -354,6 +358,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         return 'Personal Notes';
       case DataType.predictions:
         return 'Cycle Predictions';
+      default:
+        return 'Unknown';
     }
   }
 
@@ -381,6 +387,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         return 'Personal notes and observations';
       case DataType.predictions:
         return 'AI-generated cycle predictions';
+      default:
+        return 'Data type';
     }
   }
 
@@ -393,6 +401,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
       case InvitationStatus.declined:
         return Colors.red;
       case InvitationStatus.expired:
+        return Colors.grey;
+      default:
         return Colors.grey;
     }
   }
@@ -407,6 +417,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         return Icons.close;
       case InvitationStatus.expired:
         return Icons.timer_off;
+      default:
+        return Icons.schedule;
     }
   }
 
@@ -420,6 +432,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         return 'Declined';
       case InvitationStatus.expired:
         return 'Expired';
+      default:
+        return 'Unknown';
     }
   }
 
