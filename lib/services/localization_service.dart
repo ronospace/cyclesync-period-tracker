@@ -14,53 +14,33 @@ class LocalizationService extends ChangeNotifier {
     return _instance!;
   }
 
-  // Supported locales - 28 languages for global coverage
+  // Tiered Language Support - 17 strategic languages for maximum global coverage
+  // Tier 1: 7 must-have languages (65-70% global reach)
+  // Tier 2: 6 regional dominance languages
+  // Tier 3: 4 selective emerging & strategic languages
   static const List<Locale> supportedLocales = [
-    // Major Languages
-    Locale('en', 'US'), // English (US)
-    Locale('en', 'GB'), // English (UK)
-    Locale('es', 'ES'), // Spanish (Spain)
-    Locale('es', 'MX'), // Spanish (Mexico)
-    Locale('fr', 'FR'), // French
-    Locale('de', 'DE'), // German
-    Locale('it', 'IT'), // Italian
-    Locale('pt', 'BR'), // Portuguese (Brazil)
-    Locale('pt', 'PT'), // Portuguese (Portugal)
+    // === Tier 1: Must-have (largest global user base) ===
+    Locale('en'), // English (global default)
+    Locale('es'), // Spanish (Spain + Latin America + US Hispanics)
+    Locale('zh'), // Chinese Simplified (Mainland China + Singapore)
+    Locale('hi'), // Hindi (India, 600M speakers, massive app adoption)
+    Locale('ar'), // Arabic (MENA, 400M speakers, big digital adoption)
+    Locale('pt'), // Portuguese (Brazil + Portugal + Africa)
+    Locale('fr'), // French (France + Canada + West/Central Africa)
     
-    // Asian Languages
-    Locale('zh', 'CN'), // Chinese (Simplified)
-    Locale('zh', 'TW'), // Chinese (Traditional)
-    Locale('ja', 'JP'), // Japanese
-    Locale('ko', 'KR'), // Korean
-    Locale('hi', 'IN'), // Hindi
-    Locale('th', 'TH'), // Thai
-    Locale('vi', 'VN'), // Vietnamese
-    Locale('id', 'ID'), // Indonesian
-    Locale('ms', 'MY'), // Malay
+    // === Tier 2: Regional dominance (growing digital markets) ===
+    Locale('de'), // German (DACH region, strong healthtech adoption)
+    Locale('ru'), // Russian (Russia + CIS, still large despite issues)
+    Locale('ja'), // Japanese (high health/tech app adoption)
+    Locale('ko'), // Korean (huge digital health adoption)
+    Locale('it'), // Italian (Italy + partially Switzerland)
+    Locale('tr'), // Turkish (Turkey + diaspora in Europe/Middle East)
     
-    // European Languages
-    Locale('ru', 'RU'), // Russian
-    Locale('pl', 'PL'), // Polish
-    Locale('nl', 'NL'), // Dutch
-    Locale('sv', 'SE'), // Swedish
-    Locale('no', 'NO'), // Norwegian
-    Locale('da', 'DK'), // Danish
-    Locale('fi', 'FI'), // Finnish
-    Locale('cs', 'CZ'), // Czech
-    Locale('hu', 'HU'), // Hungarian
-    Locale('ro', 'RO'), // Romanian
-    
-    // Middle Eastern & African Languages
-    Locale('ar', 'SA'), // Arabic
-    Locale('tr', 'TR'), // Turkish
-    Locale('he', 'IL'), // Hebrew
-    Locale('sw', 'KE'), // Swahili
-    
-    // Other Important Languages
-    Locale('bn', 'BD'), // Bengali
-    Locale('ur', 'PK'), // Urdu
-    Locale('fa', 'IR'), // Persian/Farsi
-    Locale('uk', 'UA'), // Ukrainian
+    // === Tier 3: Selective emerging & strategic ===
+    Locale('sw'), // Swahili (East Africa, growing digital market, under-served femtech)
+    Locale('bn'), // Bengali (Bangladesh + India, ~250M speakers, fast-growing mobile)
+    Locale('id'), // Indonesian/Bahasa (massive smartphone penetration, under-served femtech)
+    Locale('fa'), // Persian/Farsi (Iran + diaspora, ~100M speakers, huge demand for women's health)
   ];
 
   // Language display names for all 36 supported languages
@@ -195,11 +175,11 @@ class LocalizationService extends ChangeNotifier {
 
   /// Get language display name
   String getLanguageName(Locale locale, {bool useNativeName = false}) {
-    final key = '${locale.languageCode}_${locale.countryCode}';
+    final key = _getLanguageKey(locale);
     final languageData = _languageNames[key];
     
     if (languageData == null) {
-      return '${locale.languageCode}_${locale.countryCode}';
+      return '${locale.languageCode}${locale.countryCode != null ? '_${locale.countryCode}' : ''}';
     }
     
     return useNativeName ? languageData['nativeName']! : languageData['name']!;
@@ -215,11 +195,43 @@ class LocalizationService extends ChangeNotifier {
   /// Get text direction
   TextDirection get textDirection => isRTL ? TextDirection.rtl : TextDirection.ltr;
 
+  /// Get language key that maps to _languageNames
+  String _getLanguageKey(Locale locale) {
+    // First try exact match
+    final exactKey = '${locale.languageCode}_${locale.countryCode}';
+    if (_languageNames.containsKey(exactKey)) {
+      return exactKey;
+    }
+    
+    // Try to find a key with the same language code
+    final possibleKeys = _languageNames.keys.where(
+      (key) => key.startsWith('${locale.languageCode}_')
+    );
+    
+    if (possibleKeys.isNotEmpty) {
+      return possibleKeys.first; // Return first matching language
+    }
+    
+    // Fallback to English
+    return 'en_US';
+  }
+
   /// Get all available languages for selection
   List<Map<String, dynamic>> get availableLanguages {
     return supportedLocales.map((locale) {
-      final key = '${locale.languageCode}_${locale.countryCode}';
-      final languageData = _languageNames[key]!;
+      final key = _getLanguageKey(locale);
+      final languageData = _languageNames[key];
+      
+      if (languageData == null) {
+        // Fallback if no language data found
+        return {
+          'locale': locale,
+          'name': '${locale.languageCode}${locale.countryCode != null ? ' (${locale.countryCode})' : ''}',
+          'nativeName': '${locale.languageCode}${locale.countryCode != null ? ' (${locale.countryCode})' : ''}',
+          'isSelected': locale == _currentLocale,
+          'flag': _getFlagEmoji(locale),
+        };
+      }
       
       return {
         'locale': locale,
@@ -233,7 +245,7 @@ class LocalizationService extends ChangeNotifier {
 
   /// Get flag emoji for locale
   String _getFlagEmoji(Locale locale) {
-    final key = '${locale.languageCode}_${locale.countryCode}';
+    final key = _getLanguageKey(locale);
     
     switch (key) {
       // Major Languages

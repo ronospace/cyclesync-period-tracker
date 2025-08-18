@@ -1,0 +1,71 @@
+{
+  "@@locale": "id",
+  "appTitle": "CycleSync",
+  
+  "bottomNavHome": "Beranda",
+  "bottomNavCycle": "Siklus",
+  "bottomNavHealth": "Kesehatan",
+  "bottomNavSettings": "Pengaturan",
+  
+  "settingsTitle": "Pengaturan",
+  "settingsLanguage": "Bahasa",
+  "settingsLanguageSubtitle": "Pilih bahasa yang Anda sukai",
+  "settingsNotifications": "Notifikasi",
+  "settingsPrivacy": "Privasi & Keamanan",
+  "settingsTheme": "Tema",
+  "settingsHelp": "Bantuan & Dukungan",
+  
+  "languageSelectorTitle": "Pilih Bahasa",
+  "languageSelectorSubtitle": "Aksesibilitas global untuk semua",
+  "languageSelectorSearch": "Cari bahasa...",
+  "languageSelectorResults": "{count, plural, =0{Tidak ada bahasa ditemukan} =1{1 bahasa ditemukan} other{{count} bahasa ditemukan}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "Pelacakan Siklus",
+  "cycleCurrentPhase": "Fase Saat Ini",
+  "cycleNextPeriod": "Menstruasi Berikutnya",
+  "cycleDaysLeft": "{days} hari tersisa",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "Wawasan Kesehatan",
+  "healthSymptoms": "Gejala",
+  "healthMood": "Suasana Hati",
+  "healthEnergy": "Tingkat Energi",
+  
+  "commonSave": "Simpan",
+  "commonCancel": "Batal",
+  "commonClose": "Tutup",
+  "commonBack": "Kembali",
+  "commonNext": "Selanjutnya",
+  "commonDone": "Selesai",
+  "commonError": "Kesalahan",
+  "commonSuccess": "Berhasil",
+  "commonLoading": "Memuat...",
+  
+  "phaseFollicular": "Fase Folikel",
+  "phaseOvulation": "Ovulasi",
+  "phaseLuteal": "Fase Luteal",
+  "phaseMenstruation": "Menstruasi",
+  
+  "moodHappy": "Bahagia",
+  "moodSad": "Sedih",
+  "moodAnxious": "Cemas",
+  "moodIrritated": "Kesal",
+  "moodCalm": "Tenang",
+  
+  "notificationTitle": "Notifikasi CycleSync",
+  "notificationPeriodReminder": "Menstruasi Anda akan segera dimulai",
+  "notificationOvulationReminder": "Anda mendekati masa subur"
+}

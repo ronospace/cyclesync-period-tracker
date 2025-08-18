@@ -1,0 +1,71 @@
+{
+  "@@locale": "ja",
+  "appTitle": "CycleSync",
+  
+  "bottomNavHome": "ホーム",
+  "bottomNavCycle": "サイクル", 
+  "bottomNavHealth": "ヘルス",
+  "bottomNavSettings": "設定",
+  
+  "settingsTitle": "設定",
+  "settingsLanguage": "言語",
+  "settingsLanguageSubtitle": "お好みの言語を選択",
+  "settingsNotifications": "通知",
+  "settingsPrivacy": "プライバシーとセキュリティ",
+  "settingsTheme": "テーマ",
+  "settingsHelp": "ヘルプとサポート",
+  
+  "languageSelectorTitle": "言語を選択",
+  "languageSelectorSubtitle": "すべての人のためのグローバルアクセシビリティ",
+  "languageSelectorSearch": "言語を検索...",
+  "languageSelectorResults": "{count, plural, =0{言語が見つかりません} =1{1つの言語が見つかりました} other{{count}つの言語が見つかりました}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "サイクルトラッキング",
+  "cycleCurrentPhase": "現在のフェーズ",
+  "cycleNextPeriod": "次の生理",
+  "cycleDaysLeft": "あと{days}日",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "健康インサイト",
+  "healthSymptoms": "症状",
+  "healthMood": "気分",
+  "healthEnergy": "エネルギーレベル",
+  
+  "commonSave": "保存",
+  "commonCancel": "キャンセル",
+  "commonClose": "閉じる",
+  "commonBack": "戻る",
+  "commonNext": "次へ",
+  "commonDone": "完了",
+  "commonError": "エラー",
+  "commonSuccess": "成功",
+  "commonLoading": "読み込み中...",
+  
+  "phaseFollicular": "卵胞期",
+  "phaseOvulation": "排卵期",
+  "phaseLuteal": "黄体期", 
+  "phaseMenstruation": "生理期",
+  
+  "moodHappy": "ハッピー",
+  "moodSad": "悲しい",
+  "moodAnxious": "不安",
+  "moodIrritated": "イライラ",
+  "moodCalm": "穏やか",
+  
+  "notificationTitle": "CycleSync通知",
+  "notificationPeriodReminder": "まもなく生理が始まります",
+  "notificationOvulationReminder": "妊娠しやすい時期に近づいています"
+}

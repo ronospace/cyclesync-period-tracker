@@ -1,0 +1,71 @@
+{
+  "@@locale": "it",
+  "appTitle": "CycleSync",
+  
+  "bottomNavHome": "Home",
+  "bottomNavCycle": "Ciclo",
+  "bottomNavHealth": "Salute",
+  "bottomNavSettings": "Impostazioni",
+  
+  "settingsTitle": "Impostazioni",
+  "settingsLanguage": "Lingua",
+  "settingsLanguageSubtitle": "Scegli la tua lingua preferita",
+  "settingsNotifications": "Notifiche",
+  "settingsPrivacy": "Privacy e Sicurezza",
+  "settingsTheme": "Tema",
+  "settingsHelp": "Aiuto e Supporto",
+  
+  "languageSelectorTitle": "Scegli Lingua",
+  "languageSelectorSubtitle": "Accessibilità globale per tutti",
+  "languageSelectorSearch": "Cerca lingue...",
+  "languageSelectorResults": "{count, plural, =0{Nessuna lingua trovata} =1{1 lingua trovata} other{{count} lingue trovate}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "Tracciamento Ciclo",
+  "cycleCurrentPhase": "Fase Attuale",
+  "cycleNextPeriod": "Prossimo Periodo",
+  "cycleDaysLeft": "{days} giorni rimanenti",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "Insight Salute",
+  "healthSymptoms": "Sintomi",
+  "healthMood": "Umore",
+  "healthEnergy": "Livello di Energia",
+  
+  "commonSave": "Salva",
+  "commonCancel": "Annulla",
+  "commonClose": "Chiudi",
+  "commonBack": "Indietro",
+  "commonNext": "Avanti",
+  "commonDone": "Fatto",
+  "commonError": "Errore",
+  "commonSuccess": "Successo",
+  "commonLoading": "Caricamento...",
+  
+  "phaseFollicular": "Fase Follicolare",
+  "phaseOvulation": "Ovulazione",
+  "phaseLuteal": "Fase Luteale",
+  "phaseMenstruation": "Mestruazioni",
+  
+  "moodHappy": "Felice",
+  "moodSad": "Triste",
+  "moodAnxious": "Ansioso",
+  "moodIrritated": "Irritato",
+  "moodCalm": "Calmo",
+  
+  "notificationTitle": "Notifica CycleSync",
+  "notificationPeriodReminder": "Il tuo periodo dovrebbe iniziare presto",
+  "notificationOvulationReminder": "Ti stai avvicinando alla finestra fertile"
+}

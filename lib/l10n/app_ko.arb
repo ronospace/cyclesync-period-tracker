@@ -1,0 +1,71 @@
+{
+  "@@locale": "ko",
+  "appTitle": "CycleSync",
+  
+  "bottomNavHome": "홈",
+  "bottomNavCycle": "사이클",
+  "bottomNavHealth": "건강",
+  "bottomNavSettings": "설정",
+  
+  "settingsTitle": "설정",
+  "settingsLanguage": "언어",
+  "settingsLanguageSubtitle": "선호하는 언어를 선택하세요",
+  "settingsNotifications": "알림",
+  "settingsPrivacy": "개인정보 보호 및 보안",
+  "settingsTheme": "테마",
+  "settingsHelp": "도움말 및 지원",
+  
+  "languageSelectorTitle": "언어 선택",
+  "languageSelectorSubtitle": "모든 사람을 위한 글로벌 접근성",
+  "languageSelectorSearch": "언어 검색...",
+  "languageSelectorResults": "{count, plural, =0{언어를 찾을 수 없습니다} =1{1개의 언어를 찾았습니다} other{{count}개의 언어를 찾았습니다}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "사이클 추적",
+  "cycleCurrentPhase": "현재 단계",
+  "cycleNextPeriod": "다음 생리",
+  "cycleDaysLeft": "{days}일 남음",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "건강 인사이트",
+  "healthSymptoms": "증상",
+  "healthMood": "기분",
+  "healthEnergy": "에너지 수준",
+  
+  "commonSave": "저장",
+  "commonCancel": "취소",
+  "commonClose": "닫기",
+  "commonBack": "뒤로",
+  "commonNext": "다음",
+  "commonDone": "완료",
+  "commonError": "오류",
+  "commonSuccess": "성공",
+  "commonLoading": "로딩 중...",
+  
+  "phaseFollicular": "난포기",
+  "phaseOvulation": "배란기",
+  "phaseLuteal": "황체기",
+  "phaseMenstruation": "생리기",
+  
+  "moodHappy": "기쁨",
+  "moodSad": "슬픔",
+  "moodAnxious": "불안",
+  "moodIrritated": "짜증",
+  "moodCalm": "평온",
+  
+  "notificationTitle": "CycleSync 알림",
+  "notificationPeriodReminder": "곧 생리가 시작될 예정입니다",
+  "notificationOvulationReminder": "가임기에 접근하고 있습니다"
+}

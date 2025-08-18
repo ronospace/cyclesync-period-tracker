@@ -1,0 +1,1159 @@
+{
+  "@@locale": "en",
+  "appTitle": "CycleSync",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "bottomNavHome": "Home",
+  "@bottomNavHome": {
+    "description": "Home tab in bottom navigation"
+  },
+  "bottomNavCycle": "Cycle",
+  "@bottomNavCycle": {
+    "description": "Cycle tab in bottom navigation"
+  },
+  "bottomNavHealth": "Health",
+  "@bottomNavHealth": {
+    "description": "Health tab in bottom navigation"
+  },
+  "bottomNavSettings": "Settings",
+  "@bottomNavSettings": {
+    "description": "Settings tab in bottom navigation"
+  },
+  
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Language settings option"
+  },
+  "settingsLanguageSubtitle": "Choose your preferred language",
+  "@settingsLanguageSubtitle": {
+    "description": "Subtitle for language settings"
+  },
+  "settingsNotifications": "Notifications",
+  "@settingsNotifications": {
+    "description": "Notifications settings option"
+  },
+  "settingsPrivacy": "Privacy & Security",
+  "@settingsPrivacy": {
+    "description": "Privacy settings option"
+  },
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "Theme settings option"
+  },
+  "settingsHelp": "Help & Support",
+  "@settingsHelp": {
+    "description": "Help and support option"
+  },
+  
+  "languageSelectorTitle": "Choose Language",
+  "@languageSelectorTitle": {
+    "description": "Title for language selection screen"
+  },
+  "languageSelectorSubtitle": "Global accessibility for everyone",
+  "@languageSelectorSubtitle": {
+    "description": "Subtitle for language selection screen"
+  },
+  "languageSelectorSearch": "Search languages...",
+  "@languageSelectorSearch": {
+    "description": "Placeholder text for language search"
+  },
+  "languageSelectorResults": "{count, plural, =0{No languages found} =1{1 language found} other{{count} languages found}}",
+  "@languageSelectorResults": {
+    "description": "Number of languages found in search",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "Cycle Tracking",
+  "@cycleTitle": {
+    "description": "Cycle tracking screen title"
+  },
+  "cycleCurrentPhase": "Current Phase",
+  "@cycleCurrentPhase": {
+    "description": "Label for current cycle phase"
+  },
+  "cycleNextPeriod": "Next Period",
+  "@cycleNextPeriod": {
+    "description": "Label for next period prediction"
+  },
+  "cycleDaysLeft": "{days} days left",
+  "@cycleDaysLeft": {
+    "description": "Days remaining until next period",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "Health Insights",
+  "@healthTitle": {
+    "description": "Health screen title"
+  },
+  "healthSymptoms": "Symptoms",
+  "@healthSymptoms": {
+    "description": "Health symptoms section"
+  },
+  "healthMood": "Mood",
+  "@healthMood": {
+    "description": "Mood tracking section"
+  },
+  "healthEnergy": "Energy Level",
+  "@healthEnergy": {
+    "description": "Energy level tracking"
+  },
+  
+  "profileTitle": "Profile",
+  "@profileTitle": {
+    "description": "Profile screen title"
+  },
+  "profilePersonalInfo": "Personal Information",
+  "@profilePersonalInfo": {
+    "description": "Personal information section"
+  },
+  "profileCycleHistory": "Cycle History",
+  "@profileCycleHistory": {
+    "description": "Cycle history section"
+  },
+  "profileDataExport": "Export Data",
+  "@profileDataExport": {
+    "description": "Data export option"
+  },
+  
+  "helpTitle": "Help & Support",
+  "@helpTitle": {
+    "description": "Help and support screen title"
+  },
+  "helpFaq": "Frequently Asked Questions",
+  "@helpFaq": {
+    "description": "FAQ section title"
+  },
+  "helpContactSupport": "Contact Support",
+  "@helpContactSupport": {
+    "description": "Contact support option"
+  },
+  "helpUserGuide": "User Guide",
+  "@helpUserGuide": {
+    "description": "User guide option"
+  },
+  "helpPrivacyPolicy": "Privacy Policy",
+  "@helpPrivacyPolicy": {
+    "description": "Privacy policy option"
+  },
+  "helpReportIssue": "Report Issue",
+  "@helpReportIssue": {
+    "description": "Report issue option"
+  },
+  
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "Common save button"
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Common cancel button"
+  },
+  "commonClose": "Close",
+  "@commonClose": {
+    "description": "Common close button"
+  },
+  "commonBack": "Back",
+  "@commonBack": {
+    "description": "Common back button"
+  },
+  "commonNext": "Next",
+  "@commonNext": {
+    "description": "Common next button"
+  },
+  "commonDone": "Done",
+  "@commonDone": {
+    "description": "Common done button"
+  },
+  "commonError": "Error",
+  "@commonError": {
+    "description": "Common error message"
+  },
+  "commonSuccess": "Success",
+  "@commonSuccess": {
+    "description": "Common success message"
+  },
+  "commonLoading": "Loading...",
+  "@commonLoading": {
+    "description": "Common loading message"
+  },
+  
+  "todayTitle": "Today",
+  "@todayTitle": {
+    "description": "Today section title"
+  },
+  "yesterdayTitle": "Yesterday",
+  "@yesterdayTitle": {
+    "description": "Yesterday section title"
+  },
+  "tomorrowTitle": "Tomorrow",
+  "@tomorrowTitle": {
+    "description": "Tomorrow section title"
+  },
+  
+  "phaseFollicular": "Follicular Phase",
+  "@phaseFollicular": {
+    "description": "Follicular phase of menstrual cycle"
+  },
+  "phaseOvulation": "Ovulation",
+  "@phaseOvulation": {
+    "description": "Ovulation phase of menstrual cycle"
+  },
+  "phaseLuteal": "Luteal Phase",
+  "@phaseLuteal": {
+    "description": "Luteal phase of menstrual cycle"
+  },
+  "phaseMenstruation": "Menstruation",
+  "@phaseMenstruation": {
+    "description": "Menstruation phase of menstrual cycle"
+  },
+  
+  "symptomCramps": "Cramps",
+  "@symptomCramps": {
+    "description": "Menstrual cramps symptom"
+  },
+  "symptomHeadache": "Headache",
+  "@symptomHeadache": {
+    "description": "Headache symptom"
+  },
+  "symptomBackache": "Backache",
+  "@symptomBackache": {
+    "description": "Backache symptom"
+  },
+  "symptomBloating": "Bloating",
+  "@symptomBloating": {
+    "description": "Bloating symptom"
+  },
+  "symptomFatigue": "Fatigue",
+  "@symptomFatigue": {
+    "description": "Fatigue symptom"
+  },
+  
+  "moodHappy": "Happy",
+  "@moodHappy": {
+    "description": "Happy mood"
+  },
+  "moodSad": "Sad",
+  "@moodSad": {
+    "description": "Sad mood"
+  },
+  "moodAnxious": "Anxious",
+  "@moodAnxious": {
+    "description": "Anxious mood"
+  },
+  "moodIrritated": "Irritated",
+  "@moodIrritated": {
+    "description": "Irritated mood"
+  },
+  "moodCalm": "Calm",
+  "@moodCalm": {
+    "description": "Calm mood"
+  },
+  
+  "energyHigh": "High Energy",
+  "@energyHigh": {
+    "description": "High energy level"
+  },
+  "energyMedium": "Medium Energy",
+  "@energyMedium": {
+    "description": "Medium energy level"
+  },
+  "energyLow": "Low Energy",
+  "@energyLow": {
+    "description": "Low energy level"
+  },
+  
+  "notificationTitle": "CycleSync Notification",
+  "@notificationTitle": {
+    "description": "Default notification title"
+  },
+  "notificationPeriodReminder": "Your period is expected to start soon",
+  "@notificationPeriodReminder": {
+    "description": "Period reminder notification"
+  },
+  "notificationOvulationReminder": "You're approaching your fertile window",
+  "@notificationOvulationReminder": {
+    "description": "Ovulation reminder notification"
+  },
+  
+  "accessibilityMenuButton": "Menu button",
+  "@accessibilityMenuButton": {
+    "description": "Accessibility label for menu button"
+  },
+  "accessibilityCalendar": "Calendar view",
+  "@accessibilityCalendar": {
+    "description": "Accessibility label for calendar"
+  },
+  "accessibilitySettingsButton": "Settings button",
+  "@accessibilitySettingsButton": {
+    "description": "Accessibility label for settings button"
+  },
+
+  "homeTitle": "CycleSync",
+  "@homeTitle": {
+    "description": "Home screen title"
+  },
+  "homeWelcomeMessage": "Hello, {name}!",
+  "@homeWelcomeMessage": {
+    "description": "Welcome message on home screen",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeWelcomeSubtitle": "Track your cycle with confidence",
+  "@homeWelcomeSubtitle": {
+    "description": "Subtitle under welcome message"
+  },
+  "homeMenstrualPhase": "Menstrual Phase",
+  "@homeMenstrualPhase": {
+    "description": "Current menstrual phase display"
+  },
+  "homeCycleDayInfo": "Day {day} of your cycle",
+  "@homeCycleDayInfo": {
+    "description": "Current cycle day information",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "homeUpcomingEvents": "Upcoming Events",
+  "@homeUpcomingEvents": {
+    "description": "Upcoming events section title"
+  },
+  "homeNextPeriod": "Next Period",
+  "@homeNextPeriod": {
+    "description": "Next period event label"
+  },
+  "homeOvulation": "Ovulation",
+  "@homeOvulation": {
+    "description": "Ovulation event label"
+  },
+  "homeFertileWindow": "Fertile Window",
+  "@homeFertileWindow": {
+    "description": "Fertile window event label"
+  },
+  "homeQuickActions": "Quick Actions",
+  "@homeQuickActions": {
+    "description": "Quick actions section title"
+  },
+  "homeLogCycle": "Log Cycle",
+  "@homeLogCycle": {
+    "description": "Log cycle quick action"
+  },
+  "homeViewHistory": "View History",
+  "@homeViewHistory": {
+    "description": "View history quick action"
+  },
+  "homeCalendar": "Calendar",
+  "@homeCalendar": {
+    "description": "Calendar quick action"
+  },
+  "homeAnalytics": "Analytics",
+  "@homeAnalytics": {
+    "description": "Analytics quick action"
+  },
+  "homeAIInsights": "AI Insights",
+  "@homeAIInsights": {
+    "description": "AI insights quick action"
+  },
+  "homeDailyLog": "Daily Log",
+  "@homeDailyLog": {
+    "description": "Daily log quick action"
+  },
+  "homeTomorrow": "Tomorrow",
+  "@homeTomorrow": {
+    "description": "Tomorrow label for events"
+  },
+  "homeDaysAgo": "{days} days ago",
+  "@homeDaysAgo": {
+    "description": "Days ago label for past events",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "appearanceTitle": "Appearance",
+  "@appearanceTitle": {
+    "description": "Appearance settings section title"
+  },
+  "lightMode": "Light Mode",
+  "@lightMode": {
+    "description": "Light theme option"
+  },
+  "lightModeDescription": "Use light theme",
+  "@lightModeDescription": {
+    "description": "Light theme description"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark theme option"
+  },
+  "darkModeDescription": "Use dark theme",
+  "@darkModeDescription": {
+    "description": "Dark theme description"
+  },
+  "systemDefault": "System Default",
+  "@systemDefault": {
+    "description": "System default theme option"
+  },
+  "systemDefaultDescription": "Follow system settings",
+  "@systemDefaultDescription": {
+    "description": "System default theme description"
+  },
+  "languageTitle": "Language",
+  "@languageTitle": {
+    "description": "Language settings section title"
+  },
+  "languageSubtitle": "Swahili • 36 languages available",
+  "@languageSubtitle": {
+    "description": "Language settings subtitle with current selection"
+  },
+  "swahiliLanguage": "Kiswahili",
+  "@swahiliLanguage": {
+    "description": "Swahili language name in Swahili"
+  },
+  "toolsTitle": "Tools",
+  "@toolsTitle": {
+    "description": "Tools settings section title"
+  },
+  "notificationsManage": "Manage cycle reminders and alerts",
+  "@notificationsManage": {
+    "description": "Notifications management description"
+  },
+  "smartNotifications": "Smart Notifications",
+  "@smartNotifications": {
+    "description": "Smart notifications option"
+  },
+  "smartNotificationsDescription": "AI-powered insights and predictions",
+  "@smartNotificationsDescription": {
+    "description": "Smart notifications description"
+  },
+  "diagnosticsTitle": "Diagnostics",
+  "@diagnosticsTitle": {
+    "description": "Diagnostics option"
+  },
+  "diagnosticsDescription": "Test Firebase connection",
+  "@diagnosticsDescription": {
+    "description": "Diagnostics description"
+  },
+  "userTitle": "User",
+  "@userTitle": {
+    "description": "User section title"
+  },
+  
+  "homeHealthInsights": "Health Insights",
+  "@homeHealthInsights": {
+    "description": "Health insights quick action"
+  },
+  "homeSymptomTrends": "Symptom Trends",
+  "@homeSymptomTrends": {
+    "description": "Symptom trends quick action"
+  },
+  "homeAIHealthCoach": "AI Health Coach",
+  "@homeAIHealthCoach": {
+    "description": "AI health coach quick action"
+  },
+  "homeInDays": "In {days} days",
+  "@homeInDays": {
+    "description": "Days in the future format",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeToday": "Today",
+  "@homeToday": {
+    "description": "Today label"
+  },
+  "homeYesterday": "Yesterday",
+  "@homeYesterday": {
+    "description": "Yesterday label"
+  },
+  "homeRecentCycles": "Recent Cycles",
+  "@homeRecentCycles": {
+    "description": "Recent cycles section title"
+  },
+  "homeViewAll": "View All",
+  "@homeViewAll": {
+    "description": "View all button text"
+  },
+  "homeStartTracking": "Start Tracking Your Cycle",
+  "@homeStartTracking": {
+    "description": "Start tracking message"
+  },
+  "homeStartTrackingDescription": "Log your first cycle to see personalized insights and predictions.",
+  "@homeStartTrackingDescription": {
+    "description": "Start tracking description"
+  },
+  "homeLogFirstCycle": "Log First Cycle",
+  "@homeLogFirstCycle": {
+    "description": "Log first cycle button"
+  },
+  "homeUnableToLoad": "Unable to load recent cycles",
+  "@homeUnableToLoad": {
+    "description": "Error message for loading cycles"
+  },
+  "homeTryAgain": "Try Again",
+  "@homeTryAgain": {
+    "description": "Try again button"
+  },
+  "homeNoCycles": "No cycles logged yet. Start tracking!",
+  "@homeNoCycles": {
+    "description": "No cycles message"
+  },
+
+  "dailyLogTitle": "Daily Log",
+  "@dailyLogTitle": {
+    "description": "Daily log screen title"
+  },
+  "logToday": "Log Today",
+  "@logToday": {
+    "description": "Log today tab"
+  },
+  "history": "History",
+  "@history": {
+    "description": "History tab"
+  },
+  "selectedDate": "Selected Date",
+  "@selectedDate": {
+    "description": "Selected date label"
+  },
+  "quickLogTemplates": "Quick Log Templates",
+  "@quickLogTemplates": {
+    "description": "Quick log templates section"
+  },
+  "greatDay": "Great Day",
+  "@greatDay": {
+    "description": "Great day template"
+  },
+  "goodDay": "Good Day",
+  "@goodDay": {
+    "description": "Good day template"
+  },
+  "okayDay": "Okay Day",
+  "@okayDay": {
+    "description": "Okay day template"
+  },
+  "toughDay": "Tough Day",
+  "@toughDay": {
+    "description": "Tough day template"
+  },
+  "periodDay": "Period Day",
+  "@periodDay": {
+    "description": "Period day template"
+  },
+  "pms": "PMS",
+  "@pms": {
+    "description": "PMS template"
+  },
+  "mood": "Mood",
+  "@mood": {
+    "description": "Mood label"
+  },
+  "energy": "Energy",
+  "@energy": {
+    "description": "Energy label"
+  },
+  "painLevel": "Pain Level",
+  "@painLevel": {
+    "description": "Pain level label"
+  },
+  "notesOptional": "Notes (optional)",
+  "@notesOptional": {
+    "description": "Notes field label"
+  },
+  "saveDailyLog": "Save Daily Log",
+  "@saveDailyLog": {
+    "description": "Save daily log button"
+  },
+  "loggingFor": "Logging for",
+  "@loggingFor": {
+    "description": "Logging for date label"
+  },
+  "change": "Change",
+  "@change": {
+    "description": "Change button"
+  },
+  "moodLevel": "Mood Level",
+  "@moodLevel": {
+    "description": "Mood level label"
+  },
+  "energyLevel": "Energy Level",
+  "@energyLevel": {
+    "description": "Energy level label"
+  },
+  "stressLevel": "Stress Level",
+  "@stressLevel": {
+    "description": "Stress level label"
+  },
+  "sleepQuality": "Sleep Quality",
+  "@sleepQuality": {
+    "description": "Sleep quality label"
+  },
+  "waterIntake": "Water Intake",
+  "@waterIntake": {
+    "description": "Water intake label"
+  },
+  "exercise": "Exercise",
+  "@exercise": {
+    "description": "Exercise label"
+  },
+  "symptomsToday": "Symptoms Today",
+  "@symptomsToday": {
+    "description": "Symptoms today label"
+  },
+  "dailyNotes": "Daily Notes",
+  "@dailyNotes": {
+    "description": "Daily notes label"
+  },
+  "wellbeing": "Wellbeing",
+  "@wellbeing": {
+    "description": "Wellbeing tab"
+  },
+  "lifestyle": "Lifestyle",
+  "@lifestyle": {
+    "description": "Lifestyle tab"
+  },
+  "symptoms": "Symptoms",
+  "@symptoms": {
+    "description": "Symptoms tab"
+  },
+  "aiInsights": "AI Insights",
+  "@aiInsights": {
+    "description": "AI insights tab"
+  },
+  "aiPredictions": "AI Predictions",
+  "@aiPredictions": {
+    "description": "AI predictions section"
+  },
+  "personalInsights": "Personal Insights",
+  "@personalInsights": {
+    "description": "Personal insights section"
+  },
+  "nextPeriod": "Next Period",
+  "@nextPeriod": {
+    "description": "Next period prediction"
+  },
+  "ovulation": "Ovulation",
+  "@ovulation": {
+    "description": "Ovulation prediction"
+  },
+  "cycleRegularity": "Cycle Regularity",
+  "@cycleRegularity": {
+    "description": "Cycle regularity prediction"
+  },
+  "confidence": "confidence",
+  "@confidence": {
+    "description": "Confidence percentage"
+  },
+  "glasses": "glasses",
+  "@glasses": {
+    "description": "Glasses unit for water"
+  },
+  "minutes": "minutes",
+  "@minutes": {
+    "description": "Minutes unit"
+  },
+  "dailyGoalAchieved": "🎉 Daily goal achieved!",
+  "@dailyGoalAchieved": {
+    "description": "Daily goal achieved message"
+  },
+  "minToReachDailyGoal": "{minutes} min to reach daily goal",
+  "@minToReachDailyGoal": {
+    "description": "Minutes to reach daily goal",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tapSymptomsExperienced": "Tap any symptoms you experienced today:",
+  "@tapSymptomsExperienced": {
+    "description": "Instructions for symptom selection"
+  },
+  "symptomSelected": "{count, plural, =1{1 symptom selected} other{{count} symptoms selected}}",
+  "@symptomSelected": {
+    "description": "Number of symptoms selected",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "howFeelingToday": "How are you feeling today? Any thoughts or observations?",
+  "@howFeelingToday": {
+    "description": "Daily notes prompt"
+  },
+  "feelingGreatToday": "e.g., Feeling great today, had a good workout...",
+  "@feelingGreatToday": {
+    "description": "Daily notes placeholder"
+  },
+  "generatingAIInsights": "Generating AI insights...",
+  "@generatingAIInsights": {
+    "description": "Loading message for AI insights"
+  },
+  "noInsightsYet": "No insights yet",
+  "@noInsightsYet": {
+    "description": "No insights available message"
+  },
+  "keepTrackingForInsights": "Keep tracking your daily data to get personalized AI insights!",
+  "@keepTrackingForInsights": {
+    "description": "Instruction to keep tracking for insights"
+  },
+  "smartDailyLog": "Smart Daily Log",
+  "@smartDailyLog": {
+    "description": "Smart daily log title"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "saving": "Saving...",
+  "@saving": {
+    "description": "Saving status"
+  },
+  "dailyLogSavedFor": "Daily log saved for {date}",
+  "@dailyLogSavedFor": {
+    "description": "Daily log saved message",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSavingDailyLog": "Error saving daily log: {error}",
+  "@errorSavingDailyLog": {
+    "description": "Error saving daily log",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button"
+  },
+  "veryLow": "Very Low",
+  "@veryLow": {
+    "description": "Very low level"
+  },
+  "low": "Low",
+  "@low": {
+    "description": "Low level"
+  },
+  "neutral": "Neutral",
+  "@neutral": {
+    "description": "Neutral level"
+  },
+  "good": "Good",
+  "@good": {
+    "description": "Good level"
+  },
+  "excellent": "Excellent",
+  "@excellent": {
+    "description": "Excellent level"
+  },
+  "exhausted": "Exhausted",
+  "@exhausted": {
+    "description": "Exhausted energy level"
+  },
+  "normal": "Normal",
+  "@normal": {
+    "description": "Normal level"
+  },
+  "high": "High",
+  "@high": {
+    "description": "High level"
+  },
+  "energetic": "Energetic",
+  "@energetic": {
+    "description": "Energetic level"
+  },
+  "none": "None",
+  "@none": {
+    "description": "No pain"
+  },
+  "mild": "Mild",
+  "@mild": {
+    "description": "Mild pain"
+  },
+  "moderate": "Moderate",
+  "@moderate": {
+    "description": "Moderate pain"
+  },
+  "severe": "Severe",
+  "@severe": {
+    "description": "Severe pain"
+  },
+  "extreme": "Extreme",
+  "@extreme": {
+    "description": "Extreme pain"
+  },
+  "veryCalm": "Very Calm",
+  "@veryCalm": {
+    "description": "Very calm stress level"
+  },
+  "relaxed": "Relaxed",
+  "@relaxed": {
+    "description": "Relaxed stress level"
+  },
+  "stressed": "Stressed",
+  "@stressed": {
+    "description": "Stressed level"
+  },
+  "veryStressed": "Very Stressed",
+  "@veryStressed": {
+    "description": "Very stressed level"
+  },
+  "poor": "Poor",
+  "@poor": {
+    "description": "Poor sleep quality"
+  },
+  "fair": "Fair",
+  "@fair": {
+    "description": "Fair sleep quality"
+  },
+  "veryGood": "Very Good",
+  "@veryGood": {
+    "description": "Very good sleep quality"
+  },
+  "cramps": "Cramps",
+  "@cramps": {
+    "description": "Cramps symptom"
+  },
+  "headache": "Headache",
+  "@headache": {
+    "description": "Headache symptom"
+  },
+  "moodSwings": "Mood Swings",
+  "@moodSwings": {
+    "description": "Mood swings symptom"
+  },
+  "fatigue": "Fatigue",
+  "@fatigue": {
+    "description": "Fatigue symptom"
+  },
+  "bloating": "Bloating",
+  "@bloating": {
+    "description": "Bloating symptom"
+  },
+  "breastTenderness": "Breast Tenderness",
+  "@breastTenderness": {
+    "description": "Breast tenderness symptom"
+  },
+  "nausea": "Nausea",
+  "@nausea": {
+    "description": "Nausea symptom"
+  },
+  "backPain": "Back Pain",
+  "@backPain": {
+    "description": "Back pain symptom"
+  },
+  "acne": "Acne",
+  "@acne": {
+    "description": "Acne symptom"
+  },
+  "foodCravings": "Food Cravings",
+  "@foodCravings": {
+    "description": "Food cravings symptom"
+  },
+  "sleepIssues": "Sleep Issues",
+  "@sleepIssues": {
+    "description": "Sleep issues symptom"
+  },
+  "hotFlashes": "Hot Flashes",
+  "@hotFlashes": {
+    "description": "Hot flashes symptom"
+  },
+  "noDailyLogsYet": "No daily logs yet",
+  "@noDailyLogsYet": {
+    "description": "No daily logs message"
+  },
+  "startLoggingDailyMood": "Start logging your daily mood and energy",
+  "@startLoggingDailyMood": {
+    "description": "Start logging instruction"
+  },
+  "failedToLoadLogs": "Failed to load logs: {error}",
+  "@failedToLoadLogs": {
+    "description": "Failed to load logs error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "notes": "Notes",
+  "@notes": {
+    "description": "Notes label"
+  },
+  "more": "more",
+  "@more": {
+    "description": "More items indicator"
+  },
+  "dailyLogSaved": "Daily log saved!",
+  "@dailyLogSaved": {
+    "description": "Daily log saved success message"
+  },
+  "failedToSaveLog": "Failed to save log: {error}",
+  "@failedToSaveLog": {
+    "description": "Failed to save log error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToLoadExistingLog": "Failed to load existing log: {error}",
+  "@failedToLoadExistingLog": {
+    "description": "Failed to load existing log error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "howAreYouFeelingToday": "How are you feeling today?",
+  "@howAreYouFeelingToday": {
+    "description": "Notes field hint"
+  },
+  "updated": "Updated",
+  "@updated": {
+    "description": "Updated status"
+  },
+  "okay": "Okay",
+  "@okay": {
+    "description": "Okay level"
+  },
+
+  "tools": "Tools",
+  "@tools": {
+    "description": "Tools section title"
+  },
+  "dataManagement": "Data Management",
+  "@dataManagement": {
+    "description": "Data management section"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Account section"
+  },
+  "verified": "Verified",
+  "@verified": {
+    "description": "Verified status"
+  },
+  "healthIntegration": "Health Integration",
+  "@healthIntegration": {
+    "description": "Health integration option"
+  },
+  "healthIntegrationDescription": "Sync with HealthKit and Google Fit",
+  "@healthIntegrationDescription": {
+    "description": "Health integration description"
+  },
+  "dataManagementDescription": "Export, import, and backup your data",
+  "@dataManagementDescription": {
+    "description": "Data management description"
+  },
+  "exportBackup": "Export & Backup",
+  "@exportBackup": {
+    "description": "Export & backup option"
+  },
+  "exportBackupDescription": "Generate reports and backup your data",
+  "@exportBackupDescription": {
+    "description": "Export & backup description"
+  },
+  "socialSharing": "Social Sharing",
+  "@socialSharing": {
+    "description": "Social sharing option"
+  },
+  "socialSharingDescription": "Share data with providers and partners",
+  "@socialSharingDescription": {
+    "description": "Social sharing description"
+  },
+  "syncStatus": "Sync Status",
+  "@syncStatus": {
+    "description": "Sync status option"
+  },
+  "syncStatusDescription": "Check cloud synchronization",
+  "@syncStatusDescription": {
+    "description": "Sync status description"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About option"
+  },
+  "aboutDescription": "App version and credits",
+  "@aboutDescription": {
+    "description": "About description"
+  },
+  "signOut": "Sign Out",
+  "@signOut": {
+    "description": "Sign out option"
+  },
+  "signOutDescription": "Sign out of your account",
+  "@signOutDescription": {
+    "description": "Sign out description"
+  },
+  "getHelpUsingCycleSync": "Get help using CycleSync",
+  "@getHelpUsingCycleSync": {
+    "description": "Help description"
+  },
+  "viewSymptomPatterns": "View symptom patterns and insights",
+  "@viewSymptomPatterns": {
+    "description": "Symptom trends description"
+  },
+  "viewAllCycles": "View all cycles",
+  "@viewAllCycles": {
+    "description": "Cycle history description"
+  },
+  "viewCycleInsights": "View cycle insights",
+  "@viewCycleInsights": {
+    "description": "Analytics description"
+  },
+  "testFirebaseConnection": "Test Firebase connection",
+  "@testFirebaseConnection": {
+    "description": "Diagnostics description"
+  },
+  "comingSoon": "Coming Soon",
+  "@comingSoon": {
+    "description": "Coming soon dialog title"
+  },
+  "featureAvailableInFuture": "{feature} will be available in a future update.",
+  "@featureAvailableInFuture": {
+    "description": "Feature coming soon message",
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button"
+  },
+  "aboutCycleSync": "About CycleSync",
+  "@aboutCycleSync": {
+    "description": "About dialog title"
+  },
+  "cycleSyncVersion": "CycleSync v1.0.0",
+  "@cycleSyncVersion": {
+    "description": "App version"
+  },
+  "modernCycleTrackingApp": "A modern cycle tracking app built with Flutter.",
+  "@modernCycleTrackingApp": {
+    "description": "App description"
+  },
+  "features": "Features:",
+  "@features": {
+    "description": "Features section title"
+  },
+  "cycleLoggingTracking": "• Cycle logging and tracking",
+  "@cycleLoggingTracking": {
+    "description": "Feature: cycle logging"
+  },
+  "analyticsInsights": "• Analytics and insights",
+  "@analyticsInsights": {
+    "description": "Feature: analytics"
+  },
+  "darkModeSupport": "• Dark mode support",
+  "@darkModeSupport": {
+    "description": "Feature: dark mode"
+  },
+  "cloudSynchronization": "• Cloud synchronization",
+  "@cloudSynchronization": {
+    "description": "Feature: cloud sync"
+  },
+  "privacyFocusedDesign": "• Privacy-focused design",
+  "@privacyFocusedDesign": {
+    "description": "Feature: privacy"
+  },
+  "areYouSureSignOut": "Are you sure you want to sign out?",
+  "@areYouSureSignOut": {
+    "description": "Sign out confirmation"
+  },
+  "firebaseAuthentication": "Firebase Authentication",
+  "@firebaseAuthentication": {
+    "description": "Firebase auth sync item"
+  },
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status"
+  },
+  "cloudFirestore": "Cloud Firestore",
+  "@cloudFirestore": {
+    "description": "Firestore sync item"
+  },
+  "syncedMinutesAgo": "Synced {minutes} minutes ago",
+  "@syncedMinutesAgo": {
+    "description": "Synced time ago",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "healthData": "Health Data",
+  "@healthData": {
+    "description": "Health data sync item"
+  },
+  "pendingSync": "Pending sync",
+  "@pendingSync": {
+    "description": "Pending sync status"
+  },
+  "analyticsData": "Analytics Data",
+  "@analyticsData": {
+    "description": "Analytics data sync item"
+  },
+  "upToDate": "Up to date",
+  "@upToDate": {
+    "description": "Up to date status"
+  },
+  "totalSyncedRecords": "Total synced records:",
+  "@totalSyncedRecords": {
+    "description": "Total synced records label"
+  },
+  "lastFullSync": "Last full sync:",
+  "@lastFullSync": {
+    "description": "Last full sync label"
+  },
+  "todayAt": "Today at {time}",
+  "@todayAt": {
+    "description": "Today at time format",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "storageUsed": "Storage used:",
+  "@storageUsed": {
+    "description": "Storage used label"
+  },
+  "syncNow": "Sync Now",
+  "@syncNow": {
+    "description": "Sync now button"
+  },
+  "manualSyncCompleted": "Manual sync completed successfully!",
+  "@manualSyncCompleted": {
+    "description": "Manual sync success message"
+  }
+}

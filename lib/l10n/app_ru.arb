@@ -1,0 +1,104 @@
+{
+  "@@locale": "ru",
+  "appTitle": "CycleSync",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "bottomNavHome": "Главная",
+  "bottomNavCycle": "Цикл",
+  "bottomNavHealth": "Здоровье",
+  "bottomNavSettings": "Настройки",
+  
+  "settingsTitle": "Настройки",
+  "settingsLanguage": "Язык",
+  "settingsLanguageSubtitle": "Выберите предпочитаемый язык",
+  "settingsNotifications": "Уведомления",
+  "settingsPrivacy": "Конфиденциальность и безопасность",
+  "settingsTheme": "Тема",
+  "settingsHelp": "Помощь и поддержка",
+  
+  "languageSelectorTitle": "Выбрать язык",
+  "languageSelectorSubtitle": "Глобальная доступность для всех",
+  "languageSelectorSearch": "Поиск языков...",
+  "languageSelectorResults": "{count, plural, =0{Языков не найдено} =1{Найден 1 язык} other{Найдено {count} языков}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "Отслеживание цикла",
+  "cycleCurrentPhase": "Текущая фаза",
+  "cycleNextPeriod": "Следующие месячные",
+  "cycleDaysLeft": "Осталось {days} дней",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "Показатели здоровья",
+  "healthSymptoms": "Симптомы",
+  "healthMood": "Настроение",
+  "healthEnergy": "Уровень энергии",
+  
+  "profileTitle": "Профиль",
+  "profilePersonalInfo": "Личная информация",
+  "profileCycleHistory": "История циклов",
+  "profileDataExport": "Экспорт данных",
+  
+  "helpTitle": "Помощь и поддержка",
+  "helpFaq": "Часто задаваемые вопросы",
+  "helpContactSupport": "Связаться с поддержкой",
+  "helpUserGuide": "Руководство пользователя",
+  "helpPrivacyPolicy": "Политика конфиденциальности",
+  "helpReportIssue": "Сообщить о проблеме",
+  
+  "commonSave": "Сохранить",
+  "commonCancel": "Отмена",
+  "commonClose": "Закрыть",
+  "commonBack": "Назад",
+  "commonNext": "Далее",
+  "commonDone": "Готово",
+  "commonError": "Ошибка",
+  "commonSuccess": "Успешно",
+  "commonLoading": "Загрузка...",
+  
+  "todayTitle": "Сегодня",
+  "yesterdayTitle": "Вчера",
+  "tomorrowTitle": "Завтра",
+  
+  "phaseFollicular": "Фолликулярная фаза",
+  "phaseOvulation": "Овуляция",
+  "phaseLuteal": "Лютеиновая фаза",
+  "phaseMenstruation": "Менструация",
+  
+  "symptomCramps": "Спазмы",
+  "symptomHeadache": "Головная боль",
+  "symptomBackache": "Боль в спине",
+  "symptomBloating": "Вздутие живота",
+  "symptomFatigue": "Усталость",
+  
+  "moodHappy": "Счастливое",
+  "moodSad": "Грустное",
+  "moodAnxious": "Тревожное",
+  "moodIrritated": "Раздраженное",
+  "moodCalm": "Спокойное",
+  
+  "energyHigh": "Высокая энергия",
+  "energyMedium": "Средняя энергия",
+  "energyLow": "Низкая энергия",
+  
+  "notificationTitle": "Уведомление CycleSync",
+  "notificationPeriodReminder": "Ваши месячные скоро должны начаться",
+  "notificationOvulationReminder": "Вы приближаетесь к фертильному окну",
+  
+  "accessibilityMenuButton": "Кнопка меню",
+  "accessibilityCalendar": "Вид календаря",
+  "accessibilitySettingsButton": "Кнопка настроек"
+}

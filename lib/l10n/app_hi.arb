@@ -1,0 +1,304 @@
+{
+  "@@locale": "hi",
+  "appTitle": "साइकल सिंक",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "bottomNavHome": "होम",
+  "@bottomNavHome": {
+    "description": "Home tab in bottom navigation"
+  },
+  "bottomNavCycle": "साइकल",
+  "@bottomNavCycle": {
+    "description": "Cycle tab in bottom navigation"
+  },
+  "bottomNavHealth": "स्वास्थ्य",
+  "@bottomNavHealth": {
+    "description": "Health tab in bottom navigation"
+  },
+  "bottomNavSettings": "सेटिंग्स",
+  "@bottomNavSettings": {
+    "description": "Settings tab in bottom navigation"
+  },
+  
+  "settingsTitle": "सेटिंग्स",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "settingsLanguage": "भाषा",
+  "@settingsLanguage": {
+    "description": "Language settings option"
+  },
+  "settingsLanguageSubtitle": "अपनी पसंदीदा भाषा चुनें",
+  "@settingsLanguageSubtitle": {
+    "description": "Subtitle for language settings"
+  },
+  "settingsNotifications": "सूचनाएं",
+  "@settingsNotifications": {
+    "description": "Notifications settings option"
+  },
+  "settingsPrivacy": "गोपनीयता और सुरक्षा",
+  "@settingsPrivacy": {
+    "description": "Privacy settings option"
+  },
+  "settingsTheme": "थीम",
+  "@settingsTheme": {
+    "description": "Theme settings option"
+  },
+  "settingsHelp": "सहायता और समर्थन",
+  "@settingsHelp": {
+    "description": "Help and support option"
+  },
+  
+  "languageSelectorTitle": "भाषा चुनें",
+  "@languageSelectorTitle": {
+    "description": "Title for language selection screen"
+  },
+  "languageSelectorSubtitle": "सभी के लिए वैश्विक पहुंच",
+  "@languageSelectorSubtitle": {
+    "description": "Subtitle for language selection screen"
+  },
+  "languageSelectorSearch": "भाषाएं खोजें...",
+  "@languageSelectorSearch": {
+    "description": "Placeholder text for language search"
+  },
+  "languageSelectorResults": "{count, plural, =0{कोई भाषा नहीं मिली} =1{1 भाषा मिली} other{{count} भाषाएं मिलीं}}",
+  "@languageSelectorResults": {
+    "description": "Number of languages found in search",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "साइकल ट्रैकिंग",
+  "@cycleTitle": {
+    "description": "Cycle tracking screen title"
+  },
+  "cycleCurrentPhase": "वर्तमान चरण",
+  "@cycleCurrentPhase": {
+    "description": "Label for current cycle phase"
+  },
+  "cycleNextPeriod": "अगली पीरियड",
+  "@cycleNextPeriod": {
+    "description": "Label for next period prediction"
+  },
+  "cycleDaysLeft": "{days} दिन बाकी",
+  "@cycleDaysLeft": {
+    "description": "Days remaining until next period",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "स्वास्थ्य अंतर्दृष्टि",
+  "@healthTitle": {
+    "description": "Health screen title"
+  },
+  "healthSymptoms": "लक्षण",
+  "@healthSymptoms": {
+    "description": "Health symptoms section"
+  },
+  "healthMood": "मूड",
+  "@healthMood": {
+    "description": "Mood tracking section"
+  },
+  "healthEnergy": "ऊर्जा स्तर",
+  "@healthEnergy": {
+    "description": "Energy level tracking"
+  },
+  
+  "profileTitle": "प्रोफ़ाइल",
+  "@profileTitle": {
+    "description": "Profile screen title"
+  },
+  "profilePersonalInfo": "व्यक्तिगत जानकारी",
+  "@profilePersonalInfo": {
+    "description": "Personal information section"
+  },
+  "profileCycleHistory": "साइकल इतिहास",
+  "@profileCycleHistory": {
+    "description": "Cycle history section"
+  },
+  "profileDataExport": "डेटा निर्यात करें",
+  "@profileDataExport": {
+    "description": "Data export option"
+  },
+  
+  "helpTitle": "सहायता और समर्थन",
+  "@helpTitle": {
+    "description": "Help and support screen title"
+  },
+  "helpFaq": "अक्सर पूछे जाने वाले प्रश्न",
+  "@helpFaq": {
+    "description": "FAQ section title"
+  },
+  "helpContactSupport": "समर्थन से संपर्क करें",
+  "@helpContactSupport": {
+    "description": "Contact support option"
+  },
+  "helpUserGuide": "उपयोगकर्ता गाइड",
+  "@helpUserGuide": {
+    "description": "User guide option"
+  },
+  "helpPrivacyPolicy": "गोपनीयता नीति",
+  "@helpPrivacyPolicy": {
+    "description": "Privacy policy option"
+  },
+  "helpReportIssue": "समस्या की रिपोर्ट करें",
+  "@helpReportIssue": {
+    "description": "Report issue option"
+  },
+  
+  "commonSave": "सहेजें",
+  "@commonSave": {
+    "description": "Common save button"
+  },
+  "commonCancel": "रद्द करें",
+  "@commonCancel": {
+    "description": "Common cancel button"
+  },
+  "commonClose": "बंद करें",
+  "@commonClose": {
+    "description": "Common close button"
+  },
+  "commonBack": "वापस",
+  "@commonBack": {
+    "description": "Common back button"
+  },
+  "commonNext": "अगला",
+  "@commonNext": {
+    "description": "Common next button"
+  },
+  "commonDone": "पूर्ण",
+  "@commonDone": {
+    "description": "Common done button"
+  },
+  "commonError": "त्रुटि",
+  "@commonError": {
+    "description": "Common error message"
+  },
+  "commonSuccess": "सफलता",
+  "@commonSuccess": {
+    "description": "Common success message"
+  },
+  "commonLoading": "लोड हो रहा है...",
+  "@commonLoading": {
+    "description": "Common loading message"
+  },
+  
+  "todayTitle": "आज",
+  "@todayTitle": {
+    "description": "Today section title"
+  },
+  "yesterdayTitle": "कल",
+  "@yesterdayTitle": {
+    "description": "Yesterday section title"
+  },
+  "tomorrowTitle": "कल",
+  "@tomorrowTitle": {
+    "description": "Tomorrow section title"
+  },
+  
+  "phaseFollicular": "फॉलिक्यूलर चरण",
+  "@phaseFollicular": {
+    "description": "Follicular phase of menstrual cycle"
+  },
+  "phaseOvulation": "ओव्यूलेशन",
+  "@phaseOvulation": {
+    "description": "Ovulation phase of menstrual cycle"
+  },
+  "phaseLuteal": "ल्यूटियल चरण",
+  "@phaseLuteal": {
+    "description": "Luteal phase of menstrual cycle"
+  },
+  "phaseMenstruation": "मासिक धर्म",
+  "@phaseMenstruation": {
+    "description": "Menstruation phase of menstrual cycle"
+  },
+  
+  "symptomCramps": "ऐंठन",
+  "@symptomCramps": {
+    "description": "Menstrual cramps symptom"
+  },
+  "symptomHeadache": "सिरदर्द",
+  "@symptomHeadache": {
+    "description": "Headache symptom"
+  },
+  "symptomBackache": "कमर दर्द",
+  "@symptomBackache": {
+    "description": "Backache symptom"
+  },
+  "symptomBloating": "पेट फूलना",
+  "@symptomBloating": {
+    "description": "Bloating symptom"
+  },
+  "symptomFatigue": "थकान",
+  "@symptomFatigue": {
+    "description": "Fatigue symptom"
+  },
+  
+  "moodHappy": "खुश",
+  "@moodHappy": {
+    "description": "Happy mood"
+  },
+  "moodSad": "दुखी",
+  "@moodSad": {
+    "description": "Sad mood"
+  },
+  "moodAnxious": "चिंतित",
+  "@moodAnxious": {
+    "description": "Anxious mood"
+  },
+  "moodIrritated": "चिड़चिड़ाहट",
+  "@moodIrritated": {
+    "description": "Irritated mood"
+  },
+  "moodCalm": "शांत",
+  "@moodCalm": {
+    "description": "Calm mood"
+  },
+  
+  "energyHigh": "उच्च ऊर्जा",
+  "@energyHigh": {
+    "description": "High energy level"
+  },
+  "energyMedium": "मध्यम ऊर्जा",
+  "@energyMedium": {
+    "description": "Medium energy level"
+  },
+  "energyLow": "कम ऊर्जा",
+  "@energyLow": {
+    "description": "Low energy level"
+  },
+  
+  "notificationTitle": "साइकल सिंक सूचना",
+  "@notificationTitle": {
+    "description": "Default notification title"
+  },
+  "notificationPeriodReminder": "आपकी अवधि जल्द शुरू होने की उम्मीद है",
+  "@notificationPeriodReminder": {
+    "description": "Period reminder notification"
+  },
+  "notificationOvulationReminder": "आप अपनी उर्वर खिड़की के पास पहुंच रहे हैं",
+  "@notificationOvulationReminder": {
+    "description": "Ovulation reminder notification"
+  },
+  
+  "accessibilityMenuButton": "मेनू बटन",
+  "@accessibilityMenuButton": {
+    "description": "Accessibility label for menu button"
+  },
+  "accessibilityCalendar": "कैलेंडर दृश्य",
+  "@accessibilityCalendar": {
+    "description": "Accessibility label for calendar"
+  },
+  "accessibilitySettingsButton": "सेटिंग्स बटन",
+  "@accessibilitySettingsButton": {
+    "description": "Accessibility label for settings button"
+  }
+}

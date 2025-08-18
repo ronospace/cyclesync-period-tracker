@@ -1,0 +1,71 @@
+{
+  "@@locale": "fa",
+  "appTitle": "سایکل سینک",
+  
+  "bottomNavHome": "خانه",
+  "bottomNavCycle": "چرخه",
+  "bottomNavHealth": "سلامت",
+  "bottomNavSettings": "تنظیمات",
+  
+  "settingsTitle": "تنظیمات",
+  "settingsLanguage": "زبان",
+  "settingsLanguageSubtitle": "زبان مورد نظر خود را انتخاب کنید",
+  "settingsNotifications": "اعلان‌ها",
+  "settingsPrivacy": "حریم خصوصی و امنیت",
+  "settingsTheme": "تم",
+  "settingsHelp": "راهنمایی و پشتیبانی",
+  
+  "languageSelectorTitle": "انتخاب زبان",
+  "languageSelectorSubtitle": "دسترسی جهانی برای همه",
+  "languageSelectorSearch": "جستجوی زبان‌ها...",
+  "languageSelectorResults": "{count, plural, =0{هیچ زبانی یافت نشد} =1{1 زبان یافت شد} other{{count} زبان یافت شد}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "پیگیری چرخه",
+  "cycleCurrentPhase": "مرحله فعلی",
+  "cycleNextPeriod": "دوره بعدی",
+  "cycleDaysLeft": "{days} روز باقی مانده",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "بینش سلامت",
+  "healthSymptoms": "علائم",
+  "healthMood": "حالت روحی",
+  "healthEnergy": "سطح انرژی",
+  
+  "commonSave": "ذخیره",
+  "commonCancel": "لغو",
+  "commonClose": "بستن",
+  "commonBack": "بازگشت",
+  "commonNext": "بعدی",
+  "commonDone": "انجام شد",
+  "commonError": "خطا",
+  "commonSuccess": "موفقیت",
+  "commonLoading": "در حال بارگیری...",
+  
+  "phaseFollicular": "مرحله فولیکولار",
+  "phaseOvulation": "تخمک‌گذاری",
+  "phaseLuteal": "مرحله لوتئال",
+  "phaseMenstruation": "قاعدگی",
+  
+  "moodHappy": "خوشحال",
+  "moodSad": "غمگین",
+  "moodAnxious": "مضطرب",
+  "moodIrritated": "عصبانی",
+  "moodCalm": "آرام",
+  
+  "notificationTitle": "اعلان سایکل سینک",
+  "notificationPeriodReminder": "دوره شما به زودی شروع خواهد شد",
+  "notificationOvulationReminder": "شما به دوران باروری نزدیک می‌شوید"
+}

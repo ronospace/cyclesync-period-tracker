@@ -1,0 +1,304 @@
+{
+  "@@locale": "zh",
+  "appTitle": "周期同步",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "bottomNavHome": "主页",
+  "@bottomNavHome": {
+    "description": "Home tab in bottom navigation"
+  },
+  "bottomNavCycle": "周期",
+  "@bottomNavCycle": {
+    "description": "Cycle tab in bottom navigation"
+  },
+  "bottomNavHealth": "健康",
+  "@bottomNavHealth": {
+    "description": "Health tab in bottom navigation"
+  },
+  "bottomNavSettings": "设置",
+  "@bottomNavSettings": {
+    "description": "Settings tab in bottom navigation"
+  },
+  
+  "settingsTitle": "设置",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "settingsLanguage": "语言",
+  "@settingsLanguage": {
+    "description": "Language settings option"
+  },
+  "settingsLanguageSubtitle": "选择您的偏好语言",
+  "@settingsLanguageSubtitle": {
+    "description": "Subtitle for language settings"
+  },
+  "settingsNotifications": "通知",
+  "@settingsNotifications": {
+    "description": "Notifications settings option"
+  },
+  "settingsPrivacy": "隐私与安全",
+  "@settingsPrivacy": {
+    "description": "Privacy settings option"
+  },
+  "settingsTheme": "主题",
+  "@settingsTheme": {
+    "description": "Theme settings option"
+  },
+  "settingsHelp": "帮助与支持",
+  "@settingsHelp": {
+    "description": "Help and support option"
+  },
+  
+  "languageSelectorTitle": "选择语言",
+  "@languageSelectorTitle": {
+    "description": "Title for language selection screen"
+  },
+  "languageSelectorSubtitle": "全球化的无障碍访问",
+  "@languageSelectorSubtitle": {
+    "description": "Subtitle for language selection screen"
+  },
+  "languageSelectorSearch": "搜索语言...",
+  "@languageSelectorSearch": {
+    "description": "Placeholder text for language search"
+  },
+  "languageSelectorResults": "{count, plural, =0{未找到语言} =1{找到 1 种语言} other{找到 {count} 种语言}}",
+  "@languageSelectorResults": {
+    "description": "Number of languages found in search",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "周期追踪",
+  "@cycleTitle": {
+    "description": "Cycle tracking screen title"
+  },
+  "cycleCurrentPhase": "当前阶段",
+  "@cycleCurrentPhase": {
+    "description": "Label for current cycle phase"
+  },
+  "cycleNextPeriod": "下次月经",
+  "@cycleNextPeriod": {
+    "description": "Label for next period prediction"
+  },
+  "cycleDaysLeft": "还有 {days} 天",
+  "@cycleDaysLeft": {
+    "description": "Days remaining until next period",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "健康洞察",
+  "@healthTitle": {
+    "description": "Health screen title"
+  },
+  "healthSymptoms": "症状",
+  "@healthSymptoms": {
+    "description": "Health symptoms section"
+  },
+  "healthMood": "情绪",
+  "@healthMood": {
+    "description": "Mood tracking section"
+  },
+  "healthEnergy": "精力水平",
+  "@healthEnergy": {
+    "description": "Energy level tracking"
+  },
+  
+  "profileTitle": "个人资料",
+  "@profileTitle": {
+    "description": "Profile screen title"
+  },
+  "profilePersonalInfo": "个人信息",
+  "@profilePersonalInfo": {
+    "description": "Personal information section"
+  },
+  "profileCycleHistory": "周期历史",
+  "@profileCycleHistory": {
+    "description": "Cycle history section"
+  },
+  "profileDataExport": "导出数据",
+  "@profileDataExport": {
+    "description": "Data export option"
+  },
+  
+  "helpTitle": "帮助与支持",
+  "@helpTitle": {
+    "description": "Help and support screen title"
+  },
+  "helpFaq": "常见问题",
+  "@helpFaq": {
+    "description": "FAQ section title"
+  },
+  "helpContactSupport": "联系支持",
+  "@helpContactSupport": {
+    "description": "Contact support option"
+  },
+  "helpUserGuide": "用户指南",
+  "@helpUserGuide": {
+    "description": "User guide option"
+  },
+  "helpPrivacyPolicy": "隐私政策",
+  "@helpPrivacyPolicy": {
+    "description": "Privacy policy option"
+  },
+  "helpReportIssue": "报告问题",
+  "@helpReportIssue": {
+    "description": "Report issue option"
+  },
+  
+  "commonSave": "保存",
+  "@commonSave": {
+    "description": "Common save button"
+  },
+  "commonCancel": "取消",
+  "@commonCancel": {
+    "description": "Common cancel button"
+  },
+  "commonClose": "关闭",
+  "@commonClose": {
+    "description": "Common close button"
+  },
+  "commonBack": "返回",
+  "@commonBack": {
+    "description": "Common back button"
+  },
+  "commonNext": "下一步",
+  "@commonNext": {
+    "description": "Common next button"
+  },
+  "commonDone": "完成",
+  "@commonDone": {
+    "description": "Common done button"
+  },
+  "commonError": "错误",
+  "@commonError": {
+    "description": "Common error message"
+  },
+  "commonSuccess": "成功",
+  "@commonSuccess": {
+    "description": "Common success message"
+  },
+  "commonLoading": "加载中...",
+  "@commonLoading": {
+    "description": "Common loading message"
+  },
+  
+  "todayTitle": "今天",
+  "@todayTitle": {
+    "description": "Today section title"
+  },
+  "yesterdayTitle": "昨天",
+  "@yesterdayTitle": {
+    "description": "Yesterday section title"
+  },
+  "tomorrowTitle": "明天",
+  "@tomorrowTitle": {
+    "description": "Tomorrow section title"
+  },
+  
+  "phaseFollicular": "卵泡期",
+  "@phaseFollicular": {
+    "description": "Follicular phase of menstrual cycle"
+  },
+  "phaseOvulation": "排卵期",
+  "@phaseOvulation": {
+    "description": "Ovulation phase of menstrual cycle"
+  },
+  "phaseLuteal": "黄体期",
+  "@phaseLuteal": {
+    "description": "Luteal phase of menstrual cycle"
+  },
+  "phaseMenstruation": "月经期",
+  "@phaseMenstruation": {
+    "description": "Menstruation phase of menstrual cycle"
+  },
+  
+  "symptomCramps": "痛经",
+  "@symptomCramps": {
+    "description": "Menstrual cramps symptom"
+  },
+  "symptomHeadache": "头痛",
+  "@symptomHeadache": {
+    "description": "Headache symptom"
+  },
+  "symptomBackache": "腰痛",
+  "@symptomBackache": {
+    "description": "Backache symptom"
+  },
+  "symptomBloating": "腹胀",
+  "@symptomBloating": {
+    "description": "Bloating symptom"
+  },
+  "symptomFatigue": "疲劳",
+  "@symptomFatigue": {
+    "description": "Fatigue symptom"
+  },
+  
+  "moodHappy": "开心",
+  "@moodHappy": {
+    "description": "Happy mood"
+  },
+  "moodSad": "难过",
+  "@moodSad": {
+    "description": "Sad mood"
+  },
+  "moodAnxious": "焦虑",
+  "@moodAnxious": {
+    "description": "Anxious mood"
+  },
+  "moodIrritated": "烦躁",
+  "@moodIrritated": {
+    "description": "Irritated mood"
+  },
+  "moodCalm": "平静",
+  "@moodCalm": {
+    "description": "Calm mood"
+  },
+  
+  "energyHigh": "精力充沛",
+  "@energyHigh": {
+    "description": "High energy level"
+  },
+  "energyMedium": "中等精力",
+  "@energyMedium": {
+    "description": "Medium energy level"
+  },
+  "energyLow": "精力不足",
+  "@energyLow": {
+    "description": "Low energy level"
+  },
+  
+  "notificationTitle": "周期同步通知",
+  "@notificationTitle": {
+    "description": "Default notification title"
+  },
+  "notificationPeriodReminder": "您的月经期即将开始",
+  "@notificationPeriodReminder": {
+    "description": "Period reminder notification"
+  },
+  "notificationOvulationReminder": "您正在接近排卵期",
+  "@notificationOvulationReminder": {
+    "description": "Ovulation reminder notification"
+  },
+  
+  "accessibilityMenuButton": "菜单按钮",
+  "@accessibilityMenuButton": {
+    "description": "Accessibility label for menu button"
+  },
+  "accessibilityCalendar": "日历视图",
+  "@accessibilityCalendar": {
+    "description": "Accessibility label for calendar"
+  },
+  "accessibilitySettingsButton": "设置按钮",
+  "@accessibilitySettingsButton": {
+    "description": "Accessibility label for settings button"
+  }
+}

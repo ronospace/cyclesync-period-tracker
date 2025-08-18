@@ -100,15 +100,21 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _startAnimationSequence() async {
     // Start background animation immediately
-    _backgroundAnimationController.forward();
-    
+    if (mounted) {
+      _backgroundAnimationController.forward();
+    }
+
     // Wait a bit, then start logo animation
     await Future.delayed(const Duration(milliseconds: 300));
-    _logoAnimationController.forward();
-    
+    if (mounted) {
+      _logoAnimationController.forward();
+    }
+
     // Wait for logo to finish, then start text
     await Future.delayed(const Duration(milliseconds: 800));
-    _textAnimationController.forward();
+    if (mounted) {
+      _textAnimationController.forward();
+    }
   }
 
   Future<void> _initializeApp() async {
@@ -119,9 +125,11 @@ class _SplashScreenState extends State<SplashScreen>
         _performInitialization(),
       ]);
       
-      setState(() {
-        _isInitialized = true;
-      });
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
       
       // Navigate to appropriate screen
       _navigateToNextScreen();
@@ -244,7 +252,7 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withAlpha(26),
                                   blurRadius: 20,
                                   spreadRadius: 5,
                                   offset: const Offset(0, 10),
@@ -284,7 +292,7 @@ class _SplashScreenState extends State<SplashScreen>
                                   letterSpacing: 2.0,
                                   shadows: [
                                     Shadow(
-                                      color: Colors.black.withOpacity(0.3),
+                                      color: Colors.black.withAlpha(77),
                                       offset: const Offset(0, 2),
                                       blurRadius: 4,
                                     ),
@@ -296,7 +304,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 'Your Smart Period Companion',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withAlpha(230),
                                   fontWeight: FontWeight.w300,
                                   letterSpacing: 1.0,
                                 ),
@@ -317,7 +325,7 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 30,
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.white.withOpacity(0.8),
+                          Colors.white.withAlpha(204),
                         ),
                         strokeWidth: 2.5,
                       ),
@@ -326,7 +334,7 @@ class _SplashScreenState extends State<SplashScreen>
                     Text(
                       'Loading your personalized experience...',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withAlpha(204),
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                       ),
@@ -349,14 +357,14 @@ class _SplashScreenState extends State<SplashScreen>
                                 Text(
                                   '✨ ',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withAlpha(204),
                                     fontSize: 16,
                                   ),
                                 ),
                                 Text(
                                   'Empowering periods with AI',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withAlpha(204),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -364,7 +372,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 Text(
                                   ' ✨',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withAlpha(204),
                                     fontSize: 16,
                                   ),
                                 ),
@@ -374,7 +382,7 @@ class _SplashScreenState extends State<SplashScreen>
                             Text(
                               'v1.0.0',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
+                                color: Colors.white.withAlpha(153),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w300,
                               ),

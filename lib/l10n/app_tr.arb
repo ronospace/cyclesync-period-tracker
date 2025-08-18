@@ -1,0 +1,71 @@
+{
+  "@@locale": "tr",
+  "appTitle": "CycleSync",
+  
+  "bottomNavHome": "Ana Sayfa",
+  "bottomNavCycle": "Döngü",
+  "bottomNavHealth": "Sağlık",
+  "bottomNavSettings": "Ayarlar",
+  
+  "settingsTitle": "Ayarlar",
+  "settingsLanguage": "Dil",
+  "settingsLanguageSubtitle": "Tercih ettiğiniz dili seçin",
+  "settingsNotifications": "Bildirimler",
+  "settingsPrivacy": "Gizlilik ve Güvenlik",
+  "settingsTheme": "Tema",
+  "settingsHelp": "Yardım ve Destek",
+  
+  "languageSelectorTitle": "Dil Seçin",
+  "languageSelectorSubtitle": "Herkes için küresel erişilebilirlik",
+  "languageSelectorSearch": "Dil ara...",
+  "languageSelectorResults": "{count, plural, =0{Hiç dil bulunamadı} =1{1 dil bulundu} other{{count} dil bulundu}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "Döngü Takibi",
+  "cycleCurrentPhase": "Mevcut Aşama",
+  "cycleNextPeriod": "Sonraki Adet",
+  "cycleDaysLeft": "{days} gün kaldı",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "Sağlık İçgörüleri",
+  "healthSymptoms": "Semptomlar",
+  "healthMood": "Ruh Hali",
+  "healthEnergy": "Enerji Seviyesi",
+  
+  "commonSave": "Kaydet",
+  "commonCancel": "İptal",
+  "commonClose": "Kapat",
+  "commonBack": "Geri",
+  "commonNext": "İleri",
+  "commonDone": "Tamam",
+  "commonError": "Hata",
+  "commonSuccess": "Başarılı",
+  "commonLoading": "Yükleniyor...",
+  
+  "phaseFollicular": "Foliküler Aşama",
+  "phaseOvulation": "Ovulasyon",
+  "phaseLuteal": "Luteal Aşama",
+  "phaseMenstruation": "Adet",
+  
+  "moodHappy": "Mutlu",
+  "moodSad": "Üzgün",
+  "moodAnxious": "Endişeli",
+  "moodIrritated": "Sinirli",
+  "moodCalm": "Sakin",
+  
+  "notificationTitle": "CycleSync Bildirimi",
+  "notificationPeriodReminder": "Adetiniz yakında başlayacak",
+  "notificationOvulationReminder": "Verimli dönemlere yaklaşıyorsunuz"
+}

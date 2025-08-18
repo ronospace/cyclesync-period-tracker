@@ -1,0 +1,71 @@
+{
+  "@@locale": "bn",
+  "appTitle": "সাইকেল সিংক",
+  
+  "bottomNavHome": "হোম",
+  "bottomNavCycle": "চক্র",
+  "bottomNavHealth": "স্বাস্থ্য",
+  "bottomNavSettings": "সেটিংস",
+  
+  "settingsTitle": "সেটিংস",
+  "settingsLanguage": "ভাষা",
+  "settingsLanguageSubtitle": "আপনার পছন্দের ভাষা বেছে নিন",
+  "settingsNotifications": "বিজ্ঞপ্তি",
+  "settingsPrivacy": "গোপনীয়তা ও নিরাপত্তা",
+  "settingsTheme": "থিম",
+  "settingsHelp": "সাহায্য ও সহায়তা",
+  
+  "languageSelectorTitle": "ভাষা নির্বাচন করুন",
+  "languageSelectorSubtitle": "সকলের জন্য বৈশ্বিক অভিগম্যতা",
+  "languageSelectorSearch": "ভাষা খুঁজুন...",
+  "languageSelectorResults": "{count, plural, =0{কোনো ভাষা পাওয়া যায়নি} =1{১টি ভাষা পাওয়া গেছে} other{{count}টি ভাষা পাওয়া গেছে}}",
+  "@languageSelectorResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cycleTitle": "চক্র ট্র্যাকিং",
+  "cycleCurrentPhase": "বর্তমান পর্যায়",
+  "cycleNextPeriod": "পরবর্তী পিরিয়ড",
+  "cycleDaysLeft": "{days} দিন বাকি",
+  "@cycleDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "healthTitle": "স্বাস্থ্য অন্তর্দৃষ্টি",
+  "healthSymptoms": "লক্ষণ",
+  "healthMood": "মেজাজ",
+  "healthEnergy": "শক্তির স্তর",
+  
+  "commonSave": "সেভ করুন",
+  "commonCancel": "বাতিল করুন",
+  "commonClose": "বন্ধ করুন",
+  "commonBack": "পিছনে",
+  "commonNext": "পরবর্তী",
+  "commonDone": "সম্পন্ন",
+  "commonError": "ত্রুটি",
+  "commonSuccess": "সফল",
+  "commonLoading": "লোড হচ্ছে...",
+  
+  "phaseFollicular": "ফলিকুলার পর্যায়",
+  "phaseOvulation": "ডিম্বস্ফোটন",
+  "phaseLuteal": "লুটিয়াল পর্যায়",
+  "phaseMenstruation": "মাসিক",
+  
+  "moodHappy": "খুশি",
+  "moodSad": "দুঃখিত",
+  "moodAnxious": "উদ্বিগ্ন",
+  "moodIrritated": "বিরক্ত",
+  "moodCalm": "শান্ত",
+  
+  "notificationTitle": "সাইকেল সিংক বিজ্ঞপ্তি",
+  "notificationPeriodReminder": "আপনার পিরিয়ড শীঘ্রই শুরু হওয়ার কথা",
+  "notificationOvulationReminder": "আপনি আপনার উর্বর সময়ের কাছাকাছি আসছেন"
+}
