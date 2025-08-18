@@ -247,7 +247,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           Text(
             'Step 1 of 4',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.pink.shade400,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -256,13 +256,15 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             'When was your cycle?',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.pink.shade700,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Let\'s start with the basic dates for this cycle.',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 32),
           
@@ -271,7 +273,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             width: double.infinity,
             child: Card(
               elevation: _startDate != null ? 0 : 2,
-              color: _startDate != null ? Colors.pink.shade50 : null,
+              color: _startDate != null ? Theme.of(context).colorScheme.primaryContainer : null,
               child: InkWell(
                 onTap: () async {
                   await _pickDate(true);
@@ -296,12 +298,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.pink.shade100,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
                           Icons.play_arrow,
-                          color: Colors.pink.shade600,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 24,
                         ),
                       ),
@@ -315,7 +317,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: _startDate != null ? Colors.pink.shade700 : null,
+                                color: _startDate != null ? Theme.of(context).colorScheme.primary : null,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -324,7 +326,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                                   ? dateFormat.format(_startDate!)
                                   : 'Tap to select when your cycle started',
                               style: TextStyle(
-                                color: _startDate != null ? Colors.pink.shade600 : Colors.grey.shade600,
+                                color: _startDate != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 14,
                               ),
                             ),

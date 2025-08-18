@@ -260,7 +260,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
 
   Widget _buildExistingInvitations() {
     return StreamBuilder<List<PartnerInvitation>>(
-      stream: PartnerSharingService().getSentInvitationsStream(),
+      stream: PartnerSharingService.instance.getSentInvitationsStream(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
@@ -439,14 +439,20 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
     });
 
     try {
-      final success = await PartnerSharingService().sendInvitation(
-        inviteeEmail: _emailController.text.trim(),
-        permission: _selectedPermission,
-        dataTypes: _selectedDataTypes.toList(),
-        personalMessage: _messageController.text.trim().isEmpty 
+      final success = await PartnerSharingService.instance.sendInvitation(
+        partnerEmail: _emailController.text.trim(),
+        relationshipType: PartnerType.romanticPartner, // Default type
+        customMessage: _messageController.text.trim().isEmpty 
             ? null 
             : _messageController.text.trim(),
-      );
+        customPermissions: Map.fromIterables(
+          _selectedDataTypes.map((dt) => SharedDataType.values.firstWhere(
+            (sdt) => sdt.toString().split('.').last == dt.toString().split('.').last,
+            orElse: () => SharedDataType.notes,
+          )),
+          _selectedDataTypes.map((_) => _selectedPermission),
+        ),
+      ) != null;
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -492,7 +498,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
 
   Future<void> _cancelInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService().cancelInvitation(invitationId);
+      final success = await PartnerSharingService.instance.cancelInvitation(invitationId);
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

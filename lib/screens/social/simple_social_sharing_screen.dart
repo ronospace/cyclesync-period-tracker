@@ -227,9 +227,11 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
               children: [
                 Icon(Icons.local_hospital, color: Theme.of(context).primaryColor),
                 const SizedBox(width: 8),
-                const Text('Share with Healthcare Provider', 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const Spacer(),
+                Expanded(
+                  child: Text('Share with Healthcare Provider', 
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis),
+                ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close),
