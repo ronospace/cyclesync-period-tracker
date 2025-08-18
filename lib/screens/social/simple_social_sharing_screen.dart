@@ -218,7 +218,8 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
     return Dialog(
       child: Container(
         width: 400,
-        padding: const EdgeInsets.all(24),
+        constraints: const BoxConstraints(maxHeight: 700),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +230,7 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text('Share with Healthcare Provider', 
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis),
                 ),
                 IconButton(
@@ -241,34 +242,39 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
             const Divider(),
             const SizedBox(height: 16),
             
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _providerNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Provider Name',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  TextFormField(
-                    controller: _providerEmailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Provider Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) return 'Required';
-                      if (!value!.contains('@')) return 'Invalid email';
-                      return null;
-                    },
-                  ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _providerNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Provider Name',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                        validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      TextFormField(
+                        controller: _providerEmailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Provider Email',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email),
+                        ),
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) return 'Required';
+                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
                   const SizedBox(height: 16),
                   
                   DropdownButtonFormField<String>(
@@ -290,26 +296,29 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
                   ),
                   const SizedBox(height: 16),
                   
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text('Data to Share:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 12),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Data to Share:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      ...['Cycle patterns', 'Symptoms', 'Daily logs', 'Analytics'].map(
+                        (dataType) => CheckboxListTile(
+                          title: Text(dataType),
+                          value: _selectedData.contains(dataType),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value ?? false) {
+                                _selectedData.add(dataType);
+                              } else {
+                                _selectedData.remove(dataType);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  ...['Cycle patterns', 'Symptoms', 'Daily logs', 'Analytics'].map(
-                    (dataType) => CheckboxListTile(
-                      title: Text(dataType),
-                      value: _selectedData.contains(dataType),
-                      onChanged: (value) {
-                        setState(() {
-                          if (value ?? false) {
-                            _selectedData.add(dataType);
-                          } else {
-                            _selectedData.remove(dataType);
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             
@@ -367,14 +376,22 @@ class _PartnerSharingDialog extends StatefulWidget {
 }
 
 class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   Set<String> _selectedData = {'Cycle predictions', 'Mood tracking'};
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
         width: 400,
+        constraints: const BoxConstraints(maxHeight: 600),
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -384,9 +401,11 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
               children: [
                 Icon(Icons.favorite, color: Colors.pink),
                 const SizedBox(width: 8),
-                const Text('Share with Partner', 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const Spacer(),
+                const Expanded(
+                  child: Text('Share with Partner', 
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis),
+                ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close),
@@ -396,12 +415,26 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
             const Divider(),
             const SizedBox(height: 16),
             
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Partner Email',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Partner Email *',
+                  hintText: 'partner@example.com',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
+                    return 'Email is required';
+                  }
+                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
               ),
             ),
             const SizedBox(height: 16),
@@ -454,7 +487,11 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () => _shareWithPartner(context),
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      _shareWithPartner(context);
+                    }
+                  },
                   child: const Text('Send Invitation'),
                 ),
               ],
@@ -466,10 +503,20 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
   }
 
   void _shareWithPartner(BuildContext context) {
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid email address'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Invitation sent to partner!'),
+      SnackBar(
+        content: Text('Invitation sent to ${_emailController.text.trim()}!'),
         backgroundColor: Colors.green,
       ),
     );

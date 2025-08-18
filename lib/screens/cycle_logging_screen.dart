@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../services/firebase_service.dart';
 import '../services/notification_service.dart';
+import '../services/theme_service.dart';
 
 class CycleLoggingScreen extends StatefulWidget {
   const CycleLoggingScreen({super.key});
@@ -115,6 +117,10 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
   }
 
   Future<void> _pickDate(bool isStart) async {
+    final themeService = Provider.of<ThemeService>(context, listen: false);
+    final isDarkMode = themeService.isDarkModeEnabled(context);
+    final theme = Theme.of(context);
+    
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isStart
@@ -122,6 +128,19 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
           : (_endDate ?? DateTime.now()),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: isDarkMode 
+                ? theme.colorScheme.copyWith(
+                    surface: const Color(0xFF2D2D2D),
+                    onSurface: Colors.white,
+                  )
+                : theme.colorScheme,
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -138,48 +157,193 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat.yMMMMd();
+    final themeService = Provider.of<ThemeService>(context);
+    final isDarkMode = themeService.isDarkModeEnabled(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('🩸 Log Your Cycle')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () => _pickDate(true),
-              child: Text(
-                _startDate == null
-                    ? 'Pick Start Date'
-                    : 'Start: ${dateFormat.format(_startDate!)}',
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => _pickDate(false),
-              child: Text(
-                _endDate == null
-                    ? 'Pick End Date'
-                    : 'End: ${dateFormat.format(_endDate!)}',
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _isSaving ? null : _saveCycle,
-              icon: _isSaving
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      appBar: AppBar(
+        title: const Text('🩸 Log Your Cycle'),
+        backgroundColor: isDarkMode 
+            ? theme.colorScheme.surface 
+            : theme.colorScheme.primaryContainer,
+        foregroundColor: isDarkMode 
+            ? theme.colorScheme.onSurface 
+            : theme.colorScheme.onPrimaryContainer,
+        elevation: isDarkMode ? 0 : 1,
+      ),
+      backgroundColor: themeService.getBackgroundColor(context),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDarkMode ? null : LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              theme.colorScheme.primaryContainer.withOpacity(0.1),
+              theme.colorScheme.background,
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              // Date selection cards
+              Card(
+                elevation: isDarkMode ? 2 : 4,
+                color: themeService.getSurfaceColor(context),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Select Cycle Dates',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: themeService.getTextColor(context),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    )
-                  : const Icon(Icons.save),
-              label: _isSaving
-                  ? const Text('Saving...')
-                  : const Text('Save Cycle'),
-            ),
-          ],
+                      const SizedBox(height: 16),
+                      
+                      // Start date button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _pickDate(true),
+                          icon: Icon(Icons.calendar_today, 
+                              color: isDarkMode ? Colors.white : null),
+                          label: Text(
+                            _startDate == null
+                                ? 'Pick Start Date'
+                                : 'Start: ${dateFormat.format(_startDate!)}',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : null,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDarkMode 
+                                ? theme.colorScheme.primary.withOpacity(0.8)
+                                : theme.colorScheme.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 12),
+                      
+                      // End date button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _pickDate(false),
+                          icon: Icon(Icons.event, 
+                              color: isDarkMode ? Colors.white : null),
+                          label: Text(
+                            _endDate == null
+                                ? 'Pick End Date'
+                                : 'End: ${dateFormat.format(_endDate!)}',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : null,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDarkMode 
+                                ? theme.colorScheme.secondary.withOpacity(0.8)
+                                : theme.colorScheme.secondary,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // Save button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isSaving ? null : _saveCycle,
+                  icon: _isSaving
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isDarkMode ? Colors.white : Colors.white,
+                            ),
+                          ),
+                        )
+                      : const Icon(Icons.save),
+                  label: Text(
+                    _isSaving ? 'Saving...' : 'Save Cycle',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDarkMode 
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: isDarkMode ? 4 : 8,
+                    shadowColor: theme.colorScheme.primary.withOpacity(0.3),
+                  ),
+                ),
+              ),
+              
+              const Spacer(),
+              
+              // Tips section
+              if (_startDate == null || _endDate == null)
+                Card(
+                  color: isDarkMode 
+                      ? theme.colorScheme.surfaceVariant.withOpacity(0.5)
+                      : theme.colorScheme.primaryContainer.withOpacity(0.3),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline,
+                          color: isDarkMode 
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Tip: Select both start and end dates to log your complete cycle',
+                            style: TextStyle(
+                              color: isDarkMode 
+                                  ? theme.colorScheme.onSurfaceVariant
+                                  : theme.colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

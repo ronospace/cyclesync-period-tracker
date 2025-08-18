@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/theme_service.dart';
 import '../services/localization_service.dart';
 import '../l10n/generated/app_localizations.dart';
+import '../widgets/app_logo.dart';
+import 'language_selection_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -213,7 +215,11 @@ class SettingsScreen extends StatelessWidget {
                         const Icon(Icons.arrow_forward_ios, size: 16),
                       ],
                     ),
-                    onTap: () => context.push('/language-selector'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const LanguageSelectionScreen(),
+                      ),
+                    ),
                   ),
                 );
               },
@@ -427,34 +433,51 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showAboutDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('About CycleSync'),
-        content: const Column(
+        title: Text(l10n?.aboutCycleSync ?? 'About CycleSync'),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('CycleSync v1.0.0'),
-            SizedBox(height: 8),
-            Text('A modern cycle tracking app built with Flutter.'),
-            SizedBox(height: 16),
-            Text(
-              'Features:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            const AppLogo(
+              size: 80,
+              showText: true,
             ),
-            SizedBox(height: 4),
-            Text('• Cycle logging and tracking'),
-            Text('• Analytics and insights'),
-            Text('• Dark mode support'),
-            Text('• Cloud synchronization'),
-            Text('• Privacy-focused design'),
+            const SizedBox(height: 16),
+            Text(
+              l10n?.cycleSyncVersion ?? 'CycleSync v1.0.0',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n?.modernCycleTrackingApp ?? 'A modern cycle tracking app built with Flutter.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n?.features ?? 'Features:',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n?.cycleLoggingTracking ?? '• Cycle logging and tracking'),
+                Text(l10n?.analyticsInsights ?? '• Analytics and insights'),
+                Text(l10n?.darkModeSupport ?? '• Dark mode support'),
+                Text(l10n?.cloudSynchronization ?? '• Cloud synchronization'),
+                Text(l10n?.privacyFocusedDesign ?? '• Privacy-focused design'),
+              ],
+            ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(l10n?.commonClose ?? 'Close'),
           ),
         ],
       ),

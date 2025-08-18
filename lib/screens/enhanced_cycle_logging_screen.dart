@@ -1039,14 +1039,14 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('🌸 Log Cycle'),
-        backgroundColor: Colors.pink.shade50,
-        foregroundColor: Colors.pink.shade700,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.pink.shade700),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => context.go('/home'),
         ),
         actions: [
@@ -1055,7 +1055,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               onPressed: _previousStep,
               child: Text(
                 'Back',
-                style: TextStyle(color: Colors.pink.shade600),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),
         ],
