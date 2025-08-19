@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -30,8 +31,8 @@ class FirebaseService {
     try {
       final user = _requireAuth();
       
-      print('🔥 FirebaseService: Starting enhanced save for user ${user.uid}');
-      print('🔥 FirebaseService: Data keys: ${cycleData.keys.join(", ")}');
+      debugPrint('🔥 FirebaseService: Starting enhanced save for user ${user.uid}');
+      debugPrint('🔥 FirebaseService: Data keys: ${cycleData.keys.join(", ")}');
 
       // Create the document reference first
       final docRef = _firestore
@@ -60,10 +61,10 @@ class FirebaseService {
             },
           );
 
-      print('🔥 FirebaseService: Enhanced save completed successfully');
+      debugPrint('🔥 FirebaseService: Enhanced save completed successfully');
     } catch (e) {
-      print('🔥 FirebaseService: Error in enhanced save: $e');
-      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      debugPrint('🔥 FirebaseService: Error in enhanced save: $e');
+      debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
       
       // Re-throw with more context
       if (e is FirebaseException) {
@@ -87,8 +88,8 @@ class FirebaseService {
     try {
       final user = _requireAuth();
       
-      print('🔥 FirebaseService: Starting save for user ${user.uid}');
-      print('🔥 FirebaseService: Start: $startDate, End: $endDate');
+      debugPrint('🔥 FirebaseService: Starting save for user ${user.uid}');
+      debugPrint('🔥 FirebaseService: Start: $startDate, End: $endDate');
 
       // Create the document reference first
       final docRef = _firestore
@@ -115,10 +116,10 @@ class FirebaseService {
             },
           );
 
-      print('🔥 FirebaseService: Save completed successfully');
+      debugPrint('🔥 FirebaseService: Save completed successfully');
     } catch (e) {
-      print('🔥 FirebaseService: Error occurred: $e');
-      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      debugPrint('🔥 FirebaseService: Error occurred: $e');
+      debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
       
       // Re-throw with more context
       if (e is FirebaseException) {
@@ -141,8 +142,8 @@ class FirebaseService {
     try {
       final user = _requireAuth();
       
-      print('🔥 FirebaseService: Starting daily log save for user ${user.uid}');
-      print('🔥 FirebaseService: Daily log data keys: ${dailyLogData.keys.join(", ")}');
+      debugPrint('🔥 FirebaseService: Starting daily log save for user ${user.uid}');
+      debugPrint('🔥 FirebaseService: Daily log data keys: ${dailyLogData.keys.join(", ")}');
 
       // Create the document reference
       final docRef = _firestore
@@ -175,10 +176,10 @@ class FirebaseService {
             },
           );
 
-      print('🔥 FirebaseService: Daily log save completed successfully');
+      debugPrint('🔥 FirebaseService: Daily log save completed successfully');
     } catch (e) {
-      print('🔥 FirebaseService: Error in daily log save: $e');
-      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      debugPrint('🔥 FirebaseService: Error in daily log save: $e');
+      debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
       
       // Re-throw with more context
       if (e is FirebaseException) {
@@ -219,7 +220,7 @@ class FirebaseService {
       }
       return null;
     } catch (e) {
-      print('🔥 FirebaseService: Error getting daily log: $e');
+      debugPrint('🔥 FirebaseService: Error getting daily log: $e');
       return null;
     }
   }
@@ -251,7 +252,7 @@ class FirebaseService {
         ...doc.data() as Map<String, dynamic>,
       }).toList();
     } catch (e) {
-      print('🔥 FirebaseService: Error getting cycles: $e');
+      debugPrint('🔥 FirebaseService: Error getting cycles: $e');
       throw Exception('Failed to fetch cycles: $e');
     }
   }
@@ -270,10 +271,10 @@ class FirebaseService {
           .get()
           .timeout(timeout);
       
-      print('🔥 FirebaseService: Connection check successful');
+      debugPrint('🔥 FirebaseService: Connection check successful');
       return true;
     } catch (e) {
-      print('🔥 FirebaseService: Connection check failed: $e');
+      debugPrint('🔥 FirebaseService: Connection check failed: $e');
       return false;
     }
   }
@@ -286,8 +287,8 @@ class FirebaseService {
     try {
       final user = _requireAuth();
       
-      print('🔥 FirebaseService: Starting delete for cycle $cycleId');
-      print('🔥 FirebaseService: User: ${user.uid}');
+      debugPrint('🔥 FirebaseService: Starting delete for cycle $cycleId');
+      debugPrint('🔥 FirebaseService: User: ${user.uid}');
 
       await _firestore
           .collection('users')
@@ -297,10 +298,10 @@ class FirebaseService {
           .delete()
           .timeout(timeout);
 
-      print('🔥 FirebaseService: Delete completed successfully');
+      debugPrint('🔥 FirebaseService: Delete completed successfully');
     } catch (e) {
-      print('🔥 FirebaseService: Error deleting cycle: $e');
-      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      debugPrint('🔥 FirebaseService: Error deleting cycle: $e');
+      debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
       
       // Re-throw with more context
       if (e is FirebaseException) {
@@ -325,9 +326,9 @@ class FirebaseService {
     try {
       final user = _requireAuth();
       
-      print('🔥 FirebaseService: Starting update for cycle $cycleId');
-      print('🔥 FirebaseService: User: ${user.uid}');
-      print('🔥 FirebaseService: New Start: $startDate, New End: $endDate');
+      debugPrint('🔥 FirebaseService: Starting update for cycle $cycleId');
+      debugPrint('🔥 FirebaseService: User: ${user.uid}');
+      debugPrint('🔥 FirebaseService: New Start: $startDate, New End: $endDate');
 
       await _firestore
           .collection('users')
@@ -341,10 +342,10 @@ class FirebaseService {
           })
           .timeout(timeout);
 
-      print('🔥 FirebaseService: Update completed successfully');
+      debugPrint('🔥 FirebaseService: Update completed successfully');
     } catch (e) {
-      print('🔥 FirebaseService: Error updating cycle: $e');
-      print('🔥 FirebaseService: Error type: ${e.runtimeType}');
+      debugPrint('🔥 FirebaseService: Error updating cycle: $e');
+      debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
       
       // Re-throw with more context
       if (e is FirebaseException) {
@@ -373,10 +374,10 @@ class FirebaseService {
           'email': user.email,
           'uid': user.uid,
         });
-        print('🔥 FirebaseService: User document created');
+        debugPrint('🔥 FirebaseService: User document created');
       }
     } catch (e) {
-      print('🔥 FirebaseService: Error initializing user: $e');
+      debugPrint('🔥 FirebaseService: Error initializing user: $e');
       // Don't throw here - this is optional initialization
     }
   }
@@ -418,7 +419,7 @@ class FirebaseService {
         ...doc.data() as Map<String, dynamic>,
       }).toList();
     } catch (e) {
-      print('🔥 FirebaseService: Error getting daily logs: $e');
+      debugPrint('🔥 FirebaseService: Error getting daily logs: $e');
       throw Exception('Failed to fetch daily logs: $e');
     }
   }
@@ -450,7 +451,7 @@ class FirebaseService {
       
       return null;
     } catch (e) {
-      print('🔥 FirebaseService: Error getting daily log for date: $e');
+      debugPrint('🔥 FirebaseService: Error getting daily log for date: $e');
       throw Exception('Failed to fetch daily log: $e');
     }
   }
@@ -473,9 +474,9 @@ class FirebaseService {
           .delete()
           .timeout(timeout);
 
-      print('🔥 FirebaseService: Daily log deleted successfully');
+      debugPrint('🔥 FirebaseService: Daily log deleted successfully');
     } catch (e) {
-      print('🔥 FirebaseService: Error deleting daily log: $e');
+      debugPrint('🔥 FirebaseService: Error deleting daily log: $e');
       
       if (e is FirebaseException) {
         throw FirebaseException(

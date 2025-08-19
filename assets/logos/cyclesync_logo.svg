@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E91E63"/>
+      <stop offset="50%" stop-color="#F06292"/>
+      <stop offset="100%" stop-color="#FCE4EC"/>
+    </linearGradient>
+    <linearGradient id="moonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9C27B0"/>
+      <stop offset="100%" stop-color="#E1BEE7"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="50" fill="url(#primaryGradient)" opacity="0.1"/>
+  
+  <!-- Main cycle icon - stylized moon phases -->
+  <g transform="translate(35, 35)">
+    <!-- Full moon -->
+    <circle cx="25" cy="10" r="8" fill="url(#moonGradient)"/>
+    <!-- Waning moon -->
+    <path d="M 50 25 A 8 8 0 0 1 50 35 A 4 4 0 0 0 50 25" fill="#9C27B0"/>
+    <!-- New moon -->
+    <circle cx="25" cy="40" r="8" fill="#6A1B9A" opacity="0.3"/>
+    <!-- Waxing moon -->
+    <path d="M 0 25 A 8 8 0 0 0 0 35 A 4 4 0 0 1 0 25" fill="#9C27B0"/>
+    
+    <!-- Connecting cycle lines -->
+    <path d="M 25 18 Q 42 25 25 32 Q 8 25 25 18" stroke="#E91E63" stroke-width="2" fill="none" opacity="0.6"/>
+  </g>
+  
+  <!-- App name -->
+  <text x="130" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#E91E63">
+    CycleSync
+  </text>
+  
+  <!-- Tagline -->
+  <text x="130" y="70" font-family="Arial, sans-serif" font-size="16" fill="#9C27B0" opacity="0.8">
+    Your Personal Health Companion
+  </text>
+  
+  <!-- Decorative elements -->
+  <circle cx="360" cy="25" r="3" fill="#F06292" opacity="0.6"/>
+  <circle cx="370" cy="35" r="2" fill="#E91E63" opacity="0.4"/>
+  <circle cx="350" cy="40" r="2.5" fill="#9C27B0" opacity="0.5"/>
+</svg>

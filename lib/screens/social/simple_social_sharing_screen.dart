@@ -413,63 +413,73 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
               ],
             ),
             const Divider(),
-            const SizedBox(height: 16),
             
-            Form(
-              key: _formKey,
-              child: TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Partner Email *',
-                  hintText: 'partner@example.com',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Email is required';
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            const Text('What to Share:', style: TextStyle(fontWeight: FontWeight.bold)),
-            ...['Cycle predictions', 'Mood tracking', 'Symptoms', 'Fertility window']
-                .map(
-              (dataType) => CheckboxListTile(
-                title: Text(dataType),
-                value: _selectedData.contains(dataType),
-                onChanged: (value) {
-                  setState(() {
-                    if (value ?? false) {
-                      _selectedData.add(dataType);
-                    } else {
-                      _selectedData.remove(dataType);
-                    }
-                  });
-                },
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            Card(
-              color: Colors.pink.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info, color: Colors.pink.shade700, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Your partner will receive updates and can view shared information.',
-                        style: TextStyle(color: Colors.pink.shade700),
+                    const SizedBox(height: 16),
+                    
+                    Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Partner Email *',
+                          hintText: 'partner@example.com',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email),
+                        ),
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) {
+                            return 'Email is required';
+                          }
+                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    const Text('What to Share:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ...['Cycle predictions', 'Mood tracking', 'Symptoms', 'Fertility window']
+                        .map(
+                      (dataType) => CheckboxListTile(
+                        title: Text(dataType),
+                        value: _selectedData.contains(dataType),
+                        onChanged: (value) {
+                          setState(() {
+                            if (value ?? false) {
+                              _selectedData.add(dataType);
+                            } else {
+                              _selectedData.remove(dataType);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    Card(
+                      color: Colors.pink.shade50,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info, color: Colors.pink.shade700, size: 20),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Your partner will receive updates and can view shared information.',
+                                style: TextStyle(color: Colors.pink.shade700),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -544,6 +554,7 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
       child: Container(
         width: 450,
         padding: const EdgeInsets.all(24),
+        constraints: const BoxConstraints(maxHeight: 700),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,79 +573,89 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
               ],
             ),
             const Divider(),
-            const SizedBox(height: 16),
             
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _providerNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Provider Name',
-                      border: OutlineInputBorder(),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _providerNameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Provider Name',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                          ),
+                          const SizedBox(height: 16),
+                          
+                          TextFormField(
+                            controller: _clinicController,
+                            decoration: const InputDecoration(
+                              labelText: 'Clinic/Hospital',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              labelText: 'Professional Email',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value?.isEmpty ?? true) return 'Required';
+                              if (!value!.contains('@')) return 'Invalid email';
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          
+                          DropdownButtonFormField<String>(
+                            value: _accessType,
+                            decoration: const InputDecoration(
+                              labelText: 'Access Level',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: ['Read-only', 'Limited write', 'Full access']
+                                .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+                                .toList(),
+                            onChanged: (value) => setState(() => _accessType = value!),
+                          ),
+                          const SizedBox(height: 16),
+                          
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Permissions:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          ...['View cycle data', 'Generate reports', 'Add notes', 'Export data']
+                              .map(
+                            (permission) => CheckboxListTile(
+                              title: Text(permission),
+                              value: _permissions.contains(permission),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (value ?? false) {
+                                    _permissions.add(permission);
+                                  } else {
+                                    _permissions.remove(permission);
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  TextFormField(
-                    controller: _clinicController,
-                    decoration: const InputDecoration(
-                      labelText: 'Clinic/Hospital',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Professional Email',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) return 'Required';
-                      if (!value!.contains('@')) return 'Invalid email';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  DropdownButtonFormField<String>(
-                    value: _accessType,
-                    decoration: const InputDecoration(
-                      labelText: 'Access Level',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: ['Read-only', 'Limited write', 'Full access']
-                        .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-                        .toList(),
-                    onChanged: (value) => setState(() => _accessType = value!),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text('Permissions:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                  ...['View cycle data', 'Generate reports', 'Add notes', 'Export data']
-                      .map(
-                    (permission) => CheckboxListTile(
-                      title: Text(permission),
-                      value: _permissions.contains(permission),
-                      onChanged: (value) {
-                        setState(() {
-                          if (value ?? false) {
-                            _permissions.add(permission);
-                          } else {
-                            _permissions.remove(permission);
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             
@@ -689,6 +710,7 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
     return Dialog(
       child: Container(
         width: 400,
+        constraints: const BoxConstraints(maxHeight: 600),
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -708,70 +730,80 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
               ],
             ),
             const Divider(),
-            const SizedBox(height: 16),
             
-            const Text(
-              'Help improve menstrual health understanding by contributing anonymous data to research.',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            
-            const Text('Research Areas:', style: TextStyle(fontWeight: FontWeight.bold)),
-            ...['Cycle patterns', 'Symptom research', 'Health correlations', 'Treatment outcomes']
-                .map(
-              (area) => CheckboxListTile(
-                title: Text(area),
-                value: _researchAreas.contains(area),
-                onChanged: (value) {
-                  setState(() {
-                    if (value ?? false) {
-                      _researchAreas.add(area);
-                    } else {
-                      _researchAreas.remove(area);
-                    }
-                  });
-                },
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            Card(
-              color: Colors.blue.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
+            Flexible(
+              child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.privacy_tip, color: Colors.blue.shade700, size: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Privacy Protection',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
+                    
                     const Text(
-                      '• All data is completely anonymous\n'
-                      '• No personal identifiers are shared\n'
-                      '• You can opt out at any time\n'
-                      '• Data is used only for approved research',
-                      style: TextStyle(fontSize: 12),
+                      'Help improve menstrual health understanding by contributing anonymous data to research.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    const Text('Research Areas:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ...['Cycle patterns', 'Symptom research', 'Health correlations', 'Treatment outcomes']
+                        .map(
+                      (area) => CheckboxListTile(
+                        title: Text(area),
+                        value: _researchAreas.contains(area),
+                        onChanged: (value) {
+                          setState(() {
+                            if (value ?? false) {
+                              _researchAreas.add(area);
+                            } else {
+                              _researchAreas.remove(area);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    Card(
+                      color: Colors.blue.shade50,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.privacy_tip, color: Colors.blue.shade700, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Privacy Protection',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              '• All data is completely anonymous\n'
+                              '• No personal identifiers are shared\n'
+                              '• You can opt out at any time\n'
+                              '• Data is used only for approved research',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    CheckboxListTile(
+                      title: const Text('I agree to the privacy terms and conditions'),
+                      value: _agreedToTerms,
+                      onChanged: (value) => setState(() => _agreedToTerms = value ?? false),
+                      controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ],
                 ),
               ),
-            ),
-            
-            CheckboxListTile(
-              title: const Text('I agree to the privacy terms and conditions'),
-              value: _agreedToTerms,
-              onChanged: (value) => setState(() => _agreedToTerms = value ?? false),
-              controlAffinity: ListTileControlAffinity.leading,
             ),
             
             const SizedBox(height: 24),

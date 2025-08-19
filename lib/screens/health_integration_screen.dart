@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import '../services/health_service.dart';
 import '../services/health_kit_service.dart';
 import '../services/theme_service.dart';

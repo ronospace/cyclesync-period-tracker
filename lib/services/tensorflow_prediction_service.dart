@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
@@ -78,7 +79,7 @@ class TensorFlowPredictionService {
       
       return predictions;
     } catch (e) {
-      print('Error getting cycle predictions: $e');
+      debugPrint('Error getting cycle predictions: $e');
       return {
         'error': 'Failed to generate predictions',
         'next_period': {
@@ -106,7 +107,7 @@ class TensorFlowPredictionService {
     if (_isInitialized) return true;
 
     try {
-      print('🧠 Initializing TensorFlow Lite AI Models...');
+      debugPrint('🧠 Initializing TensorFlow Lite AI Models...');
       
       // Load multiple specialized models
       final results = await Future.wait([
@@ -133,15 +134,15 @@ class TensorFlowPredictionService {
         };
 
         _isInitialized = true;
-        print('✅ AI Models loaded successfully - Version $_modelVersion');
+        debugPrint('✅ AI Models loaded successfully - Version $_modelVersion');
         return true;
       } else {
-        print('⚠️ Some AI models failed to load - falling back to algorithmic predictions');
+        debugPrint('⚠️ Some AI models failed to load - falling back to algorithmic predictions');
         return false;
       }
     } catch (e) {
-      print('❌ TensorFlow Lite initialization failed: $e');
-      print('📱 Using hybrid AI algorithms for predictions');
+      debugPrint('❌ TensorFlow Lite initialization failed: $e');
+      debugPrint('📱 Using hybrid AI algorithms for predictions');
       
       // Fallback to algorithmic AI
       _isInitialized = true;
@@ -160,7 +161,7 @@ class TensorFlowPredictionService {
       });
       return result['success'] ?? false;
     } catch (e) {
-      print('Failed to load model $modelName: $e');
+      debugPrint('Failed to load model $modelName: $e');
       return false;
     }
   }
@@ -210,7 +211,7 @@ class TensorFlowPredictionService {
         );
       }
     } catch (e) {
-      print('Ovulation prediction error: $e');
+      debugPrint('Ovulation prediction error: $e');
       return OvulationPredictionResult.error('Prediction failed: $e');
     }
   }
@@ -260,7 +261,7 @@ class TensorFlowPredictionService {
         );
       }
     } catch (e) {
-      print('HRV stress analysis error: $e');
+      debugPrint('HRV stress analysis error: $e');
       return HRVStressAnalysisResult.error('Analysis failed: $e');
     }
   }
@@ -312,7 +313,7 @@ class TensorFlowPredictionService {
         );
       }
     } catch (e) {
-      print('Emotion classification error: $e');
+      debugPrint('Emotion classification error: $e');
       return EmotionClassificationResult.error('Classification failed: $e');
     }
   }
@@ -361,7 +362,7 @@ class TensorFlowPredictionService {
         );
       }
     } catch (e) {
-      print('Cycle irregularity detection error: $e');
+      debugPrint('Cycle irregularity detection error: $e');
       return CycleIrregularityResult.error('Detection failed: $e');
     }
   }
@@ -408,7 +409,7 @@ class TensorFlowPredictionService {
         );
       }
     } catch (e) {
-      print('Sleep quality prediction error: $e');
+      debugPrint('Sleep quality prediction error: $e');
       return SleepQualityPredictionResult.error('Prediction failed: $e');
     }
   }

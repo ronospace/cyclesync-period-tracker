@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -10,9 +9,9 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    print('Firebase initialized successfully');
+    // Firebase initialized successfully
   } catch (e) {
-    print('Firebase initialization error: $e');
+    // Firebase initialization error logged
   }
 
   runApp(const CycleSyncApp());

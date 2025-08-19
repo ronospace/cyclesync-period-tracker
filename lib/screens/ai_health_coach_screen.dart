@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../widgets/coming_soon_widget.dart';
 
 /// 🚀 AI-Powered Health Coach Screen
 /// Intelligent personal health assistant with personalized insights and coaching
@@ -288,52 +289,80 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-        appBar: AppBar(
-          title: Row(
-            children: [
-              Icon(Icons.psychology, color: Theme.of(context).colorScheme.primary, size: 24),
-              const SizedBox(width: 8),
-              const Text('AI Health Coach'),
-            ],
-          ),
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-          foregroundColor: Theme.of(context).colorScheme.onSurface,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
-            onPressed: () => context.go('/home'),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onSurface),
-              onPressed: _loadAIInsights,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Icon(Icons.psychology, color: Theme.of(context).colorScheme.primary, size: 24),
+            const SizedBox(width: 8),
+            const Text('AI Health Coach'),
+          ],
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          onPressed: () => context.go('/home'),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: ComingSoonSection(
+          title: '🤖 AI-Powered Health Coach',
+          features: [
+            ComingSoonFeatures.aiPoweredPredictions,
+            ComingSoonFeatures.voiceAssistant,
+            const ComingSoonWidget(
+              title: 'Personalized Health Coaching',
+              description: 'AI-driven personalized coaching based on your unique cycle patterns and health data',
+              icon: Icons.psychology,
+              estimatedDate: 'Q2 2024',
+              status: 'In Development',
+              accentColor: Colors.deepPurple,
+              showDetails: true,
+              features: [
+                'Personalized daily health recommendations',
+                'AI-powered symptom prediction and alerts',
+                'Custom nutrition and exercise plans by cycle phase',
+                'Real-time health insights and coaching messages',
+                'Integration with wearable devices for continuous monitoring',
+              ],
+            ),
+            const ComingSoonWidget(
+              title: 'Smart Health Alerts',
+              description: 'Proactive health monitoring with predictive alerts for optimal cycle management',
+              icon: Icons.notification_important,
+              estimatedDate: 'Q3 2024',
+              status: 'Design Phase',
+              accentColor: Colors.orange,
+              showDetails: true,
+              features: [
+                'Predictive symptom warnings 2-3 days in advance',
+                'Fertility window optimization alerts',
+                'Medication and supplement reminders',
+                'Emergency health pattern detection',
+                'Healthcare provider integration for serious concerns',
+              ],
+            ),
+            const ComingSoonWidget(
+              title: 'Cycle Optimization Engine',
+              description: 'Advanced AI algorithms to optimize your lifestyle based on your unique cycle patterns',
+              icon: Icons.tune,
+              estimatedDate: 'Q4 2024',
+              status: 'Research Phase',
+              accentColor: Colors.green,
+              showDetails: true,
+              features: [
+                'Energy level predictions for each cycle phase',
+                'Optimal timing for work, exercise, and social activities',
+                'Personalized nutrition recommendations',
+                'Sleep pattern optimization',
+                'Stress management techniques tailored to your cycle',
+              ],
             ),
           ],
-          bottom: _isLoading || _error != null 
-            ? null 
-            : TabBar(
-                controller: _tabController,
-                labelColor: Theme.of(context).colorScheme.primary,
-                unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                indicatorColor: Theme.of(context).colorScheme.primary,
-                indicatorWeight: 3,
-                labelStyle: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: const [
-                  Tab(text: 'Coach', icon: Icon(Icons.psychology, size: 16)),
-                  Tab(text: 'Insights', icon: Icon(Icons.lightbulb, size: 16)),
-                  Tab(text: 'Alerts', icon: Icon(Icons.warning_amber, size: 16)),
-                  Tab(text: 'Optimize', icon: Icon(Icons.tune, size: 16)),
-                ],
-              ),
         ),
-        body: _buildBody(),
       ),
     );
   }

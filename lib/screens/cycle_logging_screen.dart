@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import '../services/firebase_service.dart';
 import '../services/notification_service.dart';
 import '../services/theme_service.dart';
@@ -35,12 +34,12 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
 
     // Prevent double-saving
     if (_isSaving) {
-      print('⚠️ Save already in progress, ignoring duplicate request');
+      debugPrint('⚠️ Save already in progress, ignoring duplicate request');
       return;
     }
 
     setState(() => _isSaving = true);
-    print('🟡 Starting save operation...');
+    debugPrint('🟡 Starting save operation...');
 
     try {
       // Use the robust FirebaseService with shorter timeout for better UX
@@ -50,10 +49,10 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
         timeout: const Duration(seconds: 15), // Shorter timeout for quicker feedback
       );
 
-      print('✅ Save successful!');
+      debugPrint('✅ Save successful!');
 
       if (!mounted) {
-        print('⚠️ Widget unmounted, skipping UI updates');
+        debugPrint('⚠️ Widget unmounted, skipping UI updates');
         return;
       }
 
@@ -61,9 +60,9 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
       try {
         final cycles = await FirebaseService.getCycles();
         await NotificationService.updateCycleNotifications(cycles);
-        print('✅ Notifications updated successfully');
+        debugPrint('✅ Notifications updated successfully');
       } catch (e) {
-        print('⚠️ Failed to update notifications: $e');
+        debugPrint('⚠️ Failed to update notifications: $e');
       }
 
       // Clear the form after successful save
@@ -77,8 +76,8 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
         ),
       );
     } catch (e) {
-      print('❌ Error saving cycle: $e');
-      print('❌ Error type: ${e.runtimeType}');
+      debugPrint('❌ Error saving cycle: $e');
+      debugPrint('❌ Error type: ${e.runtimeType}');
 
       if (mounted) {
         String userMessage;
@@ -106,12 +105,12 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
         );
       }
     } finally {
-      print('🔁 Cleaning up save operation...');
+      debugPrint('🔁 Cleaning up save operation...');
       if (mounted) {
         setState(() => _isSaving = false);
-        print('🔁 UI reset complete - isSaving: $_isSaving');
+        debugPrint('🔁 UI reset complete - isSaving: $_isSaving');
       } else {
-        print('⚠️ Widget unmounted during cleanup');
+        debugPrint('⚠️ Widget unmounted during cleanup');
       }
     }
   }

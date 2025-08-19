@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
-import '../models/cycle_models.dart' hide InsightType, FlowIntensity;
 import '../models/ai_prediction_models.dart';
-import 'firebase_service.dart';
 import 'error_service.dart';
 
 /// Advanced AI-powered cycle prediction and analysis service

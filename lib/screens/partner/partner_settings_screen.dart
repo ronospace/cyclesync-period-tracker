@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../models/partner_models.dart';
-import '../../services/partner_sharing_service.dart';
 
 class PartnerSettingsScreen extends StatefulWidget {
   const PartnerSettingsScreen({super.key});

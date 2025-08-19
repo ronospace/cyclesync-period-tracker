@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../models/social_models.dart';
 import '../../services/gamification_service.dart';
-import '../../theme/app_theme.dart';
 
 class GamificationScreen extends StatefulWidget {
   const GamificationScreen({super.key});

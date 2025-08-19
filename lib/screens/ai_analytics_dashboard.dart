@@ -79,14 +79,14 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       final initialized = await _aiService.initialize();
       
       if (initialized) {
-        print('🧠 AI Models initialized successfully');
+        debugPrint('🧠 AI Models initialized successfully');
         await _runAIPredictions();
       } else {
-        print('⚠️ AI Models initialization failed - using algorithmic fallback');
+        debugPrint('⚠️ AI Models initialization failed - using algorithmic fallback');
         await _runAIPredictions(); // Still run predictions with algorithmic fallback
       }
     } catch (e) {
-      print('❌ AI initialization error: $e');
+      debugPrint('❌ AI initialization error: $e');
       _showErrorSnackBar('AI initialization failed: $e');
     } finally {
       setState(() => _isLoadingPredictions = false);
@@ -119,7 +119,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       _recentHealthData = healthData;
       
     } catch (e) {
-      print('❌ Health data loading error: $e');
+      debugPrint('❌ Health data loading error: $e');
       _showErrorSnackBar('Failed to load health data: $e');
     } finally {
       setState(() => _isLoadingHealthData = false);
@@ -201,10 +201,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
         _sleepPrediction = predictions[4] as SleepQualityPredictionResult;
       });
       
-      print('🎯 All AI predictions completed successfully');
+      debugPrint('🎯 All AI predictions completed successfully');
       
     } catch (e) {
-      print('❌ AI prediction error: $e');
+      debugPrint('❌ AI prediction error: $e');
       _showErrorSnackBar('AI prediction failed: $e');
     }
   }

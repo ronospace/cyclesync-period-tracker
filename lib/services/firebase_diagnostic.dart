@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,7 +13,7 @@ class FirebaseDiagnostic {
       'tests': <String, dynamic>{},
     };
 
-    print('🔍 Nova: Starting Firebase diagnostics...\n');
+    debugPrint('🔍 Nova: Starting Firebase diagnostics...\n');
 
     // Test 1: Auth Status
     await _testAuthStatus(results);
@@ -34,7 +35,7 @@ class FirebaseDiagnostic {
   }
 
   static Future<void> _testAuthStatus(Map<String, dynamic> results) async {
-    print('🔐 Testing Authentication Status...');
+    debugPrint('🔐 Testing Authentication Status...');
     
     try {
       final user = _auth.currentUser;
@@ -49,9 +50,9 @@ class FirebaseDiagnostic {
       };
       
       if (user != null) {
-        print('   ✅ User authenticated: ${user.email} (${user.uid})');
+        debugPrint('   ✅ User authenticated: ${user.email} (${user.uid})');
       } else {
-        print('   ❌ No authenticated user found');
+        debugPrint('   ❌ No authenticated user found');
       }
     } catch (e) {
       results['tests']['auth'] = {
@@ -59,13 +60,13 @@ class FirebaseDiagnostic {
         'error': e.toString(),
         'success': false,
       };
-      print('   ❌ Auth test failed: $e');
+      debugPrint('   ❌ Auth test failed: $e');
     }
-    print('');
+    debugPrint('');
   }
 
   static Future<void> _testConnectivity(Map<String, dynamic> results) async {
-    print('🌐 Testing Basic Connectivity...');
+    debugPrint('🌐 Testing Basic Connectivity...');
     
     try {
       // Try to access Firestore settings (doesn't require auth)
@@ -75,20 +76,20 @@ class FirebaseDiagnostic {
         'status': 'connected',
         'success': true,
       };
-      print('   ✅ Firestore connection established');
+      debugPrint('   ✅ Firestore connection established');
     } catch (e) {
       results['tests']['connectivity'] = {
         'status': 'failed',
         'error': e.toString(),
         'success': false,
       };
-      print('   ❌ Connectivity test failed: $e');
+      debugPrint('   ❌ Connectivity test failed: $e');
     }
-    print('');
+    debugPrint('');
   }
 
   static Future<void> _testReadPermissions(Map<String, dynamic> results) async {
-    print('📖 Testing Read Permissions...');
+    debugPrint('📖 Testing Read Permissions...');
     
     try {
       final user = _auth.currentUser;
@@ -98,8 +99,8 @@ class FirebaseDiagnostic {
           'reason': 'no_authenticated_user',
           'success': false,
         };
-        print('   ⚠️  Skipped - no authenticated user');
-        print('');
+        debugPrint('   ⚠️  Skipped - no authenticated user');
+        debugPrint('');
         return;
       }
 
@@ -118,10 +119,10 @@ class FirebaseDiagnostic {
       };
       
       if (userDoc.exists) {
-        print('   ✅ User document read successfully');
-        print('   📄 Document data: ${userDoc.data()}');
+        debugPrint('   ✅ User document read successfully');
+        debugPrint('   📄 Document data: ${userDoc.data()}');
       } else {
-        print('   ✅ Read permission granted (document does not exist yet)');
+        debugPrint('   ✅ Read permission granted (document does not exist yet)');
       }
     } catch (e) {
       results['tests']['read_permissions'] = {
@@ -130,14 +131,14 @@ class FirebaseDiagnostic {
         'error_type': e.runtimeType.toString(),
         'success': false,
       };
-      print('   ❌ Read test failed: $e');
-      print('   🔍 Error type: ${e.runtimeType}');
+      debugPrint('   ❌ Read test failed: $e');
+      debugPrint('   🔍 Error type: ${e.runtimeType}');
     }
-    print('');
+    debugPrint('');
   }
 
   static Future<void> _testWritePermissions(Map<String, dynamic> results) async {
-    print('✍️  Testing Write Permissions...');
+    debugPrint('✍️  Testing Write Permissions...');
     
     try {
       final user = _auth.currentUser;
@@ -147,8 +148,8 @@ class FirebaseDiagnostic {
           'reason': 'no_authenticated_user',
           'success': false,
         };
-        print('   ⚠️  Skipped - no authenticated user');
-        print('');
+        debugPrint('   ⚠️  Skipped - no authenticated user');
+        debugPrint('');
         return;
       }
 
@@ -173,7 +174,7 @@ class FirebaseDiagnostic {
         'success': true,
       };
       
-      print('   ✅ Write permission granted - test document created and deleted');
+      debugPrint('   ✅ Write permission granted - test document created and deleted');
     } catch (e) {
       results['tests']['write_permissions'] = {
         'status': 'failed',
@@ -181,14 +182,14 @@ class FirebaseDiagnostic {
         'error_type': e.runtimeType.toString(),
         'success': false,
       };
-      print('   ❌ Write test failed: $e');
-      print('   🔍 Error type: ${e.runtimeType}');
+      debugPrint('   ❌ Write test failed: $e');
+      debugPrint('   🔍 Error type: ${e.runtimeType}');
     }
-    print('');
+    debugPrint('');
   }
 
   static Future<void> _testNetworkConfiguration(Map<String, dynamic> results) async {
-    print('⚙️  Testing Network Configuration...');
+    debugPrint('⚙️  Testing Network Configuration...');
     
     try {
       final user = _auth.currentUser;
@@ -198,8 +199,8 @@ class FirebaseDiagnostic {
           'reason': 'no_authenticated_user',
           'success': false,
         };
-        print('   ⚠️  Skipped - no authenticated user');
-        print('');
+        debugPrint('   ⚠️  Skipped - no authenticated user');
+        debugPrint('');
         return;
       }
 
@@ -220,8 +221,8 @@ class FirebaseDiagnostic {
         'success': true,
       };
       
-      print('   ✅ Network test successful');
-      print('   ⏱️  Response time: ${stopwatch.elapsedMilliseconds}ms');
+      debugPrint('   ✅ Network test successful');
+      debugPrint('   ⏱️  Response time: ${stopwatch.elapsedMilliseconds}ms');
     } catch (e) {
       results['tests']['network_config'] = {
         'status': 'failed',
@@ -229,15 +230,15 @@ class FirebaseDiagnostic {
         'error_type': e.runtimeType.toString(),
         'success': false,
       };
-      print('   ❌ Network test failed: $e');
-      print('   🔍 Error type: ${e.runtimeType}');
+      debugPrint('   ❌ Network test failed: $e');
+      debugPrint('   🔍 Error type: ${e.runtimeType}');
     }
-    print('');
+    debugPrint('');
   }
 
   static void _printSummary(Map<String, dynamic> results) {
-    print('📊 DIAGNOSTIC SUMMARY');
-    print('=' * 50);
+    debugPrint('📊 DIAGNOSTIC SUMMARY');
+    debugPrint('=' * 50);
     
     final tests = results['tests'] as Map<String, dynamic>;
     int passed = 0;
@@ -247,50 +248,50 @@ class FirebaseDiagnostic {
       final success = testResult['success'] as bool;
       final status = testResult['status'];
       
-      print('${success ? '✅' : '❌'} $testName: $status');
+      debugPrint('${success ? '✅' : '❌'} $testName: $status');
       if (success) passed++;
       
       if (!success && testResult['error'] != null) {
-        print('   └── Error: ${testResult['error']}');
+        debugPrint('   └── Error: ${testResult['error']}');
       }
     });
     
-    print('');
-    print('🎯 Results: $passed/$total tests passed');
+    debugPrint('');
+    debugPrint('🎯 Results: $passed/$total tests passed');
     
     if (passed == total) {
-      print('🎉 All tests passed! Firebase should be working correctly.');
+      debugPrint('🎉 All tests passed! Firebase should be working correctly.');
     } else {
-      print('⚠️  Issues detected. Check the failed tests above.');
+      debugPrint('⚠️  Issues detected. Check the failed tests above.');
       _printTroubleshootingTips(tests);
     }
-    print('');
+    debugPrint('');
   }
 
   static void _printTroubleshootingTips(Map<String, dynamic> tests) {
-    print('🔧 TROUBLESHOOTING TIPS:');
-    print('-' * 30);
+    debugPrint('🔧 TROUBLESHOOTING TIPS:');
+    debugPrint('-' * 30);
     
     if (tests['auth']?['success'] == false) {
-      print('• Authentication issue: Make sure user is logged in');
+      debugPrint('• Authentication issue: Make sure user is logged in');
     }
     
     if (tests['connectivity']?['success'] == false) {
-      print('• Connectivity issue: Check internet connection and Firebase config');
+      debugPrint('• Connectivity issue: Check internet connection and Firebase config');
     }
     
     if (tests['read_permissions']?['success'] == false) {
-      print('• Read permission denied: Check Firestore security rules');
-      print('  Suggested rule: allow read: if request.auth != null');
+      debugPrint('• Read permission denied: Check Firestore security rules');
+      debugPrint('  Suggested rule: allow read: if request.auth != null');
     }
     
     if (tests['write_permissions']?['success'] == false) {
-      print('• Write permission denied: Check Firestore security rules');
-      print('  Suggested rule: allow write: if request.auth != null && request.auth.uid == resource.data.uid');
+      debugPrint('• Write permission denied: Check Firestore security rules');
+      debugPrint('  Suggested rule: allow write: if request.auth != null && request.auth.uid == resource.data.uid');
     }
     
     if (tests['network_config']?['success'] == false) {
-      print('• Network timeout: Consider increasing timeout or check Firebase region');
+      debugPrint('• Network timeout: Consider increasing timeout or check Firebase region');
     }
   }
 }

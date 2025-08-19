@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/reminder_models.dart';
 import '../services/reminder_service.dart';
-import 'add_reminder_screen.dart';
 
 class EditReminderScreen extends StatefulWidget {
   final Reminder reminder;

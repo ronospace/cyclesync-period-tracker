@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import '../services/auth_state_notifier.dart';
 import '../services/user_profile_service.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
 class SplashScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// Advanced HealthKit service for comprehensive health data integration
 /// Handles heart rate, HRV, sleep, temperature, and activity data
@@ -30,24 +30,24 @@ class AdvancedHealthKitService {
     if (_isInitialized) return _hasPermissions;
 
     try {
-      print('🏥 Initializing Advanced HealthKit Service...');
+      debugPrint('🏥 Initializing Advanced HealthKit Service...');
       
       // Request HealthKit permissions using native plugin
       final result = await _channel.invokeMethod<Map>('initialize');
       
       if (result != null && result['success'] == true) {
-        print('✅ HealthKit permissions granted: ${result['message']}');
+        debugPrint('✅ HealthKit permissions granted: ${result['message']}');
         _hasPermissions = true;
       } else {
-        print('⚠️ HealthKit permissions denied or unavailable');
+        debugPrint('⚠️ HealthKit permissions denied or unavailable');
         _hasPermissions = false;
       }
       
       _isInitialized = true;
       return _hasPermissions;
     } catch (e) {
-      print('❌ Failed to initialize AdvancedHealthKitService: $e');
-      print('📱 Falling back to demo mode for testing');
+      debugPrint('❌ Failed to initialize AdvancedHealthKitService: $e');
+      debugPrint('📱 Falling back to demo mode for testing');
       _isInitialized = true;
       _hasPermissions = false;
       return false;
@@ -62,7 +62,7 @@ class AdvancedHealthKitService {
       });
       return result ?? false;
     } catch (e) {
-      print('❌ Failed to request health permissions: $e');
+      debugPrint('❌ Failed to request health permissions: $e');
       return false;
     }
   }
@@ -143,7 +143,7 @@ class AdvancedHealthKitService {
 
       return allData;
     } catch (e) {
-      print('❌ Failed to get recent health data: $e');
+      debugPrint('❌ Failed to get recent health data: $e');
       return [];
     }
   }
@@ -166,7 +166,7 @@ class AdvancedHealthKitService {
 
       return (result ?? []).map((data) => HealthDataPoint.fromMap(data)).toList();
     } catch (e) {
-      print('❌ Failed to get heart rate data: $e');
+      debugPrint('❌ Failed to get heart rate data: $e');
       return [];
     }
   }
@@ -189,7 +189,7 @@ class AdvancedHealthKitService {
 
       return (result ?? []).map((data) => HealthDataPoint.fromMap(data)).toList();
     } catch (e) {
-      print('❌ Failed to get HRV data: $e');
+      debugPrint('❌ Failed to get HRV data: $e');
       return [];
     }
   }
@@ -212,7 +212,7 @@ class AdvancedHealthKitService {
 
       return (result ?? []).map((data) => SleepData.fromMap(data)).toList();
     } catch (e) {
-      print('❌ Failed to get sleep data: $e');
+      debugPrint('❌ Failed to get sleep data: $e');
       return [];
     }
   }
@@ -235,7 +235,7 @@ class AdvancedHealthKitService {
 
       return (result ?? []).map((data) => HealthDataPoint.fromMap(data)).toList();
     } catch (e) {
-      print('❌ Failed to get temperature data: $e');
+      debugPrint('❌ Failed to get temperature data: $e');
       return [];
     }
   }
@@ -258,7 +258,7 @@ class AdvancedHealthKitService {
 
       return (result ?? []).map((data) => ActivityData.fromMap(data)).toList();
     } catch (e) {
-      print('❌ Failed to get activity data: $e');
+      debugPrint('❌ Failed to get activity data: $e');
       return [];
     }
   }
@@ -287,7 +287,7 @@ class AdvancedHealthKitService {
         activityData: activity,
       );
     } catch (e) {
-      print('❌ Failed to get health summary: $e');
+      debugPrint('❌ Failed to get health summary: $e');
       return null;
     }
   }
@@ -315,7 +315,7 @@ class AdvancedHealthKitService {
       // Analyze patterns
       return _analyzeHealthPatterns(healthSummaries, cycleStart, cycleEnd);
     } catch (e) {
-      print('❌ Failed to analyze cycle health patterns: $e');
+      debugPrint('❌ Failed to analyze cycle health patterns: $e');
       return null;
     }
   }
@@ -323,7 +323,7 @@ class AdvancedHealthKitService {
   /// Start background health data synchronization
   void _startHealthDataSync() {
     // Enable background delivery for health data updates
-    print('🔄 Starting background health data sync...');
+    debugPrint('🔄 Starting background health data sync...');
     // Implementation depends on specific requirements
   }
 
@@ -446,7 +446,7 @@ class AdvancedHealthKitService {
     final healthData = <Map<String, dynamic>>[];
 
     try {
-      print('📊 Fetching comprehensive health data for $days days');
+      debugPrint('📊 Fetching comprehensive health data for $days days');
 
       // Fetch heart rate data
       final heartRateData = await getHeartRateData(startDate: startDate, endDate: endDate);
@@ -521,10 +521,10 @@ class AdvancedHealthKitService {
       // Sort by date
       healthData.sort((a, b) => DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
       
-      print('📊 Fetched ${healthData.length} health data points');
+      debugPrint('📊 Fetched ${healthData.length} health data points');
       return healthData;
     } catch (e) {
-      print('❌ Error fetching comprehensive health data: $e');
+      debugPrint('❌ Error fetching comprehensive health data: $e');
       // Return mock data for testing
       return _generateMockHealthData(days);
     }

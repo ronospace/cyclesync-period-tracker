@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/theme_service.dart';
 import '../services/localization_service.dart';
@@ -367,6 +367,14 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: Text(l10n?.getHelpUsingCycleSync ?? 'Get help using CycleSync'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/help-support'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.feedback, color: Colors.purple),
+                    title: const Text('Help Us Improve'),
+                    subtitle: const Text('Share your feedback and suggestions'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/feedback'),
                   ),
                   const Divider(height: 1),
                   ListTile(

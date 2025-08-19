@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'router.dart';
 import 'services/auth_state_notifier.dart';
 import 'services/theme_service.dart';
@@ -26,6 +27,13 @@ void main() async {
     
     // Initialize performance optimizations
     await PerformanceService.initialize();
+
+    // Initialize AdMob (Google Mobile Ads)
+    try {
+      await MobileAds.instance.initialize();
+    } catch (e, st) {
+      ErrorService.logError(e, stackTrace: st, context: 'MobileAds.initialize');
+    }
     
     // Initialize services
     final themeService = ThemeService();
@@ -36,7 +44,13 @@ void main() async {
     
     // Initialize HealthKit service (don't await - let it initialize in background)
     final healthKitService = HealthKitService();
-    healthKitService.initialize();
+    try {
+      // HealthKit is not available on simulators; guard to avoid crashes
+      // Initialization will internally check availability as well
+      healthKitService.initialize();
+    } catch (e, st) {
+      ErrorService.logError(e, stackTrace: st, context: 'HealthKitService.initialize');
+    }
     
     // Preload critical data for faster startup
     await PerformanceService.preloadCriticalData();

@@ -20,14 +20,14 @@ class EmailService {
     try {
       // For now, just log the email - replace with actual email service
       if (kDebugMode) {
-        print('📧 EMAIL NOTIFICATION:');
-        print('To: $providerEmail');
-        print('From: $ownerName');
-        print('Access URL: $accessUrl');
+        debugPrint('📧 EMAIL NOTIFICATION:');
+        debugPrint('To: $providerEmail');
+        debugPrint('From: $ownerName');
+        debugPrint('Access URL: $accessUrl');
         if (personalMessage != null) {
-          print('Message: $personalMessage');
+          debugPrint('Message: $personalMessage');
         }
-        print('Share Token: $shareToken');
+        debugPrint('Share Token: $shareToken');
       }
 
       // TODO: Replace with actual email service integration
@@ -58,7 +58,7 @@ class EmailService {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to send email: $e');
+        debugPrint('Failed to send email: $e');
       }
       return false;
     }
@@ -73,18 +73,18 @@ class EmailService {
   }) async {
     try {
       if (kDebugMode) {
-        print('📧 PROVIDER ACCESS EMAIL:');
-        print('To: $providerEmail');
-        print('Patient: $patientName');
-        print('Dashboard URL: $dashboardUrl');
-        print('Access Token: $accessToken');
+        debugPrint('📧 PROVIDER ACCESS EMAIL:');
+        debugPrint('To: $providerEmail');
+        debugPrint('Patient: $patientName');
+        debugPrint('Dashboard URL: $dashboardUrl');
+        debugPrint('Access Token: $accessToken');
       }
 
       // TODO: Replace with actual email service
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to send provider access email: $e');
+        debugPrint('Failed to send provider access email: $e');
       }
       return false;
     }
@@ -97,16 +97,16 @@ class EmailService {
   }) async {
     try {
       if (kDebugMode) {
-        print('📧 COMMUNITY WELCOME EMAIL:');
-        print('To: $userEmail');
-        print('Name: $userName');
+        debugPrint('📧 COMMUNITY WELCOME EMAIL:');
+        debugPrint('To: $userEmail');
+        debugPrint('Name: $userName');
       }
 
       // TODO: Replace with actual email service
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to send community welcome email: $e');
+        debugPrint('Failed to send community welcome email: $e');
       }
       return false;
     }

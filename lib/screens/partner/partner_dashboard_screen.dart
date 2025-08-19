@@ -3,6 +3,8 @@ import '../../models/partner_models.dart';
 import '../../services/partner_sharing_service.dart';
 import 'partner_invitation_screen.dart';
 import 'partner_settings_screen.dart';
+import 'partner_monitor_screen.dart';
+import '../../widgets/common/banner_ad_container.dart';
 
 class PartnerDashboardScreen extends StatefulWidget {
   const PartnerDashboardScreen({super.key});
@@ -512,17 +514,48 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return _buildEmptySharedDataState();
+        final items = snapshot.data ?? [];
+        if (items.isEmpty) {
+          return Column(
+            children: [
+              Expanded(child: _buildEmptySharedDataState()),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: SizedBox(height: 0),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: SizedBox(height: 0),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: SizedBox(height: 0),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: const BannerAdContainer(),
+              ),
+            ],
+          );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: snapshot.data!.length,
-          itemBuilder: (context, index) {
-            final dataEntry = snapshot.data![index];
-            return _buildSharedDataCard(dataEntry);
-          },
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final dataEntry = items[index];
+                  return _buildSharedDataCard(dataEntry);
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: const BannerAdContainer(),
+            ),
+          ],
         );
       },
     );
@@ -737,11 +770,10 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
   }
 
   void _viewSharedData(PartnerRelationship partner) {
-    // Navigate to shared data detail view
-    // Implementation would show detailed shared data for this partner
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-      content: Text('Viewing shared data with ${partner.partnerName ?? partner.partnerEmail}'),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PartnerMonitorScreen(relationship: partner),
       ),
     );
   }

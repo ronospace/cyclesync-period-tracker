@@ -1,17 +1,14 @@
 /// Enterprise Home Screen with Real-time Data Integration
-/// 
 /// This is the main dashboard that showcases the Enterprise Data Architecture
 /// with real-time updates, advanced analytics, and healthcare-compliant features.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 // Enterprise Data Layer
 import '../providers/enterprise_data_provider.dart';
 import '../models/cycle_models.dart';
-import '../services/analytics_engine.dart';
 import '../config/analytics_config.dart';
 
 // UI Components

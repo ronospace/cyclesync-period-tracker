@@ -71,7 +71,7 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
         }
       }
     } catch (e) {
-      print('Error parsing dates: $e');
+      debugPrint('Error parsing dates: $e');
     }
 
     // Calculate cycle length
@@ -196,7 +196,7 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
         );
       }
     } catch (e) {
-      print('Error deleting cycle: $e');
+      debugPrint('Error deleting cycle: $e');
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

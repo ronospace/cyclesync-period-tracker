@@ -184,7 +184,7 @@ class DataExportService {
           // TODO: Add support for flow, symptoms, notes in saveCycle method
           importedCount++;
         } catch (e) {
-          print('Failed to import cycle: $e');
+          debugPrint('Failed to import cycle: $e');
           skippedCount++;
         }
       }

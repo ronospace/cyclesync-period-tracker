@@ -7,6 +7,7 @@ import '../services/firebase_service.dart';
 import '../services/analytics_service.dart' as analytics hide CycleData;
 import '../services/enhanced_analytics_service.dart';
 import '../widgets/enhanced_chart_widgets.dart';
+import '../widgets/coming_soon_widget.dart';
 import '../models/cycle_models.dart';
 import '../models/daily_log_models.dart';
 
@@ -50,7 +51,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
     final existingCycles = await FirebaseService.getCycles(limit: 1);
     if (existingCycles.isNotEmpty) return; // Already have data
     
-    print('🔄 Generating sample cycle data...');
+    debugPrint('🔄 Generating sample cycle data...');
     
     // Sample cycle data
     final sampleCycles = [
@@ -109,7 +110,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       await FirebaseService.saveCycleWithSymptoms(cycleData: cycle);
     }
     
-    print('✅ Generated ${sampleCycles.length} sample cycles');
+    debugPrint('✅ Generated ${sampleCycles.length} sample cycles');
   }
 
   Future<void> _loadCycles() async {
@@ -119,16 +120,16 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
     });
 
     try {
-      print('🔄 Loading analytics data...');
+      debugPrint('🔄 Loading analytics data...');
       
       // Step 1: Generate sample data if needed
       await _generateSampleDataIfNeeded();
-      print('✅ Sample data check complete');
+      debugPrint('✅ Sample data check complete');
       
       // Step 2: Load cycles with timeout
       final cycles = await FirebaseService.getCycles(limit: 100)
           .timeout(const Duration(seconds: 30));
-      print('✅ Loaded ${cycles.length} cycles');
+      debugPrint('✅ Loaded ${cycles.length} cycles');
       
       // Step 3: Calculate statistics with error handling
       late final analytics.CycleStatistics statistics;
@@ -137,9 +138,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       try {
         statistics = analytics.AnalyticsService.calculateStatistics(cycles);
         prediction = analytics.AnalyticsService.predictNextCycle(cycles);
-        print('✅ Analytics calculations complete');
+        debugPrint('✅ Analytics calculations complete');
       } catch (e) {
-        print('⚠️ Analytics calculation error: $e');
+        debugPrint('⚠️ Analytics calculation error: $e');
         // Provide fallback statistics
         statistics = _createFallbackStatistics(cycles);
         prediction = _createFallbackPrediction();
@@ -167,7 +168,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             updatedAt: _parseDateTime(cycleMap['updated_at']) ?? DateTime.now(),
           );
         } catch (e) {
-          print('⚠️ Error converting cycle data: $e');
+          debugPrint('⚠️ Error converting cycle data: $e');
           // Return a basic cycle with safe defaults
           return CycleData(
             id: cycleMap['id']?.toString() ?? '',
@@ -204,8 +205,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         _isLoading = false;
       });
     } catch (e, stackTrace) {
-      print('❌ Error loading analytics: $e');
-      print('Stack trace: $stackTrace');
+      debugPrint('❌ Error loading analytics: $e');
+      debugPrint('Stack trace: $stackTrace');
       
       // Try to provide fallback data or helpful error message
       String errorMessage;
@@ -238,7 +239,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       try {
         return DateTime.parse(value);
       } catch (e) {
-        print('⚠️ Failed to parse DateTime from string: $value, error: $e');
+        debugPrint('⚠️ Failed to parse DateTime from string: $value, error: $e');
         return null;
       }
     }
@@ -248,18 +249,18 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       try {
         return (value as dynamic).toDate();
       } catch (e) {
-        print('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
+        debugPrint('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
         return null;
       }
     }
     
-    print('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
+    debugPrint('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
     return null;
   }
 
   // Fallback methods for error handling
   analytics.CycleStatistics _createFallbackStatistics(List<Map<String, dynamic>> cycles) {
-    print('🔄 Creating fallback statistics for ${cycles.length} cycles');
+    debugPrint('🔄 Creating fallback statistics for ${cycles.length} cycles');
     
     // Basic calculations with error protection
     final totalCycles = cycles.length;
@@ -283,7 +284,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         averageLength = cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
       }
     } catch (e) {
-      print('⚠️ Error calculating cycle lengths: $e');
+      debugPrint('⚠️ Error calculating cycle lengths: $e');
     }
     
     // Create fallback statistics
@@ -319,7 +320,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   }
   
   analytics.CyclePrediction _createFallbackPrediction() {
-    print('🔄 Creating fallback prediction');
+    debugPrint('🔄 Creating fallback prediction');
     
     final now = DateTime.now();
     final nextCycleStart = now.add(const Duration(days: 28));
@@ -1429,7 +1430,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('📁 Advanced Analytics'),
+        title: const Text('📊 Advanced Analytics'),
         backgroundColor: Colors.purple.shade50,
         foregroundColor: Colors.purple.shade700,
         iconTheme: IconThemeData(color: Colors.purple.shade700),
@@ -1437,93 +1438,79 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           icon: Icon(Icons.arrow_back, color: Colors.purple.shade700),
           onPressed: () => context.go('/home'),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh, color: Colors.purple.shade700),
-            onPressed: _loadCycles,
-          ),
-        ],
-        bottom: _isLoading || _error != null || _cycles.isEmpty
-            ? null
-            : TabBar(
-                controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Wellbeing', icon: Icon(Icons.psychology, size: 16)),
-                  Tab(text: 'Correlations', icon: Icon(Icons.grid_view, size: 16)),
-                  Tab(text: 'Predictions', icon: Icon(Icons.auto_awesome, size: 16)),
-                ],
-              ),
       ),
-      body: _isLoading
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Analyzing your cycles...'),
-                ],
-              ),
-            )
-          : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.red.shade300,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Failed to load analytics',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text('Please try again'),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _loadCycles,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                )
-              : _cycles.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.analytics,
-                            size: 64,
-                            color: Colors.grey.shade300,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No cycle data yet',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          const Text('Log some cycles to see your analytics'),
-                          const SizedBox(height: 24),
-                          ElevatedButton(
-                            onPressed: () => context.go('/log-cycle'),
-                            child: const Text('Log Your First Cycle'),
-                          ),
-                        ],
-                      ),
-                    )
-                  : TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildWellbeingTab(),
-                        _buildCorrelationsTab(),
-                        _buildAdvancedPredictionsTab(),
-                      ],
-                    ),
+      body: SingleChildScrollView(
+        child: ComingSoonSection(
+          title: '📊 Advanced Analytics Dashboard',
+          features: [
+            ComingSoonFeatures.advancedAnalytics,
+            const ComingSoonWidget(
+              title: 'AI-Powered Correlations',
+              description: 'Discover hidden patterns and correlations between symptoms, mood, and cycle phases',
+              icon: Icons.hub,
+              estimatedDate: 'Q2 2024',
+              status: 'In Development',
+              accentColor: Colors.indigo,
+              showDetails: true,
+              features: [
+                'Symptom correlation heatmaps',
+                'AI-driven pattern recognition',
+                'Predictive health modeling',
+                'Cross-cycle trend analysis',
+                'Statistical significance testing',
+              ],
+            ),
+            const ComingSoonWidget(
+              title: 'Wellbeing Analytics',
+              description: 'Advanced mood, energy, and wellness tracking with predictive insights',
+              icon: Icons.psychology,
+              estimatedDate: 'Q3 2024',
+              status: 'Design Phase',
+              accentColor: Colors.teal,
+              showDetails: true,
+              features: [
+                'Mood pattern analysis across cycles',
+                'Energy level predictions',
+                'Sleep quality correlation tracking',
+                'Stress impact assessment',
+                'Wellness score calculations',
+              ],
+            ),
+            const ComingSoonWidget(
+              title: 'Professional Health Reports',
+              description: 'Comprehensive health reports suitable for sharing with healthcare providers',
+              icon: Icons.article,
+              estimatedDate: 'Q4 2024',
+              status: 'Research Phase',
+              accentColor: Colors.red,
+              showDetails: true,
+              features: [
+                'Medical-grade analytics reports',
+                'Shareable PDF health summaries',
+                'Healthcare provider integration',
+                'HIPAA-compliant data handling',
+                'Customizable report templates',
+              ],
+            ),
+            const ComingSoonWidget(
+              title: 'Comparative Analytics',
+              description: 'Compare your patterns with anonymized population data for deeper insights',
+              icon: Icons.compare_arrows,
+              estimatedDate: 'Q1 2025',
+              status: 'Planning Phase',
+              accentColor: Colors.amber,
+              showDetails: true,
+              features: [
+                'Anonymous population comparisons',
+                'Age-group trend analysis',
+                'Geographic health insights',
+                'Statistical benchmarking',
+                'Privacy-first data aggregation',
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -49,7 +49,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
         }
       }
     } catch (e) {
-      print('Error parsing cycle dates: $e');
+      debugPrint('Error parsing cycle dates: $e');
       // Set today as fallback
       _startDate = DateTime.now().subtract(const Duration(days: 7));
       _endDate = DateTime.now();
@@ -112,7 +112,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
     });
 
     try {
-      print('🟡 Starting update operation...');
+      debugPrint('🟡 Starting update operation...');
       
       await FirebaseService.updateCycle(
         cycleId: widget.cycle['id'],
@@ -120,7 +120,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
         endDate: _endDate!,
       );
 
-      print('✅ Update successful!');
+      debugPrint('✅ Update successful!');
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -134,7 +134,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
         Navigator.of(context).pop(true); // true indicates success
       }
     } catch (e) {
-      print('❌ Update failed: $e');
+      debugPrint('❌ Update failed: $e');
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -150,7 +150,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
         setState(() {
           _isSaving = false;
         });
-        print('🔁 Cleaning up update operation...');
+        debugPrint('🔁 Cleaning up update operation...');
       }
     }
   }

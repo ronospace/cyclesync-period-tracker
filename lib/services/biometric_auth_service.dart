@@ -153,8 +153,7 @@ class BiometricAuthService {
           : 'Verify your identity to continue';
 
       final isAuthenticated = await _localAuth.authenticate(
-        localizedFallbackTitle: 'Use Passcode',
-        authMessages: _getAuthMessages(),
+        localizedReason: reason ?? defaultReason,
         options: AuthenticationOptions(
           biometricOnly: true,
           useErrorDialogs: useErrorDialogs,
@@ -209,8 +208,7 @@ class BiometricAuthService {
           : 'Verify your identity to continue';
 
       final isAuthenticated = await _localAuth.authenticate(
-        localizedFallbackTitle: 'Use Passcode',
-        authMessages: _getAuthMessages(),
+        localizedReason: reason ?? defaultReason,
         options: const AuthenticationOptions(
           biometricOnly: false,
           useErrorDialogs: true,
@@ -367,27 +365,6 @@ class BiometricAuthService {
     }
   }
 
-  List<AuthMessages> _getAuthMessages() {
-    return [
-      const IOSAuthMessages(
-        cancelButton: 'Cancel',
-        goToSettingsButton: 'Settings',
-        goToSettingsDescription: 'Please set up biometric authentication in Settings',
-        lockOut: 'Biometric authentication is disabled. Please use your passcode.',
-      ),
-      const AndroidAuthMessages(
-        cancelButton: 'Cancel',
-        goToSettingsButton: 'Settings',
-        goToSettingsDescription: 'Please set up biometric authentication in Settings',
-        biometricHint: 'Verify your identity',
-        biometricNotRecognized: 'Biometric not recognized. Try again.',
-        biometricSuccess: 'Biometric authentication successful',
-        deviceCredentialsRequiredTitle: 'Device credentials required',
-        deviceCredentialsSetupDescription: 'Please set up device credentials in Settings',
-        signInTitle: 'Biometric Authentication',
-      ),
-    ];
-  }
 
   /// Get remaining time for rate limit
   Future<Duration?> getRateLimitRemainingTime() async {

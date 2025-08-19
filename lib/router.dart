@@ -30,6 +30,7 @@ import 'screens/social/social_feed_screen.dart'; // 📱 SOCIAL FEED
 import 'screens/social/gamification_screen.dart'; // 🎮 GAMIFICATION
 import 'screens/splash_screen.dart'; // 🌟 SPLASH SCREEN
 import 'screens/onboarding/display_name_setup_screen.dart'; // 👤 DISPLAY NAME SETUP
+import 'screens/feedback_screen.dart'; // 💬 FEEDBACK SCREEN
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -197,6 +198,10 @@ class AppRouter {
         GoRoute(
           path: '/gamification',
           builder: (context, state) => const GamificationScreen(),
+        ),
+        GoRoute(
+          path: '/feedback',
+          builder: (context, state) => const FeedbackScreen(),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import '../models/cycle_models.dart';
 import 'advanced_health_kit_service.dart';
 import 'firebase_service.dart';
@@ -21,7 +22,7 @@ class EnhancedAIService {
     required DateTime analysisDate,
   }) async {
     try {
-      print('🧠 Generating enhanced AI insights...');
+      debugPrint('🧠 Generating enhanced AI insights...');
       
       final insights = EnhancedCycleInsights();
       
@@ -57,10 +58,10 @@ class EnhancedAIService {
       insights.recommendations = recommendations;
       insights.confidence = predictions.confidenceScore;
 
-      print('✅ Enhanced AI insights generated successfully');
+      debugPrint('✅ Enhanced AI insights generated successfully');
       return insights;
     } catch (e) {
-      print('❌ Failed to generate enhanced insights: $e');
+      debugPrint('❌ Failed to generate enhanced insights: $e');
       return EnhancedCycleInsights()
         ..addRecommendation("Continue tracking your cycle for better insights");
     }
@@ -101,7 +102,7 @@ class EnhancedAIService {
   Future<CycleHealthInsights?> _analyzeBiometricData(DateTime date) async {
     try {
       if (!await _healthKit.initialize()) {
-        print('⚠️ HealthKit not available, skipping biometric analysis');
+        debugPrint('⚠️ HealthKit not available, skipping biometric analysis');
         return null;
       }
 
@@ -114,7 +115,7 @@ class EnhancedAIService {
         cycleEnd: endDate,
       );
     } catch (e) {
-      print('❌ Failed to analyze biometric data: $e');
+      debugPrint('❌ Failed to analyze biometric data: $e');
       return null;
     }
   }

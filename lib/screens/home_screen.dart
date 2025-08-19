@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import '../services/firebase_service.dart';
 import '../services/smart_notification_service.dart';
-import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/health_integration_tile.dart';
 import '../l10n/generated/app_localizations.dart';
+import '../widgets/common/banner_ad_container.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
       try {
         return DateTime.parse(value);
       } catch (e) {
-        print('⚠️ Failed to parse DateTime from string: $value, error: $e');
+        debugPrint('⚠️ Failed to parse DateTime from string: $value, error: $e');
         return null;
       }
     }
@@ -76,12 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
       try {
         return (value as dynamic).toDate();
       } catch (e) {
-        print('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
+        debugPrint('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
         return null;
       }
     }
     
-    print('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
+    debugPrint('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
     return null;
   }
 
@@ -138,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     } catch (e) {
-      print('Error parsing cycle dates in status calculation: $e');
+      debugPrint('Error parsing cycle dates in status calculation: $e');
       return null;
     }
     
@@ -804,7 +801,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     } catch (e) {
-      print('Error parsing cycle dates: $e');
+      debugPrint('Error parsing cycle dates: $e');
     }
 
     return Padding(
@@ -888,6 +885,8 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildPredictionsCard(),
               _buildQuickActions(),
               _buildRecentCycles(),
+              const SizedBox(height: 12),
+              Center(child: BannerAdContainer()),
               const SizedBox(height: 20),
             ],
           ),

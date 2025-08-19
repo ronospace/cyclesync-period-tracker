@@ -93,5 +93,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Allow Face ID to securely unlock and access CycleSync features.</string>
 </dict>
 </plist>

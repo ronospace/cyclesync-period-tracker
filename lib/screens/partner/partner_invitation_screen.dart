@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../models/partner_models.dart';
 import '../../services/partner_sharing_service.dart';
-import '../../widgets/common_widgets.dart';
 
 class PartnerInvitationScreen extends StatefulWidget {
   const PartnerInvitationScreen({super.key});
@@ -17,11 +15,11 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
   final _messageController = TextEditingController();
   
   bool _isLoading = false;
-  SharedDataPermission _selectedPermission = SharedDataPermission.viewOnly;
-  final Set<DataType> _selectedDataTypes = {
-    DataType.cycleLength,
-    DataType.periodDates,
-    DataType.symptoms,
+  SharingPermissionLevel _selectedPermission = SharingPermissionLevel.view;
+  final Set<SharedDataType> _selectedDataTypes = {
+    SharedDataType.cycleLength,
+    SharedDataType.periodDates,
+    SharedDataType.symptoms,
   };
 
   @override
@@ -148,8 +146,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        ...SharedDataPermission.values.map((permission) {
-          return RadioListTile<SharedDataPermission>(
+        ...SharingPermissionLevel.values.map((permission) {
+          return RadioListTile<SharingPermissionLevel>(
             title: Text(_getPermissionTitle(permission)),
             subtitle: Text(_getPermissionDescription(permission)),
             value: permission,
@@ -184,7 +182,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        ...DataType.values.map((dataType) {
+        ...SharedDataType.values.map((dataType) {
           return CheckboxListTile(
             title: Text(_getDataTypeTitle(dataType)),
             subtitle: Text(_getDataTypeDescription(dataType)),
@@ -308,87 +306,113 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
     );
   }
 
-  String _getPermissionTitle(SharedDataPermission permission) {
+  String _getPermissionTitle(SharingPermissionLevel permission) {
     switch (permission) {
-      case SharedDataPermission.viewOnly:
+      case SharingPermissionLevel.view:
+      case SharingPermissionLevel.viewOnly:
         return 'View Only';
-      case SharedDataPermission.comment:
-        return 'View & Comment';
-      case SharedDataPermission.edit:
-        return 'View, Comment & Edit';
-      default:
-        return 'View Only';
+      case SharingPermissionLevel.comment:
+        return 'View  Comment';
+      case SharingPermissionLevel.remind:
+        return 'View, Comment  Remind';
+      case SharingPermissionLevel.edit:
+        return 'View, Comment  Edit';
     }
   }
 
-  String _getPermissionDescription(SharedDataPermission permission) {
+  String _getPermissionDescription(SharingPermissionLevel permission) {
     switch (permission) {
-      case SharedDataPermission.viewOnly:
+      case SharingPermissionLevel.view:
+      case SharingPermissionLevel.viewOnly:
         return 'Partner can only view shared data';
-      case SharedDataPermission.comment:
+      case SharingPermissionLevel.comment:
         return 'Partner can view and add comments';
-      case SharedDataPermission.edit:
+      case SharingPermissionLevel.remind:
+        return 'Partner can view, comment, and send reminders';
+      case SharingPermissionLevel.edit:
         return 'Partner can view, comment, and make edits';
-      default:
-        return 'Partner can only view shared data';
     }
   }
 
-  String _getDataTypeTitle(DataType dataType) {
+  String _getDataTypeTitle(SharedDataType dataType) {
     switch (dataType) {
-      case DataType.cycleLength:
+      case SharedDataType.cycleLength:
         return 'Cycle Length';
-      case DataType.periodDates:
+      case SharedDataType.periodDates:
         return 'Period Dates';
-      case DataType.symptoms:
+      case SharedDataType.symptoms:
         return 'Symptoms';
-      case DataType.moods:
+      case SharedDataType.moods:
         return 'Moods';
-      case DataType.flowIntensity:
+      case SharedDataType.flowIntensity:
         return 'Flow Intensity';
-      case DataType.medications:
+      case SharedDataType.medications:
         return 'Medications';
-      case DataType.temperature:
+      case SharedDataType.temperature:
         return 'Temperature';
-      case DataType.cervicalMucus:
+      case SharedDataType.cervicalMucus:
         return 'Cervical Mucus';
-      case DataType.sexualActivity:
+      case SharedDataType.sexualActivity:
         return 'Sexual Activity';
-      case DataType.notes:
+      case SharedDataType.notes:
         return 'Personal Notes';
-      case DataType.predictions:
+      case SharedDataType.predictions:
         return 'Cycle Predictions';
-      default:
-        return 'Unknown';
+      case SharedDataType.cycleStart:
+        return 'Cycle Start';
+      case SharedDataType.mood:
+        return 'Mood';
+      case SharedDataType.fertility:
+        return 'Fertility';
+      case SharedDataType.intimacy:
+        return 'Intimacy';
+      case SharedDataType.appointments:
+        return 'Appointments';
+      case SharedDataType.analytics:
+        return 'Analytics';
+      case SharedDataType.reminders:
+        return 'Reminders';
     }
   }
 
-  String _getDataTypeDescription(DataType dataType) {
+  String _getDataTypeDescription(SharedDataType dataType) {
     switch (dataType) {
-      case DataType.cycleLength:
+      case SharedDataType.cycleLength:
         return 'Average cycle length and variations';
-      case DataType.periodDates:
+      case SharedDataType.periodDates:
         return 'Period start and end dates';
-      case DataType.symptoms:
+      case SharedDataType.symptoms:
         return 'Physical and emotional symptoms';
-      case DataType.moods:
+      case SharedDataType.moods:
         return 'Daily mood tracking';
-      case DataType.flowIntensity:
+      case SharedDataType.flowIntensity:
         return 'Menstrual flow intensity levels';
-      case DataType.medications:
+      case SharedDataType.medications:
         return 'Medications and supplements';
-      case DataType.temperature:
+      case SharedDataType.temperature:
         return 'Basal body temperature';
-      case DataType.cervicalMucus:
+      case SharedDataType.cervicalMucus:
         return 'Cervical mucus observations';
-      case DataType.sexualActivity:
+      case SharedDataType.sexualActivity:
         return 'Sexual activity tracking';
-      case DataType.notes:
+      case SharedDataType.notes:
         return 'Personal notes and observations';
-      case DataType.predictions:
+      case SharedDataType.predictions:
         return 'AI-generated cycle predictions';
-      default:
-        return 'Data type';
+      case SharedDataType.cycleStart:
+        return 'Period start dates';
+      case SharedDataType.mood:
+        return 'Mood tracking';
+      case SharedDataType.fertility:
+        return 'Fertility window';
+      case SharedDataType.intimacy:
+        return 'Intimacy events';
+      case SharedDataType.appointments:
+        return 'Doctor appointments';
+      case SharedDataType.analytics:
+        return 'Cycle analytics';
+      case SharedDataType.reminders:
+        return 'Shared reminders';
     }
   }
 
@@ -453,20 +477,17 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
     });
 
     try {
-      final success = await PartnerSharingService.instance.sendInvitation(
+      final invitationId = await PartnerSharingService.instance.sendPartnerInvitation(
         partnerEmail: _emailController.text.trim(),
         relationshipType: PartnerType.romanticPartner, // Default type
         customMessage: _messageController.text.trim().isEmpty 
             ? null 
             : _messageController.text.trim(),
-        customPermissions: Map.fromIterables(
-          _selectedDataTypes.map((dt) => SharedDataType.values.firstWhere(
-            (sdt) => sdt.toString().split('.').last == dt.toString().split('.').last,
-            orElse: () => SharedDataType.notes,
-          )),
-          _selectedDataTypes.map((_) => _selectedPermission),
-        ),
-      ) != null;
+        customPermissions: {
+          for (final dt in _selectedDataTypes) dt: _selectedPermission,
+        },
+      );
+      final success = invitationId != null;
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -500,19 +521,19 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
     _emailController.clear();
     _messageController.clear();
     setState(() {
-      _selectedPermission = SharedDataPermission.viewOnly;
+      _selectedPermission = SharingPermissionLevel.view;
       _selectedDataTypes.clear();
       _selectedDataTypes.addAll([
-        DataType.cycleLength,
-        DataType.periodDates,
-        DataType.symptoms,
+        SharedDataType.cycleLength,
+        SharedDataType.periodDates,
+        SharedDataType.symptoms,
       ]);
     });
   }
 
   Future<void> _cancelInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService.instance.cancelInvitation(invitationId);
+      final success = await PartnerSharingService.instance.cancelPartnerInvitation(invitationId);
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
