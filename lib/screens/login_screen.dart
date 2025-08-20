@@ -109,7 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
     
     return Scaffold(
       body: Container(
@@ -118,8 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              theme.colorScheme.secondary.withOpacity(0.05),
+              theme.colorScheme.primary.withValues(alpha: 0.1),
+              theme.colorScheme.secondary.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -163,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Compact Sign-in Options Card
                     Card(
                       elevation: 8,
-                      shadowColor: theme.colorScheme.primary.withOpacity(0.2),
+      shadowColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -240,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 filled: true,
-                                fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
                               ),
                             ),
                             
@@ -256,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 prefixIcon: const Icon(Icons.lock_outlined),
                                 filled: true,
-                                fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
                               ),
                             ),
                             
@@ -332,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: theme.colorScheme.errorContainer,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: theme.colorScheme.error.withOpacity(0.3),
+                            color: theme.colorScheme.error.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(

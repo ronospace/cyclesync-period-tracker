@@ -12,7 +12,7 @@ void main() async {
   final firestore = FirebaseFirestore.instance;
   const userId = '4GEkV6hItgUgrZNPLMl3ES4mXOm2'; // The user ID from logs
 
-  print('🔥 Adding sample cycle data for user: $userId');
+  // Adding sample cycle data for user: $userId
 
   // Sample cycle data for the last 6 months
   final sampleCycles = [
@@ -112,7 +112,7 @@ void main() async {
         'created_at': Timestamp.fromDate(cycleData['created_at'] as DateTime),
       });
       
-      print('✅ Added cycle ${i + 1}/6: ${cycleData['id']}');
+      // Added cycle ${i + 1}/6: ${cycleData['id']}
     }
 
     // Add some daily logs too
@@ -162,20 +162,20 @@ void main() async {
         'created_at': Timestamp.now(),
       });
       
-      print('✅ Added daily log ${i + 1}/3: $dateStr');
+      // Added daily log ${i + 1}/3: $dateStr
     }
 
-    print('\n🎉 Successfully added sample data!');
-    print('📊 Analytics should now show:');
-    print('   • 6 completed cycles');
-    print('   • Cycle length trends');
-    print('   • Symptom patterns');
-    print('   • Predictions with confidence');
-    print('   • Wellbeing trends');
-    print('\n🔄 Restart the app to see the analytics!');
+    // Successfully added sample data!
+    // Analytics should now show:
+    // • 6 completed cycles
+    // • Cycle length trends
+    // • Symptom patterns
+    // • Predictions with confidence
+    // • Wellbeing trends
+    // Restart the app to see the analytics!
 
   } catch (e) {
-    print('❌ Error adding sample data: $e');
+    // Error adding sample data: $e
   }
 
   exit(0);

@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
 import '../services/analytics_service.dart' as analytics hide CycleData;
-import '../services/enhanced_analytics_service.dart';
-import '../widgets/enhanced_chart_widgets.dart';
 import '../widgets/coming_soon_widget.dart';
 import '../models/cycle_models.dart';
 import '../models/daily_log_models.dart';
@@ -19,17 +17,12 @@ class AdvancedAnalyticsScreen extends StatefulWidget {
 }
 
 class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with TickerProviderStateMixin {
-  List<Map<String, dynamic>> _cycles = [];
-  List<CycleData> _cycleModels = [];
-  List<DailyLogEntry> _dailyLogs = [];
   analytics.CycleStatistics? _statistics;
   analytics.CyclePrediction? _prediction;
   WellbeingTrends? _wellbeingTrends;
   SymptomCorrelationMatrix? _correlationMatrix;
   AdvancedPrediction? _advancedPrediction;
   HealthScore? _healthScore;
-  bool _isLoading = true;
-  String? _error;
   late TabController _tabController;
   String _selectedWellbeingMetric = 'Mood';
 
@@ -114,11 +107,6 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   }
 
   Future<void> _loadCycles() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
     try {
       debugPrint('🔄 Loading analytics data...');
       
@@ -146,46 +134,6 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         prediction = _createFallbackPrediction();
       }
       
-      // Convert raw cycle data to models
-      final cycleModels = cycles.map((cycleMap) {
-        try {
-          return CycleData(
-            id: cycleMap['id'] ?? '',
-            startDate: _parseDateTime(cycleMap['start_date']) ?? DateTime.now(),
-            endDate: _parseDateTime(cycleMap['end_date']),
-            symptoms: (cycleMap['symptoms'] as List<dynamic>?)?.map((s) {
-              final symptomName = s is String ? s : (s['name'] ?? '');
-              final symptom = Symptom.fromName(symptomName);
-              return symptom;
-            }).where((s) => s != null).cast<Symptom>().toList() ?? [],
-            wellbeing: WellbeingData(
-              mood: (cycleMap['mood'] as num?)?.toDouble() ?? 3.0,
-              energy: (cycleMap['energy'] as num?)?.toDouble() ?? 3.0,
-              pain: (cycleMap['pain'] as num?)?.toDouble() ?? 1.0,
-            ),
-            notes: cycleMap['notes'] as String? ?? '',
-            createdAt: _parseDateTime(cycleMap['created_at']) ?? DateTime.now(),
-            updatedAt: _parseDateTime(cycleMap['updated_at']) ?? DateTime.now(),
-          );
-        } catch (e) {
-          debugPrint('⚠️ Error converting cycle data: $e');
-          // Return a basic cycle with safe defaults
-          return CycleData(
-            id: cycleMap['id']?.toString() ?? '',
-            startDate: DateTime.now(),
-            endDate: null,
-            symptoms: [],
-            wellbeing: WellbeingData(mood: 3.0, energy: 3.0, pain: 1.0),
-            notes: '',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          );
-        }
-      }).toList();
-      
-      // Load daily logs (in a real app, this would be a separate service call)
-      final dailyLogs = <DailyLogEntry>[];
-      
       // Calculate enhanced analytics (simplified for now)
       final wellbeingTrends = _createMockWellbeingTrends();
       final correlationMatrix = _createMockCorrelationMatrix();
@@ -193,37 +141,16 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       final healthScore = _createMockHealthScore();
       
       setState(() {
-        _cycles = cycles;
-        _cycleModels = cycleModels;
-        _dailyLogs = dailyLogs;
         _statistics = statistics;
         _prediction = prediction;
         _wellbeingTrends = wellbeingTrends;
         _correlationMatrix = correlationMatrix;
         _advancedPrediction = advancedPrediction;
         _healthScore = healthScore;
-        _isLoading = false;
       });
     } catch (e, stackTrace) {
       debugPrint('❌ Error loading analytics: $e');
       debugPrint('Stack trace: $stackTrace');
-      
-      // Try to provide fallback data or helpful error message
-      String errorMessage;
-      if (e.toString().contains('TimeoutException')) {
-        errorMessage = 'Connection timeout - please check your internet connection and try again';
-      } else if (e.toString().contains('FirebaseException')) {
-        errorMessage = 'Database connection error - please try again in a moment';
-      } else if (e.toString().contains('FormatException') || e.toString().contains('type')) {
-        errorMessage = 'Data format error - some data may be corrupted';
-      } else {
-        errorMessage = 'Unable to load analytics data: ${e.toString()}';
-      }
-      
-      setState(() {
-        _error = errorMessage;
-        _isLoading = false;
-      });
     }
   }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// Result of AI prediction analysis
 class AIPredictionResult {

@@ -44,7 +44,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -56,7 +56,7 @@ class AppTheme {
         backgroundColor: primaryPink,
         foregroundColor: Colors.white,
         elevation: 2,
-        shadowColor: primaryPink.withOpacity(0.3),
+        shadowColor: primaryPink.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -123,7 +123,7 @@ class AppTheme {
     // Chip Theme
     chipTheme: ChipThemeData(
       backgroundColor: Colors.grey.shade100,
-      selectedColor: primaryPink.withOpacity(0.2),
+      selectedColor: primaryPink.withValues(alpha: 0.2),
       labelStyle: const TextStyle(color: Colors.black87),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -140,12 +140,12 @@ class AppTheme {
     colorScheme: ColorScheme.fromSeed(
       seedColor: primaryPink,
       brightness: Brightness.dark,
-      primary: primaryPink.withOpacity(0.8),
-      secondary: primaryPurple.withOpacity(0.8),
-      tertiary: accentBlue.withOpacity(0.8),
+      primary: primaryPink.withValues(alpha: 0.8),
+      secondary: primaryPurple.withValues(alpha: 0.8),
+      tertiary: accentBlue.withValues(alpha: 0.8),
       surface: const Color(0xFF1E1E1E),
       background: const Color(0xFF121212),
-      error: errorRed.withOpacity(0.8),
+      error: errorRed.withValues(alpha: 0.8),
     ),
 
     // App Bar Theme
@@ -166,7 +166,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: const Color(0xFF2A2A2A),
       elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.3),
+      shadowColor: Colors.black.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -175,10 +175,10 @@ class AppTheme {
     // Elevated Button Theme
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryPink.withOpacity(0.9),
+        backgroundColor: primaryPink.withValues(alpha: 0.9),
         foregroundColor: Colors.white,
         elevation: 2,
-        shadowColor: primaryPink.withOpacity(0.3),
+        shadowColor: primaryPink.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -189,7 +189,7 @@ class AppTheme {
     // Text Button Theme
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: primaryPink.withOpacity(0.8),
+        foregroundColor: primaryPink.withValues(alpha: 0.8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -216,27 +216,27 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: primaryPink.withOpacity(0.8), width: 2),
+        borderSide: BorderSide(color: primaryPink.withValues(alpha: 0.8), width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: errorRed.withOpacity(0.8)),
+        borderSide: BorderSide(color: errorRed.withValues(alpha: 0.8)),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
 
     // Tab Bar Theme
     tabBarTheme: TabBarThemeData(
-      labelColor: primaryPink.withOpacity(0.8),
+      labelColor: primaryPink.withValues(alpha: 0.8),
       unselectedLabelColor: Colors.grey,
-      indicatorColor: primaryPink.withOpacity(0.8),
+      indicatorColor: primaryPink.withValues(alpha: 0.8),
       indicatorSize: TabBarIndicatorSize.label,
     ),
 
     // Bottom Navigation Bar Theme
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: const Color(0xFF1E1E1E),
-      selectedItemColor: primaryPink.withOpacity(0.8),
+      selectedItemColor: primaryPink.withValues(alpha: 0.8),
       unselectedItemColor: Colors.grey,
       elevation: 8,
       type: BottomNavigationBarType.fixed,
@@ -245,7 +245,7 @@ class AppTheme {
     // Chip Theme
     chipTheme: ChipThemeData(
       backgroundColor: const Color(0xFF2A2A2A),
-      selectedColor: primaryPink.withOpacity(0.3),
+      selectedColor: primaryPink.withValues(alpha: 0.3),
       labelStyle: const TextStyle(color: Colors.white70),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

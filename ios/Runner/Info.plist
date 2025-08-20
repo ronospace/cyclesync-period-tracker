@@ -24,6 +24,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -32,6 +34,13 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>New Exception Domain</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>firebaseio.com</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
@@ -70,10 +79,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>CycleSync needs health data access to provide personalized cycle tracking and health insights.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Allow Face ID to securely unlock and access CycleSync features.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>CycleSync would like to read your health data to provide better cycle insights and tracking.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>CycleSync needs health data access to provide personalized cycle tracking and health insights.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -93,9 +104,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Allow Face ID to securely unlock and access CycleSync features.</string>
 </dict>
 </plist>

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// Types of reminders available in the app
 enum ReminderType {

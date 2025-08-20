@@ -62,6 +62,12 @@ dependencies:
   # HTTP requests
   http: ^1.2.2
   
+  # Firebase Storage
+  firebase_storage: ^12.3.8
+  
+  # URL Launcher
+  url_launcher: ^6.3.1
+  
   # Encryption
   crypto: ^3.0.6
 

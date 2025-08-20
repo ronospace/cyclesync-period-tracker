@@ -38,11 +38,11 @@ class AdvancedHealthCharts {
             horizontalInterval: 20,
             verticalInterval: 6,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               strokeWidth: 1,
             ),
             getDrawingVerticalLine: (value) => FlLine(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               strokeWidth: 1,
             ),
           ),
@@ -91,7 +91,7 @@ class AdvancedHealthCharts {
           borderData: FlBorderData(
             show: true,
             border: Border.all(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               width: 1,
             ),
           ),
@@ -105,8 +105,8 @@ class AdvancedHealthCharts {
               isCurved: true,
               gradient: LinearGradient(
                 colors: [
-                  Colors.red.withOpacity(0.8),
-                  Colors.red.withOpacity(0.3),
+                  Colors.red.withValues(alpha: 0.8),
+                  Colors.red.withValues(alpha: 0.3),
                 ],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
@@ -127,8 +127,8 @@ class AdvancedHealthCharts {
                 show: true,
                 gradient: LinearGradient(
                   colors: [
-                    Colors.red.withOpacity(0.3),
-                    Colors.red.withOpacity(0.1),
+                    Colors.red.withValues(alpha: 0.3),
+                    Colors.red.withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -139,7 +139,7 @@ class AdvancedHealthCharts {
           lineTouchData: LineTouchData(
             enabled: true,
             touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: Colors.red.withOpacity(0.9),
+              tooltipBgColor: Colors.red.withValues(alpha: 0.9),
               tooltipRoundedRadius: 8,
               getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                 return touchedBarSpots.map((barSpot) {
@@ -193,7 +193,7 @@ class AdvancedHealthCharts {
               width: 16,
               borderRadius: BorderRadius.circular(4),
               gradient: LinearGradient(
-                colors: [barColor.withOpacity(0.7), barColor],
+                colors: [barColor.withValues(alpha: 0.7), barColor],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
               ),
@@ -300,7 +300,7 @@ class AdvancedHealthCharts {
                   drawVerticalLine: false,
                   horizontalInterval: 10,
                   getDrawingHorizontalLine: (value) => FlLine(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     strokeWidth: 1,
                   ),
                 ),
@@ -420,11 +420,11 @@ class AdvancedHealthCharts {
             horizontalInterval: 0.2,
             verticalInterval: 1,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               strokeWidth: 1,
             ),
             getDrawingVerticalLine: (value) => FlLine(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               strokeWidth: 1,
             ),
           ),
@@ -473,7 +473,7 @@ class AdvancedHealthCharts {
           borderData: FlBorderData(
             show: true,
             border: Border.all(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               width: 1,
             ),
           ),
@@ -488,8 +488,8 @@ class AdvancedHealthCharts {
               isCurved: true,
               gradient: LinearGradient(
                 colors: [
-                  Colors.orange.withOpacity(0.8),
-                  Colors.red.withOpacity(0.6),
+                  Colors.orange.withValues(alpha: 0.8),
+                  Colors.red.withValues(alpha: 0.6),
                 ],
               ),
               barWidth: 3,
@@ -518,8 +518,8 @@ class AdvancedHealthCharts {
                 show: true,
                 gradient: LinearGradient(
                   colors: [
-                    Colors.orange.withOpacity(0.2),
-                    Colors.orange.withOpacity(0.05),
+                    Colors.orange.withValues(alpha: 0.2),
+                    Colors.orange.withValues(alpha: 0.05),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -543,7 +543,7 @@ class AdvancedHealthCharts {
           lineTouchData: LineTouchData(
             enabled: true,
             touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: Colors.orange.withOpacity(0.9),
+              tooltipBgColor: Colors.orange.withValues(alpha: 0.9),
               tooltipRoundedRadius: 8,
               getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                 return touchedBarSpots.map((barSpot) {
@@ -632,7 +632,7 @@ class AdvancedHealthCharts {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Colors.blue.withOpacity(0.9),
+                    tooltipBgColor: Colors.blue.withValues(alpha: 0.9),
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
@@ -699,7 +699,7 @@ class AdvancedHealthCharts {
                         toY: steps,
                         gradient: LinearGradient(
                           colors: [
-                            Colors.blue.withOpacity(0.7),
+                            Colors.blue.withValues(alpha: 0.7),
                             Colors.blue,
                           ],
                           begin: Alignment.bottomCenter,
@@ -716,7 +716,7 @@ class AdvancedHealthCharts {
                   drawVerticalLine: false,
                   horizontalInterval: 2000,
                   getDrawingHorizontalLine: (value) => FlLine(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     strokeWidth: 1,
                   ),
                 ),
@@ -780,9 +780,9 @@ class AdvancedHealthCharts {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

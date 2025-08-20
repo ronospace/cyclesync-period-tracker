@@ -113,7 +113,7 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: accentColor.withOpacity(0.3),
+                    color: accentColor.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: 2,
                     offset: const Offset(0, 8),
@@ -130,12 +130,12 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withOpacity(0.2),
-                          Colors.white.withOpacity(0.05),
+                          Colors.white.withValues(alpha: 0.2),
+                          Colors.white.withValues(alpha: 0.05),
                         ],
                       ),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(20),
@@ -173,7 +173,7 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                 ],
                 colors: [
                   Colors.transparent,
-                  Colors.white.withOpacity(0.1),
+                  Colors.white.withValues(alpha: 0.1),
                   Colors.transparent,
                 ],
               ),
@@ -209,7 +209,7 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                     Text(
                       widget.description,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                           ),
                     ),
                   ],
@@ -225,13 +225,13 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                 Icon(
                   Icons.schedule,
                   size: 16,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Expected: ${widget.estimatedDate}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                 ),
               ],
@@ -257,10 +257,10 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: accentColor.withOpacity(0.2 + 0.1 * _pulseAnimation.value),
+            color: accentColor.withValues(alpha: 0.2 + 0.1 * _pulseAnimation.value),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: accentColor.withOpacity(0.5 + 0.3 * _pulseAnimation.value),
+              color: accentColor.withValues(alpha: 0.5 + 0.3 * _pulseAnimation.value),
               width: 2,
             ),
           ),
@@ -282,7 +282,7 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: accentColor.withOpacity(0.3),
+            color: accentColor.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -318,14 +318,14 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                   Icon(
                     Icons.check_circle_outline,
                     size: 16,
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       feature,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                           ),
                     ),
                   ),

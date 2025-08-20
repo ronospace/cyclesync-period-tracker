@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart'; // Removed dependency
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -167,24 +167,9 @@ class ContactIntegrationService {
         if (!granted) return [];
       }
 
-      final contacts = await ContactsService.getContacts();
-      
-      return contacts.map((contact) {
-        final phoneNumber = contact.phones?.isNotEmpty == true 
-            ? contact.phones!.first.value 
-            : null;
-        final email = contact.emails?.isNotEmpty == true 
-            ? contact.emails!.first.value 
-            : null;
-
-        return ContactInfo(
-          id: contact.identifier ?? '',
-          name: contact.displayName ?? 'Unknown',
-          phoneNumber: _cleanPhoneNumber(phoneNumber),
-          email: email,
-          platform: ContactPlatform.phone,
-        );
-      }).toList();
+      // final contacts = await ContactsService.getContacts();
+      // Return empty list since contacts_service dependency was removed
+      return [];
     } catch (e) {
       debugPrint('Error getting device contacts: $e');
       return [];

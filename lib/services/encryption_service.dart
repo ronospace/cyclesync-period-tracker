@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:crypto/crypto.dart';
@@ -399,5 +400,3 @@ class EncryptionStatus {
   };
 }
 
-// Import math for min function
-import 'dart:math' as math;

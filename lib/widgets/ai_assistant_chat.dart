@@ -144,7 +144,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 0,
               offset: const Offset(0, -5),
@@ -181,7 +181,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
           bottom: BorderSide(
-            color: Theme.of(context).dividerColor.withOpacity(0.3),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -198,8 +198,8 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.blue.withOpacity(0.8),
-                  Colors.blueAccent.withOpacity(0.8),
+                  Colors.blue.withValues(alpha: 0.8),
+                  Colors.blueAccent.withValues(alpha: 0.8),
                 ],
               ),
             ),
@@ -309,7 +309,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: suggestion.color.withOpacity(0.1),
+                        color: suggestion.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -343,7 +343,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 Text(
                   suggestion.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                    color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -387,8 +387,8 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.blue.withOpacity(0.1),
-                  Colors.blueAccent.withOpacity(0.1),
+                  Colors.blue.withValues(alpha: 0.1),
+                  Colors.blueAccent.withValues(alpha: 0.1),
                 ],
               ),
             ),
@@ -413,7 +413,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
           Text(
             'Ask me anything about CycleSync\nor your cycle tracking journey!',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -448,8 +448,8 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.blue.withOpacity(0.8),
-                    Colors.blueAccent.withOpacity(0.8),
+                    Colors.blue.withValues(alpha: 0.8),
+                    Colors.blueAccent.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -494,7 +494,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                     Text(
                       _formatMessageTime(message.timestamp),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: _getMessageTextColor(message)?.withOpacity(0.6),
+                        color: _getMessageTextColor(message)?.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
                     ),
@@ -554,7 +554,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 height: 8,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             );
@@ -571,7 +571,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
         color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           top: BorderSide(
-            color: Theme.of(context).dividerColor.withOpacity(0.3),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -585,7 +585,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(0.3),
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
                 ),
               ),
               child: TextField(
@@ -603,7 +603,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                     vertical: 12,
                   ),
                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -639,7 +639,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
       case AIMessageType.user:
         return Theme.of(context).colorScheme.primary;
       case AIMessageType.system:
-        return Theme.of(context).colorScheme.secondary.withOpacity(0.1);
+        return Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1);
       default:
         return Theme.of(context).colorScheme.surface;
     }

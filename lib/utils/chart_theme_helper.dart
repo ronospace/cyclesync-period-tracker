@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
 
@@ -39,11 +40,11 @@ class ChartThemeHelper {
       horizontalInterval: horizontalInterval,
       verticalInterval: verticalInterval,
       getDrawingHorizontalLine: (value) => FlLine(
-        color: colors['grid'] ?? Colors.grey.withOpacity(0.2),
+        color: colors['grid'] ?? Colors.grey.withValues(alpha: 0.2),
         strokeWidth: 1,
       ),
       getDrawingVerticalLine: (value) => FlLine(
-        color: colors['grid'] ?? Colors.grey.withOpacity(0.2),
+        color: colors['grid'] ?? Colors.grey.withValues(alpha: 0.2),
         strokeWidth: 1,
       ),
     );
@@ -56,7 +57,7 @@ class ChartThemeHelper {
     return FlBorderData(
       show: true,
       border: Border.all(
-        color: colors['grid'] ?? Colors.grey.withOpacity(0.2),
+        color: colors['grid'] ?? Colors.grey.withValues(alpha: 0.2),
         width: 1,
       ),
     );
@@ -122,7 +123,7 @@ class ChartThemeHelper {
     final colors = getChartColors(context);
     
     return LineTouchTooltipData(
-      tooltipBgColor: backgroundColor ?? colors['surface']?.withOpacity(0.9),
+      tooltipBgColor: backgroundColor ?? colors['surface']?.withValues(alpha: 0.9),
       tooltipRoundedRadius: 8,
       getTooltipItems: tooltipItems ?? (touchedSpots) {
         return touchedSpots.map((spot) {
@@ -147,7 +148,7 @@ class ChartThemeHelper {
     final colors = getChartColors(context);
     
     return BarTouchTooltipData(
-      tooltipBgColor: backgroundColor ?? colors['surface']?.withOpacity(0.9),
+      tooltipBgColor: backgroundColor ?? colors['surface']?.withValues(alpha: 0.9),
       tooltipRoundedRadius: 8,
       getTooltipItem: tooltipItem ?? (group, groupIndex, rod, rodIndex) {
         return BarTooltipItem(
@@ -170,41 +171,41 @@ class ChartThemeHelper {
       case 'heartRate':
         final color = colors['heartRate'] ?? Colors.red;
         return LinearGradient(
-          colors: [color.withOpacity(0.8), color.withOpacity(0.3)],
+          colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 'hrv':
         final color = colors['hrv'] ?? Colors.blue;
         return LinearGradient(
-          colors: [color.withOpacity(0.8), color.withOpacity(0.3)],
+          colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 'sleep':
         final color = colors['sleep'] ?? Colors.purple;
         return LinearGradient(
-          colors: [color.withOpacity(0.8), color.withOpacity(0.3)],
+          colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 'temperature':
         final color = colors['temperature'] ?? Colors.orange;
         return LinearGradient(
-          colors: [color.withOpacity(0.8), color.withOpacity(0.3)],
+          colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 'activity':
         final color = colors['activity'] ?? Colors.green;
         return LinearGradient(
-          colors: [color.withOpacity(0.8), color.withOpacity(0.3)],
+          colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       default:
         return LinearGradient(
-          colors: [Colors.blue.withOpacity(0.8), Colors.blue.withOpacity(0.3)],
+          colors: [Colors.blue.withValues(alpha: 0.8), Colors.blue.withValues(alpha: 0.3)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
@@ -296,7 +297,7 @@ class ChartThemeHelper {
           Icon(
             Icons.bar_chart,
             size: 48,
-            color: colors['textSecondary']?.withOpacity(0.5),
+            color: colors['textSecondary']?.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 12),
           Text(

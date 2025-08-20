@@ -31,6 +31,8 @@ import 'screens/social/gamification_screen.dart'; // 🎮 GAMIFICATION
 import 'screens/splash_screen.dart'; // 🌟 SPLASH SCREEN
 import 'screens/onboarding/display_name_setup_screen.dart'; // 👤 DISPLAY NAME SETUP
 import 'screens/feedback_screen.dart'; // 💬 FEEDBACK SCREEN
+import 'screens/share_ideas_screen.dart'; // 💡 SHARE IDEAS SCREEN
+import 'screens/flowsense_coming_soon_screen.dart'; // 🔮 FLOWSENSE COMING SOON
 import 'services/auth_state_notifier.dart';
 
 class AppRouter {
@@ -202,6 +204,14 @@ class AppRouter {
         GoRoute(
           path: '/feedback',
           builder: (context, state) => const FeedbackScreen(),
+        ),
+        GoRoute(
+          path: '/share-ideas',
+          builder: (context, state) => const ShareIdeasScreen(),
+        ),
+        GoRoute(
+          path: '/flowsense-coming-soon',
+          builder: (context, state) => const FlowSenseComingSoonScreen(),
         ),
       ],
     );
