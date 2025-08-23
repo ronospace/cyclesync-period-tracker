@@ -118,6 +118,7 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
                 }
                 final date = trendData[value.toInt()].date;
                 return SideTitleWidget(
+                  meta: meta,
                   child: Text(
                     '${date.month}/${date.day}',
                     style: const TextStyle(fontSize: 10),
@@ -224,10 +225,14 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
                 }).toList();
               },
           touchTooltipData: LineTouchTooltipData(
-            backgroundColor: _getMetricColor(
+            getTooltipColor: (touchedSpot) => _getMetricColor(
               widget.selectedMetric,
             ).withValues(alpha: 0.9),
-            tooltipRoundedRadius: 8,
+            tooltipBorder: BorderSide(
+              color: _getMetricColor(widget.selectedMetric),
+              width: 1,
+            ),
+            tooltipBorderRadius: BorderRadius.circular(8),
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((barSpot) {
                 final flSpot = barSpot;
@@ -472,7 +477,6 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
           ),
           // Heatmap cells
           ...symptoms.asMap().entries.map((entry) {
-            final rowIndex = entry.key;
             final rowSymptom = entry.value;
 
             return Row(
@@ -491,7 +495,6 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
                 ),
                 // Correlation cells
                 ...symptoms.asMap().entries.map((colEntry) {
-                  final colIndex = colEntry.key;
                   final colSymptom = colEntry.value;
                   final correlation = widget.matrix.getCorrelation(
                     rowSymptom,
