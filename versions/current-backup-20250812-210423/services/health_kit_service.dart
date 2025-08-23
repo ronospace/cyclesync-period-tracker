@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 
 // Mock health data types and classes for now
 // In a real implementation, these would come from the health package

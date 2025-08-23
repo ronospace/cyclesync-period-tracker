@@ -1,4 +1,4 @@
-package com.ronos.cyclesync
+package com.ronos.flowsense
 
 import io.flutter.embedding.android.FlutterActivity
 

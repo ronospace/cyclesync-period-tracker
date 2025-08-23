@@ -102,20 +102,50 @@ class DailyLogEntry {
   static DailyLogEntry fromFirestore(Map<String, dynamic> data, String id) {
     return DailyLogEntry(
       id: id,
-      date: DateTime.fromMillisecondsSinceEpoch(data['date'] ?? 0),
+      date: _parseFirestoreDateTime(data['date']) ?? DateTime.now(),
       mood: data['mood']?.toDouble(),
       energy: data['energy']?.toDouble(),
       pain: data['pain']?.toDouble(),
       symptoms: List<String>.from(data['symptoms'] ?? []),
       notes: data['notes'] ?? '',
-      createdAt: DateTime.fromMillisecondsSinceEpoch(data['createdAt'] ?? 0),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(data['updatedAt'] ?? 0),
+      createdAt: _parseFirestoreDateTime(data['createdAt']) ?? DateTime.now(),
+      updatedAt: _parseFirestoreDateTime(data['updatedAt']) ?? DateTime.now(),
     );
   }
 
-  bool get hasData => 
-      mood != null || energy != null || pain != null || 
-      symptoms.isNotEmpty || notes.isNotEmpty;
+  static DateTime? _parseFirestoreDateTime(dynamic value) {
+    if (value == null) return null;
+
+    // Handle Firestore Timestamp objects
+    if (value.runtimeType.toString() == 'Timestamp') {
+      return (value as dynamic).toDate();
+    }
+
+    // Handle milliseconds since epoch
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
+
+    // Handle string dates
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (e) {
+        print('Error parsing date string: $value - $e');
+        return null;
+      }
+    }
+
+    print('Unknown date format: ${value.runtimeType} - $value');
+    return null;
+  }
+
+  bool get hasData =>
+      mood != null ||
+      energy != null ||
+      pain != null ||
+      symptoms.isNotEmpty ||
+      notes.isNotEmpty;
 
   String get moodDescription {
     if (mood == null) return 'Not logged';
@@ -203,9 +233,13 @@ class DailyLogEntry {
     // Sleep factor (0-20 points)
     if (sleepHours != null) {
       // Optimal sleep is 7-9 hours
-      double sleepScore = sleepHours! >= 7 && sleepHours! <= 9 ? 1.0 : 
-                         sleepHours! < 7 ? sleepHours! / 7.0 :
-                         sleepHours! > 9 ? (16 - sleepHours!) / 7.0 : 0.5;
+      double sleepScore = sleepHours! >= 7 && sleepHours! <= 9
+          ? 1.0
+          : sleepHours! < 7
+          ? sleepHours! / 7.0
+          : sleepHours! > 9
+          ? (16 - sleepHours!) / 7.0
+          : 0.5;
       score += sleepScore * 20;
       factors++;
     }
@@ -342,7 +376,9 @@ class MoodRating {
 
   static MoodRating fromValue(double value) {
     return all.reduce((curr, next) {
-      return (value - curr.value).abs() < (value - next.value).abs() ? curr : next;
+      return (value - curr.value).abs() < (value - next.value).abs()
+          ? curr
+          : next;
     });
   }
 }

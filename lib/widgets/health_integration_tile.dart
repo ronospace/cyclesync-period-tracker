@@ -6,7 +6,7 @@ import '../models/cycle_models.dart';
 class HealthIntegrationTile extends StatefulWidget {
   final bool showDetails;
   final EdgeInsetsGeometry? margin;
-  
+
   const HealthIntegrationTile({
     super.key,
     this.showDetails = false,
@@ -29,7 +29,7 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
 
   Future<void> _checkHealthStatus() async {
     if (!mounted) return;
-    
+
     try {
       final status = await HealthService.getIntegrationStatus();
       if (mounted) {
@@ -55,7 +55,7 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
 
   Color _getStatusColor() {
     if (_status == null) return Colors.grey;
-    
+
     if (_status!.canSync) return Colors.green;
     if (_status!.isSupported) return Colors.orange;
     return Colors.red;
@@ -63,7 +63,7 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
 
   IconData _getStatusIcon() {
     if (_status == null) return Icons.health_and_safety_outlined;
-    
+
     if (_status!.canSync) return Icons.health_and_safety;
     if (_status!.isSupported) return Icons.health_and_safety_outlined;
     return Icons.error_outline;
@@ -71,7 +71,7 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
 
   String _getStatusTitle() {
     if (_status == null) return 'Health Integration';
-    
+
     if (_status!.canSync) return 'Health Integration Active';
     if (_status!.isSupported) return 'Health Setup Required';
     return 'Health Not Available';
@@ -79,7 +79,7 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
 
   String _getStatusSubtitle() {
     if (_status == null) return 'Checking status...';
-    
+
     if (_status!.canSync) return 'Syncing with health platforms';
     if (_status!.isSupported) return 'Tap to set up health sync';
     return _status!.message;
@@ -115,23 +115,15 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
       child: ListTile(
         leading: Stack(
           children: [
-            Icon(
-              _getStatusIcon(),
-              color: _getStatusColor(),
-              size: 28,
-            ),
-            Positioned(
-              right: 0,
-              top: 0,
-              child: _buildStatusBadge(),
-            ),
+            Icon(_getStatusIcon(), color: _getStatusColor(), size: 28),
+            Positioned(right: 0, top: 0, child: _buildStatusBadge()),
           ],
         ),
         title: Text(
           _getStatusTitle(),
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,14 +150,18 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
                   Icon(
                     _status!.hasPermissions ? Icons.check_circle : Icons.cancel,
                     size: 14,
-                    color: _status!.hasPermissions ? Colors.green : Colors.orange,
+                    color: _status!.hasPermissions
+                        ? Colors.green
+                        : Colors.orange,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     _status!.hasPermissions ? 'Authorized' : 'No Permission',
                     style: TextStyle(
                       fontSize: 12,
-                      color: _status!.hasPermissions ? Colors.green : Colors.orange,
+                      color: _status!.hasPermissions
+                          ? Colors.green
+                          : Colors.orange,
                     ),
                   ),
                 ],
@@ -197,7 +193,7 @@ class _HealthIntegrationTileState extends State<HealthIntegrationTile> {
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Center(
@@ -234,11 +230,13 @@ class _HealthQuickSyncWidgetState extends State<HealthQuickSyncWidget> {
 
     try {
       final status = await HealthService.getIntegrationStatus();
-      
+
       if (!status.canSync) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('⚠️ Health integration not set up. ${status.message}'),
+            content: Text(
+              '⚠️ Health integration not set up. ${status.message}',
+            ),
             backgroundColor: Colors.orange,
             action: SnackBarAction(
               label: 'Setup',
@@ -251,10 +249,12 @@ class _HealthQuickSyncWidgetState extends State<HealthQuickSyncWidget> {
 
       // Perform a quick sync of the latest cycle
       final result = await HealthService.bulkSyncToHealth();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.success ? '✅ ${result.summary}' : '❌ ${result.summary}'),
+          content: Text(
+            result.success ? '✅ ${result.summary}' : '❌ ${result.summary}',
+          ),
           backgroundColor: result.success ? Colors.green : Colors.red,
         ),
       );
@@ -282,17 +282,13 @@ class _HealthQuickSyncWidgetState extends State<HealthQuickSyncWidget> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.health_and_safety,
-                  color: Colors.purple,
-                  size: 20,
-                ),
+                Icon(Icons.health_and_safety, color: Colors.purple, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   'Health Sync',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 TextButton.icon(
@@ -305,18 +301,16 @@ class _HealthQuickSyncWidgetState extends State<HealthQuickSyncWidget> {
                         )
                       : const Icon(Icons.sync, size: 16),
                   label: Text(_isSyncing ? 'Syncing...' : 'Sync Now'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.purple,
-                  ),
+                  style: TextButton.styleFrom(foregroundColor: Colors.purple),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             Text(
               'Keep your health data in sync across all your apps',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             ),
           ],
         ),

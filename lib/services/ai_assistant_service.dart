@@ -1,18 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'navigation_service.dart';
 
 /// Message types for the AI Assistant
-enum AIMessageType {
-  user,
-  assistant,
-  system,
-  contextual,
-  suggestion
-}
+enum AIMessageType { user, assistant, system, contextual, suggestion }
 
 /// AI Message with metadata
 class AIMessage {
@@ -54,7 +47,9 @@ class AIMessage {
         (e) => e.name == map['type'],
         orElse: () => AIMessageType.assistant,
       ),
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       metadata: Map<String, dynamic>.from(map['metadata'] ?? {}),
       context: map['context'],
       isTyping: map['isTyping'] ?? false,
@@ -118,7 +113,9 @@ class AIContext {
       userPreferences: Map<String, dynamic>.from(map['userPreferences'] ?? {}),
       recentActions: List<String>.from(map['recentActions'] ?? []),
       appState: Map<String, dynamic>.from(map['appState'] ?? {}),
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 }
@@ -178,11 +175,17 @@ class AIConversationSession {
   factory AIConversationSession.fromMap(Map<String, dynamic> map) {
     return AIConversationSession(
       id: map['id'] ?? '',
-      messages: (map['messages'] as List?)
-          ?.map((m) => AIMessage.fromMap(m))
-          .toList() ?? [],
-      startedAt: DateTime.parse(map['startedAt'] ?? DateTime.now().toIso8601String()),
-      lastActivityAt: DateTime.parse(map['lastActivityAt'] ?? DateTime.now().toIso8601String()),
+      messages:
+          (map['messages'] as List?)
+              ?.map((m) => AIMessage.fromMap(m))
+              .toList() ??
+          [],
+      startedAt: DateTime.parse(
+        map['startedAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      lastActivityAt: DateTime.parse(
+        map['lastActivityAt'] ?? DateTime.now().toIso8601String(),
+      ),
       title: map['title'] ?? 'Conversation',
       metadata: Map<String, dynamic>.from(map['metadata'] ?? {}),
     );
@@ -199,7 +202,7 @@ class AIAssistantService extends ChangeNotifier {
   AIConversationSession? _currentSession;
   final List<AIConversationSession> _conversationHistory = [];
   final List<AISuggestion> _currentSuggestions = [];
-  
+
   bool _isVisible = false;
   bool _isLoading = false;
   bool _hasNewSuggestions = false;
@@ -215,8 +218,10 @@ class AIAssistantService extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasNewSuggestions => _hasNewSuggestions;
   AIConversationSession? get currentSession => _currentSession;
-  List<AISuggestion> get currentSuggestions => List.unmodifiable(_currentSuggestions);
-  List<AIConversationSession> get conversationHistory => List.unmodifiable(_conversationHistory);
+  List<AISuggestion> get currentSuggestions =>
+      List.unmodifiable(_currentSuggestions);
+  List<AIConversationSession> get conversationHistory =>
+      List.unmodifiable(_conversationHistory);
 
   /// Initialize the AI Assistant Service
   Future<void> initialize() async {
@@ -227,7 +232,7 @@ class AIAssistantService extends ChangeNotifier {
       await _loadConversationHistory();
       await _loadCurrentSession();
       await _generateContextualSuggestions();
-      
+
       _initialized = true;
       debugPrint('✅ AIAssistantService initialized');
     } catch (e) {
@@ -272,17 +277,20 @@ class AIAssistantService extends ChangeNotifier {
     );
 
     await _saveCurrentSession();
-    
+
     // Add welcome message
     await _addWelcomeMessage();
-    
+
     notifyListeners();
   }
 
   /// Send a message to the AI
-  Future<void> sendMessage(String content, {Map<String, dynamic>? metadata}) async {
+  Future<void> sendMessage(
+    String content, {
+    Map<String, dynamic>? metadata,
+  }) async {
     if (!_initialized) await initialize();
-    
+
     if (_currentSession == null) {
       await startNewConversation();
     }
@@ -322,7 +330,7 @@ class AIAssistantService extends ChangeNotifier {
     try {
       // Generate AI response
       final response = await _generateAIResponse(content, userMessage.metadata);
-      
+
       // Remove typing indicator
       _currentSession = _currentSession!.copyWith(
         messages: _currentSession!.messages.where((m) => !m.isTyping).toList(),
@@ -344,10 +352,9 @@ class AIAssistantService extends ChangeNotifier {
 
       await _saveCurrentSession();
       await _generateContextualSuggestions();
-
     } catch (e) {
       debugPrint('Error generating AI response: $e');
-      
+
       // Remove typing indicator and add error message
       _currentSession = _currentSession!.copyWith(
         messages: _currentSession!.messages.where((m) => !m.isTyping).toList(),
@@ -375,7 +382,7 @@ class AIAssistantService extends ChangeNotifier {
 
     final context = await _buildCurrentContext();
     await _generateContextualSuggestions(context: context);
-    
+
     _hasNewSuggestions = true;
     notifyListeners();
   }
@@ -412,9 +419,7 @@ class AIAssistantService extends ChangeNotifier {
       context: await _getCurrentContext(),
     );
 
-    _currentSession = _currentSession!.copyWith(
-      messages: [welcomeMessage],
-    );
+    _currentSession = _currentSession!.copyWith(messages: [welcomeMessage]);
 
     await _saveCurrentSession();
   }
@@ -422,7 +427,7 @@ class AIAssistantService extends ChangeNotifier {
   String _generateWelcomeMessage(AIContext context) {
     final currentRoute = context.currentRoute;
     final timeOfDay = DateTime.now().hour;
-    
+
     String greeting;
     if (timeOfDay < 12) {
       greeting = 'Good morning! ☀️';
@@ -436,13 +441,16 @@ class AIAssistantService extends ChangeNotifier {
     if (currentRoute != null) {
       switch (currentRoute) {
         case '/profile':
-          contextualMessage = ' I see you\'re on your profile page. Need help updating your information?';
+          contextualMessage =
+              ' I see you\'re on your profile page. Need help updating your information?';
           break;
         case '/calendar':
-          contextualMessage = ' You\'re viewing your calendar. Would you like insights on your cycle patterns?';
+          contextualMessage =
+              ' You\'re viewing your calendar. Would you like insights on your cycle patterns?';
           break;
         case '/tracking':
-          contextualMessage = ' Ready to log some cycle data? I can guide you through the process.';
+          contextualMessage =
+              ' Ready to log some cycle data? I can guide you through the process.';
           break;
         default:
           contextualMessage = ' How can I assist you with CycleSync today?';
@@ -452,7 +460,10 @@ class AIAssistantService extends ChangeNotifier {
     return '$greeting I\'m your AI assistant, here to help you navigate CycleSync and provide personalized insights.$contextualMessage';
   }
 
-  Future<String> _generateAIResponse(String userMessage, Map<String, dynamic> metadata) async {
+  Future<String> _generateAIResponse(
+    String userMessage,
+    Map<String, dynamic> metadata,
+  ) async {
     // Simulate AI processing delay
     final randomDelay = 1500 + (500 * (DateTime.now().millisecond % 3));
     await Future.delayed(Duration(milliseconds: randomDelay));
@@ -463,13 +474,16 @@ class AIAssistantService extends ChangeNotifier {
     // Context-aware responses
     if (lowerMessage.contains('cycle') || lowerMessage.contains('period')) {
       return _generateCycleResponse(userMessage, context);
-    } else if (lowerMessage.contains('calendar') || lowerMessage.contains('schedule')) {
+    } else if (lowerMessage.contains('calendar') ||
+        lowerMessage.contains('schedule')) {
       return _generateCalendarResponse(userMessage, context);
-    } else if (lowerMessage.contains('symptoms') || lowerMessage.contains('mood')) {
+    } else if (lowerMessage.contains('symptoms') ||
+        lowerMessage.contains('mood')) {
       return _generateSymptomsResponse(userMessage, context);
     } else if (lowerMessage.contains('help') || lowerMessage.contains('how')) {
       return _generateHelpResponse(userMessage, context);
-    } else if (lowerMessage.contains('settings') || lowerMessage.contains('profile')) {
+    } else if (lowerMessage.contains('settings') ||
+        lowerMessage.contains('profile')) {
       return _generateSettingsResponse(userMessage, context);
     } else {
       return _generateGeneralResponse(userMessage, context);
@@ -517,7 +531,7 @@ class AIAssistantService extends ChangeNotifier {
           return 'I\'m here to help with any aspect of CycleSync! I can assist with cycle tracking, calendar navigation, symptom logging, data insights, and personalized recommendations. What would you like to know?';
       }
     }
-    
+
     return 'I\'m your personal CycleSync assistant! I can help with cycle tracking, provide insights, explain features, and answer questions about your reproductive health. What can I do for you?';
   }
 
@@ -541,18 +555,19 @@ class AIAssistantService extends ChangeNotifier {
 
   Future<void> _generateContextualSuggestions({AIContext? context}) async {
     context ??= await _buildCurrentContext();
-    
+
     _currentSuggestions.clear();
 
     // Generate suggestions based on current context
     final route = context.currentRoute;
-    
+
     if (route == '/calendar') {
       _currentSuggestions.addAll([
         AISuggestion(
           id: 'export_data',
           title: 'Export Your Data',
-          description: 'Download your cycle data for backup or sharing with healthcare providers',
+          description:
+              'Download your cycle data for backup or sharing with healthcare providers',
           actionText: 'Export',
           icon: Icons.download,
           color: Colors.blue,
@@ -561,7 +576,8 @@ class AIAssistantService extends ChangeNotifier {
         AISuggestion(
           id: 'cycle_insights',
           title: 'Cycle Insights',
-          description: 'View personalized insights about your cycle patterns and trends',
+          description:
+              'View personalized insights about your cycle patterns and trends',
           actionText: 'View Insights',
           icon: Icons.analytics,
           color: Colors.purple,
@@ -598,7 +614,8 @@ class AIAssistantService extends ChangeNotifier {
       AISuggestion(
         id: 'health_tips',
         title: 'Daily Health Tip',
-        description: 'Get personalized health recommendations based on your cycle phase',
+        description:
+            'Get personalized health recommendations based on your cycle phase',
         actionText: 'Get Tips',
         icon: Icons.lightbulb,
         color: Colors.amber,
@@ -607,7 +624,8 @@ class AIAssistantService extends ChangeNotifier {
       AISuggestion(
         id: 'prediction_accuracy',
         title: 'Improve Predictions',
-        description: 'Help improve cycle predictions by logging more data points',
+        description:
+            'Help improve cycle predictions by logging more data points',
         actionText: 'Learn How',
         icon: Icons.trending_up,
         color: Colors.teal,
@@ -622,7 +640,7 @@ class AIAssistantService extends ChangeNotifier {
   Future<AIContext> _buildCurrentContext() async {
     final navigationService = NavigationService();
     final currentRoute = navigationService.currentRouteName;
-    
+
     return AIContext(
       currentRoute: currentRoute,
       routeArguments: {},
@@ -654,7 +672,8 @@ class AIAssistantService extends ChangeNotifier {
   Future<Map<String, dynamic>> _getAppState() async {
     return {
       'isFirstLaunch': _prefs?.getBool('is_first_launch') ?? true,
-      'hasCompletedOnboarding': _prefs?.getBool('has_completed_onboarding') ?? false,
+      'hasCompletedOnboarding':
+          _prefs?.getBool('has_completed_onboarding') ?? false,
       'notificationsEnabled': _prefs?.getBool('notifications_enabled') ?? true,
     };
   }
@@ -689,7 +708,9 @@ class AIAssistantService extends ChangeNotifier {
     try {
       final sessionJson = _prefs?.getString(_currentSessionKey);
       if (sessionJson != null) {
-        _currentSession = AIConversationSession.fromMap(jsonDecode(sessionJson));
+        _currentSession = AIConversationSession.fromMap(
+          jsonDecode(sessionJson),
+        );
       }
     } catch (e) {
       debugPrint('Error loading current session: $e');
@@ -712,16 +733,15 @@ class AIAssistantService extends ChangeNotifier {
   Future<void> _saveCurrentSessionToHistory() async {
     if (_currentSession != null) {
       _conversationHistory.add(_currentSession!);
-      
+
       // Keep only recent conversations
       if (_conversationHistory.length > 50) {
         _conversationHistory.removeAt(0);
       }
-      
+
       await _saveConversationHistory();
     }
   }
-
 }
 
 // Extension methods for AIConversationSession

@@ -6,7 +6,8 @@ class FlowSenseComingSoonScreen extends StatefulWidget {
   const FlowSenseComingSoonScreen({super.key});
 
   @override
-  State<FlowSenseComingSoonScreen> createState() => _FlowSenseComingSoonScreenState();
+  State<FlowSenseComingSoonScreen> createState() =>
+      _FlowSenseComingSoonScreenState();
 }
 
 class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
@@ -23,27 +24,19 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
-    
+
     _sparkleController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat();
-    
-    _pulseAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _sparkleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _sparkleController,
-      curve: Curves.easeInOut,
-    ));
+
+    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _sparkleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _sparkleController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -56,7 +49,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -71,7 +64,11 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.psychology, color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.psychology,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 12),
             const Text(
@@ -100,7 +97,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-            
+
             // Animated FlowSense Logo/Icon
             AnimatedBuilder(
               animation: _pulseAnimation,
@@ -121,7 +118,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                       borderRadius: BorderRadius.circular(60),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.3),
+                          color: Colors.blue.withValues(alpha: 0.3),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -176,9 +173,9 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 );
               },
             ),
-            
+
             const SizedBox(height: 30),
-            
+
             // FlowSense branding
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -187,7 +184,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                   colors: [Colors.blue.shade100, Colors.cyan.shade100],
                 ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
               ),
               child: const Text(
                 '🔗 FlowSense AI Integration',
@@ -198,9 +195,9 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Coming Soon Title
             const Text(
               'Coming Soon!',
@@ -211,30 +208,30 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             Text(
               'We\'re working on something amazing!',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Feature preview cards
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.blue.withOpacity(0.1), Colors.cyan.withOpacity(0.1)],
+                  colors: [
+                    Colors.blue.withValues(alpha: 0.1),
+                    Colors.cyan.withValues(alpha: 0.1),
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.blue.withOpacity(0.2)),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
               ),
               child: Column(
                 children: [
@@ -242,10 +239,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                   const SizedBox(height: 12),
                   const Text(
                     'Enhanced AI Integration',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -256,46 +250,50 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Features preview
             _buildFeatureCard(
               icon: Icons.insights,
               title: 'Predictive Analytics',
-              description: 'Advanced AI predictions for cycle phases, symptoms, and mood patterns',
+              description:
+                  'Advanced AI predictions for cycle phases, symptoms, and mood patterns',
               color: Colors.purple,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             _buildFeatureCard(
               icon: Icons.health_and_safety,
               title: 'Smart Health Insights',
-              description: 'Personalized health recommendations based on your unique cycle data',
+              description:
+                  'Personalized health recommendations based on your unique cycle data',
               color: Colors.green,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             _buildFeatureCard(
               icon: Icons.auto_awesome,
               title: 'AI-Powered Recommendations',
-              description: 'Intelligent suggestions for nutrition, exercise, and wellness activities',
+              description:
+                  'Intelligent suggestions for nutrition, exercise, and wellness activities',
               color: Colors.orange,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             _buildFeatureCard(
               icon: Icons.trending_up,
               title: 'Pattern Recognition',
-              description: 'Discover hidden patterns in your health data with machine learning',
+              description:
+                  'Discover hidden patterns in your health data with machine learning',
               color: Colors.indigo,
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Status timeline
             Container(
               width: double.infinity,
@@ -311,44 +309,61 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                   const SizedBox(height: 12),
                   const Text(
                     'Development Timeline',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   _buildTimelineItem('✅ Core AI Framework', 'Completed', true),
-                  _buildTimelineItem('🔄 Data Processing Engine', 'In Progress', false),
-                  _buildTimelineItem('⏳ User Interface Design', 'Upcoming', false),
-                  _buildTimelineItem('⏳ Beta Testing', 'Planned Q2 2024', false),
-                  _buildTimelineItem('⏳ Public Release', 'Planned Q3 2024', false),
+                  _buildTimelineItem(
+                    '🔄 Data Processing Engine',
+                    'In Progress',
+                    false,
+                  ),
+                  _buildTimelineItem(
+                    '⏳ User Interface Design',
+                    'Upcoming',
+                    false,
+                  ),
+                  _buildTimelineItem(
+                    '⏳ Beta Testing',
+                    'Planned Q2 2024',
+                    false,
+                  ),
+                  _buildTimelineItem(
+                    '⏳ Public Release',
+                    'Planned Q3 2024',
+                    false,
+                  ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Notification signup
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.purple.withOpacity(0.1), Colors.pink.withOpacity(0.1)],
+                  colors: [
+                    Colors.purple.withValues(alpha: 0.1),
+                    Colors.pink.withValues(alpha: 0.1),
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.purple.withOpacity(0.2)),
+                border: Border.all(color: Colors.purple.withValues(alpha: 0.2)),
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.notifications, size: 32, color: Colors.purple),
+                  const Icon(
+                    Icons.notifications,
+                    size: 32,
+                    color: Colors.purple,
+                  ),
                   const SizedBox(height: 12),
                   const Text(
                     'Get Notified When It\'s Ready!',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -365,7 +380,11 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                             children: [
                               Icon(Icons.check_circle, color: Colors.white),
                               SizedBox(width: 8),
-                              Expanded(child: Text('Notifications enabled! We\'ll let you know when FlowSense is ready.')),
+                              Expanded(
+                                child: Text(
+                                  'Notifications enabled! We\'ll let you know when FlowSense is ready.',
+                                ),
+                              ),
                             ],
                           ),
                           backgroundColor: Colors.green,
@@ -379,7 +398,10 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -388,9 +410,9 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Action buttons
             Row(
               children: [
@@ -426,7 +448,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
           ],
         ),
@@ -446,10 +468,10 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -461,7 +483,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -481,10 +503,7 @@ class _FlowSenseComingSoonScreenState extends State<FlowSenseComingSoonScreen>
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                 ),
               ],
             ),

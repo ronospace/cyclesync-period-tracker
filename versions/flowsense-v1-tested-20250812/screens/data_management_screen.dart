@@ -123,7 +123,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
             Text('Import ${cycles.length} cycles?'),
             const SizedBox(height: 12),
             Card(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(

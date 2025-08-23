@@ -7,7 +7,7 @@ import '../services/sample_health_data.dart';
 import '../widgets/advanced_health_charts.dart';
 
 class HealthInsightsScreen extends StatefulWidget {
-  const HealthInsightsScreen({Key? key}) : super(key: key);
+  const HealthInsightsScreen({super.key});
 
   @override
   State<HealthInsightsScreen> createState() => _HealthInsightsScreenState();

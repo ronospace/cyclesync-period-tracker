@@ -1,15 +1,10 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Build environment types
-enum BuildEnvironment {
-  debug,
-  profile,
-  release,
-}
+enum BuildEnvironment { debug, profile, release }
 
 /// Build optimization configuration
 class BuildOptimizationConfig {
@@ -40,7 +35,9 @@ class BuildOptimizationConfig {
       splitDebugInfo: map['split_debug_info'] ?? true,
       obfuscate: map['obfuscate'] ?? true,
       shrink: map['shrink'] ?? true,
-      platformSpecific: Map<String, dynamic>.from(map['platform_specific'] ?? {}),
+      platformSpecific: Map<String, dynamic>.from(
+        map['platform_specific'] ?? {},
+      ),
       performance: Map<String, dynamic>.from(map['performance'] ?? {}),
       security: Map<String, dynamic>.from(map['security'] ?? {}),
     );
@@ -79,14 +76,15 @@ class PerformanceMetrics {
 
 /// Build Optimization Service for production performance
 class BuildOptimizationService {
-  static final BuildOptimizationService _instance = BuildOptimizationService._internal();
+  static final BuildOptimizationService _instance =
+      BuildOptimizationService._internal();
   factory BuildOptimizationService() => _instance;
   BuildOptimizationService._internal();
 
   BuildOptimizationConfig? _config;
   PerformanceMetrics? _currentMetrics;
   bool _initialized = false;
-  
+
   // Performance monitoring
   final Stopwatch _startupTimer = Stopwatch();
   final Map<String, Stopwatch> _operationTimers = {};
@@ -103,7 +101,8 @@ class BuildOptimizationService {
   bool get isProduction => buildEnvironment == BuildEnvironment.release;
 
   /// Get current optimization configuration
-  BuildOptimizationConfig get config => _config ?? const BuildOptimizationConfig();
+  BuildOptimizationConfig get config =>
+      _config ?? const BuildOptimizationConfig();
 
   /// Get current performance metrics
   PerformanceMetrics? get currentMetrics => _currentMetrics;
@@ -116,7 +115,7 @@ class BuildOptimizationService {
       await _loadConfiguration();
       _startPerformanceMonitoring();
       await _applyOptimizations();
-      
+
       _initialized = true;
       debugPrint('✅ BuildOptimizationService initialized');
     } catch (e) {
@@ -131,13 +130,13 @@ class BuildOptimizationService {
     try {
       // Apply memory optimizations
       await _optimizeMemoryUsage();
-      
+
       // Apply network optimizations
       await _optimizeNetworkRequests();
-      
+
       // Apply rendering optimizations
       await _optimizeRendering();
-      
+
       // Apply asset optimizations
       await _optimizeAssets();
 
@@ -173,24 +172,31 @@ class BuildOptimizationService {
     startTimer('widget_build_$widgetName');
     final result = buildFunction();
     final duration = stopTimer('widget_build_$widgetName');
-    
+
     if (duration != null && duration.inMilliseconds > 16) {
-      debugPrint('⚠️ Slow widget build detected: $widgetName took ${duration.inMilliseconds}ms');
+      debugPrint(
+        '⚠️ Slow widget build detected: $widgetName took ${duration.inMilliseconds}ms',
+      );
     }
-    
+
     return result;
   }
 
   /// Measure async operation performance
-  Future<T> measureAsyncPerformance<T>(String operationName, Future<T> Function() operation) async {
+  Future<T> measureAsyncPerformance<T>(
+    String operationName,
+    Future<T> Function() operation,
+  ) async {
     startTimer('async_$operationName');
     final result = await operation();
     final duration = stopTimer('async_$operationName');
-    
+
     if (duration != null && duration.inMilliseconds > 100) {
-      debugPrint('⚠️ Slow async operation: $operationName took ${duration.inMilliseconds}ms');
+      debugPrint(
+        '⚠️ Slow async operation: $operationName took ${duration.inMilliseconds}ms',
+      );
     }
-    
+
     return result;
   }
 
@@ -200,30 +206,41 @@ class BuildOptimizationService {
 
     if (_currentMetrics != null) {
       final metrics = _currentMetrics!;
-      
+
       // Bundle size recommendations
-      if (metrics.bundleSize > 50 * 1024 * 1024) { // 50MB
-        recommendations.add('Consider enabling tree shaking and code splitting to reduce bundle size');
+      if (metrics.bundleSize > 50 * 1024 * 1024) {
+        // 50MB
+        recommendations.add(
+          'Consider enabling tree shaking and code splitting to reduce bundle size',
+        );
       }
-      
+
       // Startup time recommendations
-      if (metrics.startupTime > 3000) { // 3 seconds
-        recommendations.add('Optimize app startup time by implementing lazy loading');
+      if (metrics.startupTime > 3000) {
+        // 3 seconds
+        recommendations.add(
+          'Optimize app startup time by implementing lazy loading',
+        );
       }
-      
+
       // Memory usage recommendations
-      if (metrics.memoryUsage > 200 * 1024 * 1024) { // 200MB
-        recommendations.add('Consider implementing memory optimization strategies');
+      if (metrics.memoryUsage > 200 * 1024 * 1024) {
+        // 200MB
+        recommendations.add(
+          'Consider implementing memory optimization strategies',
+        );
       }
-      
+
       // Frame rate recommendations
       if (metrics.frameRate < 55) {
         recommendations.add('Optimize rendering performance to achieve 60 FPS');
       }
-      
+
       // Network recommendations
       if (metrics.networkRequests > 50) {
-        recommendations.add('Consider implementing request batching to reduce network calls');
+        recommendations.add(
+          'Consider implementing request batching to reduce network calls',
+        );
       }
     }
 
@@ -279,7 +296,7 @@ class BuildOptimizationService {
 
   void _startPerformanceMonitoring() {
     _startupTimer.start();
-    
+
     // Monitor app lifecycle for performance metrics
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startupTimer.stop();
@@ -301,20 +318,20 @@ class BuildOptimizationService {
   Future<void> _applyAndroidOptimizations() async {
     // Enable hardware acceleration
     await SystemChannels.platform.invokeMethod('enableHardwareAcceleration');
-    
+
     // Optimize memory allocation
     await _optimizeAndroidMemory();
-    
+
     debugPrint('✅ Android optimizations applied');
   }
 
   Future<void> _applyiOSOptimizations() async {
     // Enable Metal rendering
     await SystemChannels.platform.invokeMethod('enableMetalRendering');
-    
+
     // Optimize iOS memory management
     await _optimizeiOSMemory();
-    
+
     debugPrint('✅ iOS optimizations applied');
   }
 
@@ -358,15 +375,14 @@ class BuildOptimizationService {
         frameRate: _estimateFrameRate(),
         networkRequests: _countNetworkRequests(),
       );
-      
+
       _currentMetrics = metrics;
       _metricsHistory.add(metrics);
-      
+
       // Keep only recent metrics (last 10)
       if (_metricsHistory.length > 10) {
         _metricsHistory.removeAt(0);
       }
-      
     } catch (e) {
       debugPrint('Error updating performance metrics: $e');
     }
@@ -400,7 +416,7 @@ class BuildOptimizationService {
       if (config.treeShakeIcons) '--tree-shake-icons',
       if (config.shrink) '--shrink',
     ];
-    
+
     return commands.join(' ');
   }
 
@@ -411,7 +427,7 @@ class BuildOptimizationService {
       if (config.splitDebugInfo) '--split-debug-info=build/ios/symbols',
       if (config.treeShakeIcons) '--tree-shake-icons',
     ];
-    
+
     return commands.join(' ');
   }
 
@@ -422,14 +438,15 @@ class BuildOptimizationService {
       '--web-renderer html', // or canvaskit for better performance
       '--source-maps', // for debugging in production
     ];
-    
+
     return commands.join(' ');
   }
 }
 
 /// Performance monitoring widget mixin
 mixin PerformanceMonitoringMixin<T extends StatefulWidget> on State<T> {
-  final BuildOptimizationService _optimizationService = BuildOptimizationService();
+  final BuildOptimizationService _optimizationService =
+      BuildOptimizationService();
   String get widgetName => widget.runtimeType.toString();
 
   @override
@@ -484,9 +501,7 @@ class OptimizedImage extends StatelessWidget {
             width: width,
             height: height,
             color: Colors.grey[200],
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: const Center(child: CircularProgressIndicator()),
           );
         },
         errorBuilder: (context, error, stackTrace) => Container(

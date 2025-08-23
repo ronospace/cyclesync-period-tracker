@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// Advanced HealthKit service for comprehensive health data integration
 /// Handles heart rate, HRV, sleep, temperature, and activity data

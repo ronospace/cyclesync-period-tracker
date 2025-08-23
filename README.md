@@ -1,4 +1,4 @@
-# 🌸 CycleSync - Enterprise Menstrual Health Platform
+# 🌸 FlowSense - Enterprise Menstrual Health Platform
 
 <div align="center">
   <img src="https://img.shields.io/badge/Status-ENTERPRISE%20READY-brightgreen?style=for-the-badge&logo=rocket" />
@@ -53,7 +53,7 @@
 
 ## 🏆 **ENTERPRISE ARCHITECTURE BREAKTHROUGH**
 
-CycleSync has undergone a major transformation, evolving from a simple period tracker into a **comprehensive enterprise-grade healthcare platform**!
+FlowSense has undergone a major transformation, evolving from a simple period tracker into a **comprehensive enterprise-grade healthcare platform**!
 
 ### 🚀 **Enterprise Data Layer (NEW!)**
 - **Advanced Data Repository** with intelligent caching and real-time synchronization
@@ -182,7 +182,7 @@ match /users/{userId} {
 ### **Installation**
 ```bash
 # Clone the repository
-git clone https://github.com/ronospace/cyclesync-period-tracker.git
+git clone https://github.com/ronospace/flowsense-period-tracker.git
 cd flutter_cyclesync
 
 # Install dependencies

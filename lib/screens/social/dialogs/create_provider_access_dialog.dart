@@ -9,10 +9,12 @@ class CreateProviderAccessDialog extends StatefulWidget {
   const CreateProviderAccessDialog({super.key});
 
   @override
-  State<CreateProviderAccessDialog> createState() => _CreateProviderAccessDialogState();
+  State<CreateProviderAccessDialog> createState() =>
+      _CreateProviderAccessDialogState();
 }
 
-class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog> {
+class _CreateProviderAccessDialogState
+    extends State<CreateProviderAccessDialog> {
   final _formKey = GlobalKey<FormState>();
   final _providerNameController = TextEditingController();
   final _providerEmailController = TextEditingController();
@@ -21,7 +23,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
   final _notesController = TextEditingController();
 
   ProviderType _selectedProviderType = ProviderType.gynecologist;
-  Set<DataType> _authorizedDataTypes = {
+  final Set<DataType> _authorizedDataTypes = {
     DataType.cyclePattern,
     DataType.symptoms,
     DataType.wellbeing,
@@ -45,9 +47,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Create Provider Access',
-      ),
+      appBar: const CustomAppBar(title: 'Create Provider Access'),
       body: LoadingOverlay(
         isLoading: _isLoading,
         child: Form(
@@ -92,9 +92,9 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
         const SizedBox(height: 8),
         Text(
           'Create long-term, secure access for your healthcare provider with customizable permissions.',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.grey.shade700,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(color: Colors.grey.shade700),
         ),
         const SizedBox(height: 16),
         Card(
@@ -138,7 +138,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
             ),
             const Divider(),
             const SizedBox(height: 16),
-            
+
             Row(
               children: [
                 Expanded(
@@ -183,7 +183,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
             TextFormField(
               controller: _providerEmailController,
@@ -204,7 +204,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
             Row(
               children: [
@@ -263,15 +263,15 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
             ),
             const Divider(),
             const SizedBox(height: 16),
-            
+
             ...DataType.values.map((dataType) {
               final isAuthorized = _authorizedDataTypes.contains(dataType);
               final isSensitive = dataType.isSensitive;
-              
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 8),
-                color: isAuthorized 
-                    ? Theme.of(context).primaryColor.withOpacity(0.05)
+                color: isAuthorized
+                    ? Theme.of(context).primaryColor.withValues(alpha: 0.05)
                     : null,
                 child: CheckboxListTile(
                   title: Row(
@@ -279,7 +279,9 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                       Text(
                         dataType.displayName,
                         style: TextStyle(
-                          fontWeight: isAuthorized ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isAuthorized
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                         ),
                       ),
                       if (isSensitive) ...[
@@ -322,7 +324,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                 ),
               );
             }),
-            
+
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -372,13 +374,13 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
             ),
             const Divider(),
             const SizedBox(height: 16),
-            
+
             const Text(
               'Access Duration',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            
+
             ...([
               (const Duration(days: 90), '3 Months', 'Short-term care'),
               (const Duration(days: 365), '1 Year', 'Standard ongoing care'),
@@ -397,17 +399,19 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                 },
               );
             })),
-            
+
             const SizedBox(height: 20),
             const Text(
               'Additional Options',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            
+
             SwitchListTile(
               title: const Text('Require identity verification'),
-              subtitle: const Text('Provider must verify identity before first access'),
+              subtitle: const Text(
+                'Provider must verify identity before first access',
+              ),
               value: _requireVerification,
               onChanged: (value) {
                 setState(() {
@@ -415,10 +419,12 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                 });
               },
             ),
-            
+
             SwitchListTile(
               title: const Text('Allow data export'),
-              subtitle: const Text('Provider can export data for their records'),
+              subtitle: const Text(
+                'Provider can export data for their records',
+              ),
               value: _allowDataExport,
               onChanged: (value) {
                 setState(() {
@@ -426,10 +432,12 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                 });
               },
             ),
-            
+
             SwitchListTile(
               title: const Text('Send welcome email'),
-              subtitle: const Text('Automatically notify provider about access'),
+              subtitle: const Text(
+                'Automatically notify provider about access',
+              ),
               value: _sendWelcomeEmail,
               onChanged: (value) {
                 setState(() {
@@ -467,13 +475,13 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
             ),
             const Divider(),
             const SizedBox(height: 12),
-            
+
             const Text(
               'Security Features:',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            
+
             ...[
               '🔐 End-to-end encryption for all data',
               '🏥 HIPAA-compliant access controls',
@@ -481,23 +489,26 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
               '🔄 Real-time access monitoring',
               '⏰ Automatic session timeouts',
               '🚫 Ability to revoke access instantly',
-            ].map((feature) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Text(feature, style: const TextStyle(fontSize: 14)),
-            )),
-            
+            ].map(
+              (feature) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Text(feature, style: const TextStyle(fontSize: 14)),
+              ),
+            ),
+
             const SizedBox(height: 16),
             TextFormField(
               controller: _notesController,
               maxLines: 3,
               decoration: const InputDecoration(
                 labelText: 'Additional Notes (Optional)',
-                hintText: 'Any special instructions or context for this provider...',
+                hintText:
+                    'Any special instructions or context for this provider...',
                 border: OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
             ),
-            
+
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -533,7 +544,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -562,9 +573,11 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
 
   bool _canCreateAccess() {
     return _providerNameController.text.isNotEmpty &&
-           _providerEmailController.text.isNotEmpty &&
-           RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_providerEmailController.text) &&
-           _authorizedDataTypes.isNotEmpty;
+        _providerEmailController.text.isNotEmpty &&
+        RegExp(
+          r'^[^@]+@[^@]+\.[^@]+',
+        ).hasMatch(_providerEmailController.text) &&
+        _authorizedDataTypes.isNotEmpty;
   }
 
   String _getProviderTypeDisplayName(ProviderType type) {
@@ -635,7 +648,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
           children: [
             Text(result.message),
             const SizedBox(height: 16),
-            
+
             if (result.dashboardUrl != null) ...[
               const Text(
                 'Provider Dashboard URL:',
@@ -661,9 +674,13 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                     ),
                     IconButton(
                       onPressed: () {
-                        Clipboard.setData(ClipboardData(text: result.dashboardUrl!));
+                        Clipboard.setData(
+                          ClipboardData(text: result.dashboardUrl!),
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('URL copied to clipboard')),
+                          const SnackBar(
+                            content: Text('URL copied to clipboard'),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.copy),
@@ -674,7 +691,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
               ),
               const SizedBox(height: 12),
             ],
-            
+
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -695,11 +712,11 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
                   Text(
                     _sendWelcomeEmail
                         ? '• Your provider will receive a welcome email with access instructions\n'
-                          '• You can monitor access from the Social & Sharing section\n'
-                          '• Access can be modified or revoked at any time'
+                              '• You can monitor access from the Social & Sharing section\n'
+                              '• Access can be modified or revoked at any time'
                         : '• Share the dashboard URL with your provider\n'
-                          '• Monitor access from the Social & Sharing section\n'
-                          '• Access can be modified or revoked at any time',
+                              '• Monitor access from the Social & Sharing section\n'
+                              '• Access can be modified or revoked at any time',
                     style: TextStyle(color: Colors.blue.shade700),
                   ),
                 ],

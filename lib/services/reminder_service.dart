@@ -4,44 +4,41 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io';
-import 'dart:math';
 
 import '../models/reminder_models.dart';
-import 'firebase_service.dart';
 import 'user_service.dart';
 import 'error_service.dart';
-import 'ai_prediction_service.dart';
 
 /// Service for managing reminders and notifications
 class ReminderService {
   static ReminderService? _instance;
   static ReminderService get instance => _instance ??= ReminderService._();
-  
+
   ReminderService._() {
     _initialize();
   }
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin = 
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  
+
   bool _isInitialized = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   // Collection references
   CollectionReference get _remindersCollection =>
       _firestore.collection('reminders');
-  
+
   /// Initialize the reminder service and notifications
   Future<void> _initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       // Initialize timezone data
       tz.initializeTimeZones();
-      
+
       // Configure notification settings
       await _initializeNotifications();
-      
+
       _isInitialized = true;
       debugPrint('ReminderService initialized successfully');
     } catch (e) {
@@ -56,25 +53,27 @@ class ReminderService {
   /// Initialize local notifications
   Future<void> _initializeNotifications() async {
     // Android settings
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+
     // iOS settings
     const iosSettings = DarwinInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
       requestAlertPermission: true,
     );
-    
+
     const settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
-    
+
     await _notificationsPlugin.initialize(
       settings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
-    
+
     // Create notification channels for Android
     if (Platform.isAndroid) {
       await _createNotificationChannels();
@@ -120,8 +119,10 @@ class ReminderService {
     ];
 
     final plugin = _notificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+
     if (plugin != null) {
       for (final channel in channels) {
         await plugin.createNotificationChannel(channel);
@@ -144,10 +145,10 @@ class ReminderService {
       // Parse payload (format: "reminderId:action")
       final parts = payload.split(':');
       if (parts.length < 2) return;
-      
+
       final reminderId = parts[0];
       final action = parts[1];
-      
+
       switch (action) {
         case 'complete':
           await markReminderCompleted(reminderId);
@@ -169,18 +170,23 @@ class ReminderService {
     try {
       if (Platform.isAndroid) {
         final plugin = _notificationsPlugin
-            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-        
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
         return await plugin?.requestNotificationsPermission() ?? false;
       } else if (Platform.isIOS) {
         final plugin = _notificationsPlugin
-            .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
-        
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
+
         return await plugin?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        ) ?? false;
+              alert: true,
+              badge: true,
+              sound: true,
+            ) ??
+            false;
       }
       return false;
     } catch (e) {
@@ -196,13 +202,13 @@ class ReminderService {
       if (user == null) throw Exception('User not authenticated');
 
       // Generate ID if not provided
-      final reminderId = reminder.id.isEmpty 
-          ? _remindersCollection.doc().id 
+      final reminderId = reminder.id.isEmpty
+          ? _remindersCollection.doc().id
           : reminder.id;
-      
+
       // Calculate next occurrence
       final nextOccurrence = _calculateNextOccurrence(reminder);
-      
+
       final updatedReminder = reminder.copyWith(
         id: reminderId,
         userId: user.uid,
@@ -211,13 +217,13 @@ class ReminderService {
 
       // Save to Firestore
       await _remindersCollection.doc(reminderId).set(updatedReminder.toMap());
-      
+
       // Schedule notification
       await _scheduleNotification(updatedReminder);
-      
+
       // Log creation
       await _logReminderAction(reminderId, ReminderAction.created);
-      
+
       debugPrint('Reminder created: $reminderId');
       return reminderId;
     } catch (e) {
@@ -237,15 +243,17 @@ class ReminderService {
       final updatedReminder = reminder.copyWith(nextOccurrence: nextOccurrence);
 
       // Update in Firestore
-      await _remindersCollection.doc(reminder.id).update(updatedReminder.toMap());
-      
+      await _remindersCollection
+          .doc(reminder.id)
+          .update(updatedReminder.toMap());
+
       // Reschedule notification
       await _cancelNotification(reminder.id);
       await _scheduleNotification(updatedReminder);
-      
+
       // Log update
       await _logReminderAction(reminder.id, ReminderAction.updated);
-      
+
       return true;
     } catch (e) {
       ErrorService.logError(e, context: 'Update reminder');
@@ -261,13 +269,13 @@ class ReminderService {
 
       // Cancel notification
       await _cancelNotification(reminderId);
-      
+
       // Delete from Firestore
       await _remindersCollection.doc(reminderId).delete();
-      
+
       // Log deletion
       await _logReminderAction(reminderId, ReminderAction.deleted);
-      
+
       return true;
     } catch (e) {
       ErrorService.logError(e, context: 'Delete reminder');
@@ -283,7 +291,7 @@ class ReminderService {
     Query query = _remindersCollection
         .where('userId', isEqualTo: user.uid)
         .orderBy('nextOccurrence', descending: false);
-    
+
     if (status != null) {
       query = query.where('status', isEqualTo: status.name);
     }
@@ -347,7 +355,7 @@ class ReminderService {
 
       final reminder = Reminder.fromMap(doc.data() as Map<String, dynamic>);
       final now = DateTime.now();
-      
+
       // Update reminder
       final updatedReminder = reminder.copyWith(
         timesCompleted: reminder.timesCompleted + 1,
@@ -356,16 +364,18 @@ class ReminderService {
         nextOccurrence: _calculateNextOccurrence(reminder, from: now),
       );
 
-      await _remindersCollection.doc(reminderId).update(updatedReminder.toMap());
-      
+      await _remindersCollection
+          .doc(reminderId)
+          .update(updatedReminder.toMap());
+
       // Schedule next occurrence if recurring
       if (reminder.frequency != ReminderFrequency.once) {
         await _scheduleNotification(updatedReminder);
       }
-      
+
       // Log completion
       await _logReminderAction(reminderId, ReminderAction.completed);
-      
+
       return true;
     } catch (e) {
       ErrorService.logError(e, context: 'Mark reminder completed');
@@ -374,29 +384,34 @@ class ReminderService {
   }
 
   /// Snooze a reminder
-  Future<bool> snoozeReminder(String reminderId, Duration snoozeDuration) async {
+  Future<bool> snoozeReminder(
+    String reminderId,
+    Duration snoozeDuration,
+  ) async {
     try {
       final doc = await _remindersCollection.doc(reminderId).get();
       if (!doc.exists) return false;
 
       final reminder = Reminder.fromMap(doc.data() as Map<String, dynamic>);
       final snoozeUntil = DateTime.now().add(snoozeDuration);
-      
+
       // Update next occurrence
       final updatedReminder = reminder.copyWith(
         nextOccurrence: snoozeUntil,
         status: ReminderStatus.snoozed,
       );
 
-      await _remindersCollection.doc(reminderId).update(updatedReminder.toMap());
-      
+      await _remindersCollection
+          .doc(reminderId)
+          .update(updatedReminder.toMap());
+
       // Reschedule notification
       await _cancelNotification(reminderId);
       await _scheduleNotification(updatedReminder);
-      
+
       // Log snooze
       await _logReminderAction(reminderId, ReminderAction.snoozed);
-      
+
       return true;
     } catch (e) {
       ErrorService.logError(e, context: 'Snooze reminder');
@@ -425,33 +440,45 @@ class ReminderService {
   /// Calculate next occurrence for a reminder
   DateTime? _calculateNextOccurrence(Reminder reminder, {DateTime? from}) {
     final baseTime = from ?? DateTime.now();
-    
+
     switch (reminder.frequency) {
       case ReminderFrequency.once:
         return reminder.scheduledFor ?? baseTime;
-        
+
       case ReminderFrequency.daily:
         if (reminder.notificationTimes.isNotEmpty) {
-          final nextTime = _getNextTimeOccurrence(reminder.notificationTimes, baseTime);
+          final nextTime = _getNextTimeOccurrence(
+            reminder.notificationTimes,
+            baseTime,
+          );
           return nextTime;
         }
         return baseTime.add(const Duration(days: 1));
-        
+
       case ReminderFrequency.weekly:
         if (reminder.weeklyDays != null && reminder.weeklyDays!.isNotEmpty) {
-          return _getNextWeeklyOccurrence(reminder.weeklyDays!, baseTime, reminder.notificationTimes);
+          return _getNextWeeklyOccurrence(
+            reminder.weeklyDays!,
+            baseTime,
+            reminder.notificationTimes,
+          );
         }
         return baseTime.add(const Duration(days: 7));
-        
+
       case ReminderFrequency.monthly:
-        return DateTime(baseTime.year, baseTime.month + 1, baseTime.day, 
-                       baseTime.hour, baseTime.minute);
-        
+        return DateTime(
+          baseTime.year,
+          baseTime.month + 1,
+          baseTime.day,
+          baseTime.hour,
+          baseTime.minute,
+        );
+
       case ReminderFrequency.custom:
         final days = reminder.customIntervalDays ?? 0;
         final hours = reminder.customIntervalHours ?? 0;
         return baseTime.add(Duration(days: days, hours: hours));
-        
+
       case ReminderFrequency.cycleStart:
       case ReminderFrequency.ovulation:
         // These will be handled by cycle prediction integration
@@ -462,45 +489,61 @@ class ReminderService {
   /// Get next time occurrence for daily reminders
   DateTime _getNextTimeOccurrence(List<DateTime> times, DateTime from) {
     final today = DateTime(from.year, from.month, from.day);
-    
+
     // Check if any time today is still in the future
     for (final time in times) {
-      final todayTime = DateTime(today.year, today.month, today.day, 
-                               time.hour, time.minute);
+      final todayTime = DateTime(
+        today.year,
+        today.month,
+        today.day,
+        time.hour,
+        time.minute,
+      );
       if (todayTime.isAfter(from)) {
         return todayTime;
       }
     }
-    
+
     // All times today have passed, use first time tomorrow
     final tomorrow = today.add(const Duration(days: 1));
     final firstTime = times.first;
-    return DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 
-                    firstTime.hour, firstTime.minute);
+    return DateTime(
+      tomorrow.year,
+      tomorrow.month,
+      tomorrow.day,
+      firstTime.hour,
+      firstTime.minute,
+    );
   }
 
   /// Get next weekly occurrence
   DateTime _getNextWeeklyOccurrence(
-    List<WeekDay> weekDays, 
-    DateTime from, 
+    List<WeekDay> weekDays,
+    DateTime from,
     List<DateTime> times,
   ) {
     final today = DateTime(from.year, from.month, from.day);
     final currentWeekday = from.weekday;
-    
+
     // Sort weekdays and find next occurrence
-    final sortedDays = [...weekDays]..sort((a, b) => a.value.compareTo(b.value));
-    
+    final sortedDays = [...weekDays]
+      ..sort((a, b) => a.value.compareTo(b.value));
+
     for (final weekDay in sortedDays) {
       if (weekDay.value >= currentWeekday) {
         final daysUntil = weekDay.value - currentWeekday;
         final targetDate = today.add(Duration(days: daysUntil));
-        
+
         if (times.isNotEmpty) {
           final time = times.first;
-          final targetDateTime = DateTime(targetDate.year, targetDate.month, 
-                                        targetDate.day, time.hour, time.minute);
-          
+          final targetDateTime = DateTime(
+            targetDate.year,
+            targetDate.month,
+            targetDate.day,
+            time.hour,
+            time.minute,
+          );
+
           // If it's today and time hasn't passed, return it
           if (daysUntil == 0 && targetDateTime.isAfter(from)) {
             return targetDateTime;
@@ -512,37 +555,42 @@ class ReminderService {
         }
       }
     }
-    
+
     // No valid day this week, use first day next week
     final firstDay = sortedDays.first;
     final daysUntilNext = 7 - currentWeekday + firstDay.value;
     final nextDate = today.add(Duration(days: daysUntilNext));
-    
+
     if (times.isNotEmpty) {
       final time = times.first;
-      return DateTime(nextDate.year, nextDate.month, nextDate.day, 
-                     time.hour, time.minute);
+      return DateTime(
+        nextDate.year,
+        nextDate.month,
+        nextDate.day,
+        time.hour,
+        time.minute,
+      );
     }
-    
+
     return nextDate;
   }
 
   /// Schedule notification for a reminder
   Future<void> _scheduleNotification(Reminder reminder) async {
     if (!reminder.isEnabled || reminder.nextOccurrence == null) return;
-    
+
     try {
       final scheduledDate = tz.TZDateTime.from(
         reminder.nextOccurrence!,
         tz.local,
       );
-      
+
       if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
         return; // Don't schedule past notifications
       }
 
       final notificationDetails = _buildNotificationDetails(reminder);
-      
+
       await _notificationsPlugin.zonedSchedule(
         reminder.id.hashCode,
         reminder.displayTitle,
@@ -550,11 +598,9 @@ class ReminderService {
         scheduledDate,
         notificationDetails,
         payload: '${reminder.id}:view',
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
-      
+
       debugPrint('Scheduled notification for ${reminder.id} at $scheduledDate');
     } catch (e) {
       ErrorService.logError(e, context: 'Schedule notification');
@@ -608,12 +654,8 @@ class ReminderService {
       const AndroidNotificationAction(
         'complete',
         '✓ Complete',
-        titleColor: Color.fromARGB(255, 76, 175, 80),
       ),
-      const AndroidNotificationAction(
-        'snooze',
-        '⏰ Snooze 15m',
-      ),
+      const AndroidNotificationAction('snooze', '⏰ Snooze 15m'),
     ];
 
     return actions;
@@ -646,10 +688,7 @@ class ReminderService {
         data: data,
       );
 
-      await _firestore
-          .collection('reminder_logs')
-          .doc(log.id)
-          .set(log.toMap());
+      await _firestore.collection('reminder_logs').doc(log.id).set(log.toMap());
     } catch (e) {
       ErrorService.logError(e, context: 'Log reminder action');
     }
@@ -670,7 +709,7 @@ class ReminderService {
           .get();
 
       for (final doc in snapshot.docs) {
-        final reminder = Reminder.fromMap(doc.data());
+        final reminder = Reminder.fromMap(doc.data() as Map<String, dynamic>);
         await _triggerReminder(reminder);
       }
     } catch (e) {
@@ -740,7 +779,9 @@ class ReminderService {
     }
   }
 
-  RawResourceAndroidNotificationSound? _getAndroidSound(NotificationSound sound) {
+  RawResourceAndroidNotificationSound? _getAndroidSound(
+    NotificationSound sound,
+  ) {
     switch (sound) {
       case NotificationSound.gentle:
         return const RawResourceAndroidNotificationSound('gentle');
@@ -794,20 +835,27 @@ class ReminderService {
           .get();
 
       final reminders = snapshot.docs
-          .map((doc) => Reminder.fromMap(doc.data()))
+          .map((doc) => Reminder.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
 
       final stats = <String, dynamic>{
         'total': reminders.length,
-        'active': reminders.where((r) => r.status == ReminderStatus.active).length,
-        'completed_today': reminders.where((r) => 
-          r.completedAt != null && 
-          _isSameDay(r.completedAt!, DateTime.now())
-        ).length,
-        'completion_rate': reminders.isEmpty 
-          ? 0.0 
-          : reminders.map((r) => r.timesCompleted).reduce((a, b) => a + b) / 
-            reminders.map((r) => r.timesTriggered).fold(1, (a, b) => a + b),
+        'active': reminders
+            .where((r) => r.status == ReminderStatus.active)
+            .length,
+        'completed_today': reminders
+            .where(
+              (r) =>
+                  r.completedAt != null &&
+                  _isSameDay(r.completedAt!, DateTime.now()),
+            )
+            .length,
+        'completion_rate': reminders.isEmpty
+            ? 0.0
+            : reminders.map((r) => r.timesCompleted).reduce((a, b) => a + b) /
+                  reminders
+                      .map((r) => r.timesTriggered)
+                      .fold(1, (a, b) => a + b),
         'by_type': _groupByType(reminders),
       };
 
@@ -829,7 +877,7 @@ class ReminderService {
 
   bool _isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
-           date1.month == date2.month &&
-           date1.day == date2.day;
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 }

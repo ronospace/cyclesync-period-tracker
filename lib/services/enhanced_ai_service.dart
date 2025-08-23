@@ -23,29 +23,37 @@ class EnhancedAIService {
   }) async {
     try {
       debugPrint('🧠 Generating enhanced AI insights...');
-      
+
       final insights = EnhancedCycleInsights();
-      
+
       if (cycles.isEmpty) {
-        insights.addRecommendation("Start logging your cycles to get personalized insights!");
+        insights.addRecommendation(
+          "Start logging your cycles to get personalized insights!",
+        );
         return insights;
       }
 
       // Traditional cycle analysis
       final traditionalInsights = _analyzeTraditionalCycleData(cycles);
-      
+
       // Biometric analysis (if available)
       final biometricInsights = await _analyzeBiometricData(analysisDate);
-      
+
       // Combine insights using AI correlation
-      final combinedInsights = _combineInsights(traditionalInsights, biometricInsights);
-      
+      final combinedInsights = _combineInsights(
+        traditionalInsights,
+        biometricInsights,
+      );
+
       // Generate personalized predictions
-      final predictions = await _generateAdvancedPredictions(cycles, biometricInsights);
-      
+      final predictions = await _generateAdvancedPredictions(
+        cycles,
+        biometricInsights,
+      );
+
       // Create actionable recommendations
       final recommendations = _generatePersonalizedRecommendations(
-        combinedInsights, 
+        combinedInsights,
         predictions,
       );
 
@@ -68,15 +76,17 @@ class EnhancedAIService {
   }
 
   /// Analyze traditional cycle data patterns
-  TraditionalCycleInsights _analyzeTraditionalCycleData(List<Map<String, dynamic>> cycles) {
+  TraditionalCycleInsights _analyzeTraditionalCycleData(
+    List<Map<String, dynamic>> cycles,
+  ) {
     final insights = TraditionalCycleInsights();
-    
+
     if (cycles.length < 2) return insights;
 
     // Calculate cycle statistics
     final cycleLengths = <int>[];
     final completedCycles = cycles.where((c) => c['end_date'] != null).toList();
-    
+
     for (final cycle in completedCycles) {
       final start = _parseDate(cycle['start_date']);
       final end = _parseDate(cycle['end_date']);
@@ -86,7 +96,8 @@ class EnhancedAIService {
     }
 
     if (cycleLengths.isNotEmpty) {
-      insights.averageCycleLength = cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
+      insights.averageCycleLength =
+          cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
       insights.cycleVariability = _calculateVariability(cycleLengths);
       insights.regularityScore = _calculateRegularityScore(cycleLengths);
     }
@@ -126,25 +137,25 @@ class EnhancedAIService {
     CycleHealthInsights? biometric,
   ) {
     final combined = CombinedInsights();
-    
+
     // Correlate HRV with cycle phases
     if (biometric != null && traditional.averageCycleLength != null) {
       combined.stressCycleCorrelation = _calculateStressCycleCorrelation(
         traditional,
         biometric,
       );
-      
+
       combined.sleepCycleCorrelation = _calculateSleepCycleCorrelation(
         traditional,
         biometric,
       );
-      
+
       combined.energyCycleCorrelation = _calculateEnergyCycleCorrelation(
         traditional,
         biometric,
       );
     }
-    
+
     return combined;
   }
 
@@ -154,19 +165,20 @@ class EnhancedAIService {
     CycleHealthInsights? biometric,
   ) async {
     final predictions = AdvancedPredictions();
-    
+
     if (cycles.isEmpty) return predictions;
 
     final now = DateTime.now();
     final lastCycle = cycles.first;
     final lastStart = _parseDate(lastCycle['start_date']);
-    
+
     if (lastStart == null) return predictions;
 
     // Enhanced ovulation prediction using temperature data
     if (biometric?.possibleOvulationDate != null) {
       predictions.ovulationDate = biometric!.possibleOvulationDate!;
-      predictions.ovulationConfidence = 0.85; // High confidence with biometric data
+      predictions.ovulationConfidence =
+          0.85; // High confidence with biometric data
     } else {
       // Fallback to traditional calculation
       predictions.ovulationDate = _predictOvulationTraditional(cycles);
@@ -176,10 +188,14 @@ class EnhancedAIService {
     // Enhanced period prediction
     predictions.nextPeriodDate = _predictNextPeriod(cycles, biometric);
     predictions.periodConfidence = biometric != null ? 0.80 : 0.70;
-    
+
     // Current phase detection
-    predictions.currentPhase = _detectCurrentPhase(lastStart, predictions.ovulationDate);
-    predictions.confidenceScore = (predictions.ovulationConfidence + predictions.periodConfidence) / 2;
+    predictions.currentPhase = _detectCurrentPhase(
+      lastStart,
+      predictions.ovulationDate,
+    );
+    predictions.confidenceScore =
+        (predictions.ovulationConfidence + predictions.periodConfidence) / 2;
 
     return predictions;
   }
@@ -194,35 +210,53 @@ class EnhancedAIService {
     // Cycle phase specific recommendations
     switch (predictions.currentPhase) {
       case CyclePhase.menstrual:
-        recommendations.add("💧 Stay hydrated and consider gentle stretching for cramps");
+        recommendations.add(
+          "💧 Stay hydrated and consider gentle stretching for cramps",
+        );
         recommendations.add("🛌 Prioritize rest - your body is working hard");
         break;
       case CyclePhase.follicular:
-        recommendations.add("💪 Great time for high-intensity workouts - energy is increasing!");
+        recommendations.add(
+          "💪 Great time for high-intensity workouts - energy is increasing!",
+        );
         recommendations.add("🥗 Focus on iron-rich foods to replenish");
         break;
       case CyclePhase.ovulatory:
-        recommendations.add("❤️ You're in your fertile window - plan accordingly");
-        recommendations.add("🌟 Social energy is high - great time for important meetings");
+        recommendations.add(
+          "❤️ You're in your fertile window - plan accordingly",
+        );
+        recommendations.add(
+          "🌟 Social energy is high - great time for important meetings",
+        );
         break;
       case CyclePhase.luteal:
-        recommendations.add("🧘 Practice stress management - PMS may be approaching");
-        recommendations.add("🍯 Consider magnesium supplements for mood support");
+        recommendations.add(
+          "🧘 Practice stress management - PMS may be approaching",
+        );
+        recommendations.add(
+          "🍯 Consider magnesium supplements for mood support",
+        );
         break;
     }
 
     // Biometric-based recommendations
     if (combined.stressCycleCorrelation > 0.7) {
-      recommendations.add("😌 Your stress levels seem to correlate with your cycle - try meditation");
+      recommendations.add(
+        "😌 Your stress levels seem to correlate with your cycle - try meditation",
+      );
     }
-    
+
     if (combined.sleepCycleCorrelation < 0.4) {
-      recommendations.add("😴 Poor sleep may be affecting your cycle - establish a bedtime routine");
+      recommendations.add(
+        "😴 Poor sleep may be affecting your cycle - establish a bedtime routine",
+      );
     }
 
     // Predictive recommendations
     if (predictions.nextPeriodDate.difference(DateTime.now()).inDays <= 3) {
-      recommendations.add("📅 Period predicted in ${predictions.nextPeriodDate.difference(DateTime.now()).inDays} days - prepare supplies");
+      recommendations.add(
+        "📅 Period predicted in ${predictions.nextPeriodDate.difference(DateTime.now()).inDays} days - prepare supplies",
+      );
     }
 
     return recommendations;
@@ -245,30 +279,37 @@ class EnhancedAIService {
   double _calculateVariability(List<int> lengths) {
     if (lengths.length < 2) return 0;
     final mean = lengths.reduce((a, b) => a + b) / lengths.length;
-    final variance = lengths.map((l) => math.pow(l - mean, 2)).reduce((a, b) => a + b) / lengths.length;
+    final variance =
+        lengths.map((l) => math.pow(l - mean, 2)).reduce((a, b) => a + b) /
+        lengths.length;
     return math.sqrt(variance);
   }
 
   double _calculateRegularityScore(List<int> lengths) {
     final variability = _calculateVariability(lengths);
-    return math.max(0, 100 - (variability * 10)); // Higher variability = lower score
+    return math.max(
+      0,
+      100 - (variability * 10),
+    ); // Higher variability = lower score
   }
 
   Map<String, int> _analyzeSymptomPatterns(List<Map<String, dynamic>> cycles) {
     final symptomCounts = <String, int>{};
-    
+
     for (final cycle in cycles) {
       final symptoms = cycle['symptoms'] as List?;
       if (symptoms != null) {
         for (final symptom in symptoms) {
-          final symptomName = symptom is String ? symptom : symptom['name']?.toString();
+          final symptomName = symptom is String
+              ? symptom
+              : symptom['name']?.toString();
           if (symptomName != null) {
             symptomCounts[symptomName] = (symptomCounts[symptomName] ?? 0) + 1;
           }
         }
       }
     }
-    
+
     return symptomCounts;
   }
 
@@ -276,12 +317,12 @@ class EnhancedAIService {
     // Simplified trend analysis - in real implementation, this would be more sophisticated
     final trends = <String, double>{};
     final symptoms = _analyzeSymptomPatterns(cycles);
-    
+
     for (final entry in symptoms.entries) {
       final frequency = entry.value / cycles.length;
       trends[entry.key] = frequency;
     }
-    
+
     return trends;
   }
 
@@ -313,9 +354,12 @@ class EnhancedAIService {
     return now.add(const Duration(days: 14)); // Simplified
   }
 
-  DateTime _predictNextPeriod(List<Map<String, dynamic>> cycles, CycleHealthInsights? biometric) {
+  DateTime _predictNextPeriod(
+    List<Map<String, dynamic>> cycles,
+    CycleHealthInsights? biometric,
+  ) {
     if (cycles.isEmpty) return DateTime.now().add(const Duration(days: 28));
-    
+
     // Calculate average cycle length
     final lengths = <int>[];
     for (final cycle in cycles) {
@@ -325,20 +369,25 @@ class EnhancedAIService {
         lengths.add(end.difference(start).inDays + 1);
       }
     }
-    
-    final avgLength = lengths.isNotEmpty ? 
-        lengths.reduce((a, b) => a + b) / lengths.length : 28;
-    
+
+    final avgLength = lengths.isNotEmpty
+        ? lengths.reduce((a, b) => a + b) / lengths.length
+        : 28;
+
     final lastStart = _parseDate(cycles.first['start_date']) ?? DateTime.now();
     return lastStart.add(Duration(days: avgLength.round()));
   }
 
-  CyclePhase _detectCurrentPhase(DateTime lastPeriodStart, DateTime? predictedOvulation) {
+  CyclePhase _detectCurrentPhase(
+    DateTime lastPeriodStart,
+    DateTime? predictedOvulation,
+  ) {
     final now = DateTime.now();
     final daysSinceStart = now.difference(lastPeriodStart).inDays;
-    
+
     if (daysSinceStart <= 5) return CyclePhase.menstrual;
-    if (predictedOvulation != null && now.difference(predictedOvulation).inDays.abs() <= 2) {
+    if (predictedOvulation != null &&
+        now.difference(predictedOvulation).inDays.abs() <= 2) {
       return CyclePhase.ovulatory;
     }
     if (daysSinceStart <= 13) return CyclePhase.follicular;
@@ -356,7 +405,7 @@ class EnhancedCycleInsights {
   double energyLevel = 0.5;
   double confidence = 0.0;
   List<String> recommendations = [];
-  
+
   void addRecommendation(String rec) => recommendations.add(rec);
 }
 
@@ -383,29 +432,32 @@ class AdvancedPredictions {
   double confidenceScore = 0;
 }
 
-enum CyclePhase { 
-  menstrual, 
-  follicular, 
-  ovulatory, 
-  luteal 
-}
+enum CyclePhase { menstrual, follicular, ovulatory, luteal }
 
 extension CyclePhaseExtension on CyclePhase {
   String get displayName {
     switch (this) {
-      case CyclePhase.menstrual: return 'Menstrual';
-      case CyclePhase.follicular: return 'Follicular';
-      case CyclePhase.ovulatory: return 'Ovulatory';
-      case CyclePhase.luteal: return 'Luteal';
+      case CyclePhase.menstrual:
+        return 'Menstrual';
+      case CyclePhase.follicular:
+        return 'Follicular';
+      case CyclePhase.ovulatory:
+        return 'Ovulatory';
+      case CyclePhase.luteal:
+        return 'Luteal';
     }
   }
-  
+
   String get description {
     switch (this) {
-      case CyclePhase.menstrual: return 'Time to rest and recharge';
-      case CyclePhase.follicular: return 'Energy building phase';
-      case CyclePhase.ovulatory: return 'Peak fertility window';
-      case CyclePhase.luteal: return 'Pre-menstrual preparation';
+      case CyclePhase.menstrual:
+        return 'Time to rest and recharge';
+      case CyclePhase.follicular:
+        return 'Energy building phase';
+      case CyclePhase.ovulatory:
+        return 'Peak fertility window';
+      case CyclePhase.luteal:
+        return 'Pre-menstrual preparation';
     }
   }
 }

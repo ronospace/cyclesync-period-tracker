@@ -13,7 +13,7 @@ void main() async {
     debugPrint('✅ Firebase initialized successfully');
     
     runApp(const TestApp());
-  } catch (error, stackTrace) {
+  } catch (error) {
     debugPrint('❌ Error: $error');
     runApp(const ErrorTestApp());
   }

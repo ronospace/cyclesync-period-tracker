@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ronos.cyclesync"
+    namespace = "com.ronos.flowsense"
     compileSdk = flutter.compileSdkVersion
     // ndkVersion = flutter.ndkVersion // Disable NDK for now
 
@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.ronos.cyclesync"
+        applicationId = "com.ronos.flowsense"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23  // Override for Firebase Auth compatibility

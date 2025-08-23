@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/services.dart';
+
 class BannerAdContainer extends StatefulWidget {
   final String? adUnitId; // if null, use test ID
   const BannerAdContainer({super.key, this.adUnitId});
@@ -17,7 +18,8 @@ class _BannerAdContainerState extends State<BannerAdContainer>
   late Animation<double> _fadeAnimation;
   bool _hasError = false;
 
-  static const String _testAdUnitId = "ca-app-pub-3940256099942544/6300978111"; // Google test banner
+  static const String _testAdUnitId =
+      "ca-app-pub-3940256099942544/6300978111"; // Google test banner
 
   @override
   void initState() {
@@ -26,17 +28,13 @@ class _BannerAdContainerState extends State<BannerAdContainer>
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
     _loadAd();
   }
-  
+
   void _loadAd() {
     try {
       _banner = BannerAd(
@@ -89,7 +87,7 @@ class _BannerAdContainerState extends State<BannerAdContainer>
     if (_hasError || (!_loaded || _banner == null)) {
       return const SizedBox.shrink();
     }
-    
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Container(

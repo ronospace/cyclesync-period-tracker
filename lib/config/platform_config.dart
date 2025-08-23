@@ -7,13 +7,15 @@ class PlatformConfig {
   static bool get isIOS => Platform.isIOS;
   static bool get isAndroid => Platform.isAndroid;
   static bool get isWeb => kIsWeb;
-  static bool get isDesktop => Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+  static bool get isDesktop =>
+      Platform.isMacOS || Platform.isWindows || Platform.isLinux;
   static bool get isMobile => Platform.isIOS || Platform.isAndroid;
 
   /// Health Integration Capabilities
   static bool get supportsHealthKit => Platform.isIOS;
   static bool get supportsGoogleFit => Platform.isAndroid;
-  static bool get supportsHealthIntegration => supportsHealthKit || supportsGoogleFit;
+  static bool get supportsHealthIntegration =>
+      supportsHealthKit || supportsGoogleFit;
 
   /// Native Features
   static bool get supportsNativeNotifications => isMobile;
@@ -114,7 +116,7 @@ class PlatformConfig {
   /// Platform-specific Share Options
   static List<String> get shareOptions {
     final baseOptions = ['email', 'copy_link', 'export_file'];
-    
+
     if (Platform.isIOS) {
       return [...baseOptions, 'airdrop', 'messages', 'notes'];
     } else if (Platform.isAndroid) {
@@ -126,11 +128,7 @@ class PlatformConfig {
   /// Platform-specific Biometric Options
   static Map<String, bool> get biometricCapabilities {
     if (Platform.isIOS) {
-      return {
-        'face_id': true,
-        'touch_id': true,
-        'passcode': true,
-      };
+      return {'face_id': true, 'touch_id': true, 'passcode': true};
     } else if (Platform.isAndroid) {
       return {
         'fingerprint': true,
@@ -172,10 +170,7 @@ class PlatformConfig {
         'cloud': 'Google Drive',
       };
     }
-    return {
-      'local': 'Local Storage',
-      'cache': 'Cache Storage',
-    };
+    return {'local': 'Local Storage', 'cache': 'Cache Storage'};
   }
 
   /// Platform-specific Localization
@@ -286,14 +281,8 @@ class PlatformConfig {
           'ambient_mode': true,
           'fitness_tracking': true,
         },
-        'fitbit': {
-          'supported': true,
-          'web_api': true,
-        },
-        'garmin': {
-          'supported': true,
-          'connect_iq': true,
-        },
+        'fitbit': {'supported': true, 'web_api': true},
+        'garmin': {'supported': true, 'connect_iq': true},
       };
     }
     return {};
@@ -340,13 +329,13 @@ class PlatformConfig {
 
   static List<String> _getSupportedFeatures() {
     final features = <String>[];
-    
+
     if (supportsHealthIntegration) features.add('health_integration');
     if (supportsNativeNotifications) features.add('notifications');
     if (supportsBackgroundSync) features.add('background_sync');
     if (supportsWearableSync) features.add('wearable_integration');
     if (supportsNativeBiometrics) features.add('biometric_security');
-    
+
     // Always supported features
     features.addAll([
       'dark_mode',
@@ -356,7 +345,7 @@ class PlatformConfig {
       'cycle_tracking',
       'analytics',
     ]);
-    
+
     return features;
   }
 

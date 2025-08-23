@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/cycle_models.dart';
-import '../models/ai_models.dart';
 
 class CycleStatusCard extends StatelessWidget {
   final CycleData? cycle;
   final CyclePrediction? predictions;
   final VoidCallback? onTap;
 
-  const CycleStatusCard({
-    super.key,
-    this.cycle,
-    this.predictions,
-    this.onTap,
-  });
+  const CycleStatusCard({super.key, this.cycle, this.predictions, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +99,7 @@ class CycleStatusCard extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     final phase = _getCurrentPhase();
     final phaseIcon = _getPhaseIcon(phase);
-    
+
     return Row(
       children: [
         Container(
@@ -114,11 +108,7 @@ class CycleStatusCard extends StatelessWidget {
             color: Colors.white.withAlpha(80),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            phaseIcon,
-            color: Colors.white,
-            size: 24,
-          ),
+          child: Icon(phaseIcon, color: Colors.white, size: 24),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -132,12 +122,12 @@ class CycleStatusCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-                Text(
-                  'Cycle #${_getCycleNumber()}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withAlpha(200),
-                  ),
+              Text(
+                'Cycle #${_getCycleNumber()}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white.withAlpha(200),
                 ),
+              ),
             ],
           ),
         ),
@@ -148,7 +138,7 @@ class CycleStatusCard extends StatelessWidget {
 
   Widget _buildDayCounter(BuildContext context) {
     final currentDay = _getCurrentCycleDay();
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -179,7 +169,7 @@ class CycleStatusCard extends StatelessWidget {
   Widget _buildPhaseInfo(BuildContext context) {
     final description = _getPhaseDescription();
     final nextEvent = _getNextEvent();
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -200,11 +190,7 @@ class CycleStatusCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
-                  Icons.event,
-                  size: 16,
-                  color: Colors.white.withAlpha(180),
-                ),
+                Icon(Icons.event, size: 16, color: Colors.white.withAlpha(180)),
                 const SizedBox(width: 4),
                 Text(
                   nextEvent,
@@ -223,7 +209,7 @@ class CycleStatusCard extends StatelessWidget {
   Widget _buildProgressBar(BuildContext context) {
     final progress = _getCycleProgress();
     final estimatedLength = cycle!.lengthInDays;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -257,7 +243,7 @@ class CycleStatusCard extends StatelessWidget {
 
   Widget _buildPredictionInfo(BuildContext context) {
     if (predictions == null) return const SizedBox.shrink();
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -267,11 +253,7 @@ class CycleStatusCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.psychology,
-            color: Colors.white,
-            size: 20,
-          ),
+          Icon(Icons.psychology, color: Colors.white, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -315,7 +297,7 @@ class CycleStatusCard extends StatelessWidget {
 
   LinearGradient _getCyclePhaseGradient(BuildContext context) {
     final phase = _getCurrentPhase();
-    
+
     switch (phase.toLowerCase()) {
       case 'menstrual':
         return const LinearGradient(
@@ -370,18 +352,18 @@ class CycleStatusCard extends StatelessWidget {
 
   String _getCurrentPhase() {
     if (cycle == null) return 'Unknown';
-    
+
     final dayInCycle = _getCurrentCycleDay();
     final cycleLength = cycle!.lengthInDays;
-    
+
     if (cycle!.endDate == null || DateTime.now().isBefore(cycle!.endDate!)) {
       return 'Menstrual';
     }
-    
+
     // Post-period phases based on typical 28-day cycle ratios
     final follicularEnd = (cycleLength * 0.45).round(); // ~Day 13
     final ovulationEnd = (cycleLength * 0.55).round(); // ~Day 15
-    
+
     if (dayInCycle <= follicularEnd) {
       return 'Follicular';
     } else if (dayInCycle <= ovulationEnd) {
@@ -393,7 +375,7 @@ class CycleStatusCard extends StatelessWidget {
 
   String _getPhaseDescription() {
     final phase = _getCurrentPhase();
-    
+
     switch (phase.toLowerCase()) {
       case 'menstrual':
         return 'Your period is active. Stay hydrated and rest well.';
@@ -410,9 +392,9 @@ class CycleStatusCard extends StatelessWidget {
 
   String? _getNextEvent() {
     if (cycle == null || predictions == null) return null;
-    
+
     final phase = _getCurrentPhase();
-    
+
     switch (phase.toLowerCase()) {
       case 'menstrual':
         if (cycle!.endDate != null) {
@@ -440,26 +422,26 @@ class CycleStatusCard extends StatelessWidget {
 
   double _getCycleProgress() {
     if (cycle == null) return 0.0;
-    
+
     final dayInCycle = _getCurrentCycleDay();
     final estimatedLength = cycle!.lengthInDays;
-    
+
     return (dayInCycle / estimatedLength).clamp(0.0, 1.0);
   }
 
   int _daysUntilOvulation() {
     if (cycle == null) return 0;
-    
+
     final cycleLength = cycle!.lengthInDays;
     final ovulationDay = (cycleLength * 0.5).round(); // Mid-cycle
     final currentDay = _getCurrentCycleDay();
-    
+
     return (ovulationDay - currentDay).clamp(0, cycleLength);
   }
 
   String _getPredictionText() {
     if (predictions == null) return 'No predictions available';
-    
+
     // Use predictedStartDate instead of nextPeriodDate since CyclePrediction doesn't have nextPeriodDate
     final nextPeriod = predictions!.predictedStartDate;
     final daysUntil = nextPeriod.difference(DateTime.now()).inDays;
@@ -471,12 +453,14 @@ class CycleStatusCard extends StatelessWidget {
       return 'Next period: ${DateFormat('MMM d').format(nextPeriod)}';
     }
   }
-  
+
   int _getCycleNumber() {
     // Generate a simple cycle number based on the cycle start date
     // This is a placeholder - in a real app you might store this in the database
     if (cycle == null) return 1;
-    final daysSinceEpoch = cycle!.startDate.difference(DateTime(2024, 1, 1)).inDays;
+    final daysSinceEpoch = cycle!.startDate
+        .difference(DateTime(2024, 1, 1))
+        .inDays;
     return (daysSinceEpoch / 28).floor() + 1; // Assume 28-day cycles
   }
 }

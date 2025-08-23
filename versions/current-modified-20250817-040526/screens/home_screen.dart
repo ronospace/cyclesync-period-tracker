@@ -286,13 +286,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n?.homeWelcomeMessage(displayName) ?? 'Hello, $displayName!',
+                        l10n.homeWelcomeMessage(displayName) ?? 'Hello, $displayName!',
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        l10n?.homeWelcomeSubtitle ?? 'Track your cycle with confidence',
+                        l10n.homeWelcomeSubtitle ?? 'Track your cycle with confidence',
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                     ],
@@ -329,21 +329,21 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(Icons.calendar_today, size: 48, color: Colors.grey.shade400),
               const SizedBox(height: 16),
               Text(
-                l10n?.homeStartTracking ?? 'Start Tracking Your Cycle',
+                l10n.homeStartTracking ?? 'Start Tracking Your Cycle',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                l10n?.homeStartTrackingDescription ?? 'Log your first cycle to see personalized insights and predictions.',
+                l10n.homeStartTrackingDescription ?? 'Log your first cycle to see personalized insights and predictions.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: () => context.go('/log-cycle'),
                 icon: const Icon(Icons.add),
-                label: Text(l10n?.homeLogFirstCycle ?? 'Log First Cycle'),
+                label: Text(l10n.homeLogFirstCycle ?? 'Log First Cycle'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink.shade600,
                   foregroundColor: Colors.white,
@@ -438,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n?.homeUpcomingEvents ?? 'Upcoming Events',
+              l10n.homeUpcomingEvents ?? 'Upcoming Events',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -449,7 +449,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildPredictionItem(
               icon: Icons.water_drop,
               color: Colors.red,
-              title: l10n?.homeNextPeriod ?? 'Next Period',
+              title: l10n.homeNextPeriod ?? 'Next Period',
               date: predictions['nextPeriod'] as DateTime,
               now: now,
             ),
@@ -460,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildPredictionItem(
               icon: Icons.favorite,
               color: Colors.orange,
-              title: l10n?.homeOvulation ?? 'Ovulation',
+              title: l10n.homeOvulation ?? 'Ovulation',
               date: predictions['ovulation'] as DateTime,
               now: now,
             ),
@@ -477,7 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n?.homeFertileWindow ?? 'Fertile Window',
+                        l10n.homeFertileWindow ?? 'Fertile Window',
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
@@ -557,7 +557,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n?.homeQuickActions ?? 'Quick Actions',
+              l10n.homeQuickActions ?? 'Quick Actions',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -568,7 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.add_circle,
-                    label: l10n?.homeLogCycle ?? 'Log Cycle',
+                    label: l10n.homeLogCycle ?? 'Log Cycle',
                     color: Colors.pink,
                     onTap: () => context.go('/log-cycle'),
                   ),
@@ -577,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.history,
-                    label: l10n?.homeViewHistory ?? 'View History',
+                    label: l10n.homeViewHistory ?? 'View History',
                     color: Colors.blue,
                     onTap: () => context.go('/cycle-history'),
                   ),
@@ -590,7 +590,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.calendar_month,
-                    label: l10n?.homeCalendar ?? 'Calendar',
+                    label: l10n.homeCalendar ?? 'Calendar',
                     color: Colors.green,
                     onTap: () => context.go('/calendar'),
                   ),
@@ -599,7 +599,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.analytics,
-                    label: l10n?.homeAnalytics ?? 'Analytics',
+                    label: l10n.homeAnalytics ?? 'Analytics',
                     color: Colors.purple,
                     onTap: () => context.go('/analytics'),
                   ),
@@ -612,7 +612,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.psychology,
-                    label: l10n?.homeAIInsights ?? 'AI Insights',
+                    label: l10n.homeAIInsights ?? 'AI Insights',
                     color: Colors.deepPurple,
                     onTap: () => context.go('/ai-insights'),
                   ),
@@ -621,7 +621,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.edit_note,
-                    label: l10n?.homeDailyLog ?? 'Daily Log',
+                    label: l10n.homeDailyLog ?? 'Daily Log',
                     color: Colors.teal,
                     onTap: () => context.go('/daily-log'),
                   ),
@@ -634,7 +634,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.health_and_safety,
-                    label: l10n?.healthTitle ?? 'Health Insights',
+                    label: l10n.healthTitle ?? 'Health Insights',
                     color: Colors.red,
                     onTap: () => context.go('/health-insights'),
                   ),
@@ -665,7 +665,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.settings,
-                    label: l10n?.settingsTitle ?? 'Settings',
+                    label: l10n.settingsTitle ?? 'Settings',
                     color: Colors.grey,
                     onTap: () => context.go('/settings'),
                   ),
@@ -726,14 +726,14 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  l10n?.homeRecentCycles ?? 'Recent Cycles',
+                  l10n.homeRecentCycles ?? 'Recent Cycles',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextButton(
                   onPressed: () => context.go('/cycle-history'),
-                  child: Text(l10n?.homeViewAll ?? 'View All'),
+                  child: Text(l10n.homeViewAll ?? 'View All'),
                 ),
               ],
             ),
@@ -757,10 +757,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 size: 32,
                               ),
                               const SizedBox(height: 8),
-                              Text(l10n?.homeUnableToLoad ?? 'Unable to load recent cycles'),
+                              Text(l10n.homeUnableToLoad ?? 'Unable to load recent cycles'),
                               TextButton(
                                 onPressed: _loadDashboardData,
-                                child: Text(l10n?.homeTryAgain ?? 'Try Again'),
+                                child: Text(l10n.homeTryAgain ?? 'Try Again'),
                               ),
                             ],
                           ),
@@ -770,7 +770,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? Padding(
                             padding: const EdgeInsets.all(20),
                             child: Text(
-                              l10n?.homeNoCycles ?? 'No cycles logged yet. Start tracking!',
+                              l10n.homeNoCycles ?? 'No cycles logged yet. Start tracking!',
                               textAlign: TextAlign.center,
                               style: const TextStyle(color: Colors.grey),
                             ),
@@ -856,7 +856,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (difference == 1) {
       return 'Yesterday';
     } else if (difference < 7) {
-      return '${difference} days ago';
+      return '$difference days ago';
     } else {
       return '${date.day}/${date.month}';
     }
@@ -886,7 +886,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              l10n?.homeTitle ?? "CycleSync",
+              l10n.homeTitle ?? "CycleSync",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.pink.shade800,

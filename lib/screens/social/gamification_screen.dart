@@ -14,12 +14,12 @@ class _GamificationScreenState extends State<GamificationScreen>
   late TabController _tabController;
   late AnimationController _streakAnimationController;
   late AnimationController _achievementAnimationController;
-  
+
   List<Challenge> _activeChallenges = [];
   List<Achievement> _recentAchievements = [];
   Map<String, dynamic> _stats = {};
   bool _isLoading = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +32,7 @@ class _GamificationScreenState extends State<GamificationScreen>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _loadGamificationData();
     _streakAnimationController.repeat();
   }
@@ -47,18 +47,18 @@ class _GamificationScreenState extends State<GamificationScreen>
 
   Future<void> _loadGamificationData() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final challenges = await GamificationService.getActiveChallenges();
       final achievements = await GamificationService.getRecentAchievements();
       final stats = await GamificationService.getUserStats();
-      
+
       setState(() {
         _activeChallenges = challenges;
         _recentAchievements = achievements;
         _stats = stats;
       });
-      
+
       if (achievements.isNotEmpty) {
         _achievementAnimationController.forward();
       }
@@ -89,9 +89,7 @@ class _GamificationScreenState extends State<GamificationScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.orange, Colors.red],
-                ),
+                gradient: LinearGradient(colors: [Colors.orange, Colors.red]),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -158,7 +156,7 @@ class _GamificationScreenState extends State<GamificationScreen>
         children: [
           // Stats Header
           _buildStatsHeader(),
-          
+
           // Tab Content
           Expanded(
             child: TabBarView(
@@ -188,8 +186,8 @@ class _GamificationScreenState extends State<GamificationScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.orange.withOpacity(0.2),
-            Colors.red.withOpacity(0.2),
+            Colors.orange.withValues(alpha: 0.2),
+            Colors.red.withValues(alpha: 0.2),
           ],
         ),
       ),
@@ -241,7 +239,7 @@ class _GamificationScreenState extends State<GamificationScreen>
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -263,13 +261,7 @@ class _GamificationScreenState extends State<GamificationScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 10,
-            ),
-          ),
+          Text(subtitle, style: TextStyle(color: Colors.grey, fontSize: 10)),
         ],
       ),
     );
@@ -301,9 +293,9 @@ class _GamificationScreenState extends State<GamificationScreen>
           // Featured Challenge
           if (_activeChallenges.isNotEmpty)
             _buildFeaturedChallenge(_activeChallenges.first),
-          
+
           const SizedBox(height: 16),
-          
+
           // Daily Challenges
           Text(
             '⚡ Daily Challenges',
@@ -314,14 +306,13 @@ class _GamificationScreenState extends State<GamificationScreen>
             ),
           ),
           const SizedBox(height: 8),
-          
+
           ..._activeChallenges
               .where((c) => c.type == ChallengeType.daily)
-              .map((challenge) => _buildChallengeCard(challenge))
-              .toList(),
-          
+              .map((challenge) => _buildChallengeCard(challenge)),
+
           const SizedBox(height: 16),
-          
+
           // Weekly Challenges
           Text(
             '🗓️ Weekly Challenges',
@@ -332,14 +323,13 @@ class _GamificationScreenState extends State<GamificationScreen>
             ),
           ),
           const SizedBox(height: 8),
-          
+
           ..._activeChallenges
               .where((c) => c.type == ChallengeType.weekly)
-              .map((challenge) => _buildChallengeCard(challenge))
-              .toList(),
-          
+              .map((challenge) => _buildChallengeCard(challenge)),
+
           const SizedBox(height: 16),
-          
+
           // Community Challenges
           Text(
             '👥 Community Challenges',
@@ -350,11 +340,10 @@ class _GamificationScreenState extends State<GamificationScreen>
             ),
           ),
           const SizedBox(height: 8),
-          
+
           ..._activeChallenges
               .where((c) => c.type == ChallengeType.community)
-              .map((challenge) => _buildChallengeCard(challenge))
-              .toList(),
+              .map((challenge) => _buildChallengeCard(challenge)),
         ],
       ),
     );
@@ -367,15 +356,12 @@ class _GamificationScreenState extends State<GamificationScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.orange,
-            Colors.red,
-          ],
+          colors: [Colors.orange, Colors.red],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
+            color: Colors.orange.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: Offset(0, 6),
           ),
@@ -389,7 +375,7 @@ class _GamificationScreenState extends State<GamificationScreen>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -418,16 +404,16 @@ class _GamificationScreenState extends State<GamificationScreen>
           Text(
             challenge.description,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: 16,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Progress Bar
           LinearProgressIndicator(
             value: challenge.progressPercentage,
-            backgroundColor: Colors.white.withOpacity(0.3),
+            backgroundColor: Colors.white.withValues(alpha: 0.3),
             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           ),
           const SizedBox(height: 8),
@@ -477,7 +463,9 @@ class _GamificationScreenState extends State<GamificationScreen>
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: challenge.isCompleted ? Colors.green : Colors.grey.withOpacity(0.3),
+          color: challenge.isCompleted
+              ? Colors.green
+              : Colors.grey.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -500,23 +488,17 @@ class _GamificationScreenState extends State<GamificationScreen>
               else
                 Text(
                   '${challenge.participants.length}👥',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             challenge.description,
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[400], fontSize: 14),
           ),
           const SizedBox(height: 12),
-          
+
           // Progress
           if (!challenge.isCompleted) ...[
             LinearProgressIndicator(
@@ -568,17 +550,17 @@ class _GamificationScreenState extends State<GamificationScreen>
             ),
           ),
           const SizedBox(height: 16),
-          
-          ..._recentAchievements.map((achievement) =>
-            FadeTransition(
+
+          ..._recentAchievements.map(
+            (achievement) => FadeTransition(
               opacity: _achievementAnimationController,
               child: _buildAchievementCard(achievement),
             ),
-          ).toList(),
-          
+          ),
+
           const SizedBox(height: 24),
         ],
-        
+
         Text(
           '🏆 All Achievements',
           style: TextStyle(
@@ -588,7 +570,7 @@ class _GamificationScreenState extends State<GamificationScreen>
           ),
         ),
         const SizedBox(height: 16),
-        
+
         _buildAchievementGrid(),
       ],
     );
@@ -607,7 +589,8 @@ class _GamificationScreenState extends State<GamificationScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: (achievement.isRare ? Colors.purple : Colors.blue).withOpacity(0.3),
+            color: (achievement.isRare ? Colors.purple : Colors.blue)
+                .withValues(alpha: 0.3),
             blurRadius: 8,
             offset: Offset(0, 4),
           ),
@@ -619,7 +602,7 @@ class _GamificationScreenState extends State<GamificationScreen>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -636,9 +619,12 @@ class _GamificationScreenState extends State<GamificationScreen>
               children: [
                 if (achievement.isRare)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -663,7 +649,7 @@ class _GamificationScreenState extends State<GamificationScreen>
                 Text(
                   achievement.description,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 12,
                   ),
                 ),
@@ -683,7 +669,7 @@ class _GamificationScreenState extends State<GamificationScreen>
               Text(
                 'pts',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 10,
                 ),
               ),
@@ -696,7 +682,7 @@ class _GamificationScreenState extends State<GamificationScreen>
 
   Widget _buildAchievementGrid() {
     final allAchievements = GamificationService.getAllPossibleAchievements();
-    
+
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -708,15 +694,19 @@ class _GamificationScreenState extends State<GamificationScreen>
       itemCount: allAchievements.length,
       itemBuilder: (context, index) {
         final achievement = allAchievements[index];
-        final isUnlocked = _recentAchievements.any((a) => a.id == achievement.id);
-        
+        final isUnlocked = _recentAchievements.any(
+          (a) => a.id == achievement.id,
+        );
+
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isUnlocked ? Colors.grey[800] : Colors.grey[900],
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isUnlocked ? Colors.orange : Colors.grey.withOpacity(0.3),
+              color: isUnlocked
+                  ? Colors.orange
+                  : Colors.grey.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -789,10 +779,7 @@ class _GamificationScreenState extends State<GamificationScreen>
               child: Text(
                 'Interactive Chart\nComing Soon! 📊',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.grey[400], fontSize: 16),
               ),
             ),
           ),
@@ -820,7 +807,7 @@ class _GamificationScreenState extends State<GamificationScreen>
             ),
           ),
           const SizedBox(height: 16),
-          
+
           Row(
             children: [
               Expanded(
@@ -839,9 +826,9 @@ class _GamificationScreenState extends State<GamificationScreen>
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Row(
             children: [
               Expanded(
@@ -889,13 +876,7 @@ class _GamificationScreenState extends State<GamificationScreen>
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 12,
-            ),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 12)),
         ],
       ),
     );
@@ -920,23 +901,29 @@ class _GamificationScreenState extends State<GamificationScreen>
             ),
           ),
           const SizedBox(height: 16),
-          
+
           Text(
             'You\'re part of a community of ${_stats['globalUsers'] ?? '10,000+'} users worldwide! 🎉',
-            style: TextStyle(
-              color: Colors.grey[300],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[300], fontSize: 14),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildGlobalStatItem('Active Users', '${_stats['activeUsers'] ?? '5,432'}'),
-              _buildGlobalStatItem('Challenges Today', '${_stats['todayChallenges'] ?? '156'}'),
-              _buildGlobalStatItem('Support Posts', '${_stats['supportPosts'] ?? '89'}'),
+              _buildGlobalStatItem(
+                'Active Users',
+                '${_stats['activeUsers'] ?? '5,432'}',
+              ),
+              _buildGlobalStatItem(
+                'Challenges Today',
+                '${_stats['todayChallenges'] ?? '156'}',
+              ),
+              _buildGlobalStatItem(
+                'Support Posts',
+                '${_stats['supportPosts'] ?? '89'}',
+              ),
             ],
           ),
         ],
@@ -955,13 +942,7 @@ class _GamificationScreenState extends State<GamificationScreen>
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 10,
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 10)),
       ],
     );
   }

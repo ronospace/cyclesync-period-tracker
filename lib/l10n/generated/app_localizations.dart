@@ -132,7 +132,7 @@ abstract class AppLocalizations {
   /// The title of the application
   ///
   /// In en, this message translates to:
-  /// **'CycleSync'**
+  /// **'FlowSense'**
   String get appTitle;
 
   /// Home tab in bottom navigation
@@ -510,7 +510,7 @@ abstract class AppLocalizations {
   /// Default notification title
   ///
   /// In en, this message translates to:
-  /// **'CycleSync Notification'**
+  /// **'FlowSense Notification'**
   String get notificationTitle;
 
   /// Period reminder notification
@@ -546,7 +546,7 @@ abstract class AppLocalizations {
   /// Home screen title
   ///
   /// In en, this message translates to:
-  /// **'CycleSync'**
+  /// **'FlowSense'**
   String get homeTitle;
 
   /// Welcome message on home screen
@@ -1521,11 +1521,11 @@ abstract class AppLocalizations {
   /// **'Sign out of your account'**
   String get signOutDescription;
 
-  /// Help description
+  /// No description provided for @getHelpUsingFlowSense.
   ///
   /// In en, this message translates to:
-  /// **'Get help using CycleSync'**
-  String get getHelpUsingCycleSync;
+  /// **'Get help using FlowSense'**
+  String get getHelpUsingFlowSense;
 
   /// Symptom trends description
   ///
@@ -1569,17 +1569,17 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get ok;
 
-  /// About dialog title
+  /// No description provided for @aboutFlowSense.
   ///
   /// In en, this message translates to:
-  /// **'About CycleSync'**
-  String get aboutCycleSync;
+  /// **'About FlowSense'**
+  String get aboutFlowSense;
 
-  /// App version
+  /// No description provided for @flowSenseVersion.
   ///
   /// In en, this message translates to:
-  /// **'CycleSync v1.0.0'**
-  String get cycleSyncVersion;
+  /// **'FlowSense v1.0.0'**
+  String get flowSenseVersion;
 
   /// App description
   ///
@@ -1779,11 +1779,11 @@ abstract class AppLocalizations {
   /// **'Create Account'**
   String get createAccount;
 
-  /// Sign up subtitle
+  /// No description provided for @joinFlowSenseCommunity.
   ///
   /// In en, this message translates to:
-  /// **'Join the CycleSync community'**
-  String get joinCycleSyncCommunity;
+  /// **'Join the FlowSense community'**
+  String get joinFlowSenseCommunity;
 
   /// Password field help text
   ///

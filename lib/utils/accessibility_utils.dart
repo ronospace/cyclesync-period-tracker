@@ -3,7 +3,6 @@ import 'package:flutter/semantics.dart';
 
 /// Utility class for enhancing app accessibility
 class AccessibilityUtils {
-  
   /// Build accessible button with proper semantics
   static Widget buildAccessibleButton({
     required VoidCallback onPressed,
@@ -18,14 +17,11 @@ class AccessibilityUtils {
       excludeSemantics: excludeSemantics,
       child: Tooltip(
         message: tooltip ?? '',
-        child: ElevatedButton(
-          onPressed: onPressed,
-          child: child,
-        ),
+        child: ElevatedButton(onPressed: onPressed, child: child),
       ),
     );
   }
-  
+
   /// Build accessible icon button
   static Widget buildAccessibleIconButton({
     required VoidCallback onPressed,
@@ -48,7 +44,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible text field with proper labels
   static Widget buildAccessibleTextField({
     required TextEditingController controller,
@@ -69,9 +65,7 @@ class AccessibilityUtils {
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         keyboardType: keyboardType,
         obscureText: obscureText,
@@ -81,7 +75,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible card with semantic information
   static Widget buildAccessibleCard({
     required Widget child,
@@ -95,7 +89,7 @@ class AccessibilityUtils {
       padding: padding ?? const EdgeInsets.all(16.0),
       child: child,
     );
-    
+
     if (onTap != null) {
       return Semantics(
         label: semanticLabel,
@@ -111,7 +105,7 @@ class AccessibilityUtils {
         ),
       );
     }
-    
+
     return Semantics(
       label: semanticLabel,
       child: Card(
@@ -121,7 +115,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible list item
   static Widget buildAccessibleListItem({
     required Widget child,
@@ -136,11 +130,11 @@ class AccessibilityUtils {
       child: ListTile(
         onTap: onTap,
         selected: selected,
-        child: child,
+        title: child,
       ),
     );
   }
-  
+
   /// Build accessible checkbox
   static Widget buildAccessibleCheckbox({
     required bool value,
@@ -159,7 +153,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible radio button
   static Widget buildAccessibleRadio<T>({
     required T value,
@@ -180,7 +174,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible switch
   static Widget buildAccessibleSwitch({
     required bool value,
@@ -198,7 +192,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible slider
   static Widget buildAccessibleSlider({
     required double value,
@@ -229,7 +223,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible progress indicator
   static Widget buildAccessibleProgressIndicator({
     double? value,
@@ -238,18 +232,16 @@ class AccessibilityUtils {
     String? progressText,
   }) {
     final progressValue = value != null ? (value * 100).round() : null;
-    final accessibilityLabel = semanticLabel ?? 
+    final accessibilityLabel =
+        semanticLabel ??
         (progressValue != null ? 'Progress: $progressValue%' : 'Loading');
-    
+
     return Semantics(
       label: accessibilityLabel,
       value: progressText ?? (progressValue != null ? '$progressValue%' : null),
       child: Column(
         children: [
-          LinearProgressIndicator(
-            value: value,
-            color: color,
-          ),
+          LinearProgressIndicator(value: value, color: color),
           if (progressText != null) ...[
             const SizedBox(height: 8),
             Text(progressText, style: const TextStyle(fontSize: 12)),
@@ -258,7 +250,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible tab bar
   static Widget buildAccessibleTabBar({
     required TabController controller,
@@ -272,11 +264,11 @@ class AccessibilityUtils {
         tabs: tabs.asMap().entries.map((entry) {
           final index = entry.key;
           final tab = entry.value;
-          final semanticLabel = semanticLabels != null && 
-              index < semanticLabels.length 
-              ? semanticLabels[index] 
+          final semanticLabel =
+              semanticLabels != null && index < semanticLabels.length
+              ? semanticLabels[index]
               : null;
-          
+
           return Semantics(
             label: semanticLabel,
             selected: controller.index == index,
@@ -287,24 +279,24 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Announce message to screen readers
   static void announceMessage(String message) {
     SemanticsService.announce(message, TextDirection.ltr);
   }
-  
+
   /// Check if reduce motion is enabled
   static bool isReduceMotionEnabled(BuildContext context) {
     return MediaQuery.of(context).disableAnimations;
   }
-  
+
   /// Get accessible animation duration
   static Duration getAccessibleAnimationDuration(BuildContext context) {
-    return isReduceMotionEnabled(context) 
-        ? Duration.zero 
+    return isReduceMotionEnabled(context)
+        ? Duration.zero
         : const Duration(milliseconds: 300);
   }
-  
+
   /// Build accessible floating action button
   static Widget buildAccessibleFAB({
     required VoidCallback onPressed,
@@ -324,7 +316,7 @@ class AccessibilityUtils {
       ),
     );
   }
-  
+
   /// Build accessible bottom navigation bar
   static Widget buildAccessibleBottomNav({
     required int currentIndex,
@@ -341,11 +333,11 @@ class AccessibilityUtils {
         items: items.asMap().entries.map((entry) {
           final index = entry.key;
           final item = entry.value;
-          final semanticLabel = semanticLabels != null && 
-              index < semanticLabels.length 
-              ? semanticLabels[index] 
+          final semanticLabel =
+              semanticLabels != null && index < semanticLabels.length
+              ? semanticLabels[index]
               : null;
-          
+
           return BottomNavigationBarItem(
             icon: Semantics(
               label: semanticLabel,

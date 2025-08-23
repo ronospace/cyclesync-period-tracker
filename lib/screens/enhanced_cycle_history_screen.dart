@@ -8,10 +8,12 @@ class EnhancedCycleHistoryScreen extends StatefulWidget {
   const EnhancedCycleHistoryScreen({super.key});
 
   @override
-  State<EnhancedCycleHistoryScreen> createState() => _EnhancedCycleHistoryScreenState();
+  State<EnhancedCycleHistoryScreen> createState() =>
+      _EnhancedCycleHistoryScreenState();
 }
 
-class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen> {
+class _EnhancedCycleHistoryScreenState
+    extends State<EnhancedCycleHistoryScreen> {
   List<CycleData> _cycles = [];
   List<CycleData> _filteredCycles = [];
   bool _isLoading = true;
@@ -36,13 +38,13 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
       // Convert existing Firebase data to new CycleData models
       final rawCycles = await FirebaseService.getCycles(limit: 50);
       final cycles = rawCycles.map((raw) => _convertToCycleData(raw)).toList();
-      
+
       setState(() {
         _cycles = cycles;
         _filteredCycles = cycles;
         _isLoading = false;
       });
-      
+
       _applySorting();
     } catch (e) {
       setState(() {
@@ -87,9 +89,12 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
     if (flow == null) return FlowIntensity.medium;
     if (flow is String) {
       switch (flow.toLowerCase()) {
-        case 'light': return FlowIntensity.light;
-        case 'heavy': return FlowIntensity.heavy;
-        default: return FlowIntensity.medium;
+        case 'light':
+          return FlowIntensity.light;
+        case 'heavy':
+          return FlowIntensity.heavy;
+        default:
+          return FlowIntensity.medium;
       }
     }
     return FlowIntensity.medium;
@@ -98,7 +103,7 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
   List<Symptom> _parseSymptoms(dynamic symptoms) {
     if (symptoms == null) return [];
     if (symptoms is! List) return [];
-    
+
     return symptoms
         .map((name) => Symptom.fromName(name.toString()))
         .where((symptom) => symptom != null)
@@ -145,8 +150,7 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
                     'Cycle: ${DateFormat.yMMMd().format(cycle.startDate)}${cycle.endDate != null ? ' - ${DateFormat.yMMMd().format(cycle.endDate!)}' : ''}',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  if (cycle.notes.isNotEmpty) 
-                    Text('Notes: ${cycle.notes}'),
+                  if (cycle.notes.isNotEmpty) Text('Notes: ${cycle.notes}'),
                 ],
               ),
             ),
@@ -274,8 +278,7 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
                     'Cycle: ${DateFormat.yMMMd().format(cycle.startDate)}${cycle.endDate != null ? ' - ${DateFormat.yMMMd().format(cycle.endDate!)}' : ''}',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  if (cycle.notes.isNotEmpty) 
-                    Text('Notes: ${cycle.notes}'),
+                  if (cycle.notes.isNotEmpty) Text('Notes: ${cycle.notes}'),
                 ],
               ),
             ),
@@ -309,7 +312,7 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
       // Re-add to Firebase (this would need implementation in FirebaseService)
       // For now, just reload the data
       await _loadCycles();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -354,10 +357,8 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (context) => _FilterDialog(
-        currentFilter: _currentFilter,
-        onApply: _applyFilter,
-      ),
+      builder: (context) =>
+          _FilterDialog(currentFilter: _currentFilter, onApply: _applyFilter),
     );
   }
 
@@ -410,7 +411,12 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
                       const Text('Date'),
                       if (_sortBy == 'date') ...[
                         const Spacer(),
-                        Icon(_sortAscending ? Icons.arrow_upward : Icons.arrow_downward, size: 16),
+                        Icon(
+                          _sortAscending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          size: 16,
+                        ),
                       ],
                     ],
                   ),
@@ -424,7 +430,12 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
                       const Text('Length'),
                       if (_sortBy == 'length') ...[
                         const Spacer(),
-                        Icon(_sortAscending ? Icons.arrow_upward : Icons.arrow_downward, size: 16),
+                        Icon(
+                          _sortAscending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          size: 16,
+                        ),
                       ],
                     ],
                   ),
@@ -438,7 +449,12 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
                       const Text('Mood'),
                       if (_sortBy == 'mood') ...[
                         const Spacer(),
-                        Icon(_sortAscending ? Icons.arrow_upward : Icons.arrow_downward, size: 16),
+                        Icon(
+                          _sortAscending
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                          size: 16,
+                        ),
                       ],
                     ],
                   ),
@@ -471,11 +487,7 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.delete,
-              color: Colors.white,
-              size: 28,
-            ),
+            Icon(Icons.delete, color: Colors.white, size: 28),
             SizedBox(height: 4),
             Text(
               'Delete',
@@ -493,13 +505,13 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
           // Perform the deletion
           try {
             await FirebaseService.deleteCycle(cycleId: cycle.id);
-            
+
             // Update local state
             setState(() {
               _cycles.removeWhere((c) => c.id == cycle.id);
               _filteredCycles.removeWhere((c) => c.id == cycle.id);
             });
-            
+
             // Show success message
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -552,132 +564,142 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with date and flow
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: cycle.flowIntensity.color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: cycle.flowIntensity.color.withOpacity(0.3)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          cycle.flowIntensity.icon,
-                          color: cycle.flowIntensity.color,
-                          size: 16,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with date and flow
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: cycle.flowIntensity.color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: cycle.flowIntensity.color.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          cycle.flowIntensity.displayName,
-                          style: TextStyle(
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            cycle.flowIntensity.icon,
                             color: cycle.flowIntensity.color,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            cycle.flowIntensity.displayName,
+                            style: TextStyle(
+                              color: cycle.flowIntensity.color,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    if (cycle.isCompleted)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${cycle.lengthInDays} days',
+                          style: TextStyle(
+                            color: Colors.green.shade700,
                             fontWeight: FontWeight.w600,
                             fontSize: 12,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                // Date range
+                Text(
+                  cycle.dateRange,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Wellbeing indicators
+                Row(
+                  children: [
+                    _buildWellbeingIndicator(
+                      'Mood',
+                      Icons.mood,
+                      cycle.wellbeing.mood,
+                      cycle.wellbeing.moodDescription,
+                      Colors.purple,
+                    ),
+                    const SizedBox(width: 16),
+                    _buildWellbeingIndicator(
+                      'Energy',
+                      Icons.battery_charging_full,
+                      cycle.wellbeing.energy,
+                      cycle.wellbeing.energyDescription,
+                      Colors.orange,
+                    ),
+                    const SizedBox(width: 16),
+                    _buildWellbeingIndicator(
+                      'Pain',
+                      Icons.healing,
+                      cycle.wellbeing.pain,
+                      cycle.wellbeing.painDescription,
+                      Colors.red,
+                    ),
+                  ],
+                ),
+
+                if (cycle.symptoms.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _buildSymptomsPreview(cycle.symptoms),
+                ],
+
+                if (cycle.notes.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.note, size: 16, color: Colors.grey.shade600),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            cycle.notes,
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 12,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Spacer(),
-                  if (cycle.isCompleted)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${cycle.lengthInDays} days',
-                        style: TextStyle(
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
                 ],
-              ),
-              
-              const SizedBox(height: 12),
-              
-              // Date range
-              Text(
-                cycle.dateRange,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              // Wellbeing indicators
-              Row(
-                children: [
-                  _buildWellbeingIndicator(
-                    'Mood',
-                    Icons.mood,
-                    cycle.wellbeing.mood,
-                    cycle.wellbeing.moodDescription,
-                    Colors.purple,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildWellbeingIndicator(
-                    'Energy',
-                    Icons.battery_charging_full,
-                    cycle.wellbeing.energy,
-                    cycle.wellbeing.energyDescription,
-                    Colors.orange,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildWellbeingIndicator(
-                    'Pain',
-                    Icons.healing,
-                    cycle.wellbeing.pain,
-                    cycle.wellbeing.painDescription,
-                    Colors.red,
-                  ),
-                ],
-              ),
-              
-              if (cycle.symptoms.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                _buildSymptomsPreview(cycle.symptoms),
               ],
-              
-              if (cycle.notes.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.note, size: 16, color: Colors.grey.shade600),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          cycle.notes,
-                          style: TextStyle(
-                            color: Colors.grey.shade700,
-                            fontSize: 12,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
             ),
           ),
         ),
@@ -732,34 +754,36 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
   Widget _buildSymptomsPreview(List<Symptom> symptoms) {
     final displaySymptoms = symptoms.take(4).toList();
     final remaining = symptoms.length - displaySymptoms.length;
-    
+
     return Wrap(
       spacing: 6,
       runSpacing: 4,
       children: [
-        ...displaySymptoms.map((symptom) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: symptom.color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: symptom.color.withOpacity(0.3)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(symptom.icon, size: 12, color: symptom.color),
-              const SizedBox(width: 4),
-              Text(
-                symptom.displayName,
-                style: TextStyle(
-                  color: symptom.color,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+        ...displaySymptoms.map(
+          (symptom) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: symptom.color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: symptom.color.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(symptom.icon, size: 12, color: symptom.color),
+                const SizedBox(width: 4),
+                Text(
+                  symptom.displayName,
+                  style: TextStyle(
+                    color: symptom.color,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        )),
+        ),
         if (remaining > 0)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -813,60 +837,74 @@ class _EnhancedCycleHistoryScreenState extends State<EnhancedCycleHistoryScreen>
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
-                      const SizedBox(height: 16),
-                      Text('Failed to load cycles', style: Theme.of(context).textTheme.headlineSmall),
-                      const SizedBox(height: 8),
-                      Text(_error!, textAlign: TextAlign.center),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _loadCycles,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.red.shade300,
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadCycles,
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(child: _buildHeader()),
-                      _filteredCycles.isEmpty
-                          ? SliverFillRemaining(
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.search_off, size: 64, color: Colors.grey.shade300),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No cycles match your filters',
-                                      style: Theme.of(context).textTheme.titleMedium,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextButton(
-                                      onPressed: () => _applyFilter(CycleFilter()),
-                                      child: const Text('Clear filters'),
-                                    ),
-                                  ],
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load cycles',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(_error!, textAlign: TextAlign.center),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _loadCycles,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadCycles,
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(child: _buildHeader()),
+                  _filteredCycles.isEmpty
+                      ? SliverFillRemaining(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: Colors.grey.shade300,
                                 ),
-                              ),
-                            )
-                          : SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) => _buildCycleCard(_filteredCycles[index]),
-                                childCount: _filteredCycles.length,
-                              ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No cycles match your filters',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: 8),
+                                TextButton(
+                                  onPressed: () => _applyFilter(CycleFilter()),
+                                  child: const Text('Clear filters'),
+                                ),
+                              ],
                             ),
-                      const SliverToBoxAdapter(child: SizedBox(height: 20)),
-                    ],
-                  ),
-                ),
+                          ),
+                        )
+                      : SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) =>
+                                _buildCycleCard(_filteredCycles[index]),
+                            childCount: _filteredCycles.length,
+                          ),
+                        ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                ],
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go('/log-cycle'),
         backgroundColor: Colors.pink,
@@ -881,10 +919,7 @@ class _FilterDialog extends StatefulWidget {
   final CycleFilter currentFilter;
   final Function(CycleFilter) onApply;
 
-  const _FilterDialog({
-    required this.currentFilter,
-    required this.onApply,
-  });
+  const _FilterDialog({required this.currentFilter, required this.onApply});
 
   @override
   State<_FilterDialog> createState() => _FilterDialogState();
@@ -937,7 +972,11 @@ class _FilterDialogState extends State<_FilterDialog> {
                         if (date != null) setState(() => _startDate = date);
                       },
                       icon: const Icon(Icons.calendar_today, size: 16),
-                      label: Text(_startDate != null ? DateFormat.yMMMd().format(_startDate!) : 'Start Date'),
+                      label: Text(
+                        _startDate != null
+                            ? DateFormat.yMMMd().format(_startDate!)
+                            : 'Start Date',
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -953,16 +992,23 @@ class _FilterDialogState extends State<_FilterDialog> {
                         if (date != null) setState(() => _endDate = date);
                       },
                       icon: const Icon(Icons.calendar_today, size: 16),
-                      label: Text(_endDate != null ? DateFormat.yMMMd().format(_endDate!) : 'End Date'),
+                      label: Text(
+                        _endDate != null
+                            ? DateFormat.yMMMd().format(_endDate!)
+                            : 'End Date',
+                      ),
                     ),
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Flow intensity
-              Text('Flow Intensity', style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                'Flow Intensity',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -972,7 +1018,11 @@ class _FilterDialogState extends State<_FilterDialog> {
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(flow.icon, size: 16, color: isSelected ? Colors.white : flow.color),
+                        Icon(
+                          flow.icon,
+                          size: 16,
+                          color: isSelected ? Colors.white : flow.color,
+                        ),
                         const SizedBox(width: 4),
                         Text(flow.displayName),
                       ],
@@ -992,9 +1042,9 @@ class _FilterDialogState extends State<_FilterDialog> {
                   );
                 }).toList(),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Mood range
               Text('Mood Range', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
@@ -1003,7 +1053,10 @@ class _FilterDialogState extends State<_FilterDialog> {
                 min: 1.0,
                 max: 5.0,
                 divisions: 4,
-                labels: RangeLabels(_minMood.toInt().toString(), _maxMood.toInt().toString()),
+                labels: RangeLabels(
+                  _minMood.toInt().toString(),
+                  _maxMood.toInt().toString(),
+                ),
                 onChanged: (values) {
                   setState(() {
                     _minMood = values.start;
@@ -1083,13 +1136,16 @@ class _CycleDetailsSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              
+
               // Header
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(cycle.flowIntensity.icon, color: cycle.flowIntensity.color),
+                    Icon(
+                      cycle.flowIntensity.icon,
+                      color: cycle.flowIntensity.color,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -1097,9 +1153,8 @@ class _CycleDetailsSheet extends StatelessWidget {
                         children: [
                           Text(
                             'Cycle Details',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           Text(
                             cycle.dateRange,
@@ -1115,9 +1170,9 @@ class _CycleDetailsSheet extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const Divider(height: 1),
-              
+
               // Content
               Expanded(
                 child: SingleChildScrollView(
@@ -1127,50 +1182,72 @@ class _CycleDetailsSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Flow and Duration
-                      _buildDetailSection(
-                        'Cycle Information',
-                        [
-                          _DetailRow('Flow Intensity', cycle.flowIntensity.displayName, 
-                                   icon: cycle.flowIntensity.icon, color: cycle.flowIntensity.color),
-                          if (cycle.isCompleted)
-                            _DetailRow('Duration', '${cycle.lengthInDays} days', 
-                                     icon: Icons.timeline, color: Colors.blue),
-                          _DetailRow('Start Date', DateFormat.yMMMEd().format(cycle.startDate), 
-                                   icon: Icons.play_arrow, color: Colors.green),
-                          if (cycle.endDate != null)
-                            _DetailRow('End Date', DateFormat.yMMMEd().format(cycle.endDate!), 
-                                     icon: Icons.stop, color: Colors.red),
-                        ],
-                      ),
-                      
+                      _buildDetailSection('Cycle Information', [
+                        _DetailRow(
+                          'Flow Intensity',
+                          cycle.flowIntensity.displayName,
+                          icon: cycle.flowIntensity.icon,
+                          color: cycle.flowIntensity.color,
+                        ),
+                        if (cycle.isCompleted)
+                          _DetailRow(
+                            'Duration',
+                            '${cycle.lengthInDays} days',
+                            icon: Icons.timeline,
+                            color: Colors.blue,
+                          ),
+                        _DetailRow(
+                          'Start Date',
+                          DateFormat.yMMMEd().format(cycle.startDate),
+                          icon: Icons.play_arrow,
+                          color: Colors.green,
+                        ),
+                        if (cycle.endDate != null)
+                          _DetailRow(
+                            'End Date',
+                            DateFormat.yMMMEd().format(cycle.endDate!),
+                            icon: Icons.stop,
+                            color: Colors.red,
+                          ),
+                      ]),
+
                       const SizedBox(height: 24),
-                      
+
                       // Wellbeing
-                      _buildDetailSection(
-                        'Wellbeing',
-                        [
-                          _DetailRow('Mood', cycle.wellbeing.moodDescription, 
-                                   icon: Icons.mood, color: Colors.purple,
-                                   rating: cycle.wellbeing.mood),
-                          _DetailRow('Energy', cycle.wellbeing.energyDescription, 
-                                   icon: Icons.battery_charging_full, color: Colors.orange,
-                                   rating: cycle.wellbeing.energy),
-                          _DetailRow('Pain Level', cycle.wellbeing.painDescription, 
-                                   icon: Icons.healing, color: Colors.red,
-                                   rating: cycle.wellbeing.pain),
-                        ],
-                      ),
-                      
+                      _buildDetailSection('Wellbeing', [
+                        _DetailRow(
+                          'Mood',
+                          cycle.wellbeing.moodDescription,
+                          icon: Icons.mood,
+                          color: Colors.purple,
+                          rating: cycle.wellbeing.mood,
+                        ),
+                        _DetailRow(
+                          'Energy',
+                          cycle.wellbeing.energyDescription,
+                          icon: Icons.battery_charging_full,
+                          color: Colors.orange,
+                          rating: cycle.wellbeing.energy,
+                        ),
+                        _DetailRow(
+                          'Pain Level',
+                          cycle.wellbeing.painDescription,
+                          icon: Icons.healing,
+                          color: Colors.red,
+                          rating: cycle.wellbeing.pain,
+                        ),
+                      ]),
+
                       if (cycle.symptoms.isNotEmpty) ...[
                         const SizedBox(height: 24),
                         _buildSymptomsSection(cycle.symptoms),
                       ],
-                      
+
                       if (cycle.notes.isNotEmpty) ...[
                         const SizedBox(height: 24),
                         _buildNotesSection(cycle.notes),
                       ],
-                      
+
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -1189,10 +1266,7 @@ class _CycleDetailsSheet extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         ...children,
@@ -1202,22 +1276,21 @@ class _CycleDetailsSheet extends StatelessWidget {
 
   Widget _buildSymptomsSection(List<Symptom> symptoms) {
     final categories = Symptom.allCategories;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Symptoms',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         ...categories.map((category) {
-          final categorySymptoms = symptoms.where((s) => s.category == category).toList();
+          final categorySymptoms = symptoms
+              .where((s) => s.category == category)
+              .toList();
           if (categorySymptoms.isEmpty) return const SizedBox.shrink();
-          
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Column(
@@ -1234,29 +1307,42 @@ class _CycleDetailsSheet extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 6,
-                  children: categorySymptoms.map((symptom) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: symptom.color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: symptom.color.withOpacity(0.3)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(symptom.icon, size: 16, color: symptom.color),
-                        const SizedBox(width: 6),
-                        Text(
-                          symptom.displayName,
-                          style: TextStyle(
-                            color: symptom.color,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
+                  children: categorySymptoms
+                      .map(
+                        (symptom) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: symptom.color.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: symptom.color.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                symptom.icon,
+                                size: 16,
+                                color: symptom.color,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                symptom.displayName,
+                                style: TextStyle(
+                                  color: symptom.color,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  )).toList(),
+                      )
+                      .toList(),
                 ),
               ],
             ),
@@ -1272,10 +1358,7 @@ class _CycleDetailsSheet extends StatelessWidget {
       children: [
         const Text(
           'Notes',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Container(
@@ -1286,10 +1369,7 @@ class _CycleDetailsSheet extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade200),
           ),
-          child: Text(
-            notes,
-            style: TextStyle(color: Colors.grey.shade700),
-          ),
+          child: Text(notes, style: TextStyle(color: Colors.grey.shade700)),
         ),
       ],
     );
@@ -1337,7 +1417,9 @@ class _DetailRow extends StatelessWidget {
                 return Icon(
                   Icons.star,
                   size: 16,
-                  color: index < rating! ? (color ?? Colors.grey.shade600) : Colors.grey.shade300,
+                  color: index < rating!
+                      ? (color ?? Colors.grey.shade600)
+                      : Colors.grey.shade300,
                 );
               }),
             ),

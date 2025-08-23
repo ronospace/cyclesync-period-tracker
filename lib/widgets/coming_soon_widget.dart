@@ -58,29 +58,18 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
       vsync: this,
     )..repeat();
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     _shimmerAnimation = Tween<double>(
       begin: -1.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.linear,
-    ));
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.linear));
   }
 
   @override
@@ -200,7 +189,8 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                   children: [
                     Text(
                       widget.title,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -209,8 +199,8 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                     Text(
                       widget.description,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.8),
-                          ),
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
                     ),
                   ],
                 ),
@@ -231,8 +221,8 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
                 Text(
                   'Expected: ${widget.estimatedDate}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
@@ -257,18 +247,18 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.2 + 0.1 * _pulseAnimation.value),
+            color: accentColor.withValues(
+              alpha: 0.2 + 0.1 * _pulseAnimation.value,
+            ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: accentColor.withValues(alpha: 0.5 + 0.3 * _pulseAnimation.value),
+              color: accentColor.withValues(
+                alpha: 0.5 + 0.3 * _pulseAnimation.value,
+              ),
               width: 2,
             ),
           ),
-          child: Icon(
-            widget.icon,
-            size: 24,
-            color: Colors.white,
-          ),
+          child: Icon(widget.icon, size: 24, color: Colors.white),
         );
       },
     );
@@ -306,32 +296,34 @@ class _ComingSoonWidgetState extends State<ComingSoonWidget>
         Text(
           'Planned Features:',
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 8),
-        ...widget.features!.map((feature) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.check_circle_outline,
-                    size: 16,
-                    color: Colors.white.withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      feature,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.7),
-                          ),
+        ...widget.features!.map(
+          (feature) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 16,
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    feature,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.7),
                     ),
                   ),
-                ],
-              ),
-            )),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -400,9 +392,9 @@ class ComingSoonSection extends StatelessWidget {
             child: Text(
               title,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryPink,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryPink,
+              ),
             ),
           ),
           ...features,
@@ -416,7 +408,8 @@ class ComingSoonSection extends StatelessWidget {
 class ComingSoonFeatures {
   static const aiPoweredPredictions = ComingSoonWidget(
     title: 'AI-Powered Predictions',
-    description: 'Advanced machine learning algorithms to predict your cycle with 99% accuracy',
+    description:
+        'Advanced machine learning algorithms to predict your cycle with 99% accuracy',
     icon: Icons.psychology,
     estimatedDate: 'Q2 2024',
     status: 'In Development',
@@ -448,7 +441,8 @@ class ComingSoonFeatures {
 
   static const arVisualizations = ComingSoonWidget(
     title: 'AR Visualizations',
-    description: 'Augmented reality educational content and cycle visualization',
+    description:
+        'Augmented reality educational content and cycle visualization',
     icon: Icons.view_in_ar,
     estimatedDate: 'Q4 2024',
     status: 'Research Phase',

@@ -12,7 +12,7 @@ class PerformanceOptimizationService {
   PerformanceOptimizationService._internal();
 
   // Cache management
-  final Map<String, CacheItem> _cache = LinkedHashMap<String, CacheItem>();
+  final Map<String, CacheItem> _cache = <String, CacheItem>{};
   final int _maxCacheSize = 1000;
   final Duration _defaultCacheDuration = const Duration(hours: 1);
 

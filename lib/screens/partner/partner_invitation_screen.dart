@@ -6,14 +6,15 @@ class PartnerInvitationScreen extends StatefulWidget {
   const PartnerInvitationScreen({super.key});
 
   @override
-  State<PartnerInvitationScreen> createState() => _PartnerInvitationScreenState();
+  State<PartnerInvitationScreen> createState() =>
+      _PartnerInvitationScreenState();
 }
 
 class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
-  
+
   bool _isLoading = false;
   SharingPermissionLevel _selectedPermission = SharingPermissionLevel.view;
   final Set<SharedDataType> _selectedDataTypes = {
@@ -82,9 +83,9 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
           const SizedBox(height: 12),
           Text(
             'Share Your Cycle Journey',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
@@ -106,9 +107,9 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
       children: [
         Text(
           'Partner\'s Email',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         TextFormField(
@@ -117,9 +118,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
           decoration: InputDecoration(
             hintText: 'Enter your partner\'s email address',
             prefixIcon: const Icon(Icons.email_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -141,9 +140,9 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
       children: [
         Text(
           'Permission Level',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 12),
         ...SharingPermissionLevel.values.map((permission) {
@@ -170,9 +169,9 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
       children: [
         Text(
           'Data to Share',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         Text(
@@ -209,9 +208,9 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
       children: [
         Text(
           'Personal Message (Optional)',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
         TextFormField(
@@ -219,9 +218,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
           maxLines: 3,
           decoration: InputDecoration(
             hintText: 'Add a personal message to your invitation...',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ],
@@ -247,10 +244,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
               )
             : const Text(
                 'Send Invitation',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
       ),
     );
@@ -270,12 +264,14 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
             const SizedBox(height: 24),
             Text(
               'Sent Invitations',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
-            ...snapshot.data!.map((invitation) => _buildInvitationCard(invitation)),
+            ...snapshot.data!.map(
+              (invitation) => _buildInvitationCard(invitation),
+            ),
           ],
         );
       },
@@ -477,16 +473,17 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
     });
 
     try {
-      final invitationId = await PartnerSharingService.instance.sendPartnerInvitation(
-        partnerEmail: _emailController.text.trim(),
-        relationshipType: PartnerType.romanticPartner, // Default type
-        customMessage: _messageController.text.trim().isEmpty 
-            ? null 
-            : _messageController.text.trim(),
-        customPermissions: {
-          for (final dt in _selectedDataTypes) dt: _selectedPermission,
-        },
-      );
+      final invitationId = await PartnerSharingService.instance
+          .sendPartnerInvitation(
+            partnerEmail: _emailController.text.trim(),
+            relationshipType: PartnerType.romanticPartner, // Default type
+            customMessage: _messageController.text.trim().isEmpty
+                ? null
+                : _messageController.text.trim(),
+            customPermissions: {
+              for (final dt in _selectedDataTypes) dt: _selectedPermission,
+            },
+          );
       final success = invitationId != null;
 
       if (success) {
@@ -505,11 +502,9 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       setState(() {
         _isLoading = false;
@@ -533,7 +528,8 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
 
   Future<void> _cancelInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService.instance.cancelPartnerInvitation(invitationId);
+      final success = await PartnerSharingService.instance
+          .cancelPartnerInvitation(invitationId);
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -544,9 +540,7 @@ class _PartnerInvitationScreenState extends State<PartnerInvitationScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error cancelling invitation: $e'),
-        ),
+        SnackBar(content: Text('Error cancelling invitation: $e')),
       );
     }
   }

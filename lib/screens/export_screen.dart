@@ -16,19 +16,20 @@ class ExportScreen extends StatefulWidget {
   State<ExportScreen> createState() => _ExportScreenState();
 }
 
-class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMixin {
+class _ExportScreenState extends State<ExportScreen>
+    with TickerProviderStateMixin {
   bool _isLoading = false;
   String? _statusMessage;
   List<CycleData> _cycles = [];
   List<DailyLogEntry> _dailyLogs = [];
   late TabController _tabController;
-  
+
   // Export options
   bool _includeCharts = true;
   bool _includeInsights = true;
   bool _includeRawData = false;
   bool _includeDailyLogs = true;
-  
+
   // Date range for filtering
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 365));
   DateTime _endDate = DateTime.now();
@@ -56,22 +57,35 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
       // Load cycles and daily logs
       final cycleData = await FirebaseService.getCycles(limit: 1000);
       // Convert to models (simplified for now)
-      final cycles = cycleData.map((cycleMap) => CycleData(
-        id: cycleMap['id'] ?? '',
-        startDate: (cycleMap['start_date'] as DateTime?) ?? DateTime.now(),
-        endDate: cycleMap['end_date'] as DateTime?,
-        symptoms: (cycleMap['symptoms'] as List<dynamic>?)?.map((s) => 
-          Symptom.fromName(s['name'] ?? '') ?? Symptom.allSymptoms.first
-        ).toList() ?? [],
-        wellbeing: WellbeingData(
-          mood: (cycleMap['mood'] as num?)?.toDouble() ?? 3.0,
-          energy: (cycleMap['energy'] as num?)?.toDouble() ?? 3.0,
-          pain: (cycleMap['pain'] as num?)?.toDouble() ?? 1.0,
-        ),
-        notes: cycleMap['notes'] as String? ?? '',
-        createdAt: (cycleMap['created_at'] as DateTime?) ?? DateTime.now(),
-        updatedAt: (cycleMap['updated_at'] as DateTime?) ?? DateTime.now(),
-      )).toList();
+      final cycles = cycleData
+          .map(
+            (cycleMap) => CycleData(
+              id: cycleMap['id'] ?? '',
+              startDate:
+                  (cycleMap['start_date'] as DateTime?) ?? DateTime.now(),
+              endDate: cycleMap['end_date'] as DateTime?,
+              symptoms:
+                  (cycleMap['symptoms'] as List<dynamic>?)
+                      ?.map(
+                        (s) =>
+                            Symptom.fromName(s['name'] ?? '') ??
+                            Symptom.allSymptoms.first,
+                      )
+                      .toList() ??
+                  [],
+              wellbeing: WellbeingData(
+                mood: (cycleMap['mood'] as num?)?.toDouble() ?? 3.0,
+                energy: (cycleMap['energy'] as num?)?.toDouble() ?? 3.0,
+                pain: (cycleMap['pain'] as num?)?.toDouble() ?? 1.0,
+              ),
+              notes: cycleMap['notes'] as String? ?? '',
+              createdAt:
+                  (cycleMap['created_at'] as DateTime?) ?? DateTime.now(),
+              updatedAt:
+                  (cycleMap['updated_at'] as DateTime?) ?? DateTime.now(),
+            ),
+          )
+          .toList();
 
       // For now, daily logs will be empty but the structure is ready
       final dailyLogs = <DailyLogEntry>[];
@@ -199,17 +213,25 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
   }
 
   List<CycleData> _getFilteredCycles() {
-    return _cycles.where((cycle) =>
-      cycle.startDate.isAfter(_startDate.subtract(const Duration(days: 1))) &&
-      cycle.startDate.isBefore(_endDate.add(const Duration(days: 1)))
-    ).toList();
+    return _cycles
+        .where(
+          (cycle) =>
+              cycle.startDate.isAfter(
+                _startDate.subtract(const Duration(days: 1)),
+              ) &&
+              cycle.startDate.isBefore(_endDate.add(const Duration(days: 1))),
+        )
+        .toList();
   }
 
   List<DailyLogEntry> _getFilteredDailyLogs() {
-    return _dailyLogs.where((log) =>
-      log.date.isAfter(_startDate.subtract(const Duration(days: 1))) &&
-      log.date.isBefore(_endDate.add(const Duration(days: 1)))
-    ).toList();
+    return _dailyLogs
+        .where(
+          (log) =>
+              log.date.isAfter(_startDate.subtract(const Duration(days: 1))) &&
+              log.date.isBefore(_endDate.add(const Duration(days: 1))),
+        )
+        .toList();
   }
 
   void _showSuccessSnackBar(String message) {
@@ -251,29 +273,32 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
           tabs: const [
             Tab(text: 'Reports', icon: Icon(Icons.description, size: 16)),
             Tab(text: 'Data Export', icon: Icon(Icons.download, size: 16)),
-            Tab(text: 'Backup & Sync', icon: Icon(Icons.cloud_upload, size: 16)),
+            Tab(
+              text: 'Backup & Sync',
+              icon: Icon(Icons.cloud_upload, size: 16),
+            ),
           ],
         ),
       ),
-      body: _isLoading 
-        ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: _isLoading
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(_statusMessage ?? 'Processing...'),
+                ],
+              ),
+            )
+          : TabBarView(
+              controller: _tabController,
               children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text(_statusMessage ?? 'Processing...'),
+                _buildReportsTab(),
+                _buildDataExportTab(),
+                _buildBackupTab(),
               ],
             ),
-          )
-        : TabBarView(
-            controller: _tabController,
-            children: [
-              _buildReportsTab(),
-              _buildDataExportTab(),
-              _buildBackupTab(),
-            ],
-          ),
     );
   }
 
@@ -285,9 +310,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
         children: [
           Text(
             'Health Reports',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -319,7 +344,10 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
                 backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -336,9 +364,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
         children: [
           Text(
             'Data Export',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -350,16 +378,18 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
           // Export Format Cards
           _buildExportFormatCard(
             title: 'CSV Spreadsheet',
-            description: 'Export data in CSV format for Excel, Google Sheets, or other spreadsheet applications',
+            description:
+                'Export data in CSV format for Excel, Google Sheets, or other spreadsheet applications',
             icon: Icons.table_chart,
             color: Colors.green,
             onTap: _exportCSV,
           ),
           const SizedBox(height: 16),
-          
+
           _buildExportFormatCard(
             title: 'JSON Data',
-            description: 'Export complete data structure for developers or advanced analysis',
+            description:
+                'Export complete data structure for developers or advanced analysis',
             icon: Icons.code,
             color: Colors.orange,
             onTap: _exportJSON,
@@ -382,9 +412,12 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
                   const SizedBox(height: 16),
                   SwitchListTile(
                     title: const Text('Include Daily Logs'),
-                    subtitle: const Text('Include daily mood, energy, and symptom logs'),
+                    subtitle: const Text(
+                      'Include daily mood, energy, and symptom logs',
+                    ),
                     value: _includeDailyLogs,
-                    onChanged: (value) => setState(() => _includeDailyLogs = value),
+                    onChanged: (value) =>
+                        setState(() => _includeDailyLogs = value),
                   ),
                 ],
               ),
@@ -403,9 +436,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
         children: [
           Text(
             'Backup & Sync',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -417,7 +450,8 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
           // Backup Options
           _buildBackupCard(
             title: 'Complete Backup',
-            description: 'Create a full backup of all your cycle data, settings, and analytics',
+            description:
+                'Create a full backup of all your cycle data, settings, and analytics',
             icon: Icons.backup,
             color: Colors.blue,
             onTap: _exportJSON,
@@ -455,9 +489,8 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
                       const SizedBox(width: 8),
                       Text(
                         'Import Data',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -493,9 +526,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
           children: [
             Text(
               'Date Range',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -534,19 +567,31 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
                 _buildQuickDateButton('Last Month', () {
                   setState(() {
                     _endDate = DateTime.now();
-                    _startDate = DateTime(_endDate.year, _endDate.month - 1, _endDate.day);
+                    _startDate = DateTime(
+                      _endDate.year,
+                      _endDate.month - 1,
+                      _endDate.day,
+                    );
                   });
                 }),
                 _buildQuickDateButton('Last 3 Months', () {
                   setState(() {
                     _endDate = DateTime.now();
-                    _startDate = DateTime(_endDate.year, _endDate.month - 3, _endDate.day);
+                    _startDate = DateTime(
+                      _endDate.year,
+                      _endDate.month - 3,
+                      _endDate.day,
+                    );
                   });
                 }),
                 _buildQuickDateButton('Last Year', () {
                   setState(() {
                     _endDate = DateTime.now();
-                    _startDate = DateTime(_endDate.year - 1, _endDate.month, _endDate.day);
+                    _startDate = DateTime(
+                      _endDate.year - 1,
+                      _endDate.month,
+                      _endDate.day,
+                    );
                   });
                 }),
                 _buildQuickDateButton('All Time', () {
@@ -583,9 +628,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
           children: [
             Text(
               'Report Content',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             SwitchListTile(
@@ -624,9 +669,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
           children: [
             Text(
               'Data Summary',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Row(
@@ -678,10 +723,7 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
         ),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
       ],
     );
@@ -705,7 +747,7 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -763,7 +805,7 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -832,7 +874,9 @@ class _ExportScreenState extends State<ExportScreen> with TickerProviderStateMix
       context: context,
       builder: (context) => AlertDialog(
         title: Text('$feature Coming Soon'),
-        content: Text('$feature is currently in development and will be available in a future update.'),
+        content: Text(
+          '$feature is currently in development and will be available in a future update.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

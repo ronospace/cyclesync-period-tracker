@@ -57,10 +57,7 @@ class LoadingShimmer extends StatefulWidget {
   }
 
   /// Create a shimmer effect for circular avatars
-  static Widget circle({
-    Key? key,
-    double radius = 24,
-  }) {
+  static Widget circle({Key? key, double radius = 24}) {
     return LoadingShimmer(
       key: key,
       child: Container(
@@ -75,10 +72,7 @@ class LoadingShimmer extends StatefulWidget {
   }
 
   /// Create a complex shimmer layout for the home screen cards
-  static Widget homeCard({
-    Key? key,
-    double height = 180,
-  }) {
+  static Widget homeCard({Key? key, double height = 180}) {
     return LoadingShimmer(
       key: key,
       child: Container(
@@ -171,9 +165,7 @@ class LoadingShimmer extends StatefulWidget {
   }
 
   /// Create a shimmer for the metrics grid
-  static Widget metricsGrid({
-    Key? key,
-  }) {
+  static Widget metricsGrid({Key? key}) {
     return LoadingShimmer(
       key: key,
       child: GridView.count(
@@ -183,50 +175,53 @@ class LoadingShimmer extends StatefulWidget {
         childAspectRatio: 2.2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        children: List.generate(4, (index) => Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      height: 18,
-                      width: 18,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(4),
+        children: List.generate(
+          4,
+          (index) => Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 18,
+                        width: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      height: 12,
-                      width: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(4),
+                      const SizedBox(width: 8),
+                      Container(
+                        height: 12,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Container(
-                  height: 16,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(4),
+                    ],
                   ),
-                ),
-              ],
+                  Container(
+                    height: 16,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        )),
+        ),
       ),
     );
   }
@@ -248,13 +243,9 @@ class _LoadingShimmerState extends State<LoadingShimmer>
       vsync: this,
     );
 
-    _animation = Tween<double>(
-      begin: -1.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
     if (widget.enabled) {
       _animationController.repeat();
@@ -286,13 +277,15 @@ class _LoadingShimmerState extends State<LoadingShimmer>
     }
 
     final theme = Theme.of(context);
-    final baseColor = widget.baseColor ?? 
-        (theme.brightness == Brightness.light 
-            ? Colors.grey.shade300 
+    final baseColor =
+        widget.baseColor ??
+        (theme.brightness == Brightness.light
+            ? Colors.grey.shade300
             : Colors.grey.shade700);
-    final highlightColor = widget.highlightColor ?? 
-        (theme.brightness == Brightness.light 
-            ? Colors.grey.shade100 
+    final highlightColor =
+        widget.highlightColor ??
+        (theme.brightness == Brightness.light
+            ? Colors.grey.shade100
             : Colors.grey.shade600);
 
     return AnimatedBuilder(
@@ -304,11 +297,7 @@ class _LoadingShimmerState extends State<LoadingShimmer>
               begin: Alignment.topLeft,
               end: Alignment.centerRight,
               stops: const [0.0, 0.5, 1.0],
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               transform: GradientRotation(_animation.value * 3.14159 / 4),
             ).createShader(bounds);
           },
@@ -326,16 +315,19 @@ extension ShimmerWidgets on LoadingShimmer {
   static Widget quickActions() {
     return LoadingShimmer(
       child: Row(
-        children: List.generate(4, (index) => Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < 3 ? 12 : 0),
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(12),
+        children: List.generate(
+          4,
+          (index) => Expanded(
+            child: Container(
+              margin: EdgeInsets.only(right: index < 3 ? 12 : 0),
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
-        )),
+        ),
       ),
     );
   }
@@ -344,54 +336,57 @@ extension ShimmerWidgets on LoadingShimmer {
   static Widget activityList() {
     return LoadingShimmer(
       child: Column(
-        children: List.generate(3, (index) => Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Row(
-            children: [
-              Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  shape: BoxShape.circle,
+        children: List.generate(
+          3,
+          (index) => Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 14,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(4),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 14,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      height: 12,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(4),
+                      const SizedBox(height: 6),
+                      Container(
+                        height: 12,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                height: 12,
-                width: 50,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(4),
+                Container(
+                  height: 12,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        )),
+        ),
       ),
     );
   }

@@ -14,19 +14,19 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
-  
+
   List<FeedPost> _posts = [];
   List<String> _trendingTopics = [];
   bool _isLoading = false;
   bool _hasMore = true;
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
     _loadFeed();
     _loadTrendingTopics();
-    
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -44,15 +44,15 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
 
   Future<void> _loadFeed() async {
     if (_isLoading) return;
-    
+
     setState(() => _isLoading = true);
-    
+
     try {
       final posts = await SocialFeedService.getFeedPosts(
         category: _getSelectedCategory(),
         limit: 20,
       );
-      
+
       setState(() {
         _posts = posts;
         _hasMore = posts.length == 20;
@@ -66,16 +66,16 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
 
   Future<void> _loadMorePosts() async {
     if (_isLoading || !_hasMore) return;
-    
+
     setState(() => _isLoading = true);
-    
+
     try {
       final posts = await SocialFeedService.getFeedPosts(
         category: _getSelectedCategory(),
         offset: _posts.length,
         limit: 10,
       );
-      
+
       setState(() {
         _posts.addAll(posts);
         _hasMore = posts.length == 10;
@@ -133,9 +133,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.pink, Colors.purple],
-                ),
+                gradient: LinearGradient(colors: [Colors.pink, Colors.purple]),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -202,17 +200,28 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
                 itemBuilder: (context, index) {
                   final topic = _trendingTopics[index];
                   return Container(
-                    margin: EdgeInsets.only(left: index == 0 ? 16 : 8, right: 8),
+                    margin: EdgeInsets.only(
+                      left: index == 0 ? 16 : 8,
+                      right: 8,
+                    ),
                     child: InkWell(
                       onTap: () => _searchTopic(topic),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.pink.withOpacity(0.3), Colors.purple.withOpacity(0.3)],
+                            colors: [
+                              Colors.pink.withValues(alpha: 0.3),
+                              Colors.purple.withValues(alpha: 0.3),
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.pink.withOpacity(0.5)),
+                          border: Border.all(
+                            color: Colors.pink.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: Text(
                           '#$topic',
@@ -227,7 +236,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
                 },
               ),
             ),
-          
+
           // Feed Content
           Expanded(
             child: TabBarView(
@@ -282,7 +291,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
               ),
             );
           }
-          
+
           return _buildPostCard(_posts[index]);
         },
       ),
@@ -296,15 +305,12 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.grey[900]!,
-            Colors.grey[800]!,
-          ],
+          colors: [Colors.grey[900]!, Colors.grey[800]!],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: Offset(0, 4),
           ),
@@ -343,10 +349,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
                       ),
                       Text(
                         '${_formatTimeAgo(post.createdAt)} • ${post.location}',
-                        style: TextStyle(
-                          color: Colors.grey[400],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[400], fontSize: 12),
                       ),
                     ],
                   ),
@@ -355,20 +358,16 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
               ],
             ),
           ),
-          
+
           // Content
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               post.content,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                height: 1.5,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 16, height: 1.5),
             ),
           ),
-          
+
           // Tags
           if (post.tags.isNotEmpty)
             Padding(
@@ -387,7 +386,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
                 }).toList(),
               ),
             ),
-          
+
           // Actions
           Padding(
             padding: const EdgeInsets.all(16),
@@ -435,7 +434,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
       FeedCategory.tips: [Colors.orange, Colors.yellow],
       FeedCategory.support: [Colors.green, Colors.teal],
     };
-    
+
     final labels = {
       FeedCategory.forYou: 'For You',
       FeedCategory.stories: 'Story',
@@ -475,10 +474,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
             const SizedBox(width: 4),
             Text(
               _formatCount(count),
-              style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.grey[400], fontSize: 12),
             ),
           ],
         ],
@@ -503,7 +499,7 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
   String _formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inMinutes < 60) {
       return '${difference.inMinutes}m';
     } else if (difference.inHours < 24) {
@@ -565,6 +561,8 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
 
 // Supporting widgets and models would be implemented separately
 class CreatePostSheet extends StatelessWidget {
+  const CreatePostSheet({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -588,8 +586,8 @@ class CreatePostSheet extends StatelessWidget {
 
 class CommentsSheet extends StatelessWidget {
   final String postId;
-  
-  const CommentsSheet({required this.postId});
+
+  const CommentsSheet({super.key, required this.postId});
 
   @override
   Widget build(BuildContext context) {

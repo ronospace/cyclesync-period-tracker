@@ -22,7 +22,7 @@ class DataCacheManager {
   final EncryptionService _encryption = EncryptionService.instance;
   final Map<String, dynamic> _memoryCache = {};
   Timer? _cleanupTimer;
-  
+
   bool _isInitialized = false;
   int _cacheSize = 0;
 
@@ -32,19 +32,18 @@ class DataCacheManager {
 
     try {
       debugPrint('🗂️ Initializing DataCacheManager...');
-      
+
       _prefs = await SharedPreferences.getInstance();
       await _encryption.initialize();
-      
+
       // Load cache metadata
       await _loadCacheMetadata();
-      
+
       // Start cleanup timer
       _startCleanupTimer();
-      
+
       _isInitialized = true;
       debugPrint('✅ DataCacheManager initialized successfully');
-      
     } catch (e) {
       debugPrint('❌ Failed to initialize DataCacheManager: $e');
       rethrow;
@@ -98,7 +97,7 @@ class DataCacheManager {
         }
         return false;
       });
-      
+
       debugPrint('🧹 Cleaned up expired cache entries');
     } catch (e) {
       debugPrint('⚠️ Error during cache cleanup: $e');
@@ -108,27 +107,27 @@ class DataCacheManager {
   /// Cache cycles data
   Future<void> cacheCycles(List<CycleData> cycles) async {
     try {
-      final cacheKey = '$_cyclesCacheKey-${DateTime.now().millisecondsSinceEpoch ~/ (1000 * 60 * 5)}'; // 5-minute buckets
-      
       // Convert to serializable format
       final cyclesJson = cycles.map((cycle) => cycle.toFirestore()).toList();
       final jsonString = json.encode(cyclesJson);
-      
+
       // Encrypt and store
       final encryptedData = await _encryption.encrypt(jsonString);
       await _prefs?.setString(_cyclesCacheKey, encryptedData);
-      
+
       // Update memory cache
       _memoryCache[_cyclesCacheKey] = {
         'data': cycles,
         'timestamp': DateTime.now().toIso8601String(),
       };
-      
+
       // Update cache size
       _cacheSize += jsonString.length;
       await _saveCacheMetadata();
-      
-      debugPrint('💾 Cached ${cycles.length} cycles (${jsonString.length} bytes)');
+
+      debugPrint(
+        '💾 Cached ${cycles.length} cycles (${jsonString.length} bytes)',
+      );
     } catch (e) {
       debugPrint('❌ Error caching cycles: $e');
     }
@@ -155,7 +154,7 @@ class DataCacheManager {
       // Decrypt and deserialize
       final jsonString = await _encryption.decrypt(encryptedData);
       final cyclesJson = json.decode(jsonString) as List;
-      
+
       final cycles = cyclesJson
           .map((json) => CycleData.fromFirestore(json as Map<String, dynamic>))
           .toList();
@@ -168,7 +167,6 @@ class DataCacheManager {
 
       debugPrint('📦 Retrieved ${cycles.length} cycles from cache');
       return cycles;
-      
     } catch (e) {
       debugPrint('⚠️ Error getting cached cycles: $e');
       return [];
@@ -181,22 +179,24 @@ class DataCacheManager {
       // Convert to serializable format
       final logsJson = dailyLogs.map((log) => log.toFirestore()).toList();
       final jsonString = json.encode(logsJson);
-      
+
       // Encrypt and store
       final encryptedData = await _encryption.encrypt(jsonString);
       await _prefs?.setString(_dailyLogsCacheKey, encryptedData);
-      
+
       // Update memory cache
       _memoryCache[_dailyLogsCacheKey] = {
         'data': dailyLogs,
         'timestamp': DateTime.now().toIso8601String(),
       };
-      
+
       // Update cache size
       _cacheSize += jsonString.length;
       await _saveCacheMetadata();
-      
-      debugPrint('💾 Cached ${dailyLogs.length} daily logs (${jsonString.length} bytes)');
+
+      debugPrint(
+        '💾 Cached ${dailyLogs.length} daily logs (${jsonString.length} bytes)',
+      );
     } catch (e) {
       debugPrint('❌ Error caching daily logs: $e');
     }
@@ -223,9 +223,14 @@ class DataCacheManager {
       // Decrypt and deserialize
       final jsonString = await _encryption.decrypt(encryptedData);
       final logsJson = json.decode(jsonString) as List;
-      
+
       final dailyLogs = logsJson
-          .map((json) => DailyLogEntry.fromFirestore(json as Map<String, dynamic>, json['id'] ?? ''))
+          .map(
+            (json) => DailyLogEntry.fromFirestore(
+              json as Map<String, dynamic>,
+              json['id'] ?? '',
+            ),
+          )
           .toList();
 
       // Update memory cache
@@ -236,7 +241,6 @@ class DataCacheManager {
 
       debugPrint('📦 Retrieved ${dailyLogs.length} daily logs from cache');
       return dailyLogs;
-      
     } catch (e) {
       debugPrint('⚠️ Error getting cached daily logs: $e');
       return [];
@@ -244,22 +248,27 @@ class DataCacheManager {
   }
 
   /// Cache analytics data
-  Future<void> cacheAnalytics(String key, Map<String, dynamic> analytics) async {
+  Future<void> cacheAnalytics(
+    String key,
+    Map<String, dynamic> analytics,
+  ) async {
     try {
       final cacheKey = '$_analyticsCacheKey-$key';
       final jsonString = json.encode(analytics);
-      
+
       // Encrypt and store
       final encryptedData = await _encryption.encrypt(jsonString);
       await _prefs?.setString(cacheKey, encryptedData);
-      
+
       // Update memory cache with expiration
       _memoryCache[cacheKey] = {
         'data': analytics,
         'timestamp': DateTime.now().toIso8601String(),
-        'expiry': DateTime.now().add(const Duration(hours: 6)).toIso8601String(),
+        'expiry': DateTime.now()
+            .add(const Duration(hours: 6))
+            .toIso8601String(),
       };
-      
+
       debugPrint('💾 Cached analytics: $key');
     } catch (e) {
       debugPrint('❌ Error caching analytics: $e');
@@ -270,7 +279,7 @@ class DataCacheManager {
   Future<Map<String, dynamic>?> getCachedAnalytics(String key) async {
     try {
       final cacheKey = '$_analyticsCacheKey-$key';
-      
+
       // Check memory cache first
       if (_memoryCache.containsKey(cacheKey)) {
         final cachedData = _memoryCache[cacheKey];
@@ -292,7 +301,6 @@ class DataCacheManager {
 
       debugPrint('📊 Retrieved analytics from cache: $key');
       return analytics;
-      
     } catch (e) {
       debugPrint('⚠️ Error getting cached analytics: $e');
       return null;
@@ -308,13 +316,13 @@ class DataCacheManager {
         'expiry': expiryTime.toIso8601String(),
         'timestamp': DateTime.now().toIso8601String(),
       };
-      
+
       final jsonString = json.encode(cacheData);
       final encryptedData = await _encryption.encrypt(jsonString);
-      
+
       await _prefs?.setString('cache_$key', encryptedData);
       _memoryCache['cache_$key'] = cacheData;
-      
+
       debugPrint('💾 Cached data: $key (TTL: ${ttl?.toString() ?? '24h'})');
     } catch (e) {
       debugPrint('❌ Error caching data: $e');
@@ -325,7 +333,7 @@ class DataCacheManager {
   Future<T?> getCachedData<T>(String key) async {
     try {
       final cacheKey = 'cache_$key';
-      
+
       // Check memory cache first
       if (_memoryCache.containsKey(cacheKey)) {
         final cachedData = _memoryCache[cacheKey];
@@ -344,7 +352,7 @@ class DataCacheManager {
       // Decrypt and deserialize
       final jsonString = await _encryption.decrypt(encryptedData);
       final cacheData = json.decode(jsonString) as Map<String, dynamic>;
-      
+
       // Check expiry
       final expiry = DateTime.parse(cacheData['expiry']);
       if (DateTime.now().isAfter(expiry)) {
@@ -356,7 +364,6 @@ class DataCacheManager {
 
       debugPrint('📦 Retrieved cached data: $key');
       return cacheData['data'] as T?;
-      
     } catch (e) {
       debugPrint('⚠️ Error getting cached data: $e');
       return null;
@@ -367,8 +374,9 @@ class DataCacheManager {
   CacheStats getCacheStats() {
     final keys = _prefs?.getKeys() ?? {};
     final cyclesCacheSize = _prefs?.getString(_cyclesCacheKey)?.length ?? 0;
-    final dailyLogsCacheSize = _prefs?.getString(_dailyLogsCacheKey)?.length ?? 0;
-    
+    final dailyLogsCacheSize =
+        _prefs?.getString(_dailyLogsCacheKey)?.length ?? 0;
+
     return CacheStats(
       totalKeys: keys.length,
       totalSize: _cacheSize,
@@ -397,11 +405,11 @@ class DataCacheManager {
             await _prefs?.remove(key);
           }
         }
-        
+
         _memoryCache.clear();
         _cacheSize = 0;
         await _saveCacheMetadata();
-        
+
         debugPrint('🗑️ Cleared all cache data');
       }
     } catch (e) {
@@ -413,11 +421,11 @@ class DataCacheManager {
   Future<void> optimizeCache() async {
     try {
       debugPrint('🔧 Starting cache optimization...');
-      
+
       final keys = _prefs?.getKeys() ?? {};
       int removedCount = 0;
       int freedBytes = 0;
-      
+
       for (final key in keys) {
         if (key.startsWith('cache_') || key.startsWith('cached_')) {
           try {
@@ -426,7 +434,7 @@ class DataCacheManager {
               // Try to decrypt and check expiry
               final decrypted = await _encryption.decrypt(data);
               final parsed = json.decode(decrypted);
-              
+
               if (parsed is Map && parsed.containsKey('expiry')) {
                 final expiry = DateTime.parse(parsed['expiry']);
                 if (DateTime.now().isAfter(expiry)) {
@@ -445,11 +453,13 @@ class DataCacheManager {
           }
         }
       }
-      
+
       _cacheSize = _cacheSize - freedBytes;
       await _saveCacheMetadata();
-      
-      debugPrint('✅ Cache optimization completed: removed $removedCount entries, freed $freedBytes bytes');
+
+      debugPrint(
+        '✅ Cache optimization completed: removed $removedCount entries, freed $freedBytes bytes',
+      );
     } catch (e) {
       debugPrint('❌ Error optimizing cache: $e');
     }
@@ -457,16 +467,16 @@ class DataCacheManager {
 
   /// Check if cache is healthy
   bool isCacheHealthy() {
-    return _isInitialized && 
-           _prefs != null && 
-           _cacheSize < (50 * 1024 * 1024); // Less than 50MB
+    return _isInitialized &&
+        _prefs != null &&
+        _cacheSize < (50 * 1024 * 1024); // Less than 50MB
   }
 
   /// Get cache health report
   CacheHealthReport getCacheHealthReport() {
     final stats = getCacheStats();
     final isHealthy = isCacheHealthy();
-    
+
     return CacheHealthReport(
       isHealthy: isHealthy,
       totalSize: stats.totalSize,
@@ -480,10 +490,12 @@ class DataCacheManager {
   /// Calculate cache fragmentation level
   double _calculateFragmentation() {
     final keys = _prefs?.getKeys() ?? {};
-    final cacheKeys = keys.where((k) => k.startsWith('cache_') || k.startsWith('cached_'));
-    
+    final cacheKeys = keys.where(
+      (k) => k.startsWith('cache_') || k.startsWith('cached_'),
+    );
+
     if (cacheKeys.isEmpty) return 0.0;
-    
+
     // Simple fragmentation calculation based on key count vs total size
     return (cacheKeys.length / (_cacheSize / 1024)).clamp(0.0, 1.0);
   }
@@ -491,19 +503,19 @@ class DataCacheManager {
   /// Get optimization recommendations
   List<String> _getOptimizationRecommendations(CacheStats stats) {
     final recommendations = <String>[];
-    
+
     if (stats.totalSize > 30 * 1024 * 1024) {
       recommendations.add('Consider clearing old cache entries');
     }
-    
+
     if (stats.memoryEntries > 100) {
       recommendations.add('Memory cache is growing large');
     }
-    
+
     if (_calculateFragmentation() > 0.7) {
       recommendations.add('Cache fragmentation is high - run optimization');
     }
-    
+
     return recommendations;
   }
 

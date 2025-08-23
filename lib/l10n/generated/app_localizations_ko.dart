@@ -229,7 +229,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accessibilitySettingsButton => 'Settings button';
 
   @override
-  String get homeTitle => 'CycleSync';
+  String get homeTitle => 'FlowSense';
 
   @override
   String homeWelcomeMessage(String name) {
@@ -756,7 +756,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get signOutDescription => 'Sign out of your account';
 
   @override
-  String get getHelpUsingCycleSync => 'Get help using CycleSync';
+  String get getHelpUsingFlowSense => 'Get help using FlowSense';
 
   @override
   String get viewSymptomPatterns => 'View symptom patterns and insights';
@@ -782,10 +782,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get aboutCycleSync => 'About CycleSync';
+  String get aboutFlowSense => 'About FlowSense';
 
   @override
-  String get cycleSyncVersion => 'CycleSync v1.0.0';
+  String get flowSenseVersion => 'FlowSense v1.0.0';
 
   @override
   String get modernCycleTrackingApp =>
@@ -892,7 +892,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get createAccount => 'Create Account';
 
   @override
-  String get joinCycleSyncCommunity => 'Join the CycleSync community';
+  String get joinFlowSenseCommunity => 'Join the FlowSense community';
 
   @override
   String get passwordHelp => 'At least 6 characters';

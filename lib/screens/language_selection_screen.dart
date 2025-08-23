@@ -8,14 +8,15 @@ class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
 
   @override
-  State<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();
+  State<LanguageSelectionScreen> createState() =>
+      _LanguageSelectionScreenState();
 }
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   bool _isAITranslationEnabled = false;
-  
+
   // Language definitions with native names
   static const Map<String, Map<String, String>> _languages = {
     'en': {
@@ -126,13 +127,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     if (_searchQuery.isEmpty) {
       return _languages.entries.toList();
     }
-    
+
     return _languages.entries.where((entry) {
       final lang = entry.value;
       final query = _searchQuery.toLowerCase();
       return lang['name']!.toLowerCase().contains(query) ||
-             lang['nativeName']!.toLowerCase().contains(query) ||
-             lang['region']!.toLowerCase().contains(query);
+          lang['nativeName']!.toLowerCase().contains(query) ||
+          lang['region']!.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -145,7 +146,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final localizationService = Provider.of<LocalizationService>(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final filteredLanguages = _filteredLanguages;
 
@@ -158,9 +159,11 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
         foregroundColor: theme.colorScheme.onSurface,
         actions: [
           IconButton(
-            icon: Icon(_isAITranslationEnabled 
-                ? Icons.translate 
-                : Icons.translate_outlined),
+            icon: Icon(
+              _isAITranslationEnabled
+                  ? Icons.translate
+                  : Icons.translate_outlined,
+            ),
             onPressed: () {
               setState(() {
                 _isAITranslationEnabled = !_isAITranslationEnabled;
@@ -184,7 +187,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: theme.shadowColor.withOpacity(0.1),
+                  color: theme.shadowColor.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -192,10 +195,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             ),
             child: Column(
               children: [
-                const AppLogo(
-                  size: 60,
-                  showText: true,
-                ),
+                const AppLogo(size: 60, showText: true),
                 const SizedBox(height: 16),
                 Text(
                   l10n.languageSelectorSubtitle,
@@ -207,7 +207,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ],
             ),
           ),
-          
+
           // Search bar
           Padding(
             padding: const EdgeInsets.all(16),
@@ -232,7 +232,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
               ),
               onChanged: (value) {
                 setState(() {
@@ -241,7 +243,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               },
             ),
           ),
-          
+
           // Results count
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -292,9 +294,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // Language list
           Expanded(
             child: ListView.builder(
@@ -304,20 +306,23 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 final entry = filteredLanguages[index];
                 final languageCode = entry.key;
                 final language = entry.value;
-                final isSelected = localizationService.currentLocale.languageCode == languageCode;
-                
+                final isSelected =
+                    localizationService.currentLocale.languageCode ==
+                    languageCode;
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: Material(
-                    color: isSelected 
+                    color: isSelected
                         ? theme.colorScheme.primaryContainer
                         : theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     elevation: isSelected ? 2 : 1,
-                    shadowColor: theme.shadowColor.withOpacity(0.1),
+                    shadowColor: theme.shadowColor.withValues(alpha: 0.1),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
-                      onTap: () => _selectLanguage(languageCode, localizationService),
+                      onTap: () =>
+                          _selectLanguage(languageCode, localizationService),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Row(
@@ -328,7 +333,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                               style: const TextStyle(fontSize: 24),
                             ),
                             const SizedBox(width: 16),
-                            
+
                             // Language info
                             Expanded(
                               child: Column(
@@ -336,38 +341,54 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                 children: [
                                   Text(
                                     language['nativeName']!,
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: isSelected 
-                                          ? theme.colorScheme.onPrimaryContainer
-                                          : theme.colorScheme.onSurface,
-                                    ),
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: isSelected
+                                              ? theme
+                                                    .colorScheme
+                                                    .onPrimaryContainer
+                                              : theme.colorScheme.onSurface,
+                                        ),
                                   ),
                                   const SizedBox(height: 2),
                                   Row(
                                     children: [
                                       Text(
                                         language['name']!,
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: isSelected
-                                              ? theme.colorScheme.onPrimaryContainer.withOpacity(0.8)
-                                              : theme.colorScheme.onSurfaceVariant,
-                                        ),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              color: isSelected
+                                                  ? theme
+                                                        .colorScheme
+                                                        .onPrimaryContainer
+                                                        .withValues(alpha: 0.8)
+                                                  : theme
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                            ),
                                       ),
                                       Text(
                                         ' • ${language['region']}',
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: isSelected
-                                              ? theme.colorScheme.onPrimaryContainer.withOpacity(0.6)
-                                              : theme.colorScheme.onSurfaceVariant.withOpacity(0.8),
-                                        ),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              color: isSelected
+                                                  ? theme
+                                                        .colorScheme
+                                                        .onPrimaryContainer
+                                                        .withValues(alpha: 0.6)
+                                                  : theme
+                                                        .colorScheme
+                                                        .onSurfaceVariant
+                                                        .withValues(alpha: 0.8),
+                                            ),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
-                            
+
                             // Selection indicator
                             if (isSelected)
                               Icon(
@@ -378,7 +399,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                             else
                               Icon(
                                 Icons.circle_outlined,
-                                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+                                color: theme.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.5),
                                 size: 24,
                               ),
                           ],
@@ -395,7 +417,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     );
   }
 
-  void _selectLanguage(String languageCode, LocalizationService localizationService) async {
+  void _selectLanguage(
+    String languageCode,
+    LocalizationService localizationService,
+  ) async {
     // Show loading indicator
     showDialog(
       context: context,
@@ -421,15 +446,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       // Change locale
       final locale = Locale(languageCode);
       await localizationService.setLocale(locale);
-      
+
       // If AI translation is enabled, initialize AI services
       if (_isAITranslationEnabled) {
         await _initializeAITranslation(languageCode);
       }
-      
+
       // Close loading dialog
       Navigator.of(context).pop();
-      
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -437,20 +462,22 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             children: [
               const Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 8),
-              Text('Language changed to ${_languages[languageCode]!['nativeName']}'),
+              Text(
+                'Language changed to ${_languages[languageCode]!['nativeName']}',
+              ),
             ],
           ),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 2),
         ),
       );
-      
+
       // Go back to previous screen
       Navigator.of(context).pop();
     } catch (e) {
       // Close loading dialog
       Navigator.of(context).pop();
-      
+
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -484,8 +511,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _isAITranslationEnabled 
-                  ? 'AI Translation is now ENABLED' 
+              _isAITranslationEnabled
+                  ? 'AI Translation is now ENABLED'
                   : 'AI Translation is now DISABLED',
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
@@ -506,7 +533,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 ),
               ),
             ] else ...[
-              const Text('Standard translations will be used without AI enhancement.'),
+              const Text(
+                'Standard translations will be used without AI enhancement.',
+              ),
               const SizedBox(height: 8),
               const Text('• Faster performance'),
               const Text('• Works offline'),
@@ -529,13 +558,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     // In a real app, this would connect to translation services like Google Translate API,
     // OpenAI API, or other AI translation services
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     // Here you would:
     // 1. Initialize AI translation service
     // 2. Download language-specific AI models if needed
     // 3. Set up real-time translation pipeline
     // 4. Configure medical/health terminology dictionaries
-    
+
     debugPrint('AI Translation initialized for language: $languageCode');
   }
 }

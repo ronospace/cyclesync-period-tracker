@@ -1,14 +1,14 @@
-# Terms of Service for CycleSync
+# Terms of Service for FlowSense
 
 Last updated: August 18, 2024
 
 ## Acceptance of Terms
 
-By downloading, installing, or using CycleSync, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.
+By downloading, installing, or using FlowSense, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.
 
 ## Description of Service
 
-CycleSync is a menstrual cycle tracking application that helps users:
+FlowSense is a menstrual cycle tracking application that helps users:
 - Track menstrual cycles and predict future periods
 - Monitor symptoms, mood, and health metrics
 - Generate personalized health insights and analytics
@@ -17,10 +17,10 @@ CycleSync is a menstrual cycle tracking application that helps users:
 
 ## Medical Disclaimer
 
-**IMPORTANT**: CycleSync is NOT a medical device and should not be used for medical diagnosis or treatment. Our app provides general health information and cycle predictions for informational purposes only.
+**IMPORTANT**: FlowSense is NOT a medical device and should not be used for medical diagnosis or treatment. Our app provides general health information and cycle predictions for informational purposes only.
 
 - Always consult with a healthcare professional for medical advice
-- Do not rely solely on CycleSync for contraception or fertility planning
+- Do not rely solely on FlowSense for contraception or fertility planning
 - Cycle predictions are estimates based on historical data and may not be accurate
 - If you experience unusual symptoms or health concerns, seek medical attention
 
@@ -43,7 +43,7 @@ You agree to:
 
 ## Intellectual Property
 
-- CycleSync and all related content are owned by us or our licensors
+- FlowSense and all related content are owned by us or our licensors
 - You may not copy, modify, distribute, or create derivative works
 - User-generated content remains yours, but you grant us license to use it for service provision
 - Feedback and suggestions may be used without compensation
@@ -57,7 +57,7 @@ You agree to:
 
 ## Limitations and Disclaimers
 
-CycleSync is provided "AS IS" without warranties of any kind. We disclaim all warranties, express or implied, including:
+FlowSense is provided "AS IS" without warranties of any kind. We disclaim all warranties, express or implied, including:
 - Accuracy of cycle predictions or health information
 - Uninterrupted or error-free operation
 - Fitness for a particular purpose
@@ -81,7 +81,7 @@ To the maximum extent permitted by law, we shall not be liable for any indirect,
 
 ## Prohibited Uses
 
-You may not use CycleSync to:
+You may not use FlowSense to:
 - Violate any laws or regulations
 - Transmit harmful or malicious content
 - Harass, abuse, or harm other users
@@ -126,8 +126,8 @@ You may not use CycleSync to:
 ## Contact Information
 
 For questions about these Terms of Service:
-- Email: support@cyclesync.app
-- Website: https://cyclesync.app/terms
+- Email: support@flowsense.app
+- Website: https://flowsense.app/terms
 
 ## Severability
 
@@ -135,8 +135,8 @@ If any provision of these terms is found to be unenforceable, the remaining prov
 
 ## Entire Agreement
 
-These terms, together with our Privacy Policy, constitute the entire agreement between you and CycleSync regarding the use of our service.
+These terms, together with our Privacy Policy, constitute the entire agreement between you and FlowSense regarding the use of our service.
 
 ---
 
-By using CycleSync, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+By using FlowSense, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.

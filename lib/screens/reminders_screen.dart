@@ -94,7 +94,7 @@ class _RemindersScreenState extends State<RemindersScreen>
         future: _reminderService.getTodaysReminders(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const SizedBox.shrink();
-          
+
           final todayCount = snapshot.data!.length;
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -102,7 +102,9 @@ class _RemindersScreenState extends State<RemindersScreen>
               _buildStatItem('Today', '$todayCount', Icons.today),
               _buildDivider(),
               StreamBuilder<List<Reminder>>(
-                stream: _reminderService.getUserReminders(status: ReminderStatus.active),
+                stream: _reminderService.getUserReminders(
+                  status: ReminderStatus.active,
+                ),
                 builder: (context, snapshot) {
                   final activeCount = snapshot.data?.length ?? 0;
                   return _buildStatItem('Active', '$activeCount', Icons.alarm);
@@ -129,15 +131,17 @@ class _RemindersScreenState extends State<RemindersScreen>
         Text(
           value,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.bold,
-              ),
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
-              ),
+            color: Theme.of(
+              context,
+            ).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+          ),
         ),
       ],
     );
@@ -147,7 +151,9 @@ class _RemindersScreenState extends State<RemindersScreen>
     return Container(
       height: 40,
       width: 1,
-      color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.3),
+      color: Theme.of(
+        context,
+      ).colorScheme.onPrimaryContainer.withValues(alpha: 0.3),
     );
   }
 
@@ -157,7 +163,9 @@ class _RemindersScreenState extends State<RemindersScreen>
       child: TabBar(
         controller: _tabController,
         labelColor: Theme.of(context).colorScheme.primary,
-        unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        unselectedLabelColor: Theme.of(
+          context,
+        ).colorScheme.onSurface.withValues(alpha: 0.6),
         indicator: UnderlineTabIndicator(
           borderSide: BorderSide(
             width: 2.0,
@@ -185,7 +193,8 @@ class _RemindersScreenState extends State<RemindersScreen>
           return EmptyState(
             icon: Icons.alarm_off,
             title: 'No Reminders Yet',
-            subtitle: 'Create your first reminder to stay on track with your cycle.',
+            subtitle:
+                'Create your first reminder to stay on track with your cycle.',
             actionText: 'Add Reminder',
             onActionPressed: () => _navigateToAddReminder(context),
           );
@@ -250,7 +259,9 @@ class _RemindersScreenState extends State<RemindersScreen>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: _getReminderColor(reminder.type).withOpacity(0.1),
+                      color: _getReminderColor(
+                        reminder.type,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -267,16 +278,17 @@ class _RemindersScreenState extends State<RemindersScreen>
                       children: [
                         Text(
                           reminder.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         if (reminder.description != null) ...[
                           const SizedBox(height: 4),
                           Text(
                             reminder.description!,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
                                 ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -331,7 +343,7 @@ class _RemindersScreenState extends State<RemindersScreen>
   Widget _buildReminderDetails(Reminder reminder) {
     final nextTime = reminder.nextOccurrence;
     final frequency = _getFrequencyDisplayText(reminder.frequency);
-    
+
     return Row(
       children: [
         _buildDetailChip(
@@ -357,9 +369,9 @@ class _RemindersScreenState extends State<RemindersScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -382,7 +394,7 @@ class _RemindersScreenState extends State<RemindersScreen>
   Widget _buildPriorityIndicator(ReminderPriority priority) {
     Color color;
     IconData icon;
-    
+
     switch (priority) {
       case ReminderPriority.low:
         color = Colors.green;
@@ -401,13 +413,13 @@ class _RemindersScreenState extends State<RemindersScreen>
         icon = Icons.warning;
         break;
     }
-    
+
     return Icon(icon, color: color, size: 18);
   }
 
   Widget _buildTemplates() {
     final templates = ReminderTemplates.templates;
-    
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: templates.length,
@@ -432,7 +444,9 @@ class _RemindersScreenState extends State<RemindersScreen>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getReminderColor(template.type).withOpacity(0.1),
+                  color: _getReminderColor(
+                    template.type,
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
@@ -450,14 +464,16 @@ class _RemindersScreenState extends State<RemindersScreen>
                     Text(
                       template.title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Text(
                       template.description,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -539,7 +555,7 @@ class _RemindersScreenState extends State<RemindersScreen>
   String _formatNextOccurrence(DateTime nextTime) {
     final now = DateTime.now();
     final difference = nextTime.difference(now);
-    
+
     if (difference.inDays == 0) {
       return 'Today ${DateFormat.jm().format(nextTime)}';
     } else if (difference.inDays == 1) {
@@ -554,9 +570,7 @@ class _RemindersScreenState extends State<RemindersScreen>
   void _navigateToAddReminder(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddReminderScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddReminderScreen()),
     );
   }
 
@@ -616,7 +630,7 @@ class _RemindersScreenState extends State<RemindersScreen>
       title: '${reminder.title} (Copy)',
       createdAt: DateTime.now(),
     );
-    
+
     final id = await _reminderService.createReminder(duplicated);
     if (id != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -644,10 +658,7 @@ class _RemindersScreenState extends State<RemindersScreen>
               Navigator.pop(context);
               _deleteReminder(reminder);
             },
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

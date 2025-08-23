@@ -15,7 +15,7 @@ void main() async {
     // Run diagnostics
     final results = await FirebaseDiagnostic.runDiagnostics();
     
-    print('\n' + '='*60);
+    print('\n${'='*60}');
     print('🎯 FINAL DIAGNOSTIC REPORT');
     print('='*60);
     

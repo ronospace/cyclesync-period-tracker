@@ -56,7 +56,7 @@ class ContactInfo {
       ),
       isAppUser: map['isAppUser'] ?? false,
       userId: map['userId'],
-      lastSynced: map['lastSynced'] != null 
+      lastSynced: map['lastSynced'] != null
           ? DateTime.parse(map['lastSynced'])
           : null,
     );
@@ -85,11 +85,7 @@ class ContactInfo {
   }
 }
 
-enum ContactPlatform {
-  phone,
-  whatsapp,
-  telegram,
-}
+enum ContactPlatform { phone, whatsapp, telegram }
 
 class ShareMessage {
   final String title;
@@ -105,17 +101,12 @@ class ShareMessage {
   });
 }
 
-enum ShareType {
-  cycleUpdate,
-  symptoms,
-  reminder,
-  insights,
-  custom,
-}
+enum ShareType { cycleUpdate, symptoms, reminder, insights, custom }
 
 /// Contact Integration Service for WhatsApp and Telegram
 class ContactIntegrationService {
-  static final ContactIntegrationService _instance = ContactIntegrationService._internal();
+  static final ContactIntegrationService _instance =
+      ContactIntegrationService._internal();
   factory ContactIntegrationService() => _instance;
   ContactIntegrationService._internal();
 
@@ -128,9 +119,13 @@ class ContactIntegrationService {
   static const String _shareHistoryCollection = 'share_history';
 
   // Platform method channels (would need native implementation)
-  static const MethodChannel _whatsappChannel = MethodChannel('cyclesync/whatsapp');
-  static const MethodChannel _telegramChannel = MethodChannel('cyclesync/telegram');
-  
+  static const MethodChannel _whatsappChannel = MethodChannel(
+    'cyclesync/whatsapp',
+  );
+  static const MethodChannel _telegramChannel = MethodChannel(
+    'cyclesync/telegram',
+  );
+
   // Predefined important contacts
   static const List<ContactInfo> _predefinedContacts = [
     ContactInfo(
@@ -145,7 +140,7 @@ class ContactIntegrationService {
   Future<bool> requestPermissions() async {
     try {
       final contactsPermission = await Permission.contacts.request();
-      
+
       if (contactsPermission != PermissionStatus.granted) {
         debugPrint('Contacts permission denied');
         return false;
@@ -182,7 +177,7 @@ class ContactIntegrationService {
       // This would require native Android/iOS implementation
       // to access WhatsApp contacts or use WhatsApp Business API
       final result = await _whatsappChannel.invokeMethod('getContacts');
-      
+
       if (result is List) {
         return result.map<ContactInfo>((contact) {
           return ContactInfo(
@@ -209,7 +204,7 @@ class ContactIntegrationService {
     try {
       // This would require Telegram API integration
       final result = await _telegramChannel.invokeMethod('getContacts');
-      
+
       if (result is List) {
         return result.map<ContactInfo>((contact) {
           return ContactInfo(
@@ -239,13 +234,13 @@ class ContactIntegrationService {
   /// Add predefined contact to user's contacts
   Future<bool> addPredefinedContact(String contactId) async {
     if (currentUserId == null) return false;
-    
+
     try {
       final contact = _predefinedContacts.firstWhere(
         (c) => c.id == contactId,
         orElse: () => throw Exception('Predefined contact not found'),
       );
-      
+
       await _saveContactToFirestore(contact);
       return true;
     } catch (e) {
@@ -283,7 +278,9 @@ class ContactIntegrationService {
       }
 
       // Check which contacts are app users
-      final updatedContacts = await _checkAppUsers(uniqueContacts.values.toList());
+      final updatedContacts = await _checkAppUsers(
+        uniqueContacts.values.toList(),
+      );
 
       // Save to Firestore
       await _saveContactsToFirestore(updatedContacts, forceRefresh);
@@ -317,7 +314,7 @@ class ContactIntegrationService {
       }
 
       final snapshot = await query.get();
-      
+
       return snapshot.docs
           .map((doc) => ContactInfo.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
@@ -346,19 +343,23 @@ class ContactIntegrationService {
       if (cleanNumber == null) return false;
 
       final shareText = _formatShareMessage(message);
-      final whatsappUrl = 'https://wa.me/$cleanNumber?text=${Uri.encodeComponent(shareText)}';
+      final whatsappUrl =
+          'https://wa.me/$cleanNumber?text=${Uri.encodeComponent(shareText)}';
 
       final canLaunch = await canLaunchUrl(Uri.parse(whatsappUrl));
       if (canLaunch) {
-        await launchUrl(Uri.parse(whatsappUrl), mode: LaunchMode.externalApplication);
-        
+        await launchUrl(
+          Uri.parse(whatsappUrl),
+          mode: LaunchMode.externalApplication,
+        );
+
         // Log share activity
         await _logShareActivity(
           platform: ContactPlatform.whatsapp,
           recipient: phoneNumber,
           shareType: message.type,
         );
-        
+
         return true;
       }
 
@@ -376,19 +377,23 @@ class ContactIntegrationService {
   }) async {
     try {
       final shareText = _formatShareMessage(message);
-      final telegramUrl = 'https://t.me/share/url?url=${Uri.encodeComponent(shareText)}';
+      final telegramUrl =
+          'https://t.me/share/url?url=${Uri.encodeComponent(shareText)}';
 
       final canLaunch = await canLaunchUrl(Uri.parse(telegramUrl));
       if (canLaunch) {
-        await launchUrl(Uri.parse(telegramUrl), mode: LaunchMode.externalApplication);
-        
+        await launchUrl(
+          Uri.parse(telegramUrl),
+          mode: LaunchMode.externalApplication,
+        );
+
         // Log share activity
         await _logShareActivity(
           platform: ContactPlatform.telegram,
           recipient: phoneNumber,
           shareType: message.type,
         );
-        
+
         return true;
       }
 
@@ -411,14 +416,14 @@ class ContactIntegrationService {
       final canLaunch = await canLaunchUrl(Uri.parse(smsUrl));
       if (canLaunch) {
         await launchUrl(Uri.parse(smsUrl));
-        
+
         // Log share activity
         await _logShareActivity(
           platform: ContactPlatform.phone,
           recipient: phoneNumber,
           shareType: message.type,
         );
-        
+
         return true;
       }
 
@@ -448,7 +453,9 @@ class ContactIntegrationService {
       }
 
       final snapshot = await query.get();
-      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      return snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
     } catch (e) {
       debugPrint('Error getting share history: $e');
       return [];
@@ -458,13 +465,13 @@ class ContactIntegrationService {
   /// Search contacts
   List<ContactInfo> searchContacts(List<ContactInfo> contacts, String query) {
     if (query.trim().isEmpty) return contacts;
-    
+
     final queryLower = query.toLowerCase();
-    
+
     return contacts.where((contact) {
       return contact.name.toLowerCase().contains(queryLower) ||
-             (contact.phoneNumber?.contains(query) ?? false) ||
-             (contact.email?.toLowerCase().contains(queryLower) ?? false);
+          (contact.phoneNumber?.contains(query) ?? false) ||
+          (contact.email?.toLowerCase().contains(queryLower) ?? false);
     }).toList();
   }
 
@@ -474,7 +481,8 @@ class ContactIntegrationService {
     required String message,
     Map<String, dynamic>? diagnosticInfo,
   }) {
-    final content = '''
+    final content =
+        '''
 🆘 Support Request
 
 Subject: $subject
@@ -505,7 +513,8 @@ Sent from CycleSync App 💜
     required int dayOfCycle,
     String? additionalInfo,
   }) {
-    final content = '''
+    final content =
+        '''
 🌙 Cycle Update
 
 Current Phase: $phase
@@ -533,7 +542,8 @@ Shared from CycleSync 💜
     String? notes,
   }) {
     final symptomsText = symptoms.join(', ');
-    final content = '''
+    final content =
+        '''
 🩺 Symptoms Update
 
 Symptoms: $symptomsText
@@ -547,11 +557,7 @@ Shared from CycleSync 💜
       title: 'Symptoms Update',
       content: content.trim(),
       type: ShareType.symptoms,
-      data: {
-        'symptoms': symptoms,
-        'severity': severity,
-        'notes': notes,
-      },
+      data: {'symptoms': symptoms, 'severity': severity, 'notes': notes},
     );
   }
 
@@ -559,7 +565,8 @@ Shared from CycleSync 💜
     required String reminderType,
     required String message,
   }) {
-    final content = '''
+    final content =
+        '''
 ⏰ Reminder
 
 Type: $reminderType
@@ -572,10 +579,7 @@ Shared from CycleSync 💜
       title: 'Cycle Reminder',
       content: content.trim(),
       type: ShareType.reminder,
-      data: {
-        'reminderType': reminderType,
-        'message': message,
-      },
+      data: {'reminderType': reminderType, 'message': message},
     );
   }
 
@@ -583,15 +587,15 @@ Shared from CycleSync 💜
 
   String? _cleanPhoneNumber(String? phoneNumber) {
     if (phoneNumber == null) return null;
-    
+
     // Remove all non-digit characters except +
     String cleaned = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
-    
+
     // Ensure it starts with + or add it
     if (!cleaned.startsWith('+') && cleaned.isNotEmpty) {
       cleaned = '+$cleaned';
     }
-    
+
     return cleaned.isEmpty ? null : cleaned;
   }
 
@@ -620,7 +624,7 @@ Shared from CycleSync 💜
       }
 
       return contacts.map((contact) {
-        if (contact.phoneNumber != null && 
+        if (contact.phoneNumber != null &&
             appUserPhones.containsKey(contact.phoneNumber)) {
           return contact.copyWith(
             isAppUser: true,
@@ -644,10 +648,8 @@ Shared from CycleSync 💜
           .doc(currentUserId)
           .collection('contacts');
 
-      final contactWithTimestamp = contact.copyWith(
-        lastSynced: DateTime.now(),
-      );
-      
+      final contactWithTimestamp = contact.copyWith(lastSynced: DateTime.now());
+
       await userContactsRef.doc(contact.id).set(contactWithTimestamp.toMap());
     } catch (e) {
       debugPrint('Error saving contact to Firestore: $e');
@@ -655,7 +657,7 @@ Shared from CycleSync 💜
   }
 
   Future<void> _saveContactsToFirestore(
-    List<ContactInfo> contacts, 
+    List<ContactInfo> contacts,
     bool forceRefresh,
   ) async {
     if (currentUserId == null) return;
@@ -680,7 +682,7 @@ Shared from CycleSync 💜
         final contactWithTimestamp = contact.copyWith(
           lastSynced: DateTime.now(),
         );
-        
+
         batch.set(
           userContactsRef.doc(contact.id),
           contactWithTimestamp.toMap(),
@@ -690,10 +692,7 @@ Shared from CycleSync 💜
       await batch.commit();
 
       // Update sync metadata
-      await _firestore
-          .collection(_contactsCollection)
-          .doc(currentUserId)
-          .set({
+      await _firestore.collection(_contactsCollection).doc(currentUserId).set({
         'lastSynced': DateTime.now().toIso8601String(),
         'totalContacts': contacts.length,
         'appUsers': contacts.where((c) => c.isAppUser).length,
@@ -750,16 +749,18 @@ Shared from CycleSync 💜
 
   /// Get available sharing platforms
   Future<List<ContactPlatform>> getAvailablePlatforms() async {
-    final platforms = <ContactPlatform>[ContactPlatform.phone]; // SMS always available
-    
+    final platforms = <ContactPlatform>[
+      ContactPlatform.phone,
+    ]; // SMS always available
+
     if (await isWhatsAppInstalled()) {
       platforms.add(ContactPlatform.whatsapp);
     }
-    
+
     if (await isTelegramInstalled()) {
       platforms.add(ContactPlatform.telegram);
     }
-    
+
     return platforms;
   }
 }

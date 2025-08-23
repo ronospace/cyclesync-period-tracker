@@ -158,7 +158,7 @@ class FuturisticTheme {
       backgroundColor: Colors.transparent,
       shadowColor: Colors.transparent,
     ).copyWith(
-      backgroundColor: MaterialStateProperty.all(Colors.transparent),
+      backgroundColor: WidgetStateProperty.all(Colors.transparent),
     );
   }
 

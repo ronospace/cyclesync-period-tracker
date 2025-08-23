@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../services/ai_insights_service.dart';
 import '../services/firebase_service.dart';
 import '../models/ai_models.dart';
+import '../theme/app_theme.dart';
 
 class AIInsightsScreen extends StatefulWidget {
   const AIInsightsScreen({super.key});
@@ -11,7 +12,8 @@ class AIInsightsScreen extends StatefulWidget {
   State<AIInsightsScreen> createState() => _AIInsightsScreenState();
 }
 
-class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProviderStateMixin {
+class _AIInsightsScreenState extends State<AIInsightsScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   CycleInsights? _insights;
   bool _isLoading = true;
@@ -39,7 +41,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
     try {
       final cycles = await FirebaseService.getCycles();
       final insights = AIInsightsService.generateInsights(cycles);
-      
+
       setState(() {
         _insights = insights;
         _isLoading = false;
@@ -60,7 +62,10 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
         backgroundColor: Theme.of(context).colorScheme.surface,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -82,10 +87,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadInsights,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadInsights),
         ],
       ),
       body: _buildBody(),
@@ -111,7 +113,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+            Icon(Icons.error_outline, size: 64, color: AppTheme.errorRed),
             const SizedBox(height: 16),
             Text('Failed to load insights: $_error'),
             const SizedBox(height: 16),
@@ -149,7 +151,9 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
             Icon(
               Icons.psychology,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 24),
             Text(
@@ -172,9 +176,12 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
               icon: const Icon(Icons.add_circle),
               label: const Text('Log Your First Cycle'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple.shade600,
+                backgroundColor: AppTheme.primaryPurple,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
             ),
           ],
@@ -244,7 +251,11 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.trending_up, size: 64, color: Colors.grey.shade400),
+              Icon(
+                Icons.trending_up,
+                size: 64,
+                color: AppTheme.getSubtitleColor(context),
+              ),
               const SizedBox(height: 16),
               const Text(
                 'More Data Needed for Trends',
@@ -283,10 +294,12 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
           if (recommendations.isEmpty)
             _buildNoRecommendationsCard()
           else
-            ...recommendations.map((rec) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildRecommendationCard(rec),
-            )),
+            ...recommendations.map(
+              (rec) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildRecommendationCard(rec),
+              ),
+            ),
         ],
       ),
     );
@@ -294,7 +307,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
 
   Widget _buildDataQualityCard() {
     final quality = _insights!.dataQuality;
-    
+
     Color qualityColor;
     IconData qualityIcon;
     String qualityText;
@@ -350,11 +363,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                     color: qualityColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    qualityIcon, 
-                    color: qualityColor,
-                    size: 18,
-                  ),
+                  child: Icon(qualityIcon, color: qualityColor, size: 18),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -373,12 +382,14 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
-              child: Container(
+              child: SizedBox(
                 height: 6,
                 width: double.infinity,
                 child: LinearProgressIndicator(
                   value: (quality.completeness + quality.consistency) / 2,
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.outline.withValues(alpha: 0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(qualityColor),
                 ),
               ),
@@ -391,7 +402,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                   child: Text(
                     '${(_insights!.totalCyclesAnalyzed)} cycles analyzed',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade600,
+                      color: AppTheme.getSubtitleColor(context),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -401,7 +412,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                   child: Text(
                     '${(quality.completeness * 100).round()}% complete data',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade600,
+                      color: AppTheme.getSubtitleColor(context),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -438,8 +449,10 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
       );
     }
 
-    final daysUntil = prediction.predictedStartDate!.difference(DateTime.now()).inDays;
-    
+    final daysUntil = prediction.predictedStartDate!
+        .difference(DateTime.now())
+        .inDays;
+
     return Card(
       color: Colors.purple.shade50,
       child: Padding(
@@ -457,7 +470,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Countdown
             Container(
               padding: const EdgeInsets.all(16),
@@ -482,9 +495,9 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -693,10 +706,12 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                 'Fertility signs tracked:',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              ...insights.fertilitySignsFrequency.entries.map((entry) =>
-                Padding(
+              ...insights.fertilitySignsFrequency.entries.map(
+                (entry) => Padding(
                   padding: const EdgeInsets.only(left: 16, top: 4),
-                  child: Text('${_formatSymptomName(entry.key)}: ${entry.value} times'),
+                  child: Text(
+                    '${_formatSymptomName(entry.key)}: ${entry.value} times',
+                  ),
                 ),
               ),
             ],
@@ -727,8 +742,8 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
             if (patterns.correlations.isEmpty)
               const Text('Track more symptoms to discover patterns.')
             else
-              ...patterns.correlations.map((correlation) =>
-                Padding(
+              ...patterns.correlations.map(
+                (correlation) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     children: [
@@ -762,21 +777,9 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
               ],
             ),
             const SizedBox(height: 16),
-            _buildTrendItem(
-              'Cycle Length',
-              trends.cycleLengthTrend,
-              'days',
-            ),
-            _buildTrendItem(
-              'Mood',
-              trends.moodTrend,
-              'level',
-            ),
-            _buildTrendItem(
-              'Overall Health',
-              trends.overallHealthTrend,
-              '',
-            ),
+            _buildTrendItem('Cycle Length', trends.cycleLengthTrend, 'days'),
+            _buildTrendItem('Mood', trends.moodTrend, 'level'),
+            _buildTrendItem('Overall Health', trends.overallHealthTrend, ''),
           ],
         ),
       ),
@@ -809,9 +812,15 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
           Icon(icon, color: color, size: 20),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
           ),
-          Text(trendText, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+          Text(
+            trendText,
+            style: TextStyle(color: color, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
@@ -838,8 +847,14 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildProgressStat('Cycles Tracked', '${_insights!.totalCyclesAnalyzed}'),
-                _buildProgressStat('Consistency', '${(_insights!.dataQuality.consistency * 100).round()}%'),
+                _buildProgressStat(
+                  'Cycles Tracked',
+                  '${_insights!.totalCyclesAnalyzed}',
+                ),
+                _buildProgressStat(
+                  'Consistency',
+                  '${(_insights!.dataQuality.consistency * 100).round()}%',
+                ),
               ],
             ),
           ],
@@ -900,7 +915,10 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                 Expanded(
                   child: Text(
                     recommendation.title,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -911,7 +929,7 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: priorityColor.withOpacity(0.1),
+                color: priorityColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -921,7 +939,10 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
                   Expanded(
                     child: Text(
                       recommendation.actionable,
-                      style: TextStyle(color: priorityColor, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: priorityColor,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -962,8 +983,9 @@ class _AIInsightsScreenState extends State<AIInsightsScreen> with TickerProvider
   }
 
   String _formatSymptomName(String symptom) {
-    return symptom.split('_').map((word) => 
-      word[0].toUpperCase() + word.substring(1)
-    ).join(' ');
+    return symptom
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 }

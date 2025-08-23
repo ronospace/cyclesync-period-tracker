@@ -25,7 +25,7 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
   late AnimationController _pulseController;
   late AnimationController _rotationController;
   late AnimationController _glowController;
-  
+
   late Animation<double> _pulseAnimation;
   late Animation<double> _rotationAnimation;
   late Animation<double> _glowAnimation;
@@ -33,56 +33,44 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
   @override
   void initState() {
     super.initState();
-    
+
     // Pulse animation for breathing effect
     _pulseController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
-    _pulseAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     // Rotation animation for active state
     _rotationController = AnimationController(
       duration: const Duration(seconds: 8),
       vsync: this,
     );
-    _rotationAnimation = Tween<double>(
-      begin: 0,
-      end: 2 * math.pi,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: Curves.linear,
-    ));
+    _rotationAnimation = Tween<double>(begin: 0, end: 2 * math.pi).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    );
 
     // Glow animation for notifications
     _glowController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    _glowAnimation = Tween<double>(
-      begin: 0.3,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _glowController,
-      curve: Curves.easeInOut,
-    ));
+    _glowAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
+    );
 
     _startAnimations();
   }
 
   void _startAnimations() {
     _pulseController.repeat(reverse: true);
-    
+
     if (widget.isActive) {
       _rotationController.repeat();
     }
-    
+
     if (widget.hasNotification) {
       _glowController.repeat(reverse: true);
     }
@@ -91,7 +79,7 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
   @override
   void didUpdateWidget(AIAssistantAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (widget.isActive != oldWidget.isActive) {
       if (widget.isActive) {
         _rotationController.repeat();
@@ -99,7 +87,7 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
         _rotationController.stop();
       }
     }
-    
+
     if (widget.hasNotification != oldWidget.hasNotification) {
       if (widget.hasNotification) {
         _glowController.repeat(reverse: true);
@@ -140,18 +128,20 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
                   end: Alignment.bottomRight,
                   colors: [
                     widget.isActive
-                        ? Colors.deepPurple.withOpacity(0.9)
-                        : Colors.blue.withOpacity(0.8),
+                        ? Colors.deepPurple.withValues(alpha: 0.9)
+                        : Colors.blue.withValues(alpha: 0.8),
                     widget.isActive
-                        ? Colors.indigo.withOpacity(0.9)
-                        : Colors.blueAccent.withOpacity(0.8),
+                        ? Colors.indigo.withValues(alpha: 0.9)
+                        : Colors.blueAccent.withValues(alpha: 0.8),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: widget.hasNotification
-                        ? Colors.amber.withOpacity(_glowAnimation.value * 0.6)
-                        : Colors.blue.withOpacity(0.3),
+                        ? Colors.amber.withValues(
+                            alpha: _glowAnimation.value * 0.6,
+                          )
+                        : Colors.blue.withValues(alpha: 0.3),
                     blurRadius: widget.hasNotification ? 20 : 10,
                     spreadRadius: widget.hasNotification ? 5 : 2,
                   ),
@@ -168,7 +158,7 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withOpacity(0.3),
+                          Colors.white.withValues(alpha: 0.3),
                           Colors.transparent,
                         ],
                       ),
@@ -196,7 +186,7 @@ class _AIAssistantAvatarState extends State<AIAssistantAvatar>
                           color: Colors.amber,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withOpacity(0.6),
+                              color: Colors.amber.withValues(alpha: 0.6),
                               blurRadius: 4,
                               spreadRadius: 1,
                             ),

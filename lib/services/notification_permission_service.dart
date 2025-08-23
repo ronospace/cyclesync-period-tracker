@@ -7,9 +7,9 @@ import 'error_service.dart';
 /// Service for managing notification permissions across platforms
 class NotificationPermissionService {
   static NotificationPermissionService? _instance;
-  static NotificationPermissionService get instance => 
+  static NotificationPermissionService get instance =>
       _instance ??= NotificationPermissionService._();
-  
+
   NotificationPermissionService._();
 
   /// Check if notification permissions are granted
@@ -57,63 +57,64 @@ class NotificationPermissionService {
   /// Show permission rationale dialog
   Future<bool> showPermissionRationale(BuildContext context) async {
     return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        icon: const Icon(
-          Icons.notifications_active,
-          size: 48,
-          color: Colors.pink,
-        ),
-        title: const Text('Stay Informed'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'CycleSync needs notification permission to:',
-              style: TextStyle(fontWeight: FontWeight.w600),
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            icon: const Icon(
+              Icons.notifications_active,
+              size: 48,
+              color: Colors.pink,
             ),
-            SizedBox(height: 16),
-            _RationaleItem(
-              icon: Icons.event,
-              text: 'Remind you when your period is about to start',
+            title: const Text('Stay Informed'),
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'CycleSync needs notification permission to:',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: 16),
+                _RationaleItem(
+                  icon: Icons.event,
+                  text: 'Remind you when your period is about to start',
+                ),
+                _RationaleItem(
+                  icon: Icons.favorite,
+                  text: 'Alert you during your fertility window',
+                ),
+                _RationaleItem(
+                  icon: Icons.medication,
+                  text: 'Send medication and appointment reminders',
+                ),
+                _RationaleItem(
+                  icon: Icons.insights,
+                  text: 'Provide personalized cycle insights',
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'You can manage these permissions in Settings anytime.',
+                  style: TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            _RationaleItem(
-              icon: Icons.favorite,
-              text: 'Alert you during your fertility window',
-            ),
-            _RationaleItem(
-              icon: Icons.medication,
-              text: 'Send medication and appointment reminders',
-            ),
-            _RationaleItem(
-              icon: Icons.insights,
-              text: 'Provide personalized cycle insights',
-            ),
-            SizedBox(height: 16),
-            Text(
-              'You can manage these permissions in Settings anytime.',
-              style: TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Not Now'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Not Now'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Allow Notifications'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.pink,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Allow Notifications'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   /// Open app notification settings
@@ -133,41 +134,38 @@ class NotificationPermissionService {
   /// Show settings redirect dialog
   Future<bool> showSettingsDialog(BuildContext context) async {
     return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        icon: const Icon(
-          Icons.settings,
-          size: 48,
-          color: Colors.orange,
-        ),
-        title: const Text('Enable Notifications'),
-        content: const Text(
-          'To receive cycle reminders and alerts, please enable notifications '
-          'for CycleSync in your device settings.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Maybe Later'),
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            icon: const Icon(Icons.settings, size: 48, color: Colors.orange),
+            title: const Text('Enable Notifications'),
+            content: const Text(
+              'To receive cycle reminders and alerts, please enable notifications '
+              'for CycleSync in your device settings.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Maybe Later'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context, true);
+                  await openNotificationSettings();
+                },
+                child: const Text('Open Settings'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context, true);
-              await openNotificationSettings();
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   /// Get detailed permission status
   Future<NotificationPermissionStatus> getDetailedPermissionStatus() async {
     try {
       final hasPermission = await hasNotificationPermission();
-      
+
       if (hasPermission) {
         return NotificationPermissionStatus.granted;
       }
@@ -203,17 +201,17 @@ class NotificationPermissionService {
     try {
       // Check current status
       final status = await getDetailedPermissionStatus();
-      
+
       switch (status) {
         case NotificationPermissionStatus.granted:
           return NotificationPermissionResult.granted;
-          
+
         case NotificationPermissionStatus.permanentlyDenied:
           final shouldOpenSettings = await showSettingsDialog(context);
           return shouldOpenSettings
               ? NotificationPermissionResult.redirectedToSettings
               : NotificationPermissionResult.permanentlyDenied;
-          
+
         case NotificationPermissionStatus.denied:
         case NotificationPermissionStatus.unknown:
           // Show rationale if requested
@@ -223,7 +221,7 @@ class NotificationPermissionService {
               return NotificationPermissionResult.deniedByUser;
             }
           }
-          
+
           // Request permission
           return await requestNotificationPermission(showRationale: false);
       }
@@ -260,10 +258,11 @@ class NotificationPermissionService {
   }
 
   /// iOS-specific permission request
-  Future<NotificationPermissionResult> _requestIOSNotificationPermission() async {
+  Future<NotificationPermissionResult>
+  _requestIOSNotificationPermission() async {
     try {
       final status = await Permission.notification.request();
-      
+
       switch (status) {
         case PermissionStatus.granted:
         case PermissionStatus.limited:
@@ -291,7 +290,7 @@ class NotificationPermissionService {
   }) async {
     try {
       final status = await Permission.notification.request();
-      
+
       switch (status) {
         case PermissionStatus.granted:
           return NotificationPermissionResult.granted;
@@ -307,7 +306,7 @@ class NotificationPermissionService {
       if (e is PlatformException && e.code == 'REQUEST_PERMISSION_ERROR') {
         return NotificationPermissionResult.granted;
       }
-      
+
       ErrorService.logError(
         e,
         context: 'Android notification permission request',
@@ -322,13 +321,13 @@ class NotificationPermissionService {
     try {
       // Check if permission was already requested
       final status = await getDetailedPermissionStatus();
-      
+
       // Don't show if already granted or permanently denied
       if (status == NotificationPermissionStatus.granted ||
           status == NotificationPermissionStatus.permanentlyDenied) {
         return false;
       }
-      
+
       // You could add logic here to check user preferences or frequency
       return true;
     } catch (e) {
@@ -357,10 +356,7 @@ class _RationaleItem extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const _RationaleItem({
-    required this.icon,
-    required this.text,
-  });
+  const _RationaleItem({required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -368,18 +364,9 @@ class _RationaleItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Colors.pink.withOpacity(0.7),
-          ),
+          Icon(icon, size: 20, color: Colors.pink.withValues(alpha: 0.7)),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
         ],
       ),
     );
@@ -406,14 +393,16 @@ enum NotificationPermissionStatus {
 }
 
 /// Extension for permission result helpers
-extension NotificationPermissionResultExtension on NotificationPermissionResult {
+extension NotificationPermissionResultExtension
+    on NotificationPermissionResult {
   bool get isGranted => this == NotificationPermissionResult.granted;
   bool get isDenied => this == NotificationPermissionResult.denied;
-  bool get isPermanentlyDenied => this == NotificationPermissionResult.permanentlyDenied;
-  bool get needsSettings => 
+  bool get isPermanentlyDenied =>
+      this == NotificationPermissionResult.permanentlyDenied;
+  bool get needsSettings =>
       this == NotificationPermissionResult.permanentlyDenied ||
       this == NotificationPermissionResult.redirectedToSettings;
-  
+
   String get displayMessage {
     switch (this) {
       case NotificationPermissionResult.granted:
@@ -432,7 +421,7 @@ extension NotificationPermissionResultExtension on NotificationPermissionResult 
         return 'Unable to request notification permission. Please try again.';
     }
   }
-  
+
   Color get displayColor {
     switch (this) {
       case NotificationPermissionResult.granted:

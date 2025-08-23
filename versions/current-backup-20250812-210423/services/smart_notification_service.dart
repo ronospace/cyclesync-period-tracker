@@ -186,22 +186,20 @@ class SmartNotificationService {
       orElse: () => cycles.first,
     );
     
-    if (currentCycle.startDate != null) {
-      final daysSinceStart = DateTime.now().difference(currentCycle.startDate!).inDays;
-      
-      // Day 1-3: Likely to need pain relief
-      if (daysSinceStart >= 0 && daysSinceStart <= 3) {
-        await _scheduleSmartNotification(
-          id: _medicationReminderID,
-          title: '💊 Medication Reminder',
-          body: 'Based on your cycle phase, you might want to have pain relief ready today.',
-          scheduledDate: DateTime.now().add(Duration(hours: 2)),
-          category: _categoryMedication,
-          priority: NotificationPriority.defaultPriority,
-        );
-      }
+    final daysSinceStart = DateTime.now().difference(currentCycle.startDate).inDays;
+    
+    // Day 1-3: Likely to need pain relief
+    if (daysSinceStart >= 0 && daysSinceStart <= 3) {
+      await _scheduleSmartNotification(
+        id: _medicationReminderID,
+        title: '💊 Medication Reminder',
+        body: 'Based on your cycle phase, you might want to have pain relief ready today.',
+        scheduledDate: DateTime.now().add(Duration(hours: 2)),
+        category: _categoryMedication,
+        priority: NotificationPriority.defaultPriority,
+      );
     }
-  }
+    }
 
   /// 🌸 Wellness Check Scheduling
   static Future<void> _scheduleWellnessChecks(List<DailyLogEntry> dailyLogs) async {

@@ -16,12 +16,12 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
   bool _isSaving = false;
   
   // Symptom tracking
-  String _flow = 'Medium';
-  double _moodLevel = 3.0; // 1-5 scale
-  double _energyLevel = 3.0; // 1-5 scale
-  double _painLevel = 1.0; // 1-5 scale
-  Set<String> _symptoms = <String>{};
-  String _notes = '';
+  final String _flow = 'Medium';
+  final double _moodLevel = 3.0; // 1-5 scale
+  final double _energyLevel = 3.0; // 1-5 scale
+  final double _painLevel = 1.0; // 1-5 scale
+  final Set<String> _symptoms = <String>{};
+  final String _notes = '';
 
   Future<void> _saveCycle() async {
     if (_startDate == null || _endDate == null) {

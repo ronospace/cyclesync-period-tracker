@@ -10,7 +10,8 @@ import '../models/daily_log_models.dart';
 /// Manages state, handles loading states, and provides error handling
 class EnterpriseDataProvider extends ChangeNotifier {
   static EnterpriseDataProvider? _instance;
-  static EnterpriseDataProvider get instance => _instance ??= EnterpriseDataProvider._();
+  static EnterpriseDataProvider get instance =>
+      _instance ??= EnterpriseDataProvider._();
 
   EnterpriseDataProvider._() {
     _initialize();
@@ -39,14 +40,15 @@ class EnterpriseDataProvider extends ChangeNotifier {
   bool get isLoadingDailyLogs => _isLoadingDailyLogs;
   bool get isSaving => _isSaving;
   bool get isSyncing => _isSyncing;
-  bool get isLoading => _isLoadingCycles || _isLoadingDailyLogs || _isSaving || _isSyncing;
+  bool get isLoading =>
+      _isLoadingCycles || _isLoadingDailyLogs || _isSaving || _isSyncing;
 
   List<CycleData> get cycles => _cycles;
   List<DailyLogEntry> get dailyLogs => _dailyLogs;
   CycleAnalytics? get analytics => _analytics;
   String? get error => _error;
   DateTime? get lastSyncTime => _lastSyncTime;
-  
+
   // Additional getters for enterprise home screen
   bool get isInitialized => !_isInitializing;
   bool get hasData => _cycles.isNotEmpty || _dailyLogs.isNotEmpty;
@@ -55,9 +57,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
   int get totalCycles => _cycles.length;
   CycleAnalytics? get predictions => _analytics;
   List<CycleData> get recentCycles => _cycles.take(5).toList();
-  
+
   // Mock sync status for now
-  SyncStatus get syncStatus => _isSyncing ? SyncStatus.syncing : SyncStatus.idle;
+  SyncStatus get syncStatus =>
+      _isSyncing ? SyncStatus.syncing : SyncStatus.idle;
 
   // Computed properties
   CycleData? get currentCycle => _cycles.isNotEmpty ? _cycles.first : null;
@@ -127,7 +130,8 @@ class EnterpriseDataProvider extends ChangeNotifier {
     _repository.syncStatusStream.listen(
       (status) {
         _isSyncing = status.state == SyncState.syncing;
-        if (status.state == SyncState.success || status.state == SyncState.error) {
+        if (status.state == SyncState.success ||
+            status.state == SyncState.error) {
           _lastSyncTime = status.timestamp;
         }
         if (status.state == SyncState.error) {
@@ -136,7 +140,9 @@ class EnterpriseDataProvider extends ChangeNotifier {
           _clearError();
         }
         notifyListeners();
-        debugPrint('🔄 Sync status update: ${status.state} - ${status.message}');
+        debugPrint(
+          '🔄 Sync status update: ${status.state} - ${status.message}',
+        );
       },
       onError: (error) {
         debugPrint('❌ Sync status stream error: $error');
@@ -146,8 +152,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
     // Listen to general data changes
     _changeNotifier.dataChangeStream.listen(
       (change) {
-        debugPrint('📡 Data change detected: ${change.type} - ${change.entityType}');
-        
+        debugPrint(
+          '📡 Data change detected: ${change.type} - ${change.entityType}',
+        );
+
         // Refresh analytics when data changes
         if (change.entityType == EntityType.cycle) {
           _refreshAnalytics();
@@ -163,10 +171,7 @@ class EnterpriseDataProvider extends ChangeNotifier {
   Future<void> _loadInitialData() async {
     try {
       // Load cycles and daily logs in parallel
-      await Future.wait([
-        _loadCycles(),
-        _loadDailyLogs(),
-      ]);
+      await Future.wait([_loadCycles(), _loadDailyLogs()]);
 
       // Generate initial analytics
       await _refreshAnalytics();
@@ -275,10 +280,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
     try {
       await _repository.saveCycle(cycle);
       debugPrint('✅ Cycle saved successfully: ${cycle.id}');
-      
+
       // Refresh analytics
       await _refreshAnalytics();
-      
+
       return true;
     } catch (e) {
       debugPrint('❌ Error saving cycle: $e');
@@ -301,10 +306,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
     try {
       await _repository.deleteCycle(cycleId);
       debugPrint('✅ Cycle deleted successfully: $cycleId');
-      
+
       // Refresh analytics
       await _refreshAnalytics();
-      
+
       return true;
     } catch (e) {
       debugPrint('❌ Error deleting cycle: $e');
@@ -332,7 +337,7 @@ class EnterpriseDataProvider extends ChangeNotifier {
         startDate: startDate,
         endDate: endDate,
       );
-      
+
       debugPrint('🔍 Search returned ${results.length} cycles');
       return results;
     } catch (e) {
@@ -359,12 +364,12 @@ class EnterpriseDataProvider extends ChangeNotifier {
   Future<void> initialize() async {
     await _initialize();
   }
-  
+
   /// Refresh data method for UI
   Future<void> refreshData() async {
     await forceRefresh();
   }
-  
+
   /// Force sync method for UI
   Future<void> forceSync() async {
     await forceRefresh();
@@ -374,12 +379,12 @@ class EnterpriseDataProvider extends ChangeNotifier {
   Future<void> forceRefresh() async {
     try {
       debugPrint('🔄 Force refreshing all data...');
-      
+
       await _repository.forceRefresh();
-      
+
       // Reload data
       await _loadInitialData();
-      
+
       debugPrint('✅ Force refresh completed');
     } catch (e) {
       debugPrint('❌ Error during force refresh: $e');
@@ -397,10 +402,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
 
     try {
       final result = await _repository.syncWithHealthKit();
-      
+
       if (result.success) {
         debugPrint('✅ HealthKit sync successful: ${result.summary}');
-        
+
         // Refresh data after successful sync
         await _loadInitialData();
       } else {
@@ -429,22 +434,22 @@ class EnterpriseDataProvider extends ChangeNotifier {
   List<CycleData> getCyclesForDateRange(DateTime start, DateTime end) {
     return _cycles.where((cycle) {
       return cycle.startDate.isAfter(start.subtract(const Duration(days: 1))) &&
-             cycle.startDate.isBefore(end.add(const Duration(days: 1)));
+          cycle.startDate.isBefore(end.add(const Duration(days: 1)));
     }).toList();
   }
 
   /// Get current cycle phase
   CyclePhase? getCurrentCyclePhase() {
     if (currentCycle == null) return null;
-    
+
     final now = DateTime.now();
     final cycle = currentCycle!;
     final daysSinceStart = now.difference(cycle.startDate).inDays;
-    
+
     if (cycle.endDate != null && now.isAfter(cycle.endDate!)) {
       return null; // Cycle has ended
     }
-    
+
     // Estimate phases based on typical 28-day cycle
     if (daysSinceStart <= 5) {
       return CyclePhase.menstrual;
@@ -466,10 +471,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
   Future<void> clearCache() async {
     try {
       await _repository.clearCache();
-      
+
       // Reload data
       await _loadInitialData();
-      
+
       debugPrint('🗑️ Cache cleared and data reloaded');
     } catch (e) {
       debugPrint('❌ Error clearing cache: $e');
@@ -504,21 +509,10 @@ class EnterpriseDataProvider extends ChangeNotifier {
 }
 
 /// Sync status for UI feedback
-enum SyncStatus {
-  idle,
-  syncing,
-  synced,
-  success,
-  error,
-}
+enum SyncStatus { idle, syncing, synced, success, error }
 
 /// Cycle phases for cycle tracking
-enum CyclePhase {
-  menstrual,
-  follicular,
-  ovulation,
-  luteal,
-}
+enum CyclePhase { menstrual, follicular, ovulation, luteal }
 
 /// Extension for cycle phase display
 extension CyclePhaseExtension on CyclePhase {

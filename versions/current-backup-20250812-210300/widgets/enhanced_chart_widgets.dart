@@ -11,11 +11,11 @@ class WellbeingTrendChart extends StatefulWidget {
   final Function(String) onMetricChanged;
 
   const WellbeingTrendChart({
-    Key? key,
+    super.key,
     required this.trends,
     required this.selectedMetric,
     required this.onMetricChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<WellbeingTrendChart> createState() => _WellbeingTrendChartState();
@@ -362,9 +362,9 @@ class SymptomCorrelationHeatmap extends StatefulWidget {
   final SymptomCorrelationMatrix matrix;
 
   const SymptomCorrelationHeatmap({
-    Key? key,
+    super.key,
     required this.matrix,
-  }) : super(key: key);
+  });
 
   @override
   State<SymptomCorrelationHeatmap> createState() => _SymptomCorrelationHeatmapState();

@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Cyclesync</string>
+	<string>FlowSense</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>cyclesync</string>
+	<string>flowsense</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -80,11 +80,11 @@
 		</dict>
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Allow Face ID to securely unlock and access CycleSync features.</string>
+	<string>Allow Face ID to securely unlock and access FlowSense features.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>CycleSync would like to read your health data to provide better cycle insights and tracking.</string>
+	<string>FlowSense would like to read your health data to provide better cycle insights and tracking.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>CycleSync needs health data access to provide personalized cycle tracking and health insights.</string>
+	<string>FlowSense needs health data access to provide personalized cycle tracking and health insights.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

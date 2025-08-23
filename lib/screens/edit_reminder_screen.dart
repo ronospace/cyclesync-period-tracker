@@ -32,7 +32,7 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
 
     try {
       final success = await _reminderService.updateReminder(updatedReminder);
-      
+
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -68,7 +68,7 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
         });
       }
     }
-    
+
     return false;
   }
 
@@ -77,7 +77,9 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Reminder'),
-        content: Text('Are you sure you want to delete "${widget.reminder.title}"?'),
+        content: Text(
+          'Are you sure you want to delete "${widget.reminder.title}"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -85,10 +87,7 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -100,8 +99,10 @@ class _EditReminderScreenState extends State<EditReminderScreen> {
       });
 
       try {
-        final success = await _reminderService.deleteReminder(widget.reminder.id);
-        
+        final success = await _reminderService.deleteReminder(
+          widget.reminder.id,
+        );
+
         if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -144,12 +145,12 @@ class _EditReminderFormState extends State<_EditReminderForm> {
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _messageController;
-  
+
   late ReminderType _selectedType;
   late ReminderFrequency _selectedFrequency;
   late ReminderPriority _selectedPriority;
   late NotificationSound _selectedSound;
-  
+
   DateTime? _scheduledFor;
   List<DateTime> _notificationTimes = [];
   List<WeekDay> _selectedWeekDays = [];
@@ -165,11 +166,15 @@ class _EditReminderFormState extends State<_EditReminderForm> {
 
   void _initializeFromReminder() {
     final reminder = widget.reminder;
-    
+
     _titleController = TextEditingController(text: reminder.title);
-    _descriptionController = TextEditingController(text: reminder.description ?? '');
-    _messageController = TextEditingController(text: reminder.customMessage ?? '');
-    
+    _descriptionController = TextEditingController(
+      text: reminder.description ?? '',
+    );
+    _messageController = TextEditingController(
+      text: reminder.customMessage ?? '',
+    );
+
     _selectedType = reminder.type;
     _selectedFrequency = reminder.frequency;
     _selectedPriority = reminder.priority;
@@ -206,13 +211,13 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           ),
           TextButton(
             onPressed: widget.isLoading ? null : _saveReminder,
-            child: widget.isLoading 
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Save'),
+            child: widget.isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Save'),
           ),
         ],
       ),
@@ -248,9 +253,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           children: [
             Text(
               'Basic Information',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -292,9 +297,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           children: [
             Text(
               'Reminder Type',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Wrap(
@@ -337,9 +342,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           children: [
             Text(
               'Schedule',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             _buildFrequencySelection(),
@@ -403,9 +408,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           children: [
             Text(
               'Notification Settings',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<ReminderPriority>(
@@ -485,9 +490,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           children: [
             Text(
               'Advanced Options',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -507,7 +512,7 @@ class _EditReminderFormState extends State<_EditReminderForm> {
 
   Widget _buildReminderStats() {
     final reminder = widget.reminder;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -516,9 +521,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           children: [
             Text(
               'Statistics',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Row(
@@ -557,13 +562,18 @@ class _EditReminderFormState extends State<_EditReminderForm> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -579,7 +589,7 @@ class _EditReminderFormState extends State<_EditReminderForm> {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color.withOpacity(0.8),
+              color: color.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -593,9 +603,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
       leading: const Icon(Icons.calendar_today),
       title: const Text('Date & Time'),
       subtitle: Text(
-        _scheduledFor != null 
-          ? '${_scheduledFor!.day}/${_scheduledFor!.month}/${_scheduledFor!.year} ${_scheduledFor!.hour}:${_scheduledFor!.minute.toString().padLeft(2, '0')}'
-          : 'Tap to select',
+        _scheduledFor != null
+            ? '${_scheduledFor!.day}/${_scheduledFor!.month}/${_scheduledFor!.year} ${_scheduledFor!.hour}:${_scheduledFor!.minute.toString().padLeft(2, '0')}'
+            : 'Tap to select',
       ),
       onTap: _selectDateTime,
     );
@@ -640,9 +650,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
     if (date != null && mounted) {
       final time = await showTimePicker(
         context: context,
-        initialTime: _scheduledFor != null 
-          ? TimeOfDay.fromDateTime(_scheduledFor!)
-          : TimeOfDay.now(),
+        initialTime: _scheduledFor != null
+            ? TimeOfDay.fromDateTime(_scheduledFor!)
+            : TimeOfDay.now(),
       );
 
       if (time != null && mounted) {
@@ -664,9 +674,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
 
     final updatedReminder = widget.reminder.copyWith(
       title: _titleController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty 
-        ? null 
-        : _descriptionController.text.trim(),
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
       type: _selectedType,
       frequency: _selectedFrequency,
       priority: _selectedPriority,
@@ -677,9 +687,9 @@ class _EditReminderFormState extends State<_EditReminderForm> {
       customIntervalHours: _customIntervalHours,
       sound: _selectedSound,
       vibrate: _vibrate,
-      customMessage: _messageController.text.trim().isEmpty 
-        ? null 
-        : _messageController.text.trim(),
+      customMessage: _messageController.text.trim().isEmpty
+          ? null
+          : _messageController.text.trim(),
     );
 
     await widget.onSave(updatedReminder);
@@ -688,77 +698,118 @@ class _EditReminderFormState extends State<_EditReminderForm> {
   // Helper methods (same as AddReminderScreen)
   String _getReminderEmoji(ReminderType type) {
     switch (type) {
-      case ReminderType.cyclePrediction: return '🌸';
-      case ReminderType.medication: return '💊';
-      case ReminderType.appointment: return '📅';
-      case ReminderType.symptomTracking: return '📝';
-      case ReminderType.waterIntake: return '💧';
-      case ReminderType.exercise: return '🏃‍♀️';
-      case ReminderType.selfCare: return '🧘‍♀️';
-      case ReminderType.custom: return '⏰';
+      case ReminderType.cyclePrediction:
+        return '🌸';
+      case ReminderType.medication:
+        return '💊';
+      case ReminderType.appointment:
+        return '📅';
+      case ReminderType.symptomTracking:
+        return '📝';
+      case ReminderType.waterIntake:
+        return '💧';
+      case ReminderType.exercise:
+        return '🏃‍♀️';
+      case ReminderType.selfCare:
+        return '🧘‍♀️';
+      case ReminderType.custom:
+        return '⏰';
     }
   }
 
   String _getReminderTypeName(ReminderType type) {
     switch (type) {
-      case ReminderType.cyclePrediction: return 'Cycle';
-      case ReminderType.medication: return 'Medication';
-      case ReminderType.appointment: return 'Appointment';
-      case ReminderType.symptomTracking: return 'Tracking';
-      case ReminderType.waterIntake: return 'Hydration';
-      case ReminderType.exercise: return 'Exercise';
-      case ReminderType.selfCare: return 'Self Care';
-      case ReminderType.custom: return 'Custom';
+      case ReminderType.cyclePrediction:
+        return 'Cycle';
+      case ReminderType.medication:
+        return 'Medication';
+      case ReminderType.appointment:
+        return 'Appointment';
+      case ReminderType.symptomTracking:
+        return 'Tracking';
+      case ReminderType.waterIntake:
+        return 'Hydration';
+      case ReminderType.exercise:
+        return 'Exercise';
+      case ReminderType.selfCare:
+        return 'Self Care';
+      case ReminderType.custom:
+        return 'Custom';
     }
   }
 
   String _getFrequencyDisplayName(ReminderFrequency frequency) {
     switch (frequency) {
-      case ReminderFrequency.once: return 'Once';
-      case ReminderFrequency.daily: return 'Daily';
-      case ReminderFrequency.weekly: return 'Weekly';
-      case ReminderFrequency.monthly: return 'Monthly';
-      case ReminderFrequency.cycleStart: return 'Each Cycle Start';
-      case ReminderFrequency.ovulation: return 'Ovulation Period';
-      case ReminderFrequency.custom: return 'Custom Interval';
+      case ReminderFrequency.once:
+        return 'Once';
+      case ReminderFrequency.daily:
+        return 'Daily';
+      case ReminderFrequency.weekly:
+        return 'Weekly';
+      case ReminderFrequency.monthly:
+        return 'Monthly';
+      case ReminderFrequency.cycleStart:
+        return 'Each Cycle Start';
+      case ReminderFrequency.ovulation:
+        return 'Ovulation Period';
+      case ReminderFrequency.custom:
+        return 'Custom Interval';
     }
   }
 
   String _getPriorityName(ReminderPriority priority) {
     switch (priority) {
-      case ReminderPriority.low: return 'Low';
-      case ReminderPriority.medium: return 'Medium';
-      case ReminderPriority.high: return 'High';
-      case ReminderPriority.critical: return 'Critical';
+      case ReminderPriority.low:
+        return 'Low';
+      case ReminderPriority.medium:
+        return 'Medium';
+      case ReminderPriority.high:
+        return 'High';
+      case ReminderPriority.critical:
+        return 'Critical';
     }
   }
 
   IconData _getPriorityIcon(ReminderPriority priority) {
     switch (priority) {
-      case ReminderPriority.low: return Icons.low_priority;
-      case ReminderPriority.medium: return Icons.priority_high;
-      case ReminderPriority.high: return Icons.priority_high;
-      case ReminderPriority.critical: return Icons.warning;
+      case ReminderPriority.low:
+        return Icons.low_priority;
+      case ReminderPriority.medium:
+        return Icons.priority_high;
+      case ReminderPriority.high:
+        return Icons.priority_high;
+      case ReminderPriority.critical:
+        return Icons.warning;
     }
   }
 
   Color _getPriorityColor(ReminderPriority priority) {
     switch (priority) {
-      case ReminderPriority.low: return Colors.green;
-      case ReminderPriority.medium: return Colors.orange;
-      case ReminderPriority.high: return Colors.red;
-      case ReminderPriority.critical: return Colors.red.shade800;
+      case ReminderPriority.low:
+        return Colors.green;
+      case ReminderPriority.medium:
+        return Colors.orange;
+      case ReminderPriority.high:
+        return Colors.red;
+      case ReminderPriority.critical:
+        return Colors.red.shade800;
     }
   }
 
   String _getSoundName(NotificationSound sound) {
     switch (sound) {
-      case NotificationSound.defaultSound: return 'Default';
-      case NotificationSound.gentle: return 'Gentle';
-      case NotificationSound.chime: return 'Chime';
-      case NotificationSound.bell: return 'Bell';
-      case NotificationSound.nature: return 'Nature';
-      case NotificationSound.silent: return 'Silent';
+      case NotificationSound.defaultSound:
+        return 'Default';
+      case NotificationSound.gentle:
+        return 'Gentle';
+      case NotificationSound.chime:
+        return 'Chime';
+      case NotificationSound.bell:
+        return 'Bell';
+      case NotificationSound.nature:
+        return 'Nature';
+      case NotificationSound.silent:
+        return 'Silent';
     }
   }
 }

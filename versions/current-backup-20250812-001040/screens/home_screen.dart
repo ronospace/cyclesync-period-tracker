@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 import '../services/firebase_service.dart';
 import '../services/smart_notification_service.dart';
-import '../services/theme_service.dart';
 import '../theme/app_theme.dart';
-import '../widgets/health_integration_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -825,7 +822,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (difference == 1) {
       return 'Yesterday';
     } else if (difference < 7) {
-      return '${difference} days ago';
+      return '$difference days ago';
     } else {
       return '${date.day}/${date.month}';
     }

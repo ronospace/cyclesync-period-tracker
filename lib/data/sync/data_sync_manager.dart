@@ -2,11 +2,18 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../cache/data_cache_manager.dart';
-import '../providers/data_change_notifier.dart';
 
 // Essential sync enums and classes
 enum SyncState { idle, syncing, success, error, offline }
-enum SyncOperationType { createCycle, updateCycle, deleteCycle, createDailyLog, updateDailyLog, deleteDailyLog }
+
+enum SyncOperationType {
+  createCycle,
+  updateCycle,
+  deleteCycle,
+  createDailyLog,
+  updateDailyLog,
+  deleteDailyLog,
+}
 
 /// Data sync status model
 class DataSyncStatus {
@@ -63,7 +70,11 @@ class SyncResult {
   });
 
   factory SyncResult.success({int syncedCount = 0, bool hasChanges = false}) {
-    return SyncResult(success: true, hasChanges: hasChanges, syncedCount: syncedCount);
+    return SyncResult(
+      success: true,
+      hasChanges: hasChanges,
+      syncedCount: syncedCount,
+    );
   }
 
   factory SyncResult.error(String error) {
@@ -85,14 +96,17 @@ class HealthKitSyncResult {
 
   factory HealthKitSyncResult.success({bool hasNewData = false}) {
     return HealthKitSyncResult(
-      success: true, 
-      hasNewData: hasNewData, 
-      summary: 'HealthKit sync successful'
+      success: true,
+      hasNewData: hasNewData,
+      summary: 'HealthKit sync successful',
     );
   }
 
   factory HealthKitSyncResult.error(String error) {
-    return HealthKitSyncResult(success: false, summary: 'HealthKit sync failed: $error');
+    return HealthKitSyncResult(
+      success: false,
+      summary: 'HealthKit sync failed: $error',
+    );
   }
 }
 
@@ -104,13 +118,12 @@ class DataSyncManager {
   DataSyncManager._();
 
   final DataCacheManager _cacheManager = DataCacheManager.instance;
-  final DataChangeNotifier _changeNotifier = DataChangeNotifier.instance;
 
   bool _isOnline = true;
   bool _isSyncing = false;
   DateTime? _lastSyncTime;
   Timer? _syncTimer;
-  
+
   static const Duration _syncInterval = Duration(minutes: 15);
   bool _isInitialized = false;
 
@@ -134,11 +147,13 @@ class DataSyncManager {
   Future<void> _initializeConnectivityMonitoring() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     _isOnline = !connectivityResult.contains(ConnectivityResult.none);
-    
-    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
+
+    Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
       final wasOnline = _isOnline;
       _isOnline = !results.contains(ConnectivityResult.none);
-      
+
       if (_isOnline && !wasOnline) {
         debugPrint('📡 Connection restored - starting sync...');
         performSync();
@@ -162,10 +177,10 @@ class DataSyncManager {
     if (_isSyncing) return DataSyncStatus.syncing();
 
     _isSyncing = true;
-    
+
     try {
       debugPrint('🔄 Starting comprehensive data sync...');
-      
+
       bool hasChanges = false;
       final errors = <String>[];
 
@@ -186,7 +201,7 @@ class DataSyncManager {
       }
 
       _lastSyncTime = DateTime.now();
-      
+
       if (errors.isNotEmpty) {
         final errorMessage = 'Sync completed with errors: ${errors.join(', ')}';
         debugPrint('⚠️ $errorMessage');
@@ -200,7 +215,6 @@ class DataSyncManager {
         debugPrint('✅ Sync completed successfully');
         return DataSyncStatus.success('Sync completed successfully');
       }
-      
     } catch (e) {
       debugPrint('❌ Sync failed: $e');
       return DataSyncStatus.error('Sync failed: $e');
@@ -213,18 +227,17 @@ class DataSyncManager {
   Future<SyncResult> _syncCycles() async {
     try {
       debugPrint('🔄 Syncing cycles data...');
-      
+
       // Get local cycles
       final localCycles = await _cacheManager.getCachedCycles();
-      
+
       // For now, just return success since we have basic Firebase integration
       // This can be expanded later with conflict resolution
-      
+
       return SyncResult.success(
         syncedCount: localCycles.length,
         hasChanges: false,
       );
-
     } catch (e) {
       debugPrint('❌ Error syncing cycles: $e');
       return SyncResult.error('Cycles sync failed: $e');
@@ -235,16 +248,15 @@ class DataSyncManager {
   Future<SyncResult> _syncDailyLogs() async {
     try {
       debugPrint('🔄 Syncing daily logs...');
-      
+
       // Get local daily logs
       final localLogs = await _cacheManager.getCachedDailyLogs();
-      
+
       // For now, just return success
       return SyncResult.success(
         syncedCount: localLogs.length,
         hasChanges: false,
       );
-
     } catch (e) {
       debugPrint('❌ Error syncing daily logs: $e');
       return SyncResult.error('Daily logs sync failed: $e');

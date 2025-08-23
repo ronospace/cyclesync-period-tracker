@@ -566,6 +566,8 @@ class _SocialFeedScreenState extends State<SocialFeedScreen>
 
 // Supporting widgets and models would be implemented separately
 class CreatePostSheet extends StatelessWidget {
+  const CreatePostSheet({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -590,7 +592,7 @@ class CreatePostSheet extends StatelessWidget {
 class CommentsSheet extends StatelessWidget {
   final String postId;
   
-  const CommentsSheet({required this.postId});
+  const CommentsSheet({super.key, required this.postId});
 
   @override
   Widget build(BuildContext context) {

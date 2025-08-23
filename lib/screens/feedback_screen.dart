@@ -19,7 +19,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
   final _formKey = GlobalKey<FormState>();
   final _suggestionController = TextEditingController();
   final _emailController = TextEditingController();
-  
+
   int _selectedRating = 0;
   String _selectedCategory = 'General';
   bool _isSubmitting = false;
@@ -33,7 +33,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
     'Bug Report',
     'Accessibility',
     'Data Privacy',
-    'Notifications'
+    'Notifications',
   ];
 
   @override
@@ -50,21 +50,17 @@ class _FeedbackScreenState extends State<FeedbackScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -80,7 +76,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -123,20 +119,14 @@ class _FeedbackScreenState extends State<FeedbackScreen>
       flexibleSpace: FlexibleSpaceBar(
         title: const Text(
           'Help Us Improve',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         background: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppTheme.primaryPink,
-                AppTheme.primaryPurple,
-              ],
+              colors: [AppTheme.primaryPink, AppTheme.primaryPurple],
             ),
           ),
           child: const Center(
@@ -154,7 +144,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
   Widget _buildWelcomeCard() {
     return Card(
       elevation: 8,
-      shadowColor: AppTheme.primaryPink.withOpacity(0.3),
+      shadowColor: AppTheme.primaryPink.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -164,32 +154,28 @@ class _FeedbackScreenState extends State<FeedbackScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppTheme.primaryPink.withOpacity(0.1),
-              AppTheme.primaryPurple.withOpacity(0.1),
+              AppTheme.primaryPink.withValues(alpha: 0.1),
+              AppTheme.primaryPurple.withValues(alpha: 0.1),
             ],
           ),
         ),
         child: Column(
           children: [
-            const Icon(
-              Icons.favorite,
-              size: 48,
-              color: AppTheme.primaryPink,
-            ),
+            const Icon(Icons.favorite, size: 48, color: AppTheme.primaryPink),
             const SizedBox(height: 16),
             Text(
               'Your Opinion Matters',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryPink,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryPink,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'Help us make CycleSync the best period tracking app by sharing your feedback and suggestions.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
           ],
@@ -209,9 +195,9 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           children: [
             Text(
               'Rate Your Experience',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -244,9 +230,9 @@ class _FeedbackScreenState extends State<FeedbackScreen>
                 child: Text(
                   _getRatingText(_selectedRating),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppTheme.primaryPink,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: AppTheme.primaryPink,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -269,9 +255,9 @@ class _FeedbackScreenState extends State<FeedbackScreen>
             children: [
               Text(
                 'Share Your Thoughts',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -385,9 +371,21 @@ class _FeedbackScreenState extends State<FeedbackScreen>
   Widget _buildQuickFeedbackOptions() {
     final quickOptions = [
       {'icon': Icons.bug_report, 'label': 'Report Bug', 'color': Colors.red},
-      {'icon': Icons.lightbulb, 'label': 'Suggest Feature', 'color': Colors.orange},
-      {'icon': Icons.design_services, 'label': 'UI/UX Feedback', 'color': Colors.blue},
-      {'icon': Icons.speed, 'label': 'Performance Issue', 'color': Colors.green},
+      {
+        'icon': Icons.lightbulb,
+        'label': 'Suggest Feature',
+        'color': Colors.orange,
+      },
+      {
+        'icon': Icons.design_services,
+        'label': 'UI/UX Feedback',
+        'color': Colors.blue,
+      },
+      {
+        'icon': Icons.speed,
+        'label': 'Performance Issue',
+        'color': Colors.green,
+      },
     ];
 
     return Card(
@@ -400,9 +398,9 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           children: [
             Text(
               'Quick Feedback',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             GridView.builder(
@@ -418,15 +416,20 @@ class _FeedbackScreenState extends State<FeedbackScreen>
               itemBuilder: (context, index) {
                 final option = quickOptions[index];
                 return ElevatedButton(
-                  onPressed: () => _handleQuickFeedback(option['label'] as String),
+                  onPressed: () =>
+                      _handleQuickFeedback(option['label'] as String),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: (option['color'] as Color).withOpacity(0.1),
+                    backgroundColor: (option['color'] as Color).withValues(
+                      alpha: 0.1,
+                    ),
                     foregroundColor: option['color'] as Color,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                        color: (option['color'] as Color).withOpacity(0.3),
+                        color: (option['color'] as Color).withValues(
+                          alpha: 0.3,
+                        ),
                       ),
                     ),
                   ),
@@ -475,7 +478,8 @@ class _FeedbackScreenState extends State<FeedbackScreen>
       },
       {
         'title': 'Smart Wearable Integration',
-        'description': 'Seamless integration with fitness trackers and smartwatches',
+        'description':
+            'Seamless integration with fitness trackers and smartwatches',
         'status': 'Coming Soon',
         'icon': Icons.watch,
       },
@@ -491,19 +495,21 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           children: [
             Text(
               'Upcoming Features',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               'Here\'s what we\'re working on based on your feedback:',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 16),
-            ...suggestions.map((suggestion) => _buildSuggestionTile(suggestion)),
+            ...suggestions.map(
+              (suggestion) => _buildSuggestionTile(suggestion),
+            ),
           ],
         ),
       ),
@@ -515,18 +521,16 @@ class _FeedbackScreenState extends State<FeedbackScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryPink.withOpacity(0.05),
+        color: AppTheme.primaryPink.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.primaryPink.withOpacity(0.2),
-        ),
+        border: Border.all(color: AppTheme.primaryPink.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryPink.withOpacity(0.1),
+              color: AppTheme.primaryPink.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -550,10 +554,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
                 const SizedBox(height: 4),
                 Text(
                   suggestion['description'] as String,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
               ],
             ),
@@ -561,7 +562,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.accentBlue.withOpacity(0.2),
+              color: AppTheme.accentBlue.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -640,7 +641,9 @@ class _FeedbackScreenState extends State<FeedbackScreen>
       await Future.delayed(const Duration(seconds: 2));
 
       // Track feedback submission (would be implemented with analytics service)
-      debugPrint('📊 Feedback submitted: rating=$_selectedRating, category=$_selectedCategory, hasEmail=$_includeEmail');
+      debugPrint(
+        '📊 Feedback submitted: rating=$_selectedRating, category=$_selectedCategory, hasEmail=$_includeEmail',
+      );
 
       HapticFeedback.mediumImpact();
 

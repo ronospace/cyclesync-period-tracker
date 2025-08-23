@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:convert';
+import '../models/social_models.dart';
 import 'error_service.dart';
-import 'firebase_service.dart';
 import 'email_service.dart';
 
 /// Comprehensive social sharing and community service for healthcare and partner integration
@@ -44,7 +43,7 @@ class SocialService {
         'data_types': dataTypes.map((type) => type.name).toList(),
         'personal_message': personalMessage,
         'share_token': shareToken,
-        'expires_at': expiration != null 
+        'expires_at': expiration != null
             ? DateTime.now().add(expiration).toIso8601String()
             : null,
         'created_at': FieldValue.serverTimestamp(),
@@ -84,7 +83,7 @@ class SocialService {
         context: 'Social Service - Share with Provider',
         severity: ErrorSeverity.error,
       );
-      
+
       return ShareResult.error('Failed to share data: ${e.toString()}');
     }
   }
@@ -113,17 +112,22 @@ class SocialService {
         'provider_name': providerName,
         'provider_email': providerEmail,
         'provider_type': providerType.name,
-        'authorized_data_types': authorizedDataTypes.map((type) => type.name).toList(),
+        'authorized_data_types': authorizedDataTypes
+            .map((type) => type.name)
+            .toList(),
         'access_token': accessToken,
         'granted_at': FieldValue.serverTimestamp(),
-        'expires_at': accessDuration != null 
+        'expires_at': accessDuration != null
             ? DateTime.now().add(accessDuration).toIso8601String()
             : null,
         'status': 'active',
         'access_history': [],
       };
 
-      await _firestore.collection('provider_access').doc(accessId).set(accessData);
+      await _firestore
+          .collection('provider_access')
+          .doc(accessId)
+          .set(accessData);
 
       // Generate provider dashboard URL
       final dashboardUrl = await _generateProviderDashboardUrl(accessToken);
@@ -136,7 +140,9 @@ class SocialService {
         message: 'Provider access created successfully',
       );
     } catch (e) {
-      return ProviderAccessResult.error('Failed to create provider access: ${e.toString()}');
+      return ProviderAccessResult.error(
+        'Failed to create provider access: ${e.toString()}',
+      );
     }
   }
 
@@ -157,7 +163,7 @@ class SocialService {
 
       final shareData = shareDoc.docs.first.data();
       final shareId = shareData['id'];
-      
+
       // Check expiration
       if (shareData['expires_at'] != null) {
         final expiresAt = DateTime.parse(shareData['expires_at']);
@@ -177,12 +183,12 @@ class SocialService {
         end: DateTime.parse(shareData['date_range']['end']),
       );
 
-      // Fetch actual cycle data
-      final cycles = await FirebaseService.getCycles(
-        userId: shareData['owner_id'],
-        startDate: dateRange.start,
-        endDate: dateRange.end,
-        limit: 100,
+      // Fetch actual cycle data - temporary implementation
+      // TODO: Implement proper getCyclesInRange method in FirebaseService
+      final cycles = await _getCyclesInRangeTemp(
+        shareData['owner_id'],
+        dateRange.start,
+        dateRange.end,
       );
 
       // Filter data based on permissions
@@ -207,7 +213,9 @@ class SocialService {
           shareId: shareId,
           ownerEmail: shareData['owner_email'],
           providerEmail: shareData['provider_email'],
-          permission: SharePermission.values.firstWhere((p) => p.name == shareData['permission']),
+          permission: SharePermission.values.firstWhere(
+            (p) => p.name == shareData['permission'],
+          ),
           dateRange: dateRange,
           personalMessage: shareData['personal_message'],
         ),
@@ -216,7 +224,9 @@ class SocialService {
         summary: _generateDataSummary(filteredCycles),
       );
     } catch (e) {
-      return SharedDataResult.error('Failed to retrieve shared data: ${e.toString()}');
+      return SharedDataResult.error(
+        'Failed to retrieve shared data: ${e.toString()}',
+      );
     }
   }
 
@@ -225,20 +235,23 @@ class SocialService {
     try {
       // Generate anonymous, aggregated insights from community data
       final insights = await _generateAnonymousCommunityInsights();
-      
+
       return CommunityInsightResult(
         success: true,
         insights: insights,
-        participantCount: await _getCommunityParticipantCount(),
-        lastUpdated: DateTime.now(),
       );
     } catch (e) {
-      return CommunityInsightResult.error('Failed to generate community insights: ${e.toString()}');
+      return CommunityInsightResult(
+        success: false,
+        error: 'Failed to generate community insights: ${e.toString()}',
+      );
     }
   }
 
   /// Join anonymous community data sharing
-  static Future<bool> joinCommunityDataSharing(CommunityDataPreferences preferences) async {
+  static Future<bool> joinCommunityDataSharing(
+    CommunityDataPreferences preferences,
+  ) async {
     try {
       final user = _auth.currentUser;
       if (user == null) return false;
@@ -279,7 +292,9 @@ class SocialService {
           .orderBy('created_at', descending: true)
           .get();
 
-      final shares = sharesQuery.docs.map((doc) => _mapToShareSummary(doc.data())).toList();
+      final shares = sharesQuery.docs
+          .map((doc) => _mapToShareSummary(doc.data()))
+          .toList();
 
       // Get provider access records
       final providerAccessQuery = await _firestore
@@ -300,7 +315,9 @@ class SocialService {
         totalShares: shares.length,
       );
     } catch (e) {
-      return MySharedDataResult.error('Failed to retrieve shared data: ${e.toString()}');
+      return MySharedDataResult.error(
+        'Failed to retrieve shared data: ${e.toString()}',
+      );
     }
   }
 
@@ -327,6 +344,32 @@ class SocialService {
 
   // Private helper methods
 
+  /// Temporary implementation to get cycles in date range
+  /// TODO: Move this to FirebaseService as getCyclesInRange
+  static Future<List<Map<String, dynamic>>> _getCyclesInRangeTemp(
+    String userId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    try {
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('cycles')
+          .where('start', isGreaterThanOrEqualTo: startDate)
+          .where('start', isLessThanOrEqualTo: endDate)
+          .orderBy('start')
+          .get();
+
+      return snapshot.docs
+          .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+          .toList();
+    } catch (e) {
+      debugPrint('Error fetching cycles in range: $e');
+      return [];
+    }
+  }
+
   static Future<String> _createSecureShareToken() async {
     // Generate cryptographically secure token
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -339,7 +382,9 @@ class SocialService {
     return 'https://cyclesync.app/share/$shareToken';
   }
 
-  static Future<String> _generateProviderDashboardUrl(String accessToken) async {
+  static Future<String> _generateProviderDashboardUrl(
+    String accessToken,
+  ) async {
     return 'https://cyclesync.app/provider/$accessToken';
   }
 
@@ -350,7 +395,7 @@ class SocialService {
     String? personalMessage,
   }) async {
     final accessUrl = await _generateSecureAccessUrl(shareToken);
-    
+
     final success = await EmailService.sendShareNotification(
       providerEmail: providerEmail,
       shareToken: shareToken,
@@ -358,7 +403,7 @@ class SocialService {
       accessUrl: accessUrl,
       personalMessage: personalMessage,
     );
-    
+
     if (success) {
       debugPrint('✅ Share notification sent to $providerEmail');
     } else {
@@ -433,10 +478,10 @@ class SocialService {
     for (final cycle in cycles) {
       // Calculate cycle length
       if (cycle['start'] != null && cycle['end'] != null) {
-        final start = cycle['start'] is DateTime 
+        final start = cycle['start'] is DateTime
             ? cycle['start'] as DateTime
             : DateTime.parse(cycle['start'].toString());
-        final end = cycle['end'] is DateTime 
+        final end = cycle['end'] is DateTime
             ? cycle['end'] as DateTime
             : DateTime.parse(cycle['end'].toString());
         cycleLengths.add(end.difference(start).inDays + 1);
@@ -463,61 +508,88 @@ class SocialService {
     return ProviderAnalytics(
       totalCycles: cycles.length,
       dateRange: DateRange(
-        start: cycles.map((c) => _parseDateTime(c['start'])).where((d) => d != null).reduce((a, b) => a!.isBefore(b!) ? a : b)!,
-        end: cycles.map((c) => _parseDateTime(c['end'])).where((d) => d != null).reduce((a, b) => a!.isAfter(b!) ? a : b)!,
+        start: cycles
+            .map((c) => _parseDateTime(c['start']))
+            .where((d) => d != null)
+            .reduce((a, b) => a!.isBefore(b!) ? a : b)!,
+        end: cycles
+            .map((c) => _parseDateTime(c['end']))
+            .where((d) => d != null)
+            .reduce((a, b) => a!.isAfter(b!) ? a : b)!,
       ),
-      averageCycleLength: cycleLengths.isNotEmpty 
+      averageCycleLength: cycleLengths.isNotEmpty
           ? cycleLengths.reduce((a, b) => a + b) / cycleLengths.length
           : null,
       cycleRegularity: _calculateRegularity(cycleLengths),
       commonSymptoms: _getTopSymptoms(symptoms, 5),
-      averageWellbeing: wellbeingCount > 0 ? WellbeingAverages(
-        mood: totalMood / wellbeingCount,
-        energy: totalEnergy / wellbeingCount,
-        pain: totalPain / wellbeingCount,
-      ) : null,
+      averageWellbeing: wellbeingCount > 0
+          ? WellbeingAverages(
+              mood: totalMood / wellbeingCount,
+              energy: totalEnergy / wellbeingCount,
+              pain: totalPain / wellbeingCount,
+            )
+          : null,
     );
   }
 
   static String _generateDataSummary(List<Map<String, dynamic>> cycles) {
-    if (cycles.isEmpty) return 'No cycle data available for the selected period.';
+    if (cycles.isEmpty)
+      return 'No cycle data available for the selected period.';
 
     final cycleCount = cycles.length;
-    final dateRange = cycles.isNotEmpty ? 
-        '${_formatDate(_parseDateTime(cycles.last['start']))} - ${_formatDate(_parseDateTime(cycles.first['end']))}' : 'Unknown';
+    final dateRange = cycles.isNotEmpty
+        ? '${_formatDate(_parseDateTime(cycles.last['start']))} - ${_formatDate(_parseDateTime(cycles.first['end']))}'
+        : 'Unknown';
 
     return 'Summary: $cycleCount cycles tracked from $dateRange. '
-           'Data includes menstrual patterns, symptoms, and wellbeing metrics as authorized.';
+        'Data includes menstrual patterns, symptoms, and wellbeing metrics as authorized.';
   }
 
-  static Future<List<CommunityInsight>> _generateAnonymousCommunityInsights() async {
+  static Future<List<CommunityInsight>>
+  _generateAnonymousCommunityInsights() async {
     // This would generate aggregated, anonymous insights from community data
     // For now, return sample insights
     return [
       CommunityInsight(
+        id: 'cycle_length_avg',
         title: 'Average Cycle Length',
         value: '28.3 days',
         description: 'Based on 10,000+ anonymous cycles',
         category: InsightCategory.cyclePattern,
+        supportCount: 10000,
+        createdAt: DateTime.now().subtract(Duration(days: 1)),
       ),
       CommunityInsight(
+        id: 'common_symptoms',
         title: 'Most Common Symptoms',
         value: 'Cramps (67%), Fatigue (54%), Mood changes (48%)',
         description: 'From community symptom tracking',
         category: InsightCategory.symptoms,
+        supportCount: 8500,
+        createdAt: DateTime.now().subtract(Duration(days: 2)),
       ),
       CommunityInsight(
+        id: 'cycle_regularity',
         title: 'Cycle Regularity',
         value: '73% regular cycles',
         description: 'Regular defined as ±3 days variation',
         category: InsightCategory.regularity,
+        supportCount: 7300,
+        createdAt: DateTime.now().subtract(Duration(days: 3)),
       ),
     ];
   }
 
   static Future<int> _getCommunityParticipantCount() async {
-    final snapshot = await _firestore.collection('community_participants').count().get();
-    return snapshot.count;
+    try {
+      final snapshot = await _firestore
+          .collection('community_participants')
+          .count()
+          .get();
+      return snapshot.count ?? 0;
+    } catch (e) {
+      return 0; // Return 0 if count fails
+    }
   }
 
   static DateTime? _parseDateTime(dynamic date) {
@@ -540,10 +612,14 @@ class SocialService {
 
   static double _calculateRegularity(List<int> cycleLengths) {
     if (cycleLengths.length < 2) return 0.0;
-    
+
     final mean = cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
-    final variance = cycleLengths.map((l) => (l - mean) * (l - mean)).reduce((a, b) => a + b) / cycleLengths.length;
-    
+    final variance =
+        cycleLengths
+            .map((l) => (l - mean) * (l - mean))
+            .reduce((a, b) => a + b) /
+        cycleLengths.length;
+
     return 1.0 - (variance / 25.0).clamp(0.0, 1.0); // Normalize to 0-1
   }
 
@@ -565,19 +641,27 @@ class SocialService {
       providerEmail: data['provider_email'],
       dataTypes: (data['data_types'] as List).cast<String>(),
       createdAt: (data['created_at'] as Timestamp).toDate(),
-      expiresAt: data['expires_at'] != null ? DateTime.parse(data['expires_at']) : null,
+      expiresAt: data['expires_at'] != null
+          ? DateTime.parse(data['expires_at'])
+          : null,
       accessCount: data['access_count'] ?? 0,
       status: data['status'],
     );
   }
 
-  static ProviderAccessSummary _mapToProviderAccessSummary(Map<String, dynamic> data) {
+  static ProviderAccessSummary _mapToProviderAccessSummary(
+    Map<String, dynamic> data,
+  ) {
     return ProviderAccessSummary(
       accessId: data['id'],
       providerName: data['provider_name'],
-      providerType: ProviderType.values.firstWhere((t) => t.name == data['provider_type']),
+      providerType: ProviderType.values.firstWhere(
+        (t) => t.name == data['provider_type'],
+      ),
       grantedAt: (data['granted_at'] as Timestamp).toDate(),
-      expiresAt: data['expires_at'] != null ? DateTime.parse(data['expires_at']) : null,
+      expiresAt: data['expires_at'] != null
+          ? DateTime.parse(data['expires_at'])
+          : null,
       status: data['status'],
     );
   }

@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../services/tensorflow_prediction_service.dart';
 import '../services/advanced_health_kit_service.dart';
 import '../providers/cycle_provider.dart';
-import '../providers/user_provider.dart';
 
 /// Phase 2 Enhanced AI Analytics Dashboard with TensorFlow Predictions
 /// Extraordinary biometric analysis and machine learning insights
@@ -18,51 +17,52 @@ class AIAnalyticsDashboard extends StatefulWidget {
 
 class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
     with TickerProviderStateMixin {
-  
   late TabController _tabController;
-  final TensorFlowPredictionService _aiService = TensorFlowPredictionService.instance;
-  final AdvancedHealthKitService _healthService = AdvancedHealthKitService.instance;
-  
+  final TensorFlowPredictionService _aiService =
+      TensorFlowPredictionService.instance;
+  final AdvancedHealthKitService _healthService =
+      AdvancedHealthKitService.instance;
+
   // AI Prediction Results
   OvulationPredictionResult? _ovulationPrediction;
   HRVStressAnalysisResult? _stressAnalysis;
   EmotionClassificationResult? _emotionClassification;
   CycleIrregularityResult? _cycleIrregularity;
   SleepQualityPredictionResult? _sleepPrediction;
-  
+
   // Loading states
   bool _isLoadingPredictions = false;
   bool _isLoadingHealthData = false;
-  
+
   // Health data
   Map<String, dynamic> _currentBiometrics = {};
   List<Map<String, dynamic>> _recentHealthData = [];
   List<Map<String, dynamic>> _cycleHistory = [];
-  
+
   // Animation controllers
   late AnimationController _pulseController;
   late AnimationController _glowController;
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
-    
+
     // Initialize animation controllers
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    
+
     _glowController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat();
-    
+
     _initializeAI();
     _loadHealthData();
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -70,19 +70,21 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
     _glowController.dispose();
     super.dispose();
   }
-  
+
   Future<void> _initializeAI() async {
     setState(() => _isLoadingPredictions = true);
-    
+
     try {
       // Initialize TensorFlow Lite models
       final initialized = await _aiService.initialize();
-      
+
       if (initialized) {
         debugPrint('🧠 AI Models initialized successfully');
         await _runAIPredictions();
       } else {
-        debugPrint('⚠️ AI Models initialization failed - using algorithmic fallback');
+        debugPrint(
+          '⚠️ AI Models initialization failed - using algorithmic fallback',
+        );
         await _runAIPredictions(); // Still run predictions with algorithmic fallback
       }
     } catch (e) {
@@ -92,10 +94,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       setState(() => _isLoadingPredictions = false);
     }
   }
-  
+
   Future<void> _loadHealthData() async {
     setState(() => _isLoadingHealthData = true);
-    
+
     try {
       // Load recent health data from HealthKit
       final healthData = await _healthService.fetchComprehensiveHealthData(
@@ -105,19 +107,22 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
         includeSleep: true,
         includeActivity: true,
       );
-      
+
       // Get cycle history from provider
       final cycleProvider = Provider.of<CycleProvider>(context, listen: false);
-      _cycleHistory = cycleProvider.cycles.map((cycle) => {
-        'length': cycle.lengthInDays,
-        'start_date': cycle.startDate.toIso8601String(),
-        'symptoms': cycle.symptoms,
-      }).toList();
-      
+      _cycleHistory = cycleProvider.cycles
+          .map(
+            (cycle) => {
+              'length': cycle.lengthInDays,
+              'start_date': cycle.startDate.toIso8601String(),
+              'symptoms': cycle.symptoms,
+            },
+          )
+          .toList();
+
       // Extract current biometrics
       _currentBiometrics = _extractCurrentBiometrics(healthData);
       _recentHealthData = healthData;
-      
     } catch (e) {
       debugPrint('❌ Health data loading error: $e');
       _showErrorSnackBar('Failed to load health data: $e');
@@ -125,42 +130,48 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       setState(() => _isLoadingHealthData = false);
     }
   }
-  
-  Map<String, dynamic> _extractCurrentBiometrics(List<Map<String, dynamic>> healthData) {
+
+  Map<String, dynamic> _extractCurrentBiometrics(
+    List<Map<String, dynamic>> healthData,
+  ) {
     // Extract the most recent values for each metric
     final today = DateTime.now();
     final todayData = healthData.where((data) {
       final date = DateTime.parse(data['date'] as String);
       return date.day == today.day && date.month == today.month;
     }).toList();
-    
+
     return {
       'heart_rate': _getLatestValue(todayData, 'heart_rate') ?? 70.0,
       'hrv': _getLatestValue(todayData, 'hrv') ?? 35.0,
       'temperature': _getLatestValue(todayData, 'temperature') ?? 98.6,
       'steps': _getLatestValue(todayData, 'steps') ?? 8000.0,
       'sleep_score': _getLatestValue(todayData, 'sleep_quality') ?? 75.0,
-      'resting_heart_rate': _getLatestValue(todayData, 'resting_heart_rate') ?? 65.0,
+      'resting_heart_rate':
+          _getLatestValue(todayData, 'resting_heart_rate') ?? 65.0,
       'current_day_in_cycle': _getCurrentDayInCycle(),
-      'respiratory_rate': _getLatestValue(todayData, 'respiratory_rate') ?? 16.0,
+      'respiratory_rate':
+          _getLatestValue(todayData, 'respiratory_rate') ?? 16.0,
     };
   }
-  
+
   double? _getLatestValue(List<Map<String, dynamic>> data, String type) {
     final filtered = data.where((d) => d['type'] == type).toList();
     if (filtered.isEmpty) return null;
-    filtered.sort((a, b) => DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
+    filtered.sort(
+      (a, b) => DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])),
+    );
     return (filtered.first['value'] as num?)?.toDouble();
   }
-  
+
   int _getCurrentDayInCycle() {
     final cycleProvider = Provider.of<CycleProvider>(context, listen: false);
     final currentCycle = cycleProvider.currentCycle;
     if (currentCycle == null) return 14;
-    
+
     return DateTime.now().difference(currentCycle.startDate).inDays + 1;
   }
-  
+
   Future<void> _runAIPredictions() async {
     try {
       // Run all AI predictions concurrently for better performance
@@ -192,7 +203,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
           dailyActivity: _extractActivityData(),
         ),
       ]);
-      
+
       setState(() {
         _ovulationPrediction = predictions[0] as OvulationPredictionResult;
         _stressAnalysis = predictions[1] as HRVStressAnalysisResult;
@@ -200,25 +211,28 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
         _cycleIrregularity = predictions[3] as CycleIrregularityResult;
         _sleepPrediction = predictions[4] as SleepQualityPredictionResult;
       });
-      
+
       debugPrint('🎯 All AI predictions completed successfully');
-      
     } catch (e) {
       debugPrint('❌ AI prediction error: $e');
       _showErrorSnackBar('AI prediction failed: $e');
     }
   }
-  
+
   List<Map<String, dynamic>> _filterHealthData(String type) {
     return _recentHealthData.where((data) => data['type'] == type).toList();
   }
-  
+
   Map<String, dynamic> _extractSleepData() {
     final sleepData = _filterHealthData('sleep_quality');
     if (sleepData.isEmpty) {
-      return {'duration': 480.0, 'quality': 75.0, 'deep_sleep_percentage': 25.0};
+      return {
+        'duration': 480.0,
+        'quality': 75.0,
+        'deep_sleep_percentage': 25.0,
+      };
     }
-    
+
     final latest = sleepData.first;
     return {
       'duration': latest['duration'] ?? 480.0,
@@ -226,15 +240,17 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       'deep_sleep_percentage': latest['deep_percentage'] ?? 25.0,
     };
   }
-  
+
   Map<String, dynamic> _extractActivityData() {
     return {
       'steps': _currentBiometrics['steps'] ?? 8000.0,
-      'active_minutes': _getLatestValue(_recentHealthData, 'active_minutes') ?? 60.0,
-      'calories_burned': _getLatestValue(_recentHealthData, 'calories') ?? 2000.0,
+      'active_minutes':
+          _getLatestValue(_recentHealthData, 'active_minutes') ?? 60.0,
+      'calories_burned':
+          _getLatestValue(_recentHealthData, 'calories') ?? 2000.0,
     };
   }
-  
+
   Map<String, dynamic> _extractLifestyleFactors() {
     // In a real app, this would come from user input or additional tracking
     return {
@@ -244,7 +260,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       'sleep_consistency': 0.75,
     };
   }
-  
+
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -254,7 +270,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -265,7 +281,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
           : _buildDashboardContent(),
     );
   }
-  
+
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -281,7 +297,9 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF6C5CE7).withOpacity(0.3 + 0.3 * _glowController.value),
+                      color: const Color(
+                        0xFF6C5CE7,
+                      ).withValues(alpha: 0.3 + 0.3 * _glowController.value),
                       blurRadius: 10 + 5 * _glowController.value,
                       spreadRadius: 2,
                     ),
@@ -331,7 +349,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildLoadingView() {
     return Center(
       child: Column(
@@ -349,13 +367,13 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF6C5CE7).withOpacity(0.3),
+                        const Color(0xFF6C5CE7).withValues(alpha: 0.3),
                         const Color(0xFF6C5CE7),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                        color: const Color(0xFF6C5CE7).withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -372,7 +390,9 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
           ),
           const SizedBox(height: 24),
           Text(
-            _isLoadingHealthData ? 'Loading Health Data...' : 'Initializing AI Models...',
+            _isLoadingHealthData
+                ? 'Loading Health Data...'
+                : 'Initializing AI Models...',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -384,17 +404,14 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
             _isLoadingHealthData
                 ? 'Fetching your biometric data from HealthKit'
                 : 'Loading TensorFlow Lite models for predictions',
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[400], fontSize: 14),
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
-  
+
   Widget _buildDashboardContent() {
     return TabBarView(
       controller: _tabController,
@@ -407,16 +424,19 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ],
     );
   }
-  
+
   Widget _buildOvulationTab() {
     if (_ovulationPrediction == null) {
       return const Center(
-        child: Text('No ovulation prediction available', style: TextStyle(color: Colors.white)),
+        child: Text(
+          'No ovulation prediction available',
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
-    
+
     final prediction = _ovulationPrediction!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -429,31 +449,49 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
             confidence: prediction.confidence,
             child: Column(
               children: [
-                _buildMetricRow('Days to Ovulation', '${prediction.daysToOvulation}'),
-                _buildMetricRow('Fertility Score', '${(prediction.fertilityScore * 100).round()}%'),
-                _buildMetricRow('LH Surge Probability', '${(prediction.lhSurgeProbability * 100).round()}%'),
-                _buildMetricRow('Temperature Shift', '${(prediction.temperatureShiftProbability * 100).round()}%'),
+                _buildMetricRow(
+                  'Days to Ovulation',
+                  '${prediction.daysToOvulation}',
+                ),
+                _buildMetricRow(
+                  'Fertility Score',
+                  '${(prediction.fertilityScore * 100).round()}%',
+                ),
+                _buildMetricRow(
+                  'LH Surge Probability',
+                  '${(prediction.lhSurgeProbability * 100).round()}%',
+                ),
+                _buildMetricRow(
+                  'Temperature Shift',
+                  '${(prediction.temperatureShiftProbability * 100).round()}%',
+                ),
                 const SizedBox(height: 16),
                 _buildFertilityWindow(prediction.fertilityWindow),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          _buildMethodCard(prediction.predictionMethod, prediction.modelVersion),
+          _buildMethodCard(
+            prediction.predictionMethod,
+            prediction.modelVersion,
+          ),
         ],
       ),
     );
   }
-  
+
   Widget _buildWellnessTab() {
     if (_stressAnalysis == null) {
       return const Center(
-        child: Text('No wellness analysis available', style: TextStyle(color: Colors.white)),
+        child: Text(
+          'No wellness analysis available',
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
-    
+
     final analysis = _stressAnalysis!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -468,29 +506,47 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               children: [
                 _buildStressGauge(analysis.stressLevel),
                 const SizedBox(height: 16),
-                _buildMetricRow('Recovery Score', '${(analysis.recoveryScore * 100).round()}%'),
-                _buildMetricRow('Autonomic Balance', '${(analysis.autonomicBalance * 100).round()}%'),
-                _buildMetricRow('Wellness Trend', '${(analysis.wellnessTrend * 100).round()}%'),
-                _buildMetricRow('Data Quality', '${(analysis.dataQuality * 100).round()}%'),
+                _buildMetricRow(
+                  'Recovery Score',
+                  '${(analysis.recoveryScore * 100).round()}%',
+                ),
+                _buildMetricRow(
+                  'Autonomic Balance',
+                  '${(analysis.autonomicBalance * 100).round()}%',
+                ),
+                _buildMetricRow(
+                  'Wellness Trend',
+                  '${(analysis.wellnessTrend * 100).round()}%',
+                ),
+                _buildMetricRow(
+                  'Data Quality',
+                  '${(analysis.dataQuality * 100).round()}%',
+                ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          _buildRecommendationsCard('Wellness Recommendations', analysis.recommendations),
+          _buildRecommendationsCard(
+            'Wellness Recommendations',
+            analysis.recommendations,
+          ),
         ],
       ),
     );
   }
-  
+
   Widget _buildEmotionTab() {
     if (_emotionClassification == null) {
       return const Center(
-        child: Text('No emotion analysis available', style: TextStyle(color: Colors.white)),
+        child: Text(
+          'No emotion analysis available',
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
-    
+
     final emotion = _emotionClassification!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -503,7 +559,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
             confidence: emotion.confidence,
             child: Column(
               children: [
-                _buildEmotionDisplay(emotion.dominantEmotion, emotion.confidence),
+                _buildEmotionDisplay(
+                  emotion.dominantEmotion,
+                  emotion.confidence,
+                ),
                 const SizedBox(height: 16),
                 _buildEmotionChart(emotion.emotionProbabilities),
               ],
@@ -512,21 +571,27 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
           const SizedBox(height: 16),
           _buildPhysiologicalIndicators(emotion.physiologicalIndicators),
           const SizedBox(height: 16),
-          _buildRecommendationsCard('Emotion-Based Actions', emotion.recommendedActions),
+          _buildRecommendationsCard(
+            'Emotion-Based Actions',
+            emotion.recommendedActions,
+          ),
         ],
       ),
     );
   }
-  
+
   Widget _buildCycleTab() {
     if (_cycleIrregularity == null) {
       return const Center(
-        child: Text('No cycle analysis available', style: TextStyle(color: Colors.white)),
+        child: Text(
+          'No cycle analysis available',
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
-    
+
     final cycle = _cycleIrregularity!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -542,7 +607,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 _buildIrregularityGauge(cycle.irregularityScore),
                 const SizedBox(height: 16),
                 _buildMetricRow('Severity Level', cycle.severityLevel),
-                _buildMetricRow('Stress Impact', '${(cycle.stressImpactFactor * 100).round()}%'),
+                _buildMetricRow(
+                  'Stress Impact',
+                  '${(cycle.stressImpactFactor * 100).round()}%',
+                ),
                 _buildBooleanRow('Hormonal Concern', cycle.hormonalConcernFlag),
                 _buildBooleanRow('Health Concern', cycle.healthConcernFlag),
                 _buildTrendRow('Trend Direction', cycle.trendDirection),
@@ -552,21 +620,27 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
           const SizedBox(height: 16),
           _buildPatternsCard(cycle.detectedPatterns),
           const SizedBox(height: 16),
-          _buildRecommendationsCard('Cycle Recommendations', cycle.recommendations),
+          _buildRecommendationsCard(
+            'Cycle Recommendations',
+            cycle.recommendations,
+          ),
         ],
       ),
     );
   }
-  
+
   Widget _buildSleepTab() {
     if (_sleepPrediction == null) {
       return const Center(
-        child: Text('No sleep analysis available', style: TextStyle(color: Colors.white)),
+        child: Text(
+          'No sleep analysis available',
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
-    
+
     final sleep = _sleepPrediction!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -581,25 +655,37 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               children: [
                 _buildSleepQualityGauge(sleep.predictedQualityScore),
                 const SizedBox(height: 16),
-                _buildMetricRow('Deep Sleep', '${sleep.expectedDeepSleepMinutes} min'),
+                _buildMetricRow(
+                  'Deep Sleep',
+                  '${sleep.expectedDeepSleepMinutes} min',
+                ),
                 _buildMetricRow('REM Sleep', '${sleep.expectedREMMinutes} min'),
-                _buildMetricRow('Sleep Efficiency', '${(sleep.sleepEfficiency * 100).round()}%'),
-                _buildMetricRow('Recovery Potential', '${(sleep.recoveryPotential * 100).round()}%'),
+                _buildMetricRow(
+                  'Sleep Efficiency',
+                  '${(sleep.sleepEfficiency * 100).round()}%',
+                ),
+                _buildMetricRow(
+                  'Recovery Potential',
+                  '${(sleep.recoveryPotential * 100).round()}%',
+                ),
               ],
             ),
           ),
           const SizedBox(height: 16),
           _buildBedtimeRecommendation(sleep.bedtimeRecommendation),
           const SizedBox(height: 16),
-          _buildRecommendationsCard('Sleep Optimization', sleep.optimizationTips),
+          _buildRecommendationsCard(
+            'Sleep Optimization',
+            sleep.optimizationTips,
+          ),
         ],
       ),
     );
   }
-  
+
   // Helper widgets would continue here...
   // [Additional helper widget methods for building various UI components]
-  
+
   Widget _buildPredictionCard({
     required String title,
     required IconData icon,
@@ -612,10 +698,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -631,7 +717,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon, color: color, size: 24),
@@ -658,11 +744,11 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildConfidenceBadge(double confidence) {
     final percentage = (confidence * 100).round();
     Color color;
-    
+
     if (percentage >= 80) {
       color = const Color(0xFF00B894);
     } else if (percentage >= 60) {
@@ -670,13 +756,13 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
     } else {
       color = const Color(0xFF6C5CE7);
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Text(
         '${percentage}%',
@@ -688,20 +774,14 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildMetricRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[300],
-              fontSize: 14,
-            ),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[300], fontSize: 14)),
           Text(
             value,
             style: const TextStyle(
@@ -714,20 +794,14 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildBooleanRow(String label, bool value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[300],
-              fontSize: 14,
-            ),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[300], fontSize: 14)),
           Icon(
             value ? Icons.warning : Icons.check_circle,
             color: value ? Colors.orange : Colors.green,
@@ -737,12 +811,12 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildTrendRow(String label, double value) {
     IconData icon;
     Color color;
     String text;
-    
+
     if (value > 0.5) {
       icon = Icons.trending_up;
       color = Colors.green;
@@ -756,19 +830,13 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       color = Colors.orange;
       text = 'Stable';
     }
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[300],
-              fontSize: 14,
-            ),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[300], fontSize: 14)),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -788,10 +856,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildFertilityWindow(Map<String, DateTime> window) {
     if (window.isEmpty) return const SizedBox();
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -817,35 +885,26 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildDateRow(String label, DateTime date) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
-            ),
-          ),
+          Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 14)),
           Text(
             DateFormat('MMM dd').format(date),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
           ),
         ],
       ),
     );
   }
-  
+
   Widget _buildRecommendationsCard(String title, List<String> recommendations) {
     if (recommendations.isEmpty) return const SizedBox();
-    
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -873,41 +932,49 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               ],
             ),
           ),
-          ...recommendations.map((rec) => Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  margin: const EdgeInsets.only(top: 6, right: 8),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFD79A8),
-                    shape: BoxShape.circle,
+          ...recommendations
+              .map(
+                (rec) => Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.only(top: 6, right: 8),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFD79A8),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          rec,
+                          style: TextStyle(
+                            color: Colors.grey[300],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    rec,
-                    style: TextStyle(
-                      color: Colors.grey[300],
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )).toList(),
+              )
+              .toList(),
           const SizedBox(height: 8),
         ],
       ),
     );
   }
-  
+
   Widget _buildMethodCard(String method, String version) {
     final isML = method.contains('tensorflow');
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -939,10 +1006,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 ),
                 Text(
                   'Version: $version',
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 12),
                 ),
               ],
             ),
@@ -951,7 +1015,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildStressGauge(double stressLevel) {
     return SizedBox(
       height: 120,
@@ -967,8 +1031,11 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 strokeWidth: 8,
                 backgroundColor: Colors.grey[800],
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  stressLevel > 0.7 ? Colors.red : 
-                  stressLevel > 0.4 ? Colors.orange : Colors.green,
+                  stressLevel > 0.7
+                      ? Colors.red
+                      : stressLevel > 0.4
+                      ? Colors.orange
+                      : Colors.green,
                 ),
               ),
             ),
@@ -985,10 +1052,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 ),
                 Text(
                   'Stress',
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 12),
                 ),
               ],
             ),
@@ -997,7 +1061,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildEmotionDisplay(String emotion, double confidence) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1022,10 +1086,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               ),
               Text(
                 '${(confidence * 100).round()}% confidence',
-                style: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[400], fontSize: 12),
               ),
             ],
           ),
@@ -1033,11 +1094,11 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _getEmotionIcon(String emotion) {
     IconData icon;
     Color color;
-    
+
     switch (emotion.toLowerCase()) {
       case 'happy':
         icon = Icons.sentiment_very_satisfied;
@@ -1071,10 +1132,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
         icon = Icons.sentiment_neutral;
         color = Colors.grey;
     }
-    
+
     return Icon(icon, color: color, size: 32);
   }
-  
+
   Widget _buildEmotionChart(Map<String, double> probabilities) {
     return Container(
       height: 200,
@@ -1110,11 +1171,13 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
             rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           borderData: FlBorderData(show: false),
-          barGroups: probabilities.entries.toList().asMap().entries.map((entry) {
+          barGroups: probabilities.entries.toList().asMap().entries.map((
+            entry,
+          ) {
             final index = entry.key;
             final emotion = entry.value.key;
             final probability = entry.value.value;
-            
+
             return BarChartGroupData(
               x: index,
               barRods: [
@@ -1131,20 +1194,28 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Color _getEmotionColor(String emotion) {
     switch (emotion.toLowerCase()) {
-      case 'happy': return Colors.green;
-      case 'sad': return Colors.blue;
-      case 'anxious': return Colors.orange;
-      case 'stressed': return Colors.red;
-      case 'energized': return Colors.yellow;
-      case 'tired': return Colors.grey;
-      case 'calm': return Colors.lightBlue;
-      default: return const Color(0xFF6C5CE7);
+      case 'happy':
+        return Colors.green;
+      case 'sad':
+        return Colors.blue;
+      case 'anxious':
+        return Colors.orange;
+      case 'stressed':
+        return Colors.red;
+      case 'energized':
+        return Colors.yellow;
+      case 'tired':
+        return Colors.grey;
+      case 'calm':
+        return Colors.lightBlue;
+      default:
+        return const Color(0xFF6C5CE7);
     }
   }
-  
+
   Widget _buildPhysiologicalIndicators(Map<String, double> indicators) {
     return Container(
       width: double.infinity,
@@ -1167,19 +1238,27 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               ),
             ),
           ),
-          ...indicators.entries.map((entry) => Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-            child: _buildMetricRow(
-              entry.key.replaceAll('_', ' ').toUpperCase(),
-              entry.value.toStringAsFixed(1),
-            ),
-          )).toList(),
+          ...indicators.entries
+              .map(
+                (entry) => Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  child: _buildMetricRow(
+                    entry.key.replaceAll('_', ' ').toUpperCase(),
+                    entry.value.toStringAsFixed(1),
+                  ),
+                ),
+              )
+              .toList(),
           const SizedBox(height: 8),
         ],
       ),
     );
   }
-  
+
   Widget _buildIrregularityGauge(double score) {
     return SizedBox(
       height: 120,
@@ -1195,8 +1274,11 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 strokeWidth: 8,
                 backgroundColor: Colors.grey[800],
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  score > 0.7 ? Colors.red : 
-                  score > 0.4 ? Colors.orange : Colors.green,
+                  score > 0.7
+                      ? Colors.red
+                      : score > 0.4
+                      ? Colors.orange
+                      : Colors.green,
                 ),
               ),
             ),
@@ -1213,10 +1295,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 ),
                 Text(
                   'Irregularity',
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 12),
                 ),
               ],
             ),
@@ -1225,10 +1304,10 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildPatternsCard(List<String> patterns) {
     if (patterns.isEmpty) return const SizedBox();
-    
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -1256,38 +1335,46 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               ],
             ),
           ),
-          ...patterns.map((pattern) => Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  margin: const EdgeInsets.only(top: 6, right: 8),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF74B9FF),
-                    shape: BoxShape.circle,
+          ...patterns
+              .map(
+                (pattern) => Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.only(top: 6, right: 8),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF74B9FF),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          pattern,
+                          style: TextStyle(
+                            color: Colors.grey[300],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    pattern,
-                    style: TextStyle(
-                      color: Colors.grey[300],
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )).toList(),
+              )
+              .toList(),
           const SizedBox(height: 8),
         ],
       ),
     );
   }
-  
+
   Widget _buildSleepQualityGauge(double quality) {
     return SizedBox(
       height: 120,
@@ -1303,8 +1390,11 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 strokeWidth: 8,
                 backgroundColor: Colors.grey[800],
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  quality > 0.8 ? Colors.green : 
-                  quality > 0.6 ? Colors.orange : Colors.red,
+                  quality > 0.8
+                      ? Colors.green
+                      : quality > 0.6
+                      ? Colors.orange
+                      : Colors.red,
                 ),
               ),
             ),
@@ -1321,10 +1411,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 ),
                 Text(
                   'Quality',
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 12),
                 ),
               ],
             ),
@@ -1333,7 +1420,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       ),
     );
   }
-  
+
   Widget _buildBedtimeRecommendation(DateTime bedtime) {
     return Container(
       width: double.infinity,
@@ -1341,7 +1428,9 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF74B9FF).withOpacity(0.3)),
+        border: Border.all(
+          color: const Color(0xFF74B9FF).withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [

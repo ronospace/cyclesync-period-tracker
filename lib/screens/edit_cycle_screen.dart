@@ -4,11 +4,8 @@ import '../services/firebase_service.dart';
 
 class EditCycleScreen extends StatefulWidget {
   final Map<String, dynamic> cycle;
-  
-  const EditCycleScreen({
-    super.key,
-    required this.cycle,
-  });
+
+  const EditCycleScreen({super.key, required this.cycle});
 
   @override
   State<EditCycleScreen> createState() => _EditCycleScreenState();
@@ -37,7 +34,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
           _startDate = DateTime.parse(widget.cycle['start'].toString());
         }
       }
-      
+
       // Parse existing end date
       if (widget.cycle['end'] != null) {
         if (widget.cycle['end'] is DateTime) {
@@ -54,19 +51,21 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
       _startDate = DateTime.now().subtract(const Duration(days: 7));
       _endDate = DateTime.now();
     }
-    
+
     setState(() {});
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: isStartDate ? (_startDate ?? DateTime.now()) : (_endDate ?? DateTime.now()),
+      initialDate: isStartDate
+          ? (_startDate ?? DateTime.now())
+          : (_endDate ?? DateTime.now()),
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
       helpText: isStartDate ? 'Select start date' : 'Select end date',
     );
-    
+
     if (picked != null) {
       setState(() {
         if (isStartDate) {
@@ -113,7 +112,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
 
     try {
       debugPrint('🟡 Starting update operation...');
-      
+
       await FirebaseService.updateCycle(
         cycleId: widget.cycle['id'],
         startDate: _startDate!,
@@ -121,7 +120,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
       );
 
       debugPrint('✅ Update successful!');
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -129,17 +128,19 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Return to previous screen
         Navigator.of(context).pop(true); // true indicates success
       }
     } catch (e) {
       debugPrint('❌ Update failed: $e');
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update cycle: ${e.toString().split(':').last.trim()}'),
+            content: Text(
+              'Failed to update cycle: ${e.toString().split(':').last.trim()}',
+            ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 4),
           ),
@@ -171,7 +172,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundColor: color.withOpacity(0.1),
+                backgroundColor: color.withValues(alpha: 0.1),
                 child: Icon(icon, color: color),
               ),
               const SizedBox(width: 16),
@@ -200,11 +201,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.grey,
-              ),
+              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             ],
           ),
         ),
@@ -218,7 +215,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
     }
 
     final duration = _endDate!.difference(_startDate!).inDays + 1;
-    
+
     return Card(
       color: Colors.pink.shade50,
       child: Padding(
@@ -236,10 +233,7 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                 children: [
                   const Text(
                     'Cycle Duration',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -295,21 +289,15 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                 children: [
                   const Text(
                     'Update Cycle Dates',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Modify the start and end dates for this cycle entry.',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   _buildDateCard(
                     title: 'Start Date',
                     date: _startDate,
@@ -317,9 +305,9 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                     icon: Icons.play_arrow,
                     color: Colors.green,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   _buildDateCard(
                     title: 'End Date',
                     date: _endDate,
@@ -327,13 +315,13 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                     icon: Icons.stop,
                     color: Colors.red,
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   _buildSummaryCard(),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   ElevatedButton.icon(
                     onPressed: _isSaving ? null : _updateCycle,
                     icon: _isSaving
@@ -353,11 +341,13 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   OutlinedButton(
-                    onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                    onPressed: _isSaving
+                        ? null
+                        : () => Navigator.of(context).pop(),
                     child: const Text('Cancel'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),

@@ -224,7 +224,7 @@ class PredictionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withAlpha(60),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

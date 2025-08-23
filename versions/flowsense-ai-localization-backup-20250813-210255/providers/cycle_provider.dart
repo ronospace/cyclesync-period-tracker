@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/cycle_models.dart';
 
 class CycleProvider extends ChangeNotifier {
-  List<CycleData> _cycles = [];
+  final List<CycleData> _cycles = [];
   CycleData? _currentCycle;
   bool _isLoading = false;
   String? _error;

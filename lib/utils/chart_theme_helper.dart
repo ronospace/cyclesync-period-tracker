@@ -6,33 +6,33 @@ import '../theme/app_theme.dart';
 
 /// Helper utility for creating theme-aware charts with consistent styling
 class ChartThemeHelper {
-  
   /// Get theme-aware chart colors
   static Map<String, Color> getChartColors(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context, listen: false);
     return themeService.getChartColors(context);
   }
-  
-  /// Get theme-aware calendar colors  
+
+  /// Get theme-aware calendar colors
   static Map<String, Color> getCalendarColors(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context, listen: false);
     return themeService.getCalendarColors(context);
   }
-  
+
   /// Get health-specific colors (theme independent)
   static Map<String, Color> getHealthColors() {
     return AppTheme.healthColors;
   }
-  
+
   /// Create theme-aware grid data for charts
-  static FlGridData createGridData(BuildContext context, {
+  static FlGridData createGridData(
+    BuildContext context, {
     bool showVerticalLines = true,
     bool showHorizontalLines = true,
     double horizontalInterval = 1.0,
     double verticalInterval = 1.0,
   }) {
     final colors = getChartColors(context);
-    
+
     return FlGridData(
       show: true,
       drawVerticalLine: showVerticalLines,
@@ -49,11 +49,11 @@ class ChartThemeHelper {
       ),
     );
   }
-  
+
   /// Create theme-aware border data for charts
   static FlBorderData createBorderData(BuildContext context) {
     final colors = getChartColors(context);
-    
+
     return FlBorderData(
       show: true,
       border: Border.all(
@@ -62,9 +62,10 @@ class ChartThemeHelper {
       ),
     );
   }
-  
+
   /// Create theme-aware titles data for charts
-  static FlTitlesData createTitlesData(BuildContext context, {
+  static FlTitlesData createTitlesData(
+    BuildContext context, {
     bool showLeftTitles = true,
     bool showBottomTitles = true,
     bool showRightTitles = false,
@@ -75,98 +76,116 @@ class ChartThemeHelper {
     Widget Function(double, TitleMeta)? bottomTitleWidget,
   }) {
     final colors = getChartColors(context);
-    
+
     return FlTitlesData(
       show: true,
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: showRightTitles)),
+      rightTitles: AxisTitles(
+        sideTitles: SideTitles(showTitles: showRightTitles),
+      ),
       topTitles: AxisTitles(sideTitles: SideTitles(showTitles: showTopTitles)),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: showBottomTitles,
           reservedSize: bottomReservedSize,
-          getTitlesWidget: bottomTitleWidget ?? (value, meta) {
-            return Text(
-              value.toInt().toString(),
-              style: TextStyle(
-                color: colors['textSecondary'],
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-              ),
-            );
-          },
+          getTitlesWidget:
+              bottomTitleWidget ??
+              (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: TextStyle(
+                    color: colors['textSecondary'],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                  ),
+                );
+              },
         ),
       ),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: showLeftTitles,
           reservedSize: leftReservedSize,
-          getTitlesWidget: leftTitleWidget ?? (value, meta) {
-            return Text(
-              value.toInt().toString(),
-              style: TextStyle(
-                color: colors['textSecondary'],
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-              ),
-            );
-          },
+          getTitlesWidget:
+              leftTitleWidget ??
+              (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: TextStyle(
+                    color: colors['textSecondary'],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                  ),
+                );
+              },
         ),
       ),
     );
   }
-  
+
   /// Create theme-aware tooltip data for line charts
-  static LineTouchTooltipData createLineTooltipData(BuildContext context, {
+  static LineTouchTooltipData createLineTooltipData(
+    BuildContext context, {
     Color? backgroundColor,
     List<LineTooltipItem?> Function(List<LineBarSpot>)? tooltipItems,
   }) {
     final colors = getChartColors(context);
-    
+
     return LineTouchTooltipData(
-      tooltipBgColor: backgroundColor ?? colors['surface']?.withValues(alpha: 0.9),
-      tooltipRoundedRadius: 8,
-      getTooltipItems: tooltipItems ?? (touchedSpots) {
-        return touchedSpots.map((spot) {
-          return LineTooltipItem(
-            '${spot.y.toStringAsFixed(1)}',
-            TextStyle(
-              color: colors['text'],
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          );
-        }).toList();
-      },
+      getTooltipColor: (touchedSpot) =>
+          backgroundColor ?? (colors['surface'] ?? Colors.grey).withValues(alpha: 0.9),
+      tooltipBorderRadius: BorderRadius.circular(8),
+      getTooltipItems:
+          tooltipItems ??
+          (touchedSpots) {
+            return touchedSpots.map((spot) {
+              return LineTooltipItem(
+                '${spot.y.toStringAsFixed(1)}',
+                TextStyle(
+                  color: colors['text'],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              );
+            }).toList();
+          },
     );
   }
-  
+
   /// Create theme-aware tooltip data for bar charts
-  static BarTouchTooltipData createBarTooltipData(BuildContext context, {
+  static BarTouchTooltipData createBarTooltipData(
+    BuildContext context, {
     Color? backgroundColor,
-    BarTooltipItem? Function(BarChartGroupData, int, BarChartRodData, int)? tooltipItem,
+    BarTooltipItem? Function(BarChartGroupData, int, BarChartRodData, int)?
+    tooltipItem,
   }) {
     final colors = getChartColors(context);
-    
+
     return BarTouchTooltipData(
-      tooltipBgColor: backgroundColor ?? colors['surface']?.withValues(alpha: 0.9),
-      tooltipRoundedRadius: 8,
-      getTooltipItem: tooltipItem ?? (group, groupIndex, rod, rodIndex) {
-        return BarTooltipItem(
-          '${rod.toY.toStringAsFixed(1)}',
-          TextStyle(
-            color: colors['text'],
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-        );
-      },
+      getTooltipColor: (group) =>
+          backgroundColor ?? (colors['surface'] ?? Colors.grey).withValues(alpha: 0.9),
+      tooltipBorderRadius: BorderRadius.circular(8),
+      getTooltipItem:
+          tooltipItem ??
+          (group, groupIndex, rod, rodIndex) {
+            return BarTooltipItem(
+              '${rod.toY.toStringAsFixed(1)}',
+              TextStyle(
+                color: colors['text'],
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            );
+          },
     );
   }
-  
+
   /// Get gradient colors for different chart types
-  static LinearGradient getChartGradient(BuildContext context, String chartType) {
+  static LinearGradient getChartGradient(
+    BuildContext context,
+    String chartType,
+  ) {
     final colors = getChartColors(context);
-    
+
     switch (chartType) {
       case 'heartRate':
         final color = colors['heartRate'] ?? Colors.red;
@@ -205,22 +224,27 @@ class ChartThemeHelper {
         );
       default:
         return LinearGradient(
-          colors: [Colors.blue.withValues(alpha: 0.8), Colors.blue.withValues(alpha: 0.3)],
+          colors: [
+            Colors.blue.withValues(alpha: 0.8),
+            Colors.blue.withValues(alpha: 0.3),
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
     }
   }
-  
+
   /// Create theme-aware card container for charts
-  static Widget createChartContainer(BuildContext context, Widget chart, {
+  static Widget createChartContainer(
+    BuildContext context,
+    Widget chart, {
     String? title,
     String? subtitle,
     double height = 300,
     EdgeInsets padding = const EdgeInsets.all(16),
   }) {
     final colors = getChartColors(context);
-    
+
     return Card(
       elevation: AppTheme.elevationMedium,
       shape: RoundedRectangleBorder(
@@ -258,11 +282,15 @@ class ChartThemeHelper {
       ),
     );
   }
-  
+
   /// Create theme-aware legend item
-  static Widget createLegendItem(BuildContext context, Color color, String text) {
+  static Widget createLegendItem(
+    BuildContext context,
+    Color color,
+    String text,
+  ) {
     final colors = getChartColors(context);
-    
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -277,19 +305,16 @@ class ChartThemeHelper {
         const SizedBox(width: 6),
         Text(
           text,
-          style: TextStyle(
-            fontSize: 12,
-            color: colors['textSecondary'],
-          ),
+          style: TextStyle(fontSize: 12, color: colors['textSecondary']),
         ),
       ],
     );
   }
-  
+
   /// Create no data widget with theme-aware colors
   static Widget createNoDataWidget(BuildContext context, String message) {
     final colors = getChartColors(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -302,10 +327,7 @@ class ChartThemeHelper {
           const SizedBox(height: 12),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: colors['textSecondary'],
-            ),
+            style: TextStyle(fontSize: 16, color: colors['textSecondary']),
             textAlign: TextAlign.center,
           ),
         ],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../services/social_service.dart';
 import '../../models/social_models.dart';
 import '../../widgets/custom_app_bar.dart';
@@ -366,7 +365,7 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
           ],
         ),
       ),
-    );
+    )
   }
 
   Widget _buildShareWithPartnerSection() {
@@ -403,7 +402,7 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
           ],
         ),
       ),
-    );
+    )
   }
 
   Widget _buildCommunityTab() {
@@ -502,7 +501,7 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
           ],
         ),
       ),
-    );
+    )
   }
 
   Widget _buildInsightItem(CommunityInsight insight) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/advanced_health_kit_service.dart';
-import '../theme/app_theme.dart';
 import 'dart:math' as math;
 
 /// Advanced health data visualization widgets using fl_chart
@@ -233,8 +232,9 @@ class AdvancedHealthCharts {
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final hrv = rod.toY;
                       String stressLevel;
-                      if (hrv >= 40) stressLevel = 'Low Stress';
-                      else if (hrv >= 30) stressLevel = 'Moderate';
+                      if (hrv >= 40) {
+                        stressLevel = 'Low Stress';
+                      } else if (hrv >= 30) stressLevel = 'Moderate';
                       else if (hrv >= 20) stressLevel = 'Elevated';
                       else stressLevel = 'High Stress';
                       
@@ -730,7 +730,7 @@ class AdvancedHealthCharts {
 
   // Helper widgets
   static Widget _buildNoDataChart(String message) {
-    return Container(
+    return SizedBox(
       height: 200,
       child: Center(
         child: Column(

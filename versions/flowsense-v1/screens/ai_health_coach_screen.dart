@@ -5,7 +5,6 @@ import '../services/ai_insights_engine.dart';
 import '../services/firebase_service.dart';
 import '../models/cycle_models.dart';
 import '../models/daily_log_models.dart';
-import '../services/enhanced_analytics_service.dart';
 
 /// 🚀 Mission Gamma: AI-Powered Health Coach Screen
 /// Intelligent personal health assistant with ML-powered insights and coaching

@@ -11,67 +11,68 @@ class ShareIdeasScreen extends StatefulWidget {
   State<ShareIdeasScreen> createState() => _ShareIdeasScreenState();
 }
 
-class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProviderStateMixin {
+class _ShareIdeasScreenState extends State<ShareIdeasScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final _ideaController = TextEditingController();
   final _featureController = TextEditingController();
   final _bugController = TextEditingController();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  
+
   String _selectedCategory = 'Feature Request';
   int _rating = 5;
   bool _isSubmitting = false;
   bool _allowContact = true;
-  
+
   final List<String> _categories = [
     'Feature Request',
-    'Bug Report', 
+    'Bug Report',
     'UI/UX Improvement',
     'Performance',
     'Health Features',
     'AI Enhancement',
     'Data & Analytics',
     'Social Features',
-    'General Feedback'
+    'General Feedback',
   ];
-  
+
   final List<Map<String, dynamic>> _quickIdeas = [
     {
       'title': '🎯 AI Mood Predictor',
       'description': 'Predict mood patterns based on cycle phases',
       'category': 'AI Enhancement',
-      'votes': 42
+      'votes': 42,
     },
     {
       'title': '🏃‍♀️ Exercise Recommendations',
       'description': 'Suggest workouts based on cycle phase and energy levels',
-      'category': 'Health Features', 
-      'votes': 38
+      'category': 'Health Features',
+      'votes': 38,
     },
     {
       'title': '📱 Widget Support',
       'description': 'Home screen widget for quick cycle tracking',
       'category': 'Feature Request',
-      'votes': 35
+      'votes': 35,
     },
     {
       'title': '🍎 Nutrition Tracking',
       'description': 'Track nutrition and correlate with symptoms',
       'category': 'Health Features',
-      'votes': 29
+      'votes': 29,
     },
     {
       'title': '👥 Partner Notifications',
       'description': 'Discreet notifications to partners about mood/phase',
       'category': 'Social Features',
-      'votes': 27
+      'votes': 27,
     },
     {
       'title': '🌙 Sleep Pattern Integration',
       'description': 'Deep sleep analysis with cycle correlation',
       'category': 'Health Features',
-      'votes': 24
+      'votes': 24,
     },
   ];
 
@@ -110,7 +111,7 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -181,10 +182,13 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple.withOpacity(0.1), Colors.pink.withOpacity(0.1)],
+                colors: [
+                  Colors.purple.withValues(alpha: 0.1),
+                  Colors.pink.withValues(alpha: 0.1),
+                ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.purple.withOpacity(0.2)),
+              border: Border.all(color: Colors.purple.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
@@ -203,9 +207,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Category selection
           const Text(
             'Category',
@@ -241,9 +245,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Idea title/summary
           const Text(
             'Title or Summary',
@@ -265,9 +269,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             ),
             maxLength: 100,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Detailed description
           const Text(
             'Detailed Description',
@@ -277,7 +281,8 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
           TextField(
             controller: _ideaController,
             decoration: InputDecoration(
-              hintText: 'Describe your idea in detail. How would it work? What problem does it solve?',
+              hintText:
+                  'Describe your idea in detail. How would it work? What problem does it solve?',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -290,9 +295,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             maxLines: 4,
             maxLength: 500,
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Priority rating
           const Text(
             'How important is this to you?',
@@ -319,9 +324,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             _getRatingText(_rating),
             style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Contact info (optional)
           const Text(
             'Contact Information (Optional)',
@@ -355,18 +360,18 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           SwitchListTile(
             title: const Text('Allow us to contact you about this idea'),
             subtitle: const Text('Get updates on development progress'),
             value: _allowContact,
             onChanged: (value) => setState(() => _allowContact = value),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Submit button
           SizedBox(
             width: double.infinity,
@@ -387,14 +392,20 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
                       children: [
                         Icon(Icons.send),
                         SizedBox(width: 8),
-                        Text('Submit Idea', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(
+                          'Submit Idea',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Quick submit buttons
           const Text(
             'Quick Actions',
@@ -405,10 +416,26 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildQuickActionChip('🐛 Report Bug', Icons.bug_report, Colors.red),
-              _buildQuickActionChip('🎨 UI Suggestion', Icons.palette, Colors.blue),
-              _buildQuickActionChip('⚡ Performance', Icons.speed, Colors.orange),
-              _buildQuickActionChip('🤖 AI Feature', Icons.psychology, Colors.purple),
+              _buildQuickActionChip(
+                '🐛 Report Bug',
+                Icons.bug_report,
+                Colors.red,
+              ),
+              _buildQuickActionChip(
+                '🎨 UI Suggestion',
+                Icons.palette,
+                Colors.blue,
+              ),
+              _buildQuickActionChip(
+                '⚡ Performance',
+                Icons.speed,
+                Colors.orange,
+              ),
+              _buildQuickActionChip(
+                '🤖 AI Feature',
+                Icons.psychology,
+                Colors.purple,
+              ),
             ],
           ),
         ],
@@ -427,9 +454,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.blue.withOpacity(0.2)),
+              border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
@@ -448,27 +475,30 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Ideas list
           ...List.generate(_quickIdeas.length, (index) {
             final idea = _quickIdeas[index];
             return _buildIdeaCard(idea, index + 1);
           }),
-          
+
           const SizedBox(height: 20),
-          
+
           // Submit your own idea
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple.withOpacity(0.1), Colors.pink.withOpacity(0.1)],
+                colors: [
+                  Colors.purple.withValues(alpha: 0.1),
+                  Colors.pink.withValues(alpha: 0.1),
+                ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.purple.withOpacity(0.2)),
+              border: Border.all(color: Colors.purple.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
@@ -511,9 +541,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
+              color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.green.withOpacity(0.2)),
+              border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
@@ -532,47 +562,70 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Steps
-          _buildStep(1, '💡 Submit Ideas', 
-              'Share your feature requests, bug reports, or general feedback through our easy form.'),
-          _buildStep(2, '👥 Community Voting', 
-              'Other users can vote on ideas they like. Popular ideas get prioritized for development.'),
-          _buildStep(3, '🔍 Review Process', 
-              'Our development team reviews all submissions and evaluates technical feasibility.'),
-          _buildStep(4, '🚀 Development', 
-              'Top-voted and feasible ideas get added to our development roadmap.'),
-          _buildStep(5, '📱 Release', 
-              'New features are released in app updates, and contributors get credited!'),
-          
+          _buildStep(
+            1,
+            '💡 Submit Ideas',
+            'Share your feature requests, bug reports, or general feedback through our easy form.',
+          ),
+          _buildStep(
+            2,
+            '👥 Community Voting',
+            'Other users can vote on ideas they like. Popular ideas get prioritized for development.',
+          ),
+          _buildStep(
+            3,
+            '🔍 Review Process',
+            'Our development team reviews all submissions and evaluates technical feasibility.',
+          ),
+          _buildStep(
+            4,
+            '🚀 Development',
+            'Top-voted and feasible ideas get added to our development roadmap.',
+          ),
+          _buildStep(
+            5,
+            '📱 Release',
+            'New features are released in app updates, and contributors get credited!',
+          ),
+
           const SizedBox(height: 24),
-          
+
           // FAQ
           const Text(
             'Frequently Asked Questions',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          
-          _buildFAQ('How long does development take?', 
-              'Simple features can be implemented in 1-2 weeks, while complex features may take 2-3 months.'),
-          _buildFAQ('Will I be notified about my idea?', 
-              'Yes! If you provide your email, we\'ll send updates about your idea\'s progress.'),
-          _buildFAQ('Can I submit multiple ideas?', 
-              'Absolutely! We love hearing lots of creative suggestions from our users.'),
-          _buildFAQ('What makes a good suggestion?', 
-              'Clear description, specific use case, and explanation of how it would improve the user experience.'),
-          
+
+          _buildFAQ(
+            'How long does development take?',
+            'Simple features can be implemented in 1-2 weeks, while complex features may take 2-3 months.',
+          ),
+          _buildFAQ(
+            'Will I be notified about my idea?',
+            'Yes! If you provide your email, we\'ll send updates about your idea\'s progress.',
+          ),
+          _buildFAQ(
+            'Can I submit multiple ideas?',
+            'Absolutely! We love hearing lots of creative suggestions from our users.',
+          ),
+          _buildFAQ(
+            'What makes a good suggestion?',
+            'Clear description, specific use case, and explanation of how it would improve the user experience.',
+          ),
+
           const SizedBox(height: 24),
-          
+
           // Contact info
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -616,7 +669,7 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -645,9 +698,9 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
                 ),
               ),
             ),
-            
+
             const SizedBox(width: 12),
-            
+
             // Content
             Expanded(
               child: Column(
@@ -655,7 +708,10 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
                 children: [
                   Text(
                     idea['title'],
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -666,9 +722,12 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
+                          color: Colors.purple.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -685,7 +744,7 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
                 ],
               ),
             ),
-            
+
             // Votes
             Column(
               children: [
@@ -706,16 +765,23 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.thumb_up, color: Colors.green, size: 16),
+                    child: const Icon(
+                      Icons.thumb_up,
+                      color: Colors.green,
+                      size: 16,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${idea['votes']}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
@@ -756,7 +822,10 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -787,10 +856,7 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(
-              answer,
-              style: TextStyle(color: Colors.grey.shade700),
-            ),
+            child: Text(answer, style: TextStyle(color: Colors.grey.shade700)),
           ),
         ],
       ),
@@ -804,8 +870,8 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
       onPressed: () {
         _quickFillForm(label);
       },
-      backgroundColor: color.withOpacity(0.1),
-      side: BorderSide(color: color.withOpacity(0.3)),
+      backgroundColor: color.withValues(alpha: 0.1),
+      side: BorderSide(color: color.withValues(alpha: 0.3)),
     );
   }
 
@@ -893,7 +959,7 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
 
     if (mounted) {
       setState(() => _isSubmitting = false);
-      
+
       // Show success dialog
       showDialog(
         context: context,
@@ -909,9 +975,14 @@ class _ShareIdeasScreenState extends State<ShareIdeasScreen> with TickerProvider
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Thank you for your suggestion! Your idea has been submitted to our development team.'),
+              const Text(
+                'Thank you for your suggestion! Your idea has been submitted to our development team.',
+              ),
               const SizedBox(height: 16),
-              const Text('What happens next:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'What happens next:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               const Text('• Community voting period (2 weeks)'),
               const Text('• Development team review'),

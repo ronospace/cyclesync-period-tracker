@@ -75,7 +75,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(l10n?.settingsTitle ?? 'Settings'),
+          title: Text(l10n.settingsTitle ?? 'Settings'),
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -106,7 +106,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
             ),
             const SizedBox(width: 12),
             Text(
-              l10n?.settingsTitle ?? 'Settings',
+              l10n.settingsTitle ?? 'Settings',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -135,10 +135,10 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
           indicatorColor: Colors.purple.shade600,
           isScrollable: true,
           tabs: [
-            Tab(icon: Icon(Icons.palette), text: l10n?.appearance ?? 'Appearance'),
+            Tab(icon: Icon(Icons.palette), text: l10n.appearance ?? 'Appearance'),
             Tab(icon: Icon(Icons.psychology), text: 'FlowSense AI'),
-            Tab(icon: Icon(Icons.tune), text: l10n?.advanced ?? 'Advanced'),
-            Tab(icon: Icon(Icons.person), text: l10n?.account ?? 'Account'),
+            Tab(icon: Icon(Icons.tune), text: l10n.advanced ?? 'Advanced'),
+            Tab(icon: Icon(Icons.person), text: l10n.account ?? 'Account'),
           ],
         ),
       ),
@@ -170,7 +170,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n?.themeSettings ?? 'Theme Settings',
+                    l10n.themeSettings ?? 'Theme Settings',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -184,8 +184,8 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                         children: [
                           _buildThemeOption(
                             context: context,
-                            title: l10n?.lightMode ?? 'Light Mode',
-                            subtitle: l10n?.lightModeDescription ?? 'Use light theme',
+                            title: l10n.lightMode ?? 'Light Mode',
+                            subtitle: l10n.lightModeDescription ?? 'Use light theme',
                             icon: Icons.light_mode,
                             color: Colors.amber,
                             isSelected: themeService.themeMode == ThemeMode.light,
@@ -194,8 +194,8 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                           const SizedBox(height: 8),
                           _buildThemeOption(
                             context: context,
-                            title: l10n?.darkMode ?? 'Dark Mode',
-                            subtitle: l10n?.darkModeDescription ?? 'Use dark theme',
+                            title: l10n.darkMode ?? 'Dark Mode',
+                            subtitle: l10n.darkModeDescription ?? 'Use dark theme',
                             icon: Icons.dark_mode,
                             color: Colors.indigo,
                             isSelected: themeService.themeMode == ThemeMode.dark,
@@ -204,8 +204,8 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                           const SizedBox(height: 8),
                           _buildThemeOption(
                             context: context,
-                            title: l10n?.systemDefault ?? 'System Default',
-                            subtitle: l10n?.systemDefaultDescription ?? 'Follow system settings',
+                            title: l10n.systemDefault ?? 'System Default',
+                            subtitle: l10n.systemDefaultDescription ?? 'Follow system settings',
                             icon: Icons.settings_brightness,
                             color: Colors.green,
                             isSelected: themeService.themeMode == ThemeMode.system,
@@ -238,7 +238,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                     ),
                     child: const Icon(Icons.language, color: Colors.white),
                   ),
-                  title: Text(l10n?.languageTitle ?? 'Language'),
+                  title: Text(l10n.languageTitle ?? 'Language'),
                   subtitle: Text('${localizationService.currentLanguageName} • ${LocalizationService.supportedLocales.length} languages available'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -279,7 +279,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n?.displaySettings ?? 'Display Settings',
+                    l10n.displaySettings ?? 'Display Settings',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -288,8 +288,8 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    title: Text(l10n?.compactView ?? 'Compact View'),
-                    subtitle: Text(l10n?.compactViewDescription ?? 'Reduce spacing and use smaller elements'),
+                    title: Text(l10n.compactView ?? 'Compact View'),
+                    subtitle: Text(l10n.compactViewDescription ?? 'Reduce spacing and use smaller elements'),
                     value: _compactView,
                     onChanged: (value) async {
                       setState(() => _compactView = value);
@@ -574,24 +574,24 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
               children: [
                 ListTile(
                   leading: const Icon(Icons.health_and_safety, color: Colors.purple),
-                  title: Text(l10n?.healthIntegration ?? 'Health Integration'),
-                  subtitle: Text(l10n?.healthIntegrationDescription ?? 'Sync with HealthKit and Google Fit'),
+                  title: Text(l10n.healthIntegration ?? 'Health Integration'),
+                  subtitle: Text(l10n.healthIntegrationDescription ?? 'Sync with HealthKit and Google Fit'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/health-integration'),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.backup, color: Colors.blue),
-                  title: Text(l10n?.dataManagement ?? 'Data Management'),
-                  subtitle: Text(l10n?.dataManagementDescription ?? 'Export, import, and backup your data'),
+                  title: Text(l10n.dataManagement ?? 'Data Management'),
+                  subtitle: Text(l10n.dataManagementDescription ?? 'Export, import, and backup your data'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/data-management'),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.cloud_sync, color: Colors.green),
-                  title: Text(l10n?.syncStatus ?? 'Sync Status'),
-                  subtitle: Text(l10n?.syncStatusDescription ?? 'Check cloud synchronization'),
+                  title: Text(l10n.syncStatus ?? 'Sync Status'),
+                  subtitle: Text(l10n.syncStatusDescription ?? 'Check cloud synchronization'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => _showSyncStatusDialog(context),
                 ),
@@ -607,16 +607,16 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
               children: [
                 ListTile(
                   leading: const Icon(Icons.notifications, color: Colors.orange),
-                  title: Text(l10n?.settingsNotifications ?? 'Notifications'),
-                  subtitle: Text(l10n?.notificationsManage ?? 'Manage cycle reminders and alerts'),
+                  title: Text(l10n.settingsNotifications ?? 'Notifications'),
+                  subtitle: Text(l10n.notificationsManage ?? 'Manage cycle reminders and alerts'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/notification-settings'),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.psychology, color: Colors.purple),
-                  title: Text(l10n?.smartNotifications ?? 'Smart Notifications'),
-                  subtitle: Text(l10n?.smartNotificationsDescription ?? 'AI-powered insights and predictions'),
+                  title: Text(l10n.smartNotifications ?? 'Smart Notifications'),
+                  subtitle: Text(l10n.smartNotificationsDescription ?? 'AI-powered insights and predictions'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/smart-notifications'),
                 ),
@@ -632,16 +632,16 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
               children: [
                 ListTile(
                   leading: const Icon(Icons.analytics, color: Colors.indigo),
-                  title: Text(l10n?.homeAnalytics ?? 'Analytics'),
-                  subtitle: Text(l10n?.viewCycleInsights ?? 'View cycle insights'),
+                  title: Text(l10n.homeAnalytics ?? 'Analytics'),
+                  subtitle: Text(l10n.viewCycleInsights ?? 'View cycle insights'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/analytics'),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.science, color: Colors.teal),
-                  title: Text(l10n?.diagnosticsTitle ?? 'Diagnostics'),
-                  subtitle: Text(l10n?.testFirebaseConnection ?? 'Test Firebase connection'),
+                  title: Text(l10n.diagnosticsTitle ?? 'Diagnostics'),
+                  subtitle: Text(l10n.testFirebaseConnection ?? 'Test Firebase connection'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/diagnostics'),
                 ),
@@ -704,7 +704,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
                                 Icon(Icons.verified, size: 16, color: Colors.green),
                                 const SizedBox(width: 4),
                                 Text(
-                                  l10n?.verified ?? 'Verified',
+                                  l10n.verified ?? 'Verified',
                                   style: TextStyle(
                                     color: Colors.green,
                                     fontSize: 12,
@@ -729,24 +729,24 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
               children: [
                 ListTile(
                   leading: const Icon(Icons.help_outline, color: Colors.blue),
-                  title: Text(l10n?.settingsHelp ?? 'Help & Support'),
-                  subtitle: Text(l10n?.getHelpUsing ?? 'Get help using the app'),
+                  title: Text(l10n.settingsHelp ?? 'Help & Support'),
+                  subtitle: Text(l10n.getHelpUsing ?? 'Get help using the app'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => context.push('/help-support'),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.info_outline, color: Colors.green),
-                  title: Text(l10n?.about ?? 'About'),
-                  subtitle: Text(l10n?.aboutDescription ?? 'App version and credits'),
+                  title: Text(l10n.about ?? 'About'),
+                  subtitle: Text(l10n.aboutDescription ?? 'App version and credits'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => _showAboutDialog(context),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.logout, color: Colors.red),
-                  title: Text(l10n?.signOut ?? 'Sign Out'),
-                  subtitle: Text(l10n?.signOutDescription ?? 'Sign out of your account'),
+                  title: Text(l10n.signOut ?? 'Sign Out'),
+                  subtitle: Text(l10n.signOutDescription ?? 'Sign out of your account'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => _showSignOutDialog(context),
                 ),
@@ -812,26 +812,26 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
           children: [
             Text('${_getDisplayName()} v1.0.0'),
             const SizedBox(height: 8),
-            Text(l10n?.appDescription ?? 'A modern cycle tracking app built with Flutter.'),
+            Text(l10n.appDescription ?? 'A modern cycle tracking app built with Flutter.'),
             const SizedBox(height: 16),
             Text(
-              l10n?.features ?? 'Features:',
+              l10n.features ?? 'Features:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text('• ${l10n?.featureCycleTracking ?? "Cycle logging and tracking"}'),
-            Text('• ${l10n?.featureAnalytics ?? "Analytics and insights"}'),
-            Text('• ${l10n?.featureAI ?? "AI-powered predictions"}'),
-            Text('• ${l10n?.featureSmartInsights ?? "Smart health insights"}'),
-            Text('• ${l10n?.featureDarkMode ?? "Dark mode support"}'),
-            Text('• ${l10n?.featureCloudSync ?? "Cloud synchronization"}'),
-            Text('• ${l10n?.featurePrivacy ?? "Privacy-focused design"}'),
+            Text('• ${l10n.featureCycleTracking ?? "Cycle logging and tracking"}'),
+            Text('• ${l10n.featureAnalytics ?? "Analytics and insights"}'),
+            Text('• ${l10n.featureAI ?? "AI-powered predictions"}'),
+            Text('• ${l10n.featureSmartInsights ?? "Smart health insights"}'),
+            Text('• ${l10n.featureDarkMode ?? "Dark mode support"}'),
+            Text('• ${l10n.featureCloudSync ?? "Cloud synchronization"}'),
+            Text('• ${l10n.featurePrivacy ?? "Privacy-focused design"}'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n?.close ?? 'Close'),
+            child: Text(l10n.close ?? 'Close'),
           ),
         ],
       ),
@@ -959,12 +959,12 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n?.signOut ?? 'Sign Out'),
-        content: Text(l10n?.signOutConfirmation ?? 'Are you sure you want to sign out?'),
+        title: Text(l10n.signOut ?? 'Sign Out'),
+        content: Text(l10n.signOutConfirmation ?? 'Are you sure you want to sign out?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n?.cancel ?? 'Cancel'),
+            child: Text(l10n.cancel ?? 'Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -978,7 +978,7 @@ class _EnhancedSettingsScreenState extends State<EnhancedSettingsScreen> with Ti
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
             ),
-            child: Text(l10n?.signOut ?? 'Sign Out'),
+            child: Text(l10n.signOut ?? 'Sign Out'),
           ),
         ],
       ),

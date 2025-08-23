@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../services/social_service.dart';
 import '../../../models/social_models.dart';
 import '../../../widgets/custom_app_bar.dart';
@@ -17,7 +16,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
-  
+
   bool _includeCyclePatterns = true;
   bool _includeSymptoms = false;
   bool _includePainLevels = false;
@@ -106,7 +105,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -124,11 +123,13 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 16),
             SwitchListTile(
               title: const Text('Include personal message'),
-              subtitle: const Text('Add a note to help explain the shared information'),
+              subtitle: const Text(
+                'Add a note to help explain the shared information',
+              ),
               value: _includePersonalMessage,
               onChanged: (value) {
                 setState(() {
@@ -136,7 +137,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 });
               },
             ),
-            
+
             if (_includePersonalMessage) ...[
               const SizedBox(height: 12),
               TextFormField(
@@ -144,7 +145,8 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 maxLines: 3,
                 decoration: const InputDecoration(
                   labelText: 'Personal Message',
-                  hintText: 'Hi! I\'m sharing my cycle information with you so you can better understand and support me...',
+                  hintText:
+                      'Hi! I\'m sharing my cycle information with you so you can better understand and support me...',
                   border: OutlineInputBorder(),
                   alignLabelWithHint: true,
                 ),
@@ -173,7 +175,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
-            
+
             CheckboxListTile(
               title: const Text('Cycle patterns'),
               subtitle: const Text('Period start/end dates and cycle lengths'),
@@ -184,10 +186,12 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 });
               },
             ),
-            
+
             CheckboxListTile(
               title: const Text('Common symptoms'),
-              subtitle: const Text('Physical symptoms you experience during your cycle'),
+              subtitle: const Text(
+                'Physical symptoms you experience during your cycle',
+              ),
               value: _includeSymptoms,
               onChanged: (value) {
                 setState(() {
@@ -195,10 +199,12 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 });
               },
             ),
-            
+
             CheckboxListTile(
               title: const Text('Pain levels'),
-              subtitle: const Text('Help them understand when you might need extra support'),
+              subtitle: const Text(
+                'Help them understand when you might need extra support',
+              ),
               value: _includePainLevels,
               onChanged: (value) {
                 setState(() {
@@ -206,7 +212,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 });
               },
             ),
-            
+
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -245,10 +251,14 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             ...([
               (const Duration(days: 30), '1 Month', 'Short-term sharing'),
-              (const Duration(days: 90), '3 Months', 'Recommended for partners'),
+              (
+                const Duration(days: 90),
+                '3 Months',
+                'Recommended for partners',
+              ),
               (const Duration(days: 365), '1 Year', 'Long-term relationship'),
               (null, 'Indefinite', 'Until manually revoked'),
             ].map((option) {
@@ -256,7 +266,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 title: Text(option.$2),
                 subtitle: Text(option.$3),
                 value: option.$1,
-                groupValue: _accessDuration == null ? null : _accessDuration,
+                groupValue: _accessDuration,
                 onChanged: (value) {
                   setState(() {
                     _accessDuration = value ?? const Duration(days: 90);
@@ -333,8 +343,8 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
 
   bool _canShare() {
     return _emailController.text.isNotEmpty &&
-           RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_emailController.text) &&
-           (_includeCyclePatterns || _includeSymptoms || _includePainLevels);
+        RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_emailController.text) &&
+        (_includeCyclePatterns || _includeSymptoms || _includePainLevels);
   }
 
   Future<void> _shareWithPartner() async {
@@ -358,7 +368,9 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
           end: DateTime.now().add(const Duration(days: 365)),
         ),
         dataTypes: dataTypes,
-        personalMessage: _includePersonalMessage ? _messageController.text.trim() : null,
+        personalMessage: _includePersonalMessage
+            ? _messageController.text.trim()
+            : null,
         expiration: _accessDuration,
       );
 
@@ -425,10 +437,12 @@ class CommunityPreferencesDialog extends StatefulWidget {
   const CommunityPreferencesDialog({super.key});
 
   @override
-  State<CommunityPreferencesDialog> createState() => _CommunityPreferencesDialogState();
+  State<CommunityPreferencesDialog> createState() =>
+      _CommunityPreferencesDialogState();
 }
 
-class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog> {
+class _CommunityPreferencesDialogState
+    extends State<CommunityPreferencesDialog> {
   CommunityDataPreferences _preferences = CommunityDataPreferences(
     contributionLevel: ContributionLevel.standard,
     shareCyclePatterns: true,
@@ -483,7 +497,7 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             ...ContributionLevel.values.map((level) {
               return RadioListTile<ContributionLevel>(
                 title: Text(level.displayName),
@@ -494,9 +508,15 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
                   setState(() {
                     _preferences = CommunityDataPreferences(
                       contributionLevel: value!,
-                      shareCyclePatterns: level.includedDataTypes.contains(DataType.cyclePattern),
-                      shareSymptomTrends: level.includedDataTypes.contains(DataType.symptoms),
-                      shareWellbeingData: level.includedDataTypes.contains(DataType.wellbeing),
+                      shareCyclePatterns: level.includedDataTypes.contains(
+                        DataType.cyclePattern,
+                      ),
+                      shareSymptomTrends: level.includedDataTypes.contains(
+                        DataType.symptoms,
+                      ),
+                      shareWellbeingData: level.includedDataTypes.contains(
+                        DataType.wellbeing,
+                      ),
                       shareAgeRange: _preferences.shareAgeRange,
                       shareGeographicRegion: _preferences.shareGeographicRegion,
                     );
@@ -527,10 +547,12 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
-            
+
             CheckboxListTile(
               title: const Text('Cycle Patterns'),
-              subtitle: const Text('Anonymous cycle length and regularity data'),
+              subtitle: const Text(
+                'Anonymous cycle length and regularity data',
+              ),
               value: _preferences.shareCyclePatterns,
               onChanged: (value) {
                 setState(() {
@@ -545,10 +567,12 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
                 });
               },
             ),
-            
+
             CheckboxListTile(
               title: const Text('Symptom Trends'),
-              subtitle: const Text('Help researchers understand common symptoms'),
+              subtitle: const Text(
+                'Help researchers understand common symptoms',
+              ),
               value: _preferences.shareSymptomTrends,
               onChanged: (value) {
                 setState(() {
@@ -563,7 +587,7 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
                 });
               },
             ),
-            
+
             CheckboxListTile(
               title: const Text('Wellbeing Data'),
               subtitle: const Text('Mood and energy patterns (sensitive data)'),
@@ -599,7 +623,7 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             CheckboxListTile(
               title: const Text('Age Range'),
               subtitle: const Text('Share your age bracket (e.g., 25-29)'),
@@ -617,10 +641,12 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
                 });
               },
             ),
-            
+
             CheckboxListTile(
               title: const Text('Geographic Region'),
-              subtitle: const Text('Share your general region (e.g., North America)'),
+              subtitle: const Text(
+                'Share your general region (e.g., North America)',
+              ),
               value: _preferences.shareGeographicRegion,
               onChanged: (value) {
                 setState(() {
@@ -721,7 +747,9 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
     });
 
     try {
-      final success = await SocialService.joinCommunityDataSharing(_preferences);
+      final success = await SocialService.joinCommunityDataSharing(
+        _preferences,
+      );
       setState(() {
         _isLoading = false;
       });
@@ -740,9 +768,9 @@ class _CommunityPreferencesDialogState extends State<CommunityPreferencesDialog>
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -792,8 +820,8 @@ class ShareDetailsSheet extends StatelessWidget {
             children: [
               Icon(
                 share.isActive ? Icons.share : Icons.history,
-                color: share.isActive 
-                    ? Theme.of(context).primaryColor 
+                color: share.isActive
+                    ? Theme.of(context).primaryColor
                     : Colors.grey,
                 size: 28,
               ),
@@ -813,41 +841,54 @@ class ShareDetailsSheet extends StatelessWidget {
             ],
           ),
           const Divider(),
-          
+
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildDetailSection('Recipient', share.providerEmail),
-                  _buildDetailSection('Status', share.isActive ? 'Active' : 'Inactive'),
+                  _buildDetailSection(
+                    'Status',
+                    share.isActive ? 'Active' : 'Inactive',
+                  ),
                   _buildDetailSection('Created', _formatDate(share.createdAt)),
-                  _buildDetailSection('Expires', share.expiresAt != null 
-                      ? _formatDate(share.expiresAt!)
-                      : 'Never'),
-                  _buildDetailSection('Access Count', '${share.accessCount} times'),
-                  
+                  _buildDetailSection(
+                    'Expires',
+                    share.expiresAt != null
+                        ? _formatDate(share.expiresAt!)
+                        : 'Never',
+                  ),
+                  _buildDetailSection(
+                    'Access Count',
+                    '${share.accessCount} times',
+                  ),
+
                   const SizedBox(height: 24),
                   const Text(
                     'Shared Data Types',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: share.dataTypes
-                        .map((type) => Chip(
-                              label: Text(type),
-                              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                            ))
+                        .map(
+                          (type) => Chip(
+                            label: Text(type),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.1),
+                          ),
+                        )
                         .toList(),
                   ),
-                  
+
                   const SizedBox(height: 24),
                   Card(
-                    color: share.isActive 
+                    color: share.isActive
                         ? Colors.green.shade50
                         : Colors.orange.shade50,
                     child: Padding(
@@ -855,10 +896,8 @@ class ShareDetailsSheet extends StatelessWidget {
                       child: Row(
                         children: [
                           Icon(
-                            share.isActive 
-                                ? Icons.check_circle
-                                : Icons.warning,
-                            color: share.isActive 
+                            share.isActive ? Icons.check_circle : Icons.warning,
+                            color: share.isActive
                                 ? Colors.green.shade600
                                 : Colors.orange.shade600,
                           ),
@@ -878,7 +917,7 @@ class ShareDetailsSheet extends StatelessWidget {
               ),
             ),
           ),
-          
+
           if (share.isActive) ...[
             const SizedBox(height: 16),
             SizedBox(
@@ -959,9 +998,11 @@ class ShareDetailsSheet extends StatelessWidget {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(success 
-                ? 'Access revoked successfully'
-                : 'Failed to revoke access'),
+            content: Text(
+              success
+                  ? 'Access revoked successfully'
+                  : 'Failed to revoke access',
+            ),
           ),
         );
       }

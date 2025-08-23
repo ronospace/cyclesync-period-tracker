@@ -1,4 +1,3 @@
-
 /// Result of AI prediction analysis
 class AIPredictionResult {
   final bool success;
@@ -129,12 +128,7 @@ class FertilityWindow {
   });
 }
 
-enum FertilityPhase {
-  menstrual,
-  follicular,
-  ovulation,
-  luteal,
-}
+enum FertilityPhase { menstrual, follicular, ovulation, luteal }
 
 /// Symptom pattern analysis
 class SymptomPattern {
@@ -162,10 +156,7 @@ class SeasonalPattern {
   final Map<String, double> monthlyVariation;
   final double confidence;
 
-  SeasonalPattern({
-    required this.monthlyVariation,
-    required this.confidence,
-  });
+  SeasonalPattern({required this.monthlyVariation, required this.confidence});
 }
 
 /// Symptom occurrence data
@@ -254,7 +245,15 @@ class PersonalizedInsight {
   });
 }
 
-enum InsightType { cycle, symptom, wellness, prediction, cycleRegularity, symptomPattern }
+enum InsightType {
+  cycle,
+  symptom,
+  wellness,
+  prediction,
+  cycleRegularity,
+  symptomPattern,
+}
+
 enum InsightSeverity { positive, neutral, warning, critical }
 
 /// AI-generated recommendation
@@ -276,7 +275,15 @@ class AIRecommendation {
   });
 }
 
-enum RecommendationType { lifestyle, medical, tracking, wellness, dataCollection, healthIntegration }
+enum RecommendationType {
+  lifestyle,
+  medical,
+  tracking,
+  wellness,
+  dataCollection,
+  healthIntegration,
+}
+
 enum RecommendationPriority { low, medium, high }
 
 /// Flow intensity enum for cycle tracking

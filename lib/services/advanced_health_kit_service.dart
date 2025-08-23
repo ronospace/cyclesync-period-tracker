@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 /// Handles heart rate, HRV, sleep, temperature, and activity data
 class AdvancedHealthKitService {
   static const MethodChannel _channel = MethodChannel('cyclesync/healthkit');
-  
+
   static AdvancedHealthKitService? _instance;
-  static AdvancedHealthKitService get instance => _instance ??= AdvancedHealthKitService._();
+  static AdvancedHealthKitService get instance =>
+      _instance ??= AdvancedHealthKitService._();
   AdvancedHealthKitService._();
 
   bool _isInitialized = false;
@@ -16,7 +17,7 @@ class AdvancedHealthKitService {
   /// Health data types we want to access
   static const List<String> _requiredPermissions = [
     'heartRate',
-    'heartRateVariability', 
+    'heartRateVariability',
     'sleepAnalysis',
     'steps',
     'activeEnergyBurned',
@@ -31,10 +32,10 @@ class AdvancedHealthKitService {
 
     try {
       debugPrint('🏥 Initializing Advanced HealthKit Service...');
-      
+
       // Request HealthKit permissions using native plugin
       final result = await _channel.invokeMethod<Map>('initialize');
-      
+
       if (result != null && result['success'] == true) {
         debugPrint('✅ HealthKit permissions granted: ${result['message']}');
         _hasPermissions = true;
@@ -42,7 +43,7 @@ class AdvancedHealthKitService {
         debugPrint('⚠️ HealthKit permissions denied or unavailable');
         _hasPermissions = false;
       }
-      
+
       _isInitialized = true;
       return _hasPermissions;
     } catch (e) {
@@ -81,7 +82,10 @@ class AdvancedHealthKitService {
       final allData = <Map<String, dynamic>>[];
 
       // Get recent heart rate data
-      final heartRateData = await getHeartRateData(startDate: since, endDate: endDate);
+      final heartRateData = await getHeartRateData(
+        startDate: since,
+        endDate: endDate,
+      );
       for (final dataPoint in heartRateData) {
         allData.add({
           'type': 'heart_rate',
@@ -116,7 +120,10 @@ class AdvancedHealthKitService {
       }
 
       // Get recent temperature data
-      final tempData = await getTemperatureData(startDate: since, endDate: endDate);
+      final tempData = await getTemperatureData(
+        startDate: since,
+        endDate: endDate,
+      );
       for (final dataPoint in tempData) {
         allData.add({
           'type': 'temperature',
@@ -127,7 +134,10 @@ class AdvancedHealthKitService {
       }
 
       // Get recent activity data
-      final activityData = await getActivityData(startDate: since, endDate: endDate);
+      final activityData = await getActivityData(
+        startDate: since,
+        endDate: endDate,
+      );
       for (final activity in activityData) {
         allData.add({
           'type': 'activity',
@@ -159,12 +169,15 @@ class AdvancedHealthKitService {
       startDate ??= DateTime.now().subtract(const Duration(days: 7));
       endDate ??= DateTime.now();
 
-      final result = await _channel.invokeMethod<List<dynamic>>('getHeartRate', {
-        'startDate': startDate.millisecondsSinceEpoch,
-        'endDate': endDate.millisecondsSinceEpoch,
-      });
+      final result = await _channel
+          .invokeMethod<List<dynamic>>('getHeartRate', {
+            'startDate': startDate.millisecondsSinceEpoch,
+            'endDate': endDate.millisecondsSinceEpoch,
+          });
 
-      return (result ?? []).map((data) => HealthDataPoint.fromMap(data)).toList();
+      return (result ?? [])
+          .map((data) => HealthDataPoint.fromMap(data))
+          .toList();
     } catch (e) {
       debugPrint('❌ Failed to get heart rate data: $e');
       return [];
@@ -187,7 +200,9 @@ class AdvancedHealthKitService {
         'endDate': endDate.millisecondsSinceEpoch,
       });
 
-      return (result ?? []).map((data) => HealthDataPoint.fromMap(data)).toList();
+      return (result ?? [])
+          .map((data) => HealthDataPoint.fromMap(data))
+          .toList();
     } catch (e) {
       debugPrint('❌ Failed to get HRV data: $e');
       return [];
@@ -205,10 +220,11 @@ class AdvancedHealthKitService {
       startDate ??= DateTime.now().subtract(const Duration(days: 7));
       endDate ??= DateTime.now();
 
-      final result = await _channel.invokeMethod<List<dynamic>>('getSleepData', {
-        'startDate': startDate.millisecondsSinceEpoch,
-        'endDate': endDate.millisecondsSinceEpoch,
-      });
+      final result = await _channel
+          .invokeMethod<List<dynamic>>('getSleepData', {
+            'startDate': startDate.millisecondsSinceEpoch,
+            'endDate': endDate.millisecondsSinceEpoch,
+          });
 
       return (result ?? []).map((data) => SleepData.fromMap(data)).toList();
     } catch (e) {
@@ -228,12 +244,15 @@ class AdvancedHealthKitService {
       startDate ??= DateTime.now().subtract(const Duration(days: 30));
       endDate ??= DateTime.now();
 
-      final result = await _channel.invokeMethod<List<dynamic>>('getBodyTemperature', {
-        'startDate': startDate.millisecondsSinceEpoch,
-        'endDate': endDate.millisecondsSinceEpoch,
-      });
+      final result = await _channel
+          .invokeMethod<List<dynamic>>('getBodyTemperature', {
+            'startDate': startDate.millisecondsSinceEpoch,
+            'endDate': endDate.millisecondsSinceEpoch,
+          });
 
-      return (result ?? []).map((data) => HealthDataPoint.fromMap(data)).toList();
+      return (result ?? [])
+          .map((data) => HealthDataPoint.fromMap(data))
+          .toList();
     } catch (e) {
       debugPrint('❌ Failed to get temperature data: $e');
       return [];
@@ -251,10 +270,11 @@ class AdvancedHealthKitService {
       startDate ??= DateTime.now().subtract(const Duration(days: 7));
       endDate ??= DateTime.now();
 
-      final result = await _channel.invokeMethod<List<dynamic>>('getActivityData', {
-        'startDate': startDate.millisecondsSinceEpoch,
-        'endDate': endDate.millisecondsSinceEpoch,
-      });
+      final result = await _channel
+          .invokeMethod<List<dynamic>>('getActivityData', {
+            'startDate': startDate.millisecondsSinceEpoch,
+            'endDate': endDate.millisecondsSinceEpoch,
+          });
 
       return (result ?? []).map((data) => ActivityData.fromMap(data)).toList();
     } catch (e) {
@@ -272,11 +292,23 @@ class AdvancedHealthKitService {
       final endOfDay = startOfDay.add(const Duration(days: 1));
 
       // Gather all health data for the day
-      final heartRate = await getHeartRateData(startDate: startOfDay, endDate: endOfDay);
+      final heartRate = await getHeartRateData(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
       final hrv = await getHRVData(startDate: startOfDay, endDate: endOfDay);
-      final sleep = await getSleepData(startDate: startOfDay, endDate: endOfDay);
-      final temperature = await getTemperatureData(startDate: startOfDay, endDate: endOfDay);
-      final activity = await getActivityData(startDate: startOfDay, endDate: endOfDay);
+      final sleep = await getSleepData(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
+      final temperature = await getTemperatureData(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
+      final activity = await getActivityData(
+        startDate: startOfDay,
+        endDate: endOfDay,
+      );
 
       return HealthSummary(
         date: date,
@@ -302,8 +334,12 @@ class AdvancedHealthKitService {
     try {
       // Get comprehensive health data for cycle period
       final healthSummaries = <HealthSummary>[];
-      
-      for (var date = cycleStart; date.isBefore(cycleEnd); date = date.add(Duration(days: 1))) {
+
+      for (
+        var date = cycleStart;
+        date.isBefore(cycleEnd);
+        date = date.add(Duration(days: 1))
+      ) {
         final summary = await getHealthSummaryForDate(date);
         if (summary != null) {
           healthSummaries.add(summary);
@@ -356,7 +392,8 @@ class AdvancedHealthKitService {
         .toList();
 
     if (sleepDurations.isNotEmpty) {
-      final avgSleep = sleepDurations.reduce((a, b) => a + b) / sleepDurations.length;
+      final avgSleep =
+          sleepDurations.reduce((a, b) => a + b) / sleepDurations.length;
       insights.averageSleepDuration = avgSleep / 3600; // Convert to hours
       insights.sleepQuality = _calculateSleepQuality(avgSleep / 3600);
     }
@@ -369,7 +406,10 @@ class AdvancedHealthKitService {
         .toList();
 
     if (tempValues.length >= 5) {
-      insights.possibleOvulationDate = _detectOvulationFromTemp(summaries, tempValues);
+      insights.possibleOvulationDate = _detectOvulationFromTemp(
+        summaries,
+        tempValues,
+      );
     }
 
     // Calculate energy levels from activity
@@ -407,17 +447,22 @@ class AdvancedHealthKitService {
   }
 
   /// Detect possible ovulation from temperature patterns
-  DateTime? _detectOvulationFromTemp(List<HealthSummary> summaries, List<double> temps) {
+  DateTime? _detectOvulationFromTemp(
+    List<HealthSummary> summaries,
+    List<double> temps,
+  ) {
     // Look for temperature rise pattern (simplified BBT method)
     for (int i = 3; i < temps.length - 1; i++) {
       final recent = temps.sublist(i - 3, i);
       final current = temps[i];
       final recentAvg = recent.reduce((a, b) => a + b) / recent.length;
-      
+
       // Temperature rise of 0.2°C or more sustained for 2+ days
       if (current - recentAvg >= 0.2) {
         final date = summaries[i].date;
-        return date.subtract(Duration(days: 1)); // Ovulation likely day before temp rise
+        return date.subtract(
+          Duration(days: 1),
+        ); // Ovulation likely day before temp rise
       }
     }
     return null;
@@ -427,9 +472,9 @@ class AdvancedHealthKitService {
   double _calculateEnergyFromActivity(double avgSteps) {
     // Steps-based energy calculation
     if (avgSteps >= 10000) return 0.9; // High energy
-    if (avgSteps >= 7500) return 0.7;  // Good energy
-    if (avgSteps >= 5000) return 0.5;  // Moderate energy
-    if (avgSteps >= 2500) return 0.3;  // Low energy
+    if (avgSteps >= 7500) return 0.7; // Good energy
+    if (avgSteps >= 5000) return 0.5; // Moderate energy
+    if (avgSteps >= 2500) return 0.3; // Low energy
     return 0.1; // Very low energy
   }
 
@@ -449,7 +494,10 @@ class AdvancedHealthKitService {
       debugPrint('📊 Fetching comprehensive health data for $days days');
 
       // Fetch heart rate data
-      final heartRateData = await getHeartRateData(startDate: startDate, endDate: endDate);
+      final heartRateData = await getHeartRateData(
+        startDate: startDate,
+        endDate: endDate,
+      );
       for (final data in heartRateData) {
         healthData.add({
           'type': 'heart_rate',
@@ -460,7 +508,10 @@ class AdvancedHealthKitService {
 
       // Fetch HRV data if requested
       if (includeHRV) {
-        final hrvData = await getHRVData(startDate: startDate, endDate: endDate);
+        final hrvData = await getHRVData(
+          startDate: startDate,
+          endDate: endDate,
+        );
         for (final data in hrvData) {
           healthData.add({
             'type': 'hrv',
@@ -472,7 +523,10 @@ class AdvancedHealthKitService {
 
       // Fetch temperature data if requested
       if (includeTemperature) {
-        final tempData = await getTemperatureData(startDate: startDate, endDate: endDate);
+        final tempData = await getTemperatureData(
+          startDate: startDate,
+          endDate: endDate,
+        );
         for (final data in tempData) {
           healthData.add({
             'type': 'temperature',
@@ -484,7 +538,10 @@ class AdvancedHealthKitService {
 
       // Fetch sleep data if requested
       if (includeSleep) {
-        final sleepData = await getSleepData(startDate: startDate, endDate: endDate);
+        final sleepData = await getSleepData(
+          startDate: startDate,
+          endDate: endDate,
+        );
         for (final data in sleepData) {
           healthData.add({
             'type': 'sleep_quality',
@@ -498,7 +555,10 @@ class AdvancedHealthKitService {
 
       // Fetch activity data if requested
       if (includeActivity) {
-        final activityData = await getActivityData(startDate: startDate, endDate: endDate);
+        final activityData = await getActivityData(
+          startDate: startDate,
+          endDate: endDate,
+        );
         for (final data in activityData) {
           healthData.add({
             'type': 'steps',
@@ -519,8 +579,11 @@ class AdvancedHealthKitService {
       }
 
       // Sort by date
-      healthData.sort((a, b) => DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
-      
+      healthData.sort(
+        (a, b) =>
+            DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])),
+      );
+
       debugPrint('📊 Fetched ${healthData.length} health data points');
       return healthData;
     } catch (e) {
@@ -534,32 +597,32 @@ class AdvancedHealthKitService {
   List<Map<String, dynamic>> _generateMockHealthData(int days) {
     final healthData = <Map<String, dynamic>>[];
     final now = DateTime.now();
-    
+
     for (int i = 0; i < days; i++) {
       final date = now.subtract(Duration(days: i));
       final dateString = date.toIso8601String();
-      
+
       // Mock heart rate data
       healthData.add({
         'type': 'heart_rate',
         'value': 65.0 + (i % 10) * 2.0,
         'date': dateString,
       });
-      
+
       // Mock HRV data
       healthData.add({
         'type': 'hrv',
         'value': 35.0 + (i % 15) * 1.5,
         'date': dateString,
       });
-      
+
       // Mock temperature data
       healthData.add({
         'type': 'temperature',
         'value': 98.6 + (i % 7) * 0.2,
         'date': dateString,
       });
-      
+
       // Mock sleep data
       healthData.add({
         'type': 'sleep_quality',
@@ -568,27 +631,27 @@ class AdvancedHealthKitService {
         'deep_percentage': 20.0 + (i % 10) * 1.0,
         'date': dateString,
       });
-      
+
       // Mock activity data
       healthData.add({
         'type': 'steps',
         'value': 8000.0 + (i % 5000).toDouble(),
         'date': dateString,
       });
-      
+
       healthData.add({
         'type': 'calories',
         'value': 2000.0 + (i % 500).toDouble(),
         'date': dateString,
       });
-      
+
       healthData.add({
         'type': 'active_minutes',
         'value': 60.0 + (i % 30).toDouble(),
         'date': dateString,
       });
     }
-    
+
     return healthData;
   }
 }
@@ -630,8 +693,12 @@ class SleepData {
   factory SleepData.fromMap(Map<String, dynamic> map) {
     return SleepData(
       stage: map['stage'] as String,
-      startDate: DateTime.fromMillisecondsSinceEpoch((map['startDate'] as num).toInt()),
-      endDate: DateTime.fromMillisecondsSinceEpoch((map['endDate'] as num).toInt()),
+      startDate: DateTime.fromMillisecondsSinceEpoch(
+        (map['startDate'] as num).toInt(),
+      ),
+      endDate: DateTime.fromMillisecondsSinceEpoch(
+        (map['endDate'] as num).toInt(),
+      ),
       durationSeconds: (map['duration'] as num).toDouble(),
     );
   }

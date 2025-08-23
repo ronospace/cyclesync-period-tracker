@@ -5,24 +5,27 @@ import 'package:flutter/foundation.dart';
 /// Provides real-time updates to UI components when data changes
 class DataChangeNotifier extends ChangeNotifier {
   static DataChangeNotifier? _instance;
-  static DataChangeNotifier get instance => _instance ??= DataChangeNotifier._();
+  static DataChangeNotifier get instance =>
+      _instance ??= DataChangeNotifier._();
 
   DataChangeNotifier._();
 
   // Stream controllers for different data types
-  final StreamController<DataChange> _dataChangeController = 
+  final StreamController<DataChange> _dataChangeController =
       StreamController<DataChange>.broadcast();
-  final StreamController<CycleDataChange> _cycleChangeController = 
+  final StreamController<CycleDataChange> _cycleChangeController =
       StreamController<CycleDataChange>.broadcast();
-  final StreamController<DailyLogChange> _dailyLogChangeController = 
+  final StreamController<DailyLogChange> _dailyLogChangeController =
       StreamController<DailyLogChange>.broadcast();
-  final StreamController<SyncStatusChange> _syncStatusController = 
+  final StreamController<SyncStatusChange> _syncStatusController =
       StreamController<SyncStatusChange>.broadcast();
 
   // Public streams
   Stream<DataChange> get dataChangeStream => _dataChangeController.stream;
-  Stream<CycleDataChange> get cycleChangeStream => _cycleChangeController.stream;
-  Stream<DailyLogChange> get dailyLogChangeStream => _dailyLogChangeController.stream;
+  Stream<CycleDataChange> get cycleChangeStream =>
+      _cycleChangeController.stream;
+  Stream<DailyLogChange> get dailyLogChangeStream =>
+      _dailyLogChangeController.stream;
   Stream<SyncStatusChange> get syncStatusStream => _syncStatusController.stream;
 
   // Change tracking
@@ -33,7 +36,7 @@ class DataChangeNotifier extends ChangeNotifier {
   void notifyDataChange(DataChange change) {
     _addToRecentChanges(change);
     _dataChangeController.add(change);
-    
+
     // Route to specific change streams
     switch (change.entityType) {
       case EntityType.cycle:
@@ -45,9 +48,11 @@ class DataChangeNotifier extends ChangeNotifier {
       default:
         break;
     }
-    
+
     notifyListeners();
-    debugPrint('📡 Data change notification: ${change.type} - ${change.entityType} - ${change.entityId}');
+    debugPrint(
+      '📡 Data change notification: ${change.type} - ${change.entityType} - ${change.entityId}',
+    );
   }
 
   /// Notify of cycle-specific changes
@@ -55,9 +60,11 @@ class DataChangeNotifier extends ChangeNotifier {
     _addToRecentChanges(change.toDataChange());
     _cycleChangeController.add(change);
     _dataChangeController.add(change.toDataChange());
-    
+
     notifyListeners();
-    debugPrint('🔄 Cycle change notification: ${change.type} - ${change.cycleId}');
+    debugPrint(
+      '🔄 Cycle change notification: ${change.type} - ${change.cycleId}',
+    );
   }
 
   /// Notify of daily log changes
@@ -65,9 +72,11 @@ class DataChangeNotifier extends ChangeNotifier {
     _addToRecentChanges(change.toDataChange());
     _dailyLogChangeController.add(change);
     _dataChangeController.add(change.toDataChange());
-    
+
     notifyListeners();
-    debugPrint('📝 Daily log change notification: ${change.type} - ${change.logId}');
+    debugPrint(
+      '📝 Daily log change notification: ${change.type} - ${change.logId}',
+    );
   }
 
   /// Notify of sync status changes
@@ -80,7 +89,7 @@ class DataChangeNotifier extends ChangeNotifier {
   /// Add change to recent changes list
   void _addToRecentChanges(DataChange change) {
     _recentChanges.insert(0, change);
-    
+
     // Maintain max size
     if (_recentChanges.length > _maxRecentChanges) {
       _recentChanges.removeRange(_maxRecentChanges, _recentChanges.length);
@@ -104,7 +113,7 @@ class DataChangeNotifier extends ChangeNotifier {
     final last24Hours = _recentChanges
         .where((change) => now.difference(change.timestamp).inHours < 24)
         .toList();
-    
+
     final lastHour = _recentChanges
         .where((change) => now.difference(change.timestamp).inMinutes < 60)
         .toList();
@@ -173,10 +182,10 @@ class DataChange {
   factory DataChange.fromJson(Map<String, dynamic> json) {
     return DataChange(
       type: DataChangeType.values.firstWhere(
-        (e) => e.toString() == json['type']
+        (e) => e.toString() == json['type'],
       ),
       entityType: EntityType.values.firstWhere(
-        (e) => e.toString() == json['entityType']
+        (e) => e.toString() == json['entityType'],
       ),
       entityId: json['entityId'],
       timestamp: DateTime.parse(json['timestamp']),
@@ -220,7 +229,10 @@ class CycleDataChange {
     );
   }
 
-  factory CycleDataChange.created(String cycleId, Map<String, dynamic> cycleData) {
+  factory CycleDataChange.created(
+    String cycleId,
+    Map<String, dynamic> cycleData,
+  ) {
     return CycleDataChange(
       type: DataChangeType.created,
       cycleId: cycleId,
@@ -230,9 +242,9 @@ class CycleDataChange {
   }
 
   factory CycleDataChange.updated(
-    String cycleId, 
-    Map<String, dynamic> cycleData, 
-    List<String> affectedFields
+    String cycleId,
+    Map<String, dynamic> cycleData,
+    List<String> affectedFields,
   ) {
     return CycleDataChange(
       type: DataChangeType.updated,
@@ -269,10 +281,10 @@ class DailyLogChange {
   });
 
   factory DailyLogChange.fromDataChange(DataChange change) {
-    final logDate = change.metadata?['date'] != null 
-        ? DateTime.parse(change.metadata!['date']) 
+    final logDate = change.metadata?['date'] != null
+        ? DateTime.parse(change.metadata!['date'])
         : DateTime.now();
-        
+
     return DailyLogChange(
       type: change.type,
       logId: change.entityId,
@@ -292,7 +304,11 @@ class DailyLogChange {
     );
   }
 
-  factory DailyLogChange.created(String logId, DateTime logDate, Map<String, dynamic> logData) {
+  factory DailyLogChange.created(
+    String logId,
+    DateTime logDate,
+    Map<String, dynamic> logData,
+  ) {
     return DailyLogChange(
       type: DataChangeType.created,
       logId: logId,
@@ -302,7 +318,11 @@ class DailyLogChange {
     );
   }
 
-  factory DailyLogChange.updated(String logId, DateTime logDate, Map<String, dynamic> logData) {
+  factory DailyLogChange.updated(
+    String logId,
+    DateTime logDate,
+    Map<String, dynamic> logData,
+  ) {
     return DailyLogChange(
       type: DataChangeType.updated,
       logId: logId,
@@ -344,7 +364,10 @@ class SyncStatusChange {
     );
   }
 
-  factory SyncStatusChange.completed(String message, {Map<String, dynamic>? details}) {
+  factory SyncStatusChange.completed(
+    String message, {
+    Map<String, dynamic>? details,
+  }) {
     return SyncStatusChange(
       status: SyncStatus.completed,
       message: message,
@@ -353,7 +376,10 @@ class SyncStatusChange {
     );
   }
 
-  factory SyncStatusChange.failed(String message, {Map<String, dynamic>? details}) {
+  factory SyncStatusChange.failed(
+    String message, {
+    Map<String, dynamic>? details,
+  }) {
     return SyncStatusChange(
       status: SyncStatus.failed,
       message: message,
@@ -405,29 +431,10 @@ class ChangeStatistics {
 }
 
 /// Data change types
-enum DataChangeType {
-  created,
-  updated,
-  deleted,
-  synced,
-  conflict,
-}
+enum DataChangeType { created, updated, deleted, synced, conflict }
 
 /// Entity types
-enum EntityType {
-  cycle,
-  dailyLog,
-  symptom,
-  analytics,
-  user,
-}
+enum EntityType { cycle, dailyLog, symptom, analytics, user }
 
 /// Sync status
-enum SyncStatus {
-  idle,
-  syncing,
-  completed,
-  failed,
-  offline,
-  online,
-}
+enum SyncStatus { idle, syncing, completed, failed, offline, online }

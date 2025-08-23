@@ -173,7 +173,7 @@ class SimpleSocialSharingScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('$feature'),
+        title: Text(feature),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

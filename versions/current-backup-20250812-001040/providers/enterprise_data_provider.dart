@@ -4,7 +4,6 @@ import '../data/repositories/health_data_repository.dart';
 import '../data/providers/data_change_notifier.dart';
 import '../models/cycle_models.dart';
 import '../models/daily_log_models.dart';
-import '../services/firebase_service.dart';
 
 /// Enterprise data provider that bridges the data layer with UI components
 /// Manages state, handles loading states, and provides error handling

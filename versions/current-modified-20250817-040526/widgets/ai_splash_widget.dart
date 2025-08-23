@@ -200,7 +200,7 @@ class _AISplashWidgetState extends State<AISplashWidget>
                   child: Column(
                     children: [
                       Text(
-                        localizations?.appTitle ?? 'CycleSync',
+                        localizations.appTitle ?? 'CycleSync',
                         style: theme.textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.primaryColor,
@@ -209,7 +209,7 @@ class _AISplashWidgetState extends State<AISplashWidget>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        localizations?.appSubtitle ?? 'Your Smart Clinical Period Tracker',
+                        localizations.appSubtitle ?? 'Your Smart Clinical Period Tracker',
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: theme.colorScheme.secondary,
                           fontWeight: FontWeight.w500,
@@ -253,7 +253,7 @@ class _AISplashWidgetState extends State<AISplashWidget>
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          localizations?.smartTracking ?? 'Smart Tracking',
+                          localizations.smartTracking ?? 'Smart Tracking',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.primaryColor,
                             fontWeight: FontWeight.w600,
@@ -337,7 +337,7 @@ class AIPoweredBadge extends StatelessWidget {
           ),
           SizedBox(width: isSmall ? 4 : 6),
           Text(
-            localizations?.smartTracking ?? 'Smart Tracking',
+            localizations.smartTracking ?? 'Smart Tracking',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.primaryColor,
               fontWeight: FontWeight.w600,
@@ -392,7 +392,7 @@ class FlowSenseHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  localizations?.appTitle ?? 'CycleSync',
+                  localizations.appTitle ?? 'CycleSync',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.primaryColor,
@@ -400,7 +400,7 @@ class FlowSenseHeader extends StatelessWidget {
                 ),
                 if (showSubtitle)
                   Text(
-                    localizations?.clinicalInsights ?? 'Clinical Insights',
+                    localizations.clinicalInsights ?? 'Clinical Insights',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.secondary,
                       fontWeight: FontWeight.w500,

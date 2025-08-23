@@ -2,6 +2,7 @@
 /// 
 /// This is the main dashboard that showcases the Enterprise Data Architecture
 /// with real-time updates, advanced analytics, and healthcare-compliant features.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

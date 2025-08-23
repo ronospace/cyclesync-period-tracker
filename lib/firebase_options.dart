@@ -64,7 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '730237632589',
     projectId: 'cyclesync-app',
     storageBucket: 'cyclesync-app.firebasestorage.app',
-    iosClientId: '730237632589-mp9ncc6781pmjk64i513q9pec7cc29da.apps.googleusercontent.com',
+    iosClientId:
+        '730237632589-mp9ncc6781pmjk64i513q9pec7cc29da.apps.googleusercontent.com',
     iosBundleId: 'com.example.cyclesync',
   );
 
@@ -74,7 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '730237632589',
     projectId: 'cyclesync-app',
     storageBucket: 'cyclesync-app.firebasestorage.app',
-    iosClientId: '730237632589-mp9ncc6781pmjk64i513q9pec7cc29da.apps.googleusercontent.com',
+    iosClientId:
+        '730237632589-mp9ncc6781pmjk64i513q9pec7cc29da.apps.googleusercontent.com',
     iosBundleId: 'com.example.cyclesync',
   );
 
@@ -87,5 +89,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'cyclesync-app.firebasestorage.app',
     measurementId: 'G-X11MH79GPC',
   );
-
 }

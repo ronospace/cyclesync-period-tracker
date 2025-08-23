@@ -301,7 +301,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 32),
           
           // Start Date - Prominent Button
-          Container(
+          SizedBox(
             width: double.infinity,
             child: Card(
               elevation: _startDate != null ? 0 : 2,
@@ -379,7 +379,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 16),
           
           // End Date - Prominent Button
-          Container(
+          SizedBox(
             width: double.infinity,
             child: Card(
               elevation: _endDate != null ? 0 : 2,

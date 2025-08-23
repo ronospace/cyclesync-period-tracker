@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import '../services/firebase_service.dart';
 import '../services/smart_notification_service.dart';
+import '../providers/user_provider.dart';
 import '../theme/app_theme.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/common/banner_ad_container.dart';
@@ -20,7 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _error;
   Map<String, dynamic>? _cycleStatus;
   Map<String, dynamic>? _predictions;
-  static DateTime? _lastSmartAnalysis; // Make static to persist across instances
+  static DateTime?
+  _lastSmartAnalysis; // Make static to persist across instances
 
   @override
   void initState() {
@@ -34,13 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
     // Throttle smart analysis - only run every 30 minutes
     final now = DateTime.now();
     if (_lastSmartAnalysis != null) {
-      final timeSinceLastAnalysis = now.difference(_lastSmartAnalysis!).inMinutes;
+      final timeSinceLastAnalysis = now
+          .difference(_lastSmartAnalysis!)
+          .inMinutes;
       if (timeSinceLastAnalysis < 30) {
-        debugPrint('🧠 Smart analysis skipped - throttled (${timeSinceLastAnalysis}min ago)');
+        debugPrint(
+          '🧠 Smart analysis skipped - throttled (${timeSinceLastAnalysis}min ago)',
+        );
         return;
       }
     }
-    
+
     // Run smart notification analysis in background
     try {
       await SmartNotificationService.runSmartAnalysis();
@@ -54,30 +61,34 @@ class _HomeScreenState extends State<HomeScreen> {
   // Helper method to parse DateTime from various formats
   DateTime? _parseDateTime(dynamic value) {
     if (value == null) return null;
-    
+
     if (value is DateTime) {
       return value;
     }
-    
+
     if (value is String) {
       try {
         return DateTime.parse(value);
       } catch (e) {
-        debugPrint('⚠️ Failed to parse DateTime from string: $value, error: $e');
+        debugPrint(
+          '⚠️ Failed to parse DateTime from string: $value, error: $e',
+        );
         return null;
       }
     }
-    
+
     // Handle Firestore Timestamp objects if needed
     if (value.runtimeType.toString().contains('Timestamp')) {
       try {
         return (value as dynamic).toDate();
       } catch (e) {
-        debugPrint('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
+        debugPrint(
+          '⚠️ Failed to parse DateTime from Timestamp: $value, error: $e',
+        );
         return null;
       }
     }
-    
+
     debugPrint('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
     return null;
   }
@@ -87,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final cycles = await FirebaseService.getCycles(limit: 5);
       final status = _calculateCycleStatus(cycles);
       final predictions = _calculatePredictions(cycles);
-      
+
       setState(() {
         _recentCycles = cycles;
         _cycleStatus = status;
@@ -102,16 +113,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Map<String, dynamic>? _calculateCycleStatus(List<Map<String, dynamic>> cycles) {
+  Map<String, dynamic>? _calculateCycleStatus(
+    List<Map<String, dynamic>> cycles,
+  ) {
     if (cycles.isEmpty) return null;
-    
+
     final now = DateTime.now();
     final lastCycle = cycles.first;
-    
+
     // Safe date parsing
     DateTime? startDate;
     DateTime? endDate;
-    
+
     try {
       // Parse start date
       if (lastCycle['start'] != null) {
@@ -123,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
           startDate = _parseDateTime(lastCycle['start']);
         }
       }
-      
+
       // Parse end date
       if (lastCycle['end'] != null) {
         if (lastCycle['end'] is DateTime) {
@@ -138,21 +151,21 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint('Error parsing cycle dates in status calculation: $e');
       return null;
     }
-    
+
     if (startDate == null) return null;
-    
+
     // Calculate days since last period
     final daysSinceStart = now.difference(startDate).inDays;
-    
+
     String phase;
     String description;
     Color color;
     IconData icon;
-    
+
     if (endDate != null) {
       // Last cycle ended
       final daysSinceEnd = now.difference(endDate).inDays;
-      
+
       if (daysSinceEnd < 0) {
         // Currently on period
         phase = 'Menstrual';
@@ -185,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color = Colors.red;
       icon = Icons.water_drop;
     }
-    
+
     return {
       'phase': phase,
       'description': description,
@@ -195,36 +208,44 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
-  Map<String, dynamic>? _calculatePredictions(List<Map<String, dynamic>> cycles) {
+  Map<String, dynamic>? _calculatePredictions(
+    List<Map<String, dynamic>> cycles,
+  ) {
     if (cycles.length < 2) return null;
-    
+
     // Calculate average cycle length
     int totalDays = 0;
     int completedCycles = 0;
-    
+
     for (var cycle in cycles) {
-      final start = _parseDateTime(cycle['start']) ?? _parseDateTime(cycle['start_date']);
-      final end = _parseDateTime(cycle['end']) ?? _parseDateTime(cycle['end_date']);
+      final start =
+          _parseDateTime(cycle['start']) ?? _parseDateTime(cycle['start_date']);
+      final end =
+          _parseDateTime(cycle['end']) ?? _parseDateTime(cycle['end_date']);
       if (start != null && end != null) {
         totalDays += end.difference(start).inDays + 1;
         completedCycles++;
       }
     }
-    
+
     if (completedCycles == 0) return null;
-    
+
     final avgCycleLength = totalDays / completedCycles;
     final lastCycle = cycles.first;
-    final lastStart = _parseDateTime(lastCycle['start']) ?? _parseDateTime(lastCycle['start_date']);
-    final lastEnd = _parseDateTime(lastCycle['end']) ?? _parseDateTime(lastCycle['end_date']);
-    
+    final lastStart =
+        _parseDateTime(lastCycle['start']) ??
+        _parseDateTime(lastCycle['start_date']);
+    final lastEnd =
+        _parseDateTime(lastCycle['end']) ??
+        _parseDateTime(lastCycle['end_date']);
+
     if (lastStart == null) return null;
-    
+
     DateTime? nextPeriodDate;
     DateTime? ovulationDate;
     DateTime? fertileWindowStart;
     DateTime? fertileWindowEnd;
-    
+
     if (lastEnd != null) {
       // Calculate based on completed last cycle
       nextPeriodDate = lastEnd.add(Duration(days: avgCycleLength.round()));
@@ -232,12 +253,12 @@ class _HomeScreenState extends State<HomeScreen> {
       // Current cycle ongoing, predict based on start
       nextPeriodDate = lastStart.add(Duration(days: avgCycleLength.round()));
     }
-    
+
     // Ovulation typically 14 days before next period
     ovulationDate = nextPeriodDate.subtract(const Duration(days: 14));
     fertileWindowStart = ovulationDate.subtract(const Duration(days: 5));
     fertileWindowEnd = ovulationDate.add(const Duration(days: 1));
-    
+
     return {
       'nextPeriod': nextPeriodDate,
       'ovulation': ovulationDate,
@@ -248,55 +269,145 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildWelcomeCard() {
-    final user = FirebaseAuth.instance.currentUser;
-    final displayName = user?.displayName ?? user?.email?.split('@')[0] ?? 'User';
-    final l10n = AppLocalizations.of(context);
-    
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        final l10n = AppLocalizations.of(context);
+
+        // Get display name from persistent user service with fallback
+        String getDisplayName() {
+          // First try from UserProvider (persistent storage)
+          if (userProvider.displayName?.isNotEmpty == true) {
+            return userProvider.displayName!;
+          }
+
+          // Fallback to preferred name from profile
+          if (userProvider.preferredName?.isNotEmpty == true) {
+            return userProvider.preferredName!;
+          }
+
+          // Last resort - use greeting name method
+          final greetingName = userProvider.getGreetingName();
+          if (greetingName != 'User') {
+            return greetingName;
+          }
+
+          // Final fallback to Firebase Auth or email
+          final user = FirebaseAuth.instance.currentUser;
+          return user?.displayName ?? user?.email?.split('@')[0] ?? 'User';
+        }
+
+        final displayName = getDisplayName();
+        final isLoggedIn = userProvider.isLoggedIn;
+
+        return Card(
+          margin: const EdgeInsets.all(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: Colors.pink.shade100,
-                  child: Icon(
-                    Icons.favorite,
-                    color: Colors.pink.shade700,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n?.homeWelcomeMessage(displayName) ?? 'Hello, $displayName!',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: isLoggedIn
+                          ? Colors.pink.shade100
+                          : Colors.grey.shade200,
+                      child: Icon(
+                        isLoggedIn ? Icons.favorite : Icons.person,
+                        color: isLoggedIn
+                            ? Colors.pink.shade700
+                            : Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isLoggedIn
+                                ? (l10n.homeWelcomeMessage(displayName) ??
+                                      'Hello, $displayName!')
+                                : 'Welcome to FlowSense!',
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            isLoggedIn
+                                ? (l10n.homeWelcomeSubtitle ??
+                                      'Track your cycle with confidence')
+                                : 'Sign in to start tracking your cycle',
+                            style: TextStyle(
+                              color: AppTheme.getSubtitleColor(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!isLoggedIn)
+                      ElevatedButton(
+                        onPressed: () => context.go('/auth'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pink.shade600,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
+                        child: const Text('Sign In'),
                       ),
-                      Text(
-                        l10n?.homeWelcomeSubtitle ?? 'Track your cycle with confidence',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
+
+                // Show user profile info if available
+                if (isLoggedIn && userProvider.userProfile != null) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.pink.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.pink.shade100),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.verified_user,
+                          color: Colors.pink.shade600,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Profile synced • ${userProvider.userProfile!.stats.totalLogins} logins',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.pink.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        if (userProvider.userProfile!.isProfileComplete)
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.green.shade600,
+                            size: 16,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildCycleStatusCard() {
     final l10n = AppLocalizations.of(context);
-    
+
     if (_isLoading) {
       return const Card(
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -314,24 +425,29 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Icon(Icons.calendar_today, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              Icon(
+                Icons.calendar_today,
+                size: 48,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(height: 16),
               Text(
-                l10n?.homeStartTracking ?? 'Start Tracking Your Cycle',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                l10n.homeStartTracking ?? 'Start Tracking Your Cycle',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
-                l10n?.homeStartTrackingDescription ?? 'Log your first cycle to see personalized insights and predictions.',
+                l10n.homeStartTrackingDescription ??
+                    'Log your first cycle to see personalized insights and predictions.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: () => context.go('/log-cycle'),
                 icon: const Icon(Icons.add),
-                label: Text(l10n?.homeLogFirstCycle ?? 'Log First Cycle'),
+                label: Text(l10n.homeLogFirstCycle ?? 'Log First Cycle'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink.shade600,
                   foregroundColor: Colors.white,
@@ -384,17 +500,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           '${status['phase']} Phase',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: status['color'] as Color,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: status['color'] as Color,
+                              ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           status['description'] as String,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -417,7 +536,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final predictions = _predictions!;
     final now = DateTime.now();
     final l10n = AppLocalizations.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
@@ -426,35 +545,35 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n?.homeUpcomingEvents ?? 'Upcoming Events',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              l10n.homeUpcomingEvents ?? 'Upcoming Events',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            
+
             // Next Period
             _buildPredictionItem(
               icon: Icons.water_drop,
               color: Colors.red,
-              title: l10n?.homeNextPeriod ?? 'Next Period',
+              title: l10n.homeNextPeriod ?? 'Next Period',
               date: predictions['nextPeriod'] as DateTime,
               now: now,
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Ovulation
             _buildPredictionItem(
               icon: Icons.favorite,
               color: Colors.orange,
-              title: l10n?.homeOvulation ?? 'Ovulation',
+              title: l10n.homeOvulation ?? 'Ovulation',
               date: predictions['ovulation'] as DateTime,
               now: now,
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Fertile Window
             Row(
               children: [
@@ -465,7 +584,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n?.homeFertileWindow ?? 'Fertile Window',
+                        l10n.homeFertileWindow ?? 'Fertile Window',
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
@@ -517,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _formatPredictionDate(DateTime date, DateTime now) {
     final difference = date.difference(now).inDays;
-    
+
     if (difference == 0) {
       return 'Today';
     } else if (difference == 1) {
@@ -536,7 +655,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildQuickActions() {
     final l10n = AppLocalizations.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
@@ -545,10 +664,10 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n?.homeQuickActions ?? 'Quick Actions',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              l10n.homeQuickActions ?? 'Quick Actions',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -556,7 +675,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.add_circle,
-                    label: l10n?.homeLogCycle ?? 'Log Cycle',
+                    label: l10n.homeLogCycle ?? 'Log Cycle',
                     color: Colors.pink,
                     onTap: () => context.go('/log-cycle'),
                   ),
@@ -565,7 +684,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.history,
-                    label: l10n?.homeViewHistory ?? 'View History',
+                    label: l10n.homeViewHistory ?? 'View History',
                     color: Colors.blue,
                     onTap: () => context.go('/cycle-history'),
                   ),
@@ -578,7 +697,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.calendar_month,
-                    label: l10n?.homeCalendar ?? 'Calendar',
+                    label: l10n.homeCalendar ?? 'Calendar',
                     color: Colors.green,
                     onTap: () => context.go('/calendar'),
                   ),
@@ -587,7 +706,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.analytics,
-                    label: l10n?.homeAnalytics ?? 'Analytics',
+                    label: l10n.homeAnalytics ?? 'Analytics',
                     color: Colors.purple,
                     onTap: () => context.go('/analytics'),
                   ),
@@ -600,7 +719,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.psychology,
-                    label: l10n?.homeAIInsights ?? 'AI Insights',
+                    label: l10n.homeAIInsights ?? 'AI Insights',
                     color: Colors.deepPurple,
                     onTap: () => context.go('/ai-insights'),
                   ),
@@ -609,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.edit_note,
-                    label: l10n?.homeDailyLog ?? 'Daily Log',
+                    label: l10n.homeDailyLog ?? 'Daily Log',
                     color: Colors.teal,
                     onTap: () => context.go('/daily-log'),
                   ),
@@ -622,7 +741,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.health_and_safety,
-                    label: l10n?.healthTitle ?? 'Health Insights',
+                    label: l10n.healthTitle ?? 'Health Insights',
                     color: Colors.red,
                     onTap: () => context.go('/health-insights'),
                   ),
@@ -653,7 +772,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.settings,
-                    label: l10n?.settingsTitle ?? 'Settings',
+                    label: l10n.settingsTitle ?? 'Settings',
                     color: Colors.grey,
                     onTap: () => context.go('/settings'),
                   ),
@@ -688,10 +807,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 8),
             Text(
               label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(color: color, fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
           ],
@@ -702,7 +818,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildRecentCycles() {
     final l10n = AppLocalizations.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
@@ -714,14 +830,14 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  l10n?.homeRecentCycles ?? 'Recent Cycles',
+                  l10n.homeRecentCycles ?? 'Recent Cycles',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextButton(
                   onPressed: () => context.go('/cycle-history'),
-                  child: Text(l10n?.homeViewAll ?? 'View All'),
+                  child: Text(l10n.homeViewAll ?? 'View All'),
                 ),
               ],
             ),
@@ -734,40 +850,46 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 : _error != null
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.error_outline,
-                                color: Colors.orange,
-                                size: 32,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(l10n?.homeUnableToLoad ?? 'Unable to load recent cycles'),
-                              TextButton(
-                                onPressed: _loadDashboardData,
-                                child: Text(l10n?.homeTryAgain ?? 'Try Again'),
-                              ),
-                            ],
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: Colors.orange,
+                            size: 32,
                           ),
-                        ),
-                      )
-                    : _recentCycles.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Text(
-                              l10n?.homeNoCycles ?? 'No cycles logged yet. Start tracking!',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          )
-                        : Column(
-                            children: _recentCycles.take(3).map((cycle) {
-                              return _buildRecentCycleItem(cycle);
-                            }).toList(),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.homeUnableToLoad ??
+                                'Unable to load recent cycles',
                           ),
+                          TextButton(
+                            onPressed: _loadDashboardData,
+                            child: Text(l10n.homeTryAgain ?? 'Try Again'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : _recentCycles.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      l10n.homeNoCycles ??
+                          'No cycles logged yet. Start tracking!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppTheme.getSubtitleColor(context),
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: _recentCycles.take(3).map((cycle) {
+                      return _buildRecentCycleItem(cycle);
+                    }).toList(),
+                  ),
           ],
         ),
       ),
@@ -778,7 +900,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Parse dates safely
     DateTime? startDate;
     DateTime? endDate;
-    
+
     try {
       if (cycle['start'] != null) {
         if (cycle['start'] is DateTime) {
@@ -794,7 +916,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (cycle['end'] is DateTime) {
           endDate = cycle['end'];
         } else if (cycle['end'].toString().contains('Timestamp')) {
-          // Handle Firestore Timestamp  
+          // Handle Firestore Timestamp
           endDate = (cycle['end'] as dynamic).toDate();
         } else {
           endDate = DateTime.parse(cycle['end'].toString());
@@ -838,7 +960,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date).inDays;
-    
+
     if (difference == 0) {
       return 'Today';
     } else if (difference == 1) {
@@ -853,10 +975,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('🌸 ${l10n?.homeTitle ?? "CycleSync"}'),
+        title: Text('🌸 ${l10n.homeTitle ?? "CycleSync"}'),
         backgroundColor: Colors.pink.shade50,
         elevation: 0,
         iconTheme: IconThemeData(
@@ -864,10 +986,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.pink.shade700,
-            ),
+            icon: Icon(Icons.settings, color: Colors.pink.shade700),
             onPressed: () => context.push('/settings'),
             tooltip: 'Settings',
           ),

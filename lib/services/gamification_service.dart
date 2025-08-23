@@ -7,11 +7,13 @@ class GamificationService {
 
   /// Get active challenges for the user
   static Future<List<Challenge>> getActiveChallenges() async {
-    await Future.delayed(const Duration(milliseconds: 600)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 600),
+    ); // Simulate API call
+
     final challenges = <Challenge>[];
     final now = DateTime.now();
-    
+
     // Daily Challenges
     challenges.addAll([
       Challenge(
@@ -51,7 +53,7 @@ class GamificationService {
         reward: '+25 Points',
       ),
     ]);
-    
+
     // Weekly Challenges
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
     challenges.addAll([
@@ -63,7 +65,9 @@ class GamificationService {
         targetValue: 7,
         currentProgress: 1 + _random.nextInt(7),
         startDate: weekStart,
-        endDate: weekStart.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59)),
+        endDate: weekStart.add(
+          const Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+        ),
         participants: _generateParticipants(1247),
         reward: '+200 Points & Streak Master Badge',
       ),
@@ -75,24 +79,29 @@ class GamificationService {
         targetValue: 5,
         currentProgress: _random.nextInt(6),
         startDate: weekStart,
-        endDate: weekStart.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59)),
+        endDate: weekStart.add(
+          const Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+        ),
         participants: _generateParticipants(567),
         reward: '+150 Points & Community Helper Badge',
       ),
       Challenge(
         id: 'weekly_wellness',
         title: '🧘 Wellness Week',
-        description: 'Complete 3 wellness activities (exercise, meditation, self-care)',
+        description:
+            'Complete 3 wellness activities (exercise, meditation, self-care)',
         type: ChallengeType.weekly,
         targetValue: 3,
         currentProgress: _random.nextInt(4),
         startDate: weekStart,
-        endDate: weekStart.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59)),
+        endDate: weekStart.add(
+          const Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+        ),
         participants: _generateParticipants(892),
         reward: '+180 Points & Wellness Guru Badge',
       ),
     ]);
-    
+
     // Monthly Challenges
     final monthStart = DateTime(now.year, now.month, 1);
     final monthEnd = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
@@ -110,7 +119,7 @@ class GamificationService {
         reward: '+500 Points & Consistency Crown',
       ),
     ]);
-    
+
     // Community Challenges
     challenges.addAll([
       Challenge(
@@ -138,7 +147,7 @@ class GamificationService {
         reward: 'Storyteller Badge & Special Recognition',
       ),
     ]);
-    
+
     // Mark some challenges as completed
     for (final challenge in challenges) {
       if (challenge.currentProgress >= challenge.targetValue) {
@@ -157,63 +166,71 @@ class GamificationService {
         );
       }
     }
-    
+
     return challenges;
   }
 
   /// Get recent achievements for the user
   static Future<List<Achievement>> getRecentAchievements() async {
-    await Future.delayed(const Duration(milliseconds: 400)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 400),
+    ); // Simulate API call
+
     final achievements = <Achievement>[];
     final now = DateTime.now();
-    
+
     // Recent achievements based on activity
     if (_random.nextBool()) {
-      achievements.add(Achievement(
-        id: 'first_week',
-        title: 'Welcome to CycleSync! 🎉',
-        description: 'Completed your first week of tracking',
-        type: AchievementType.tracking,
-        iconUrl: '',
-        unlockedAt: now.subtract(const Duration(hours: 2)),
-        points: 100,
-      ));
+      achievements.add(
+        Achievement(
+          id: 'first_week',
+          title: 'Welcome to CycleSync! 🎉',
+          description: 'Completed your first week of tracking',
+          type: AchievementType.tracking,
+          iconUrl: '',
+          unlockedAt: now.subtract(const Duration(hours: 2)),
+          points: 100,
+        ),
+      );
     }
-    
+
     if (_random.nextBool()) {
-      achievements.add(Achievement(
-        id: 'community_helper',
-        title: 'Community Helper 💕',
-        description: 'Helped 10 community members with support',
-        type: AchievementType.community,
-        iconUrl: '',
-        unlockedAt: now.subtract(const Duration(days: 1)),
-        points: 150,
-        isRare: true,
-      ));
+      achievements.add(
+        Achievement(
+          id: 'community_helper',
+          title: 'Community Helper 💕',
+          description: 'Helped 10 community members with support',
+          type: AchievementType.community,
+          iconUrl: '',
+          unlockedAt: now.subtract(const Duration(days: 1)),
+          points: 150,
+          isRare: true,
+        ),
+      );
     }
-    
+
     if (_random.nextBool()) {
-      achievements.add(Achievement(
-        id: 'streak_master',
-        title: 'Streak Master 🔥',
-        description: 'Maintained a 30-day tracking streak',
-        type: AchievementType.consistency,
-        iconUrl: '',
-        unlockedAt: now.subtract(const Duration(days: 3)),
-        points: 300,
-        isRare: true,
-      ));
+      achievements.add(
+        Achievement(
+          id: 'streak_master',
+          title: 'Streak Master 🔥',
+          description: 'Maintained a 30-day tracking streak',
+          type: AchievementType.consistency,
+          iconUrl: '',
+          unlockedAt: now.subtract(const Duration(days: 3)),
+          points: 300,
+          isRare: true,
+        ),
+      );
     }
-    
+
     return achievements;
   }
 
   /// Get all possible achievements (for display in grid)
   static List<Achievement> getAllPossibleAchievements() {
     final now = DateTime.now();
-    
+
     return [
       // Tracking Achievements
       Achievement(
@@ -243,7 +260,7 @@ class GamificationService {
         unlockedAt: now,
         points: 250,
       ),
-      
+
       // Consistency Achievements
       Achievement(
         id: 'fire_starter',
@@ -273,7 +290,7 @@ class GamificationService {
         points: 1000,
         isRare: true,
       ),
-      
+
       // Community Achievements
       Achievement(
         id: 'first_like',
@@ -303,7 +320,7 @@ class GamificationService {
         points: 500,
         isRare: true,
       ),
-      
+
       // Wellness Achievements
       Achievement(
         id: 'self_care_starter',
@@ -333,7 +350,7 @@ class GamificationService {
         points: 400,
         isRare: true,
       ),
-      
+
       // Knowledge Achievements
       Achievement(
         id: 'curious_learner',
@@ -368,21 +385,22 @@ class GamificationService {
 
   /// Get user statistics
   static Future<Map<String, dynamic>> getUserStats() async {
-    await Future.delayed(const Duration(milliseconds: 300)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    ); // Simulate API call
+
     return {
       'level': 5 + _random.nextInt(15), // Level 5-20
       'points': 1250 + _random.nextInt(5000), // 1250-6250 points
       'streak': _random.nextInt(30) + 1, // 1-30 day streak
       'rank': _random.nextInt(1000) + 1, // Rank 1-1000
       'newAchievements': _random.nextInt(3), // 0-2 new achievements
-      
       // Monthly stats
       'trackingDays': DateTime.now().day + _random.nextInt(5) - 2,
       'challengesCompleted': _random.nextInt(10),
       'monthlyPoints': 350 + _random.nextInt(200),
       'monthlyAchievements': _random.nextInt(5),
-      
+
       // Global community stats
       'globalUsers': '${10000 + _random.nextInt(5000)}',
       'activeUsers': '${5000 + _random.nextInt(2000)}',
@@ -393,29 +411,36 @@ class GamificationService {
 
   /// Complete a challenge
   static Future<bool> completeChallenge(String challengeId) async {
-    await Future.delayed(const Duration(milliseconds: 500)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    ); // Simulate API call
+
     // In real implementation, this would:
     // 1. Update challenge progress in database
     // 2. Award points and badges
     // 3. Check for achievement unlocks
     // 4. Update user stats
-    
+
     return true; // Success
   }
 
   /// Award achievement to user
-  static Future<Achievement?> checkAndAwardAchievements(Map<String, dynamic> userActivity) async {
-    await Future.delayed(const Duration(milliseconds: 300)); // Simulate API call
-    
+  static Future<Achievement?> checkAndAwardAchievements(
+    Map<String, dynamic> userActivity,
+  ) async {
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    ); // Simulate API call
+
     // In real implementation, this would check various conditions
     // and award appropriate achievements based on user activity
-    
-    if (_random.nextDouble() < 0.1) { // 10% chance of new achievement
+
+    if (_random.nextDouble() < 0.1) {
+      // 10% chance of new achievement
       final achievements = getAllPossibleAchievements();
       return achievements[_random.nextInt(achievements.length)];
     }
-    
+
     return null;
   }
 
@@ -424,17 +449,31 @@ class GamificationService {
     String period = 'weekly', // weekly, monthly, all-time
     int limit = 50,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 800)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 800),
+    ); // Simulate API call
+
     final leaderboard = <Map<String, dynamic>>[];
-    
+
     // Generate sample leaderboard data
     final names = [
-      'CycleQueen', 'FlowGuru', 'PeriodPower', 'MoonChild', 'WellnessWave',
-      'CycleStar', 'FlowFriend', 'PeriodPro', 'MoonBeam', 'WellnessWin',
-      'CycleSage', 'FlowFab', 'PeriodPal', 'MoonGlow', 'WellnessWiz',
+      'CycleQueen',
+      'FlowGuru',
+      'PeriodPower',
+      'MoonChild',
+      'WellnessWave',
+      'CycleStar',
+      'FlowFriend',
+      'PeriodPro',
+      'MoonBeam',
+      'WellnessWin',
+      'CycleSage',
+      'FlowFab',
+      'PeriodPal',
+      'MoonGlow',
+      'WellnessWiz',
     ];
-    
+
     for (int i = 0; i < limit; i++) {
       final points = (1000 - i * 15) + _random.nextInt(50);
       leaderboard.add({
@@ -444,10 +483,11 @@ class GamificationService {
         'streak': _random.nextInt(50) + 1,
         'level': (points / 500).floor() + 1,
         'badges': _random.nextInt(10) + 1,
-        'isCurrentUser': i == _random.nextInt(limit), // Random position for current user
+        'isCurrentUser':
+            i == _random.nextInt(limit), // Random position for current user
       });
     }
-    
+
     return leaderboard;
   }
 
@@ -462,8 +502,10 @@ class GamificationService {
 
   /// Get user's challenge progress
   static Future<Map<String, double>> getUserChallengeProgress() async {
-    await Future.delayed(const Duration(milliseconds: 200)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 200),
+    ); // Simulate API call
+
     return {
       'daily_completion': 0.7 + _random.nextDouble() * 0.3, // 70-100%
       'weekly_completion': 0.4 + _random.nextDouble() * 0.6, // 40-100%
@@ -480,12 +522,14 @@ class GamificationService {
     required int targetValue,
     required String reward,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 1000)); // Simulate API call
-    
+    await Future.delayed(
+      const Duration(milliseconds: 1000),
+    ); // Simulate API call
+
     if (title.trim().isEmpty || description.trim().isEmpty) {
       throw Exception('Title and description cannot be empty');
     }
-    
+
     final now = DateTime.now();
     final challenge = Challenge(
       id: 'custom_${now.millisecondsSinceEpoch}',
@@ -499,20 +543,29 @@ class GamificationService {
       participants: ['current_user'],
       reward: reward,
     );
-    
+
     return challenge;
   }
 
   static DateTime _getEndDateForType(ChallengeType type, DateTime startDate) {
     switch (type) {
       case ChallengeType.daily:
-        return DateTime(startDate.year, startDate.month, startDate.day, 23, 59, 59);
+        return DateTime(
+          startDate.year,
+          startDate.month,
+          startDate.day,
+          23,
+          59,
+          59,
+        );
       case ChallengeType.weekly:
         return startDate.add(const Duration(days: 7));
       case ChallengeType.monthly:
         return DateTime(startDate.year, startDate.month + 1, startDate.day);
       case ChallengeType.community:
-        return startDate.add(const Duration(days: 30)); // Default 30 days for community
+        return startDate.add(
+          const Duration(days: 30),
+        ); // Default 30 days for community
     }
   }
 }

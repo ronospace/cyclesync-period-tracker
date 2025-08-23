@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "CycleSync",
+  "appTitle": "FlowSense",
   "@appTitle": {
     "description": "The title of the application"
   },
@@ -276,7 +276,7 @@
     "description": "Low energy level"
   },
   
-  "notificationTitle": "CycleSync Notification",
+  "notificationTitle": "FlowSense Notification",
   "@notificationTitle": {
     "description": "Default notification title"
   },
@@ -302,7 +302,7 @@
     "description": "Accessibility label for settings button"
   },
 
-  "homeTitle": "CycleSync",
+  "homeTitle": "FlowSense",
   "@homeTitle": {
     "description": "Home screen title"
   },
@@ -1013,7 +1013,7 @@
   "@signOutDescription": {
     "description": "Sign out description"
   },
-  "getHelpUsingCycleSync": "Get help using CycleSync",
+  "getHelpUsingFlowSense": "Get help using FlowSense",
   "@getHelpUsingCycleSync": {
     "description": "Help description"
   },
@@ -1050,11 +1050,11 @@
   "@ok": {
     "description": "OK button"
   },
-  "aboutCycleSync": "About CycleSync",
+  "aboutFlowSense": "About FlowSense",
   "@aboutCycleSync": {
     "description": "About dialog title"
   },
-  "cycleSyncVersion": "CycleSync v1.0.0",
+  "flowSenseVersion": "FlowSense v1.0.0",
   "@cycleSyncVersion": {
     "description": "App version"
   },
@@ -1201,7 +1201,7 @@
   "@createAccount": {
     "description": "Create account title"
   },
-  "joinCycleSyncCommunity": "Join the CycleSync community",
+  "joinFlowSenseCommunity": "Join the FlowSense community",
   "@joinCycleSyncCommunity": {
     "description": "Sign up subtitle"
   },

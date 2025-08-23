@@ -55,9 +55,11 @@ class CommunityService {
         .collection(_communitiesCollection)
         .orderBy('memberCount', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Community.fromMap(doc.data()))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Community.fromMap(doc.data()))
+              .toList(),
+        );
   }
 
   /// Get user's joined communities
@@ -72,21 +74,21 @@ class CommunityService {
         .where('status', isEqualTo: MembershipStatus.active.name)
         .snapshots()
         .asyncMap((snapshot) async {
-      final communityIds = snapshot.docs
-          .map((doc) => doc.data()['communityId'] as String)
-          .toList();
+          final communityIds = snapshot.docs
+              .map((doc) => doc.data()['communityId'] as String)
+              .toList();
 
-      if (communityIds.isEmpty) return <Community>[];
+          if (communityIds.isEmpty) return <Community>[];
 
-      final communitiesSnapshot = await _firestore
-          .collection(_communitiesCollection)
-          .where(FieldPath.documentId, whereIn: communityIds)
-          .get();
+          final communitiesSnapshot = await _firestore
+              .collection(_communitiesCollection)
+              .where(FieldPath.documentId, whereIn: communityIds)
+              .get();
 
-      return communitiesSnapshot.docs
-          .map((doc) => Community.fromMap(doc.data()))
-          .toList();
-    });
+          return communitiesSnapshot.docs
+              .map((doc) => Community.fromMap(doc.data()))
+              .toList();
+        });
   }
 
   /// Join a community
@@ -103,8 +105,9 @@ class CommunityService {
 
       if (existingMembership.docs.isNotEmpty) {
         final membership = CommunityMembership.fromMap(
-            existingMembership.docs.first.data());
-        
+          existingMembership.docs.first.data(),
+        );
+
         if (membership.status == MembershipStatus.active) {
           return true; // Already a member
         }
@@ -114,9 +117,9 @@ class CommunityService {
             .collection(_membershipsCollection)
             .doc(existingMembership.docs.first.id)
             .update({
-          'status': MembershipStatus.active.name,
-          'joinedAt': DateTime.now().toIso8601String(),
-        });
+              'status': MembershipStatus.active.name,
+              'joinedAt': DateTime.now().toIso8601String(),
+            });
       } else {
         // Create new membership
         final user = _auth.currentUser!;
@@ -138,9 +141,7 @@ class CommunityService {
       await _firestore
           .collection(_communitiesCollection)
           .doc(communityId)
-          .update({
-        'memberCount': FieldValue.increment(1),
-      });
+          .update({'memberCount': FieldValue.increment(1)});
 
       return true;
     } catch (e) {
@@ -165,17 +166,13 @@ class CommunityService {
       await _firestore
           .collection(_membershipsCollection)
           .doc(membership.docs.first.id)
-          .update({
-        'status': MembershipStatus.left.name,
-      });
+          .update({'status': MembershipStatus.left.name});
 
       // Update community member count
       await _firestore
           .collection(_communitiesCollection)
           .doc(communityId)
-          .update({
-        'memberCount': FieldValue.increment(-1),
-      });
+          .update({'memberCount': FieldValue.increment(-1)});
 
       return true;
     } catch (e) {
@@ -185,8 +182,10 @@ class CommunityService {
   }
 
   /// Get messages from a community
-  Stream<List<CommunityMessage>> getMessagesStream(String communityId,
-      {int limit = 50}) {
+  Stream<List<CommunityMessage>> getMessagesStream(
+    String communityId, {
+    int limit = 50,
+  }) {
     return _firestore
         .collection(_messagesCollection)
         .where('communityId', isEqualTo: communityId)
@@ -194,11 +193,13 @@ class CommunityService {
         .orderBy('timestamp', descending: true)
         .limit(limit)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => CommunityMessage.fromMap(doc.data()))
-            .toList()
-            .reversed
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => CommunityMessage.fromMap(doc.data()))
+              .toList()
+              .reversed
+              .toList(),
+        );
   }
 
   /// Send a message to a community
@@ -232,13 +233,15 @@ class CommunityService {
           final snapshot = await uploadTask;
           final downloadUrl = await snapshot.ref.getDownloadURL();
 
-          uploadedAttachments.add(MessageAttachment(
-            id: fileName,
-            type: _getAttachmentTypeFromPath(file.path),
-            url: downloadUrl,
-            fileName: file.path.split('/').last,
-            fileSize: await file.length(),
-          ));
+          uploadedAttachments.add(
+            MessageAttachment(
+              id: fileName,
+              type: _getAttachmentTypeFromPath(file.path),
+              url: downloadUrl,
+              fileName: file.path.split('/').last,
+              fileSize: await file.length(),
+            ),
+          );
         }
       }
 
@@ -265,10 +268,10 @@ class CommunityService {
           .collection(_communitiesCollection)
           .doc(communityId)
           .update({
-        'stats.totalMessages': FieldValue.increment(1),
-        'stats.dailyMessages': FieldValue.increment(1),
-        'stats.lastActivity': DateTime.now().toIso8601String(),
-      });
+            'stats.totalMessages': FieldValue.increment(1),
+            'stats.dailyMessages': FieldValue.increment(1),
+            'stats.lastActivity': DateTime.now().toIso8601String(),
+          });
 
       return true;
     } catch (e) {
@@ -294,7 +297,8 @@ class CommunityService {
 
       // Find existing reaction with same emoji
       final existingReactionIndex = reactions.indexWhere(
-          (reaction) => reaction.emoji == emoji);
+        (reaction) => reaction.emoji == emoji,
+      );
 
       if (existingReactionIndex != -1) {
         final existingReaction = reactions[existingReactionIndex];
@@ -323,17 +327,12 @@ class CommunityService {
         }
       } else {
         // Create new reaction
-        reactions.add(MessageReaction(
-          emoji: emoji,
-          userIds: [currentUserId!],
-          count: 1,
-        ));
+        reactions.add(
+          MessageReaction(emoji: emoji, userIds: [currentUserId!], count: 1),
+        );
       }
 
-      await _firestore
-          .collection(_messagesCollection)
-          .doc(messageId)
-          .update({
+      await _firestore.collection(_messagesCollection).doc(messageId).update({
         'reactions': reactions.map((r) => r.toMap()).toList(),
       });
 
@@ -357,16 +356,16 @@ class CommunityService {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      final communityId = _firestore.collection(_communitiesCollection).doc().id;
+      final communityId = _firestore
+          .collection(_communitiesCollection)
+          .doc()
+          .id;
       String? imageUrl;
 
       // Upload community image if provided
       if (imageFile != null) {
-        final ref = _storage
-            .ref()
-            .child('community_images')
-            .child(communityId);
-        
+        final ref = _storage.ref().child('community_images').child(communityId);
+
         final uploadTask = ref.putFile(imageFile);
         final snapshot = await uploadTask;
         imageUrl = await snapshot.ref.getDownloadURL();
@@ -432,14 +431,11 @@ class CommunityService {
           .get();
 
       final user = _auth.currentUser!;
-      
+
       if (existingReview.docs.isNotEmpty) {
         // Update existing review
         final reviewId = existingReview.docs.first.id;
-        await _firestore
-            .collection(_reviewsCollection)
-            .doc(reviewId)
-            .update({
+        await _firestore.collection(_reviewsCollection).doc(reviewId).update({
           'rating': rating,
           'title': title,
           'comment': comment,
@@ -461,9 +457,7 @@ class CommunityService {
           createdAt: DateTime.now(),
         );
 
-        await _firestore
-            .collection(_reviewsCollection)
-            .add(review.toMap());
+        await _firestore.collection(_reviewsCollection).add(review.toMap());
       }
 
       return true;
@@ -488,9 +482,11 @@ class CommunityService {
       query = query.where('status', isEqualTo: status.name);
     }
 
-    return query.snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => AppReview.fromMap(doc.data() as Map<String, dynamic>))
-        .toList());
+    return query.snapshots().map(
+      (snapshot) => snapshot.docs
+          .map((doc) => AppReview.fromMap(doc.data() as Map<String, dynamic>))
+          .toList(),
+    );
   }
 
   /// Mark review as helpful
@@ -514,10 +510,7 @@ class CommunityService {
         helpfulVotes.add(currentUserId!);
       }
 
-      await _firestore
-          .collection(_reviewsCollection)
-          .doc(reviewId)
-          .update({
+      await _firestore.collection(_reviewsCollection).doc(reviewId).update({
         'helpfulVotes': helpfulVotes,
       });
 
@@ -606,16 +599,19 @@ class CommunityService {
     bool isAnonymous = false,
   }) async {
     if (currentUserId == null) throw Exception('User not authenticated');
-    if (options.length < 2) throw Exception('Poll must have at least 2 options');
+    if (options.length < 2)
+      throw Exception('Poll must have at least 2 options');
 
     try {
       final pollId = _firestore.collection(_pollsCollection).doc().id;
-      
-      final pollOptions = options.asMap().entries.map((entry) =>
-          PollOption(
-            id: entry.key.toString(),
-            text: entry.value,
-          )).toList();
+
+      final pollOptions = options
+          .asMap()
+          .entries
+          .map(
+            (entry) => PollOption(id: entry.key.toString(), text: entry.value),
+          )
+          .toList();
 
       final poll = CommunityPoll(
         id: pollId,
@@ -661,14 +657,14 @@ class CommunityService {
       if (!pollDoc.exists) return false;
 
       final poll = CommunityPoll.fromMap(pollDoc.data()!);
-      
+
       if (!poll.isActive) return false;
       if (poll.expiresAt != null && DateTime.now().isAfter(poll.expiresAt!)) {
         return false;
       }
 
       final updatedOptions = List<PollOption>.from(poll.options);
-      
+
       // Remove user's previous votes
       for (int i = 0; i < updatedOptions.length; i++) {
         final voters = List<String>.from(updatedOptions[i].voters);
@@ -701,12 +697,11 @@ class CommunityService {
       }
 
       final totalVotes = updatedOptions.fold<int>(
-          0, (sum, option) => sum + option.voteCount);
+        0,
+        (sum, option) => sum + option.voteCount,
+      );
 
-      await _firestore
-          .collection(_pollsCollection)
-          .doc(pollId)
-          .update({
+      await _firestore.collection(_pollsCollection).doc(pollId).update({
         'options': updatedOptions.map((o) => o.toMap()).toList(),
         'totalVotes': totalVotes,
       });
@@ -724,12 +719,12 @@ class CommunityService {
       if (query.trim().isEmpty) return [];
 
       final queryLower = query.toLowerCase();
-      
+
       // Search by name (Firestore text search is limited)
       final nameResults = await _firestore
           .collection(_communitiesCollection)
           .where('name', isGreaterThanOrEqualTo: query)
-          .where('name', isLessThan: query + '\uf8ff')
+          .where('name', isLessThan: '$query\uf8ff')
           .get();
 
       // Search by tags
@@ -739,7 +734,7 @@ class CommunityService {
           .get();
 
       final communities = <String, Community>{};
-      
+
       for (final doc in [...nameResults.docs, ...tagResults.docs]) {
         final community = Community.fromMap(doc.data());
         communities[community.id] = community;
@@ -756,7 +751,7 @@ class CommunityService {
   Future<void> cleanupExpiredContent() async {
     try {
       final now = DateTime.now();
-      
+
       // Expire old polls
       final expiredPolls = await _firestore
           .collection(_pollsCollection)
@@ -778,7 +773,7 @@ class CommunityService {
   /// Helper method to determine attachment type from file path
   AttachmentType _getAttachmentTypeFromPath(String path) {
     final extension = path.split('.').last.toLowerCase();
-    
+
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].contains(extension)) {
       return AttachmentType.image;
     } else if (['mp4', 'avi', 'mov', 'wmv', 'mkv'].contains(extension)) {

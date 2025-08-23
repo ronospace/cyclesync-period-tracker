@@ -1,53 +1,34 @@
-
 /// Types of reminders available in the app
 enum ReminderType {
-  cyclePrediction,    // Period start, fertility window, ovulation
-  medication,         // Birth control, supplements, prescriptions
-  appointment,        // Doctor visits, check-ups
-  symptomTracking,    // Daily tracking reminders
-  waterIntake,        // Hydration reminders
-  exercise,           // Workout or activity reminders
-  selfCare,           // Meditation, relaxation, wellness
-  custom,             // User-defined reminders
+  cyclePrediction, // Period start, fertility window, ovulation
+  medication, // Birth control, supplements, prescriptions
+  appointment, // Doctor visits, check-ups
+  symptomTracking, // Daily tracking reminders
+  waterIntake, // Hydration reminders
+  exercise, // Workout or activity reminders
+  selfCare, // Meditation, relaxation, wellness
+  custom, // User-defined reminders
 }
 
 /// How often a reminder should repeat
 enum ReminderFrequency {
-  once,               // One-time reminder
-  daily,              // Every day
-  weekly,             // Every week
-  monthly,            // Every month
-  cycleStart,         // At the start of each cycle
-  ovulation,          // During ovulation window
-  custom,             // Custom interval
+  once, // One-time reminder
+  daily, // Every day
+  weekly, // Every week
+  monthly, // Every month
+  cycleStart, // At the start of each cycle
+  ovulation, // During ovulation window
+  custom, // Custom interval
 }
 
 /// Priority levels for reminders
-enum ReminderPriority {
-  low,
-  medium,
-  high,
-  critical,
-}
+enum ReminderPriority { low, medium, high, critical }
 
 /// Status of a reminder
-enum ReminderStatus {
-  active,
-  paused,
-  completed,
-  missed,
-  snoozed,
-}
+enum ReminderStatus { active, paused, completed, missed, snoozed }
 
 /// Sound options for notifications
-enum NotificationSound {
-  defaultSound,
-  gentle,
-  chime,
-  bell,
-  nature,
-  silent,
-}
+enum NotificationSound { defaultSound, gentle, chime, bell, nature, silent }
 
 /// Days of the week for weekly reminders
 enum WeekDay {
@@ -73,7 +54,7 @@ class Reminder {
   final ReminderFrequency frequency;
   final ReminderPriority priority;
   final ReminderStatus status;
-  
+
   // Scheduling
   final DateTime createdAt;
   final DateTime? scheduledFor;
@@ -82,7 +63,7 @@ class Reminder {
   final List<WeekDay>? weeklyDays;
   final int? customIntervalDays;
   final int? customIntervalHours;
-  
+
   // Notification settings
   final bool isEnabled;
   final List<DateTime> notificationTimes;
@@ -90,7 +71,7 @@ class Reminder {
   final bool vibrate;
   final String? customMessage;
   final Map<String, dynamic>? metadata;
-  
+
   // Tracking
   final int timesTriggered;
   final int timesCompleted;
@@ -205,7 +186,9 @@ class Reminder {
       'customIntervalDays': customIntervalDays,
       'customIntervalHours': customIntervalHours,
       'isEnabled': isEnabled,
-      'notificationTimes': notificationTimes.map((t) => t.toIso8601String()).toList(),
+      'notificationTimes': notificationTimes
+          .map((t) => t.toIso8601String())
+          .toList(),
       'sound': sound.name,
       'vibrate': vibrate,
       'customMessage': customMessage,
@@ -241,10 +224,18 @@ class Reminder {
         (e) => e.name == map['status'],
         orElse: () => ReminderStatus.active,
       ),
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
-      scheduledFor: map['scheduledFor'] != null ? DateTime.parse(map['scheduledFor']) : null,
-      nextOccurrence: map['nextOccurrence'] != null ? DateTime.parse(map['nextOccurrence']) : null,
-      lastTriggered: map['lastTriggered'] != null ? DateTime.parse(map['lastTriggered']) : null,
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      scheduledFor: map['scheduledFor'] != null
+          ? DateTime.parse(map['scheduledFor'])
+          : null,
+      nextOccurrence: map['nextOccurrence'] != null
+          ? DateTime.parse(map['nextOccurrence'])
+          : null,
+      lastTriggered: map['lastTriggered'] != null
+          ? DateTime.parse(map['lastTriggered'])
+          : null,
       weeklyDays: (map['weeklyDays'] as List<dynamic>?)
           ?.map((d) => WeekDay.values.firstWhere((w) => w.name == d))
           .toList(),
@@ -264,7 +255,9 @@ class Reminder {
       timesTriggered: map['timesTriggered'] ?? 0,
       timesCompleted: map['timesCompleted'] ?? 0,
       timesMissed: map['timesMissed'] ?? 0,
-      completedAt: map['completedAt'] != null ? DateTime.parse(map['completedAt']) : null,
+      completedAt: map['completedAt'] != null
+          ? DateTime.parse(map['completedAt'])
+          : null,
       logs: (map['logs'] as List<dynamic>? ?? [])
           .map((log) => ReminderLog.fromMap(log))
           .toList(),
@@ -273,9 +266,9 @@ class Reminder {
 
   /// Check if reminder is active and should trigger notifications
   bool get shouldTrigger {
-    return isEnabled && 
-           status == ReminderStatus.active &&
-           (nextOccurrence?.isBefore(DateTime.now()) ?? false);
+    return isEnabled &&
+        status == ReminderStatus.active &&
+        (nextOccurrence?.isBefore(DateTime.now()) ?? false);
   }
 
   /// Get display title with emoji based on type
@@ -339,7 +332,9 @@ class ReminderLog {
     return ReminderLog(
       id: map['id'] ?? '',
       reminderId: map['reminderId'] ?? '',
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       action: ReminderAction.values.firstWhere(
         (e) => e.name == map['action'],
         orElse: () => ReminderAction.created,
@@ -422,7 +417,7 @@ class ReminderTemplates {
       priority: ReminderPriority.high,
       sound: NotificationSound.gentle,
     ),
-    
+
     const ReminderTemplate(
       name: 'fertile_window',
       type: ReminderType.cyclePrediction,
@@ -431,7 +426,7 @@ class ReminderTemplates {
       frequency: ReminderFrequency.ovulation,
       priority: ReminderPriority.medium,
     ),
-    
+
     // Daily tracking
     const ReminderTemplate(
       name: 'daily_log',
@@ -440,7 +435,7 @@ class ReminderTemplates {
       description: 'Time to log your daily symptoms and mood',
       frequency: ReminderFrequency.daily,
     ),
-    
+
     // Birth control
     const ReminderTemplate(
       name: 'birth_control',
@@ -451,7 +446,7 @@ class ReminderTemplates {
       priority: ReminderPriority.critical,
       sound: NotificationSound.chime,
     ),
-    
+
     // Water intake
     const ReminderTemplate(
       name: 'hydration',
@@ -461,7 +456,7 @@ class ReminderTemplates {
       frequency: ReminderFrequency.daily,
       sound: NotificationSound.nature,
     ),
-    
+
     // Self-care
     const ReminderTemplate(
       name: 'self_care',

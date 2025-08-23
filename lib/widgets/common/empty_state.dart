@@ -10,14 +10,14 @@ class EmptyState extends StatelessWidget {
   final double iconSize;
 
   const EmptyState({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.subtitle,
     this.actionText,
     this.onActionPressed,
     this.iconSize = 80.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,9 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: iconSize,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
             const SizedBox(height: 24),
             Text(
@@ -46,7 +48,9 @@ class EmptyState extends StatelessWidget {
               Text(
                 subtitle!,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),

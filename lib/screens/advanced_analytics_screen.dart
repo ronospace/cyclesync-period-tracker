@@ -6,17 +6,17 @@ import 'package:go_router/go_router.dart';
 import '../services/firebase_service.dart';
 import '../services/analytics_service.dart' as analytics hide CycleData;
 import '../widgets/coming_soon_widget.dart';
-import '../models/cycle_models.dart';
-import '../models/daily_log_models.dart';
 
 class AdvancedAnalyticsScreen extends StatefulWidget {
   const AdvancedAnalyticsScreen({super.key});
 
   @override
-  State<AdvancedAnalyticsScreen> createState() => _AdvancedAnalyticsScreenState();
+  State<AdvancedAnalyticsScreen> createState() =>
+      _AdvancedAnalyticsScreenState();
 }
 
-class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with TickerProviderStateMixin {
+class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen>
+    with TickerProviderStateMixin {
   analytics.CycleStatistics? _statistics;
   analytics.CyclePrediction? _prediction;
   WellbeingTrends? _wellbeingTrends;
@@ -43,9 +43,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
     // Check if we have any cycles
     final existingCycles = await FirebaseService.getCycles(limit: 1);
     if (existingCycles.isNotEmpty) return; // Already have data
-    
+
     debugPrint('🔄 Generating sample cycle data...');
-    
+
     // Sample cycle data
     final sampleCycles = [
       {
@@ -97,32 +97,33 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         'notes': 'Recent cycle',
       },
     ];
-    
+
     // Add cycles to Firebase
     for (final cycle in sampleCycles) {
       await FirebaseService.saveCycleWithSymptoms(cycleData: cycle);
     }
-    
+
     debugPrint('✅ Generated ${sampleCycles.length} sample cycles');
   }
 
   Future<void> _loadCycles() async {
     try {
       debugPrint('🔄 Loading analytics data...');
-      
+
       // Step 1: Generate sample data if needed
       await _generateSampleDataIfNeeded();
       debugPrint('✅ Sample data check complete');
-      
+
       // Step 2: Load cycles with timeout
-      final cycles = await FirebaseService.getCycles(limit: 100)
-          .timeout(const Duration(seconds: 30));
+      final cycles = await FirebaseService.getCycles(
+        limit: 100,
+      ).timeout(const Duration(seconds: 30));
       debugPrint('✅ Loaded ${cycles.length} cycles');
-      
+
       // Step 3: Calculate statistics with error handling
       late final analytics.CycleStatistics statistics;
       late final analytics.CyclePrediction prediction;
-      
+
       try {
         statistics = analytics.AnalyticsService.calculateStatistics(cycles);
         prediction = analytics.AnalyticsService.predictNextCycle(cycles);
@@ -133,13 +134,13 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         statistics = _createFallbackStatistics(cycles);
         prediction = _createFallbackPrediction();
       }
-      
+
       // Calculate enhanced analytics (simplified for now)
       final wellbeingTrends = _createMockWellbeingTrends();
       final correlationMatrix = _createMockCorrelationMatrix();
       final advancedPrediction = _createMockAdvancedPrediction();
       final healthScore = _createMockHealthScore();
-      
+
       setState(() {
         _statistics = statistics;
         _prediction = prediction;
@@ -154,46 +155,17 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
     }
   }
 
-  // Helper method to parse DateTime from various formats
-  DateTime? _parseDateTime(dynamic value) {
-    if (value == null) return null;
-    
-    if (value is DateTime) {
-      return value;
-    }
-    
-    if (value is String) {
-      try {
-        return DateTime.parse(value);
-      } catch (e) {
-        debugPrint('⚠️ Failed to parse DateTime from string: $value, error: $e');
-        return null;
-      }
-    }
-    
-    // Handle Firestore Timestamp objects if needed
-    if (value.runtimeType.toString().contains('Timestamp')) {
-      try {
-        return (value as dynamic).toDate();
-      } catch (e) {
-        debugPrint('⚠️ Failed to parse DateTime from Timestamp: $value, error: $e');
-        return null;
-      }
-    }
-    
-    debugPrint('⚠️ Unknown DateTime format: ${value.runtimeType} - $value');
-    return null;
-  }
-
   // Fallback methods for error handling
-  analytics.CycleStatistics _createFallbackStatistics(List<Map<String, dynamic>> cycles) {
+  analytics.CycleStatistics _createFallbackStatistics(
+    List<Map<String, dynamic>> cycles,
+  ) {
     debugPrint('🔄 Creating fallback statistics for ${cycles.length} cycles');
-    
+
     // Basic calculations with error protection
     final totalCycles = cycles.length;
     double averageLength = 28.0; // default
     List<int> cycleLengths = [];
-    
+
     try {
       // Calculate cycle lengths safely
       for (final cycle in cycles) {
@@ -201,29 +173,39 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         final endDate = cycle['end_date'] as DateTime?;
         if (startDate != null && endDate != null) {
           final length = endDate.difference(startDate).inDays;
-          if (length > 0 && length < 60) { // reasonable bounds
+          if (length > 0 && length < 60) {
+            // reasonable bounds
             cycleLengths.add(length);
           }
         }
       }
-      
+
       if (cycleLengths.isNotEmpty) {
-        averageLength = cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
+        averageLength =
+            cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
       }
     } catch (e) {
       debugPrint('⚠️ Error calculating cycle lengths: $e');
     }
-    
+
     // Create fallback statistics
     return analytics.CycleStatistics(
       totalCycles: totalCycles,
       averageLength: averageLength,
-      shortestCycle: cycleLengths.isNotEmpty ? cycleLengths.reduce((a, b) => a < b ? a : b) : 28,
-      longestCycle: cycleLengths.isNotEmpty ? cycleLengths.reduce((a, b) => a > b ? a : b) : 28,
-      standardDeviation: cycleLengths.length > 1 ? _calculateStandardDeviation(cycleLengths, averageLength) : 0.0,
+      shortestCycle: cycleLengths.isNotEmpty
+          ? cycleLengths.reduce((a, b) => a < b ? a : b)
+          : 28,
+      longestCycle: cycleLengths.isNotEmpty
+          ? cycleLengths.reduce((a, b) => a > b ? a : b)
+          : 28,
+      standardDeviation: cycleLengths.length > 1
+          ? _calculateStandardDeviation(cycleLengths, averageLength)
+          : 0.0,
       regularityScore: totalCycles >= 3 ? 75.0 : 0.0,
       predictionAccuracy: totalCycles >= 3 ? 65.0 : 0.0,
-      cycleLengthHistory: cycleLengths.isNotEmpty ? cycleLengths : [28, 29, 27, 28],
+      cycleLengthHistory: cycleLengths.isNotEmpty
+          ? cycleLengths
+          : [28, 29, 27, 28],
       recentCycles: [], // Empty for fallback
       trends: analytics.CycleTrends(
         lengthTrend: analytics.TrendDirection.stable,
@@ -232,26 +214,26 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       ),
     );
   }
-  
+
   double _calculateStandardDeviation(List<int> values, double mean) {
     if (values.length <= 1) return 0.0;
-    
+
     double sumSquaredDifferences = 0.0;
     for (final value in values) {
       final difference = value - mean;
       sumSquaredDifferences += difference * difference;
     }
-    
+
     final variance = sumSquaredDifferences / values.length;
     return math.sqrt(variance);
   }
-  
+
   analytics.CyclePrediction _createFallbackPrediction() {
     debugPrint('🔄 Creating fallback prediction');
-    
+
     final now = DateTime.now();
     final nextCycleStart = now.add(const Duration(days: 28));
-    
+
     return analytics.CyclePrediction(
       nextCycleStart: nextCycleStart,
       nextCycleEnd: nextCycleStart.add(const Duration(days: 4)),
@@ -266,7 +248,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   }
 
   Widget _buildOverviewTab() {
-    if (_statistics == null) return const Center(child: Text('No data available'));
+    if (_statistics == null)
+      return const Center(child: Text('No data available'));
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -276,11 +259,11 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           // Statistics Cards
           _buildStatsGrid(),
           const SizedBox(height: 24),
-          
+
           // Cycle Length Chart
           _buildCycleLengthChart(),
           const SizedBox(height: 24),
-          
+
           // Predictions
           _buildPredictionsCard(),
           const SizedBox(height: 24),
@@ -294,7 +277,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
 
   Widget _buildStatsGrid() {
     final stats = _statistics!;
-    
+
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -376,10 +359,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey.shade500,
-                ),
+                style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -438,8 +418,10 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                         showTitles: true,
                         reservedSize: 40,
                         getTitlesWidget: (value, meta) {
-                          return Text('${value.toInt()}',
-                              style: const TextStyle(fontSize: 12));
+                          return Text(
+                            '${value.toInt()}',
+                            style: const TextStyle(fontSize: 12),
+                          );
                         },
                       ),
                     ),
@@ -448,14 +430,19 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                         showTitles: true,
                         reservedSize: 30,
                         getTitlesWidget: (value, meta) {
-                          final cycleIndex = cycleLengths.length - value.toInt() - 1;
-                          return Text('${cycleLengths.length - value.toInt()}',
-                              style: const TextStyle(fontSize: 12));
+                          return Text(
+                            '${cycleLengths.length - value.toInt()}',
+                            style: const TextStyle(fontSize: 12),
+                          );
                         },
                       ),
                     ),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
@@ -471,8 +458,10 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                       ),
                     ),
                   ],
-                  minY: (cycleLengths.reduce((a, b) => a < b ? a : b) - 2).toDouble(),
-                  maxY: (cycleLengths.reduce((a, b) => a > b ? a : b) + 2).toDouble(),
+                  minY: (cycleLengths.reduce((a, b) => a < b ? a : b) - 2)
+                      .toDouble(),
+                  maxY: (cycleLengths.reduce((a, b) => a > b ? a : b) + 2)
+                      .toDouble(),
                 ),
               ),
             ),
@@ -480,21 +469,20 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             Row(
               children: [
                 Icon(
-                  _statistics!.trends.lengthTrend == analytics.TrendDirection.increasing
+                  _statistics!.trends.lengthTrend ==
+                          analytics.TrendDirection.increasing
                       ? Icons.trending_up
-                      : _statistics!.trends.lengthTrend == analytics.TrendDirection.decreasing
-                          ? Icons.trending_down
-                          : Icons.trending_flat,
+                      : _statistics!.trends.lengthTrend ==
+                            analytics.TrendDirection.decreasing
+                      ? Icons.trending_down
+                      : Icons.trending_flat,
                   size: 16,
                   color: Colors.grey.shade600,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'Trend: ${_statistics!.trends.lengthTrend.displayName}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -545,7 +533,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Next Cycle Prediction
             _buildPredictionItem(
               icon: Icons.calendar_today,
@@ -554,14 +542,15 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
               subtitle: '${_prediction!.daysUntilNext} days from now',
               confidence: _prediction!.confidence,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Ovulation Window
             _buildPredictionItem(
               icon: Icons.favorite,
               title: 'Fertile Window',
-              value: '${DateFormat.MMMd().format(_prediction!.ovulationWindow.start)} - ${DateFormat.MMMd().format(_prediction!.ovulationWindow.end)}',
+              value:
+                  '${DateFormat.MMMd().format(_prediction!.ovulationWindow.start)} - ${DateFormat.MMMd().format(_prediction!.ovulationWindow.end)}',
               subtitle: 'Estimated ovulation period',
               confidence: _prediction!.confidence,
             ),
@@ -586,10 +575,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
               Text(
                 value,
                 style: TextStyle(
@@ -599,10 +585,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
               ),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -619,10 +602,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             ),
             Text(
               'confidence',
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -655,12 +635,12 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         children: [
           Text(
             'Symptom Trends',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          
+
           ..._statistics!.trends.symptomTrends.entries.map((entry) {
             final symptom = entry.key;
             final trend = entry.value;
@@ -679,7 +659,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: _getTrendColor(trend.trend).withOpacity(0.1),
+              backgroundColor: _getTrendColor(
+                trend.trend,
+              ).withValues(alpha: 0.1),
               child: Icon(
                 _getTrendIcon(trend.trend),
                 color: _getTrendColor(trend.trend),
@@ -736,12 +718,12 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         children: [
           Text(
             'Health Insights',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          
+
           ..._generateInsights().map((insight) => _buildInsightCard(insight)),
         ],
       ),
@@ -754,91 +736,118 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
 
     // Regularity insight
     if (stats.regularityScore >= 80) {
-      insights.add(InsightData(
-        title: 'Excellent Regularity',
-        description: 'Your cycles are very consistent, which is a good sign of hormonal balance.',
-        icon: Icons.check_circle,
-        color: Colors.green,
-        priority: InsightPriority.positive,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Excellent Regularity',
+          description:
+              'Your cycles are very consistent, which is a good sign of hormonal balance.',
+          icon: Icons.check_circle,
+          color: Colors.green,
+          priority: InsightPriority.positive,
+        ),
+      );
     } else if (stats.regularityScore >= 60) {
-      insights.add(InsightData(
-        title: 'Moderate Regularity',
-        description: 'Your cycles show some variation, which is normal. Continue tracking for better insights.',
-        icon: Icons.info,
-        color: Colors.orange,
-        priority: InsightPriority.neutral,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Moderate Regularity',
+          description:
+              'Your cycles show some variation, which is normal. Continue tracking for better insights.',
+          icon: Icons.info,
+          color: Colors.orange,
+          priority: InsightPriority.neutral,
+        ),
+      );
     } else {
-      insights.add(InsightData(
-        title: 'Irregular Cycles',
-        description: 'Your cycles show significant variation. Consider consulting with a healthcare provider.',
-        icon: Icons.warning,
-        color: Colors.red,
-        priority: InsightPriority.attention,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Irregular Cycles',
+          description:
+              'Your cycles show significant variation. Consider consulting with a healthcare provider.',
+          icon: Icons.warning,
+          color: Colors.red,
+          priority: InsightPriority.attention,
+        ),
+      );
     }
 
     // Cycle length insight
     if (stats.averageLength >= 21 && stats.averageLength <= 35) {
-      insights.add(InsightData(
-        title: 'Normal Cycle Length',
-        description: 'Your average cycle length of ${stats.averageLength.toStringAsFixed(1)} days is within the normal range.',
-        icon: Icons.timeline,
-        color: Colors.green,
-        priority: InsightPriority.positive,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Normal Cycle Length',
+          description:
+              'Your average cycle length of ${stats.averageLength.toStringAsFixed(1)} days is within the normal range.',
+          icon: Icons.timeline,
+          color: Colors.green,
+          priority: InsightPriority.positive,
+        ),
+      );
     } else {
-      insights.add(InsightData(
-        title: stats.averageLength < 21 ? 'Short Cycles' : 'Long Cycles',
-        description: stats.averageLength < 21 
-            ? 'Your cycles are shorter than typical. This could be normal for you or worth discussing with a doctor.'
-            : 'Your cycles are longer than typical. This could be normal for you or worth discussing with a doctor.',
-        icon: Icons.schedule,
-        color: Colors.orange,
-        priority: InsightPriority.neutral,
-      ));
+      insights.add(
+        InsightData(
+          title: stats.averageLength < 21 ? 'Short Cycles' : 'Long Cycles',
+          description: stats.averageLength < 21
+              ? 'Your cycles are shorter than typical. This could be normal for you or worth discussing with a doctor.'
+              : 'Your cycles are longer than typical. This could be normal for you or worth discussing with a doctor.',
+          icon: Icons.schedule,
+          color: Colors.orange,
+          priority: InsightPriority.neutral,
+        ),
+      );
     }
 
     // Prediction accuracy insight
     if (stats.predictionAccuracy >= 70) {
-      insights.add(InsightData(
-        title: 'Reliable Predictions',
-        description: 'Our predictions are ${stats.predictionAccuracy.toInt()}% accurate for your cycles.',
-        icon: Icons.precision_manufacturing,
-        color: Colors.blue,
-        priority: InsightPriority.positive,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Reliable Predictions',
+          description:
+              'Our predictions are ${stats.predictionAccuracy.toInt()}% accurate for your cycles.',
+          icon: Icons.precision_manufacturing,
+          color: Colors.blue,
+          priority: InsightPriority.positive,
+        ),
+      );
     } else if (stats.predictionAccuracy > 0) {
-      insights.add(InsightData(
-        title: 'Improving Predictions',
-        description: 'Keep logging cycles to improve prediction accuracy (currently ${stats.predictionAccuracy.toInt()}%).',
-        icon: Icons.trending_up,
-        color: Colors.orange,
-        priority: InsightPriority.neutral,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Improving Predictions',
+          description:
+              'Keep logging cycles to improve prediction accuracy (currently ${stats.predictionAccuracy.toInt()}%).',
+          icon: Icons.trending_up,
+          color: Colors.orange,
+          priority: InsightPriority.neutral,
+        ),
+      );
     }
 
     // Data quality insight
     if (stats.totalCycles >= 6) {
-      insights.add(InsightData(
-        title: 'Great Data Quality',
-        description: 'You have ${stats.totalCycles} cycles logged, providing excellent insights.',
-        icon: Icons.data_usage,
-        color: Colors.green,
-        priority: InsightPriority.positive,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Great Data Quality',
+          description:
+              'You have ${stats.totalCycles} cycles logged, providing excellent insights.',
+          icon: Icons.data_usage,
+          color: Colors.green,
+          priority: InsightPriority.positive,
+        ),
+      );
     } else {
-      insights.add(InsightData(
-        title: 'Building Your Profile',
-        description: 'Log ${6 - stats.totalCycles} more cycles for even better insights and predictions.',
-        icon: Icons.add_chart,
-        color: Colors.blue,
-        priority: InsightPriority.neutral,
-      ));
+      insights.add(
+        InsightData(
+          title: 'Building Your Profile',
+          description:
+              'Log ${6 - stats.totalCycles} more cycles for even better insights and predictions.',
+          icon: Icons.add_chart,
+          color: Colors.blue,
+          priority: InsightPriority.neutral,
+        ),
+      );
     }
 
-    return insights..sort((a, b) => a.priority.index.compareTo(b.priority.index));
+    return insights
+      ..sort((a, b) => a.priority.index.compareTo(b.priority.index));
   }
 
   Widget _buildInsightCard(InsightData insight) {
@@ -846,7 +855,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: insight.color.withOpacity(0.1),
+          backgroundColor: insight.color.withValues(alpha: 0.1),
           child: Icon(insight.icon, color: insight.color),
         ),
         title: Text(
@@ -858,9 +867,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           insight.priority == InsightPriority.attention
               ? Icons.priority_high
               : insight.priority == InsightPriority.positive
-                  ? Icons.thumb_up
-                  : Icons.info_outline,
-          color: insight.color.withOpacity(0.7),
+              ? Icons.thumb_up
+              : Icons.info_outline,
+          color: insight.color.withValues(alpha: 0.7),
         ),
       ),
     );
@@ -872,9 +881,9 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
       children: [
         Text(
           'Quick Actions',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Row(
@@ -950,8 +959,10 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   }
 
   String _formatSymptomName(String symptom) {
-    return symptom.split('_').map((word) => 
-        word[0].toUpperCase() + word.substring(1)).join(' ');
+    return symptom
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 
   // 🚀 Mission Alpha Enhanced Tabs
@@ -982,7 +993,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           // Health Score Card
           if (_healthScore != null) _buildHealthScoreCard(),
           const SizedBox(height: 24),
-          
+
           // Interactive Wellbeing Trends Chart
           WellbeingTrendChart(
             trends: _wellbeingTrends!,
@@ -1028,7 +1039,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
   }
 
   Widget _buildAdvancedPredictionsTab() {
-    if (_advancedPrediction == null || _advancedPrediction!.basedOnCycles == 0) {
+    if (_advancedPrediction == null ||
+        _advancedPrediction!.basedOnCycles == 0) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1063,7 +1075,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           // Advanced Prediction Card with Confidence Intervals
           _buildAdvancedPredictionCard(),
           const SizedBox(height: 24),
-          
+
           // Cycle Phase Analysis
           _buildCyclePhaseCard(),
         ],
@@ -1073,7 +1085,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
 
   Widget _buildHealthScoreCard() {
     final score = _healthScore!;
-    
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1081,7 +1093,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
-            colors: [score.gradeColor.withOpacity(0.1), Colors.white],
+            colors: [score.gradeColor.withValues(alpha: 0.1), Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -1093,7 +1105,11 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             children: [
               Row(
                 children: [
-                  Icon(Icons.health_and_safety, color: score.gradeColor, size: 32),
+                  Icon(
+                    Icons.health_and_safety,
+                    color: score.gradeColor,
+                    size: 32,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -1101,9 +1117,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                       children: [
                         Text(
                           'Health Score',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(
                           '${score.overall.toInt()}/100 • ${score.overallGrade}',
@@ -1133,27 +1148,29 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                   ),
                 ),
                 const SizedBox(height: 8),
-                ...score.breakdown.entries.map((entry) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          entry.key,
-                          style: const TextStyle(fontSize: 14),
+                ...score.breakdown.entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            entry.key,
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Text(
-                        '${entry.value.toInt()}%',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: _getAccuracyColor(entry.value),
+                        Text(
+                          '${entry.value.toInt()}%',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: _getAccuracyColor(entry.value),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ],
           ),
@@ -1164,7 +1181,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
 
   Widget _buildAdvancedPredictionCard() {
     final prediction = _advancedPrediction!;
-    
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1175,7 +1192,11 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           children: [
             Row(
               children: [
-                Icon(Icons.auto_awesome, color: Colors.indigo.shade600, size: 28),
+                Icon(
+                  Icons.auto_awesome,
+                  color: Colors.indigo.shade600,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -1200,23 +1221,25 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Next Cycle with Confidence Range
             _buildAdvancedPredictionItem(
               title: 'Next Cycle Start',
               primaryDate: prediction.nextCycleStart,
-              confidenceRange: '${DateFormat.MMMd().format(prediction.confidenceLowerBound)} - ${DateFormat.MMMd().format(prediction.confidenceUpperBound)}',
+              confidenceRange:
+                  '${DateFormat.MMMd().format(prediction.confidenceLowerBound)} - ${DateFormat.MMMd().format(prediction.confidenceUpperBound)}',
               icon: Icons.calendar_today,
               color: Colors.blue,
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Ovulation Prediction
             _buildAdvancedPredictionItem(
               title: 'Ovulation Date',
               primaryDate: prediction.ovulationDate,
-              confidenceRange: '${DateFormat.MMMd().format(prediction.fertileWindowStart)} - ${DateFormat.MMMd().format(prediction.fertileWindowEnd)} fertile window',
+              confidenceRange:
+                  '${DateFormat.MMMd().format(prediction.fertileWindowStart)} - ${DateFormat.MMMd().format(prediction.fertileWindowEnd)} fertile window',
               icon: Icons.favorite,
               color: Colors.pink,
             ),
@@ -1236,7 +1259,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1264,10 +1287,7 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                 ),
                 Text(
                   confidenceRange,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -1292,22 +1312,19 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
                 const SizedBox(width: 12),
                 Text(
                   'Cycle Phase Analysis',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             Text(
               'Discover patterns in your symptoms and wellbeing across cycle phases',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
             ),
             const SizedBox(height: 16),
-            
+
             // Phase breakdown (simplified for now)
             _buildPhaseRow('Menstrual', '1-5 days', Colors.red),
             _buildPhaseRow('Follicular', '6-13 days', Colors.green),
@@ -1327,26 +1344,18 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
           Container(
             width: 12,
             height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               name,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
           Text(
             days,
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
           ),
         ],
       ),
@@ -1373,7 +1382,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             ComingSoonFeatures.advancedAnalytics,
             const ComingSoonWidget(
               title: 'AI-Powered Correlations',
-              description: 'Discover hidden patterns and correlations between symptoms, mood, and cycle phases',
+              description:
+                  'Discover hidden patterns and correlations between symptoms, mood, and cycle phases',
               icon: Icons.hub,
               estimatedDate: 'Q2 2024',
               status: 'In Development',
@@ -1389,7 +1399,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             ),
             const ComingSoonWidget(
               title: 'Wellbeing Analytics',
-              description: 'Advanced mood, energy, and wellness tracking with predictive insights',
+              description:
+                  'Advanced mood, energy, and wellness tracking with predictive insights',
               icon: Icons.psychology,
               estimatedDate: 'Q3 2024',
               status: 'Design Phase',
@@ -1405,7 +1416,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             ),
             const ComingSoonWidget(
               title: 'Professional Health Reports',
-              description: 'Comprehensive health reports suitable for sharing with healthcare providers',
+              description:
+                  'Comprehensive health reports suitable for sharing with healthcare providers',
               icon: Icons.article,
               estimatedDate: 'Q4 2024',
               status: 'Research Phase',
@@ -1421,7 +1433,8 @@ class _AdvancedAnalyticsScreenState extends State<AdvancedAnalyticsScreen> with 
             ),
             const ComingSoonWidget(
               title: 'Comparative Analytics',
-              description: 'Compare your patterns with anonymized population data for deeper insights',
+              description:
+                  'Compare your patterns with anonymized population data for deeper insights',
               icon: Icons.compare_arrows,
               estimatedDate: 'Q1 2025',
               status: 'Planning Phase',
@@ -1490,10 +1503,30 @@ extension _MockData on _AdvancedAnalyticsScreenState {
     return SymptomCorrelationMatrix(
       symptoms: ['cramps', 'headache', 'mood_swings', 'fatigue'],
       correlations: {
-        'cramps': {'cramps': 1.0, 'headache': 0.6, 'mood_swings': 0.3, 'fatigue': 0.7},
-        'headache': {'cramps': 0.6, 'headache': 1.0, 'mood_swings': 0.5, 'fatigue': 0.4},
-        'mood_swings': {'cramps': 0.3, 'headache': 0.5, 'mood_swings': 1.0, 'fatigue': 0.2},
-        'fatigue': {'cramps': 0.7, 'headache': 0.4, 'mood_swings': 0.2, 'fatigue': 1.0},
+        'cramps': {
+          'cramps': 1.0,
+          'headache': 0.6,
+          'mood_swings': 0.3,
+          'fatigue': 0.7,
+        },
+        'headache': {
+          'cramps': 0.6,
+          'headache': 1.0,
+          'mood_swings': 0.5,
+          'fatigue': 0.4,
+        },
+        'mood_swings': {
+          'cramps': 0.3,
+          'headache': 0.5,
+          'mood_swings': 1.0,
+          'fatigue': 0.2,
+        },
+        'fatigue': {
+          'cramps': 0.7,
+          'headache': 0.4,
+          'mood_swings': 0.2,
+          'fatigue': 1.0,
+        },
       },
     );
   }
@@ -1528,7 +1561,10 @@ extension _MockData on _AdvancedAnalyticsScreenState {
 
   List<DateTime> _generateDates(int count) {
     final now = DateTime.now();
-    return List.generate(count, (i) => now.subtract(Duration(days: (count - 1 - i) * 28)));
+    return List.generate(
+      count,
+      (i) => now.subtract(Duration(days: (count - 1 - i) * 28)),
+    );
   }
 }
 
@@ -1556,11 +1592,7 @@ class TrendData {
   final List<DateTime> dates;
   final analytics.TrendDirection trend;
 
-  TrendData({
-    required this.values,
-    required this.dates,
-    required this.trend,
-  });
+  TrendData({required this.values, required this.dates, required this.trend});
 }
 
 class SymptomCorrelationMatrix {
@@ -1632,16 +1664,20 @@ class WellbeingTrendChart extends StatelessWidget {
           children: [
             Text(
               'Wellbeing Trends',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
               children: [
                 _buildMetricButton('Mood', trends.averageMood, Colors.blue),
                 const SizedBox(width: 8),
-                _buildMetricButton('Energy', trends.averageEnergy, Colors.orange),
+                _buildMetricButton(
+                  'Energy',
+                  trends.averageEnergy,
+                  Colors.orange,
+                ),
                 const SizedBox(width: 8),
                 _buildMetricButton('Pain', trends.averagePain, Colors.red),
               ],
@@ -1662,17 +1698,14 @@ class WellbeingTrendChart extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           children: [
             Text(
               name,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: color,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, color: color),
             ),
             const SizedBox(height: 4),
             Text(
@@ -1705,9 +1738,9 @@ class SymptomCorrelationHeatmap extends StatelessWidget {
           children: [
             Text(
               'Symptom Correlations',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // Add X-axis header row
@@ -1715,7 +1748,7 @@ class SymptomCorrelationHeatmap extends StatelessWidget {
               children: [
                 const SizedBox(
                   width: 100,
-                  child: Text(''),  // Empty space for Y-axis labels
+                  child: Text(''), // Empty space for Y-axis labels
                 ),
                 Expanded(
                   child: Row(
@@ -1794,8 +1827,10 @@ class SymptomCorrelationHeatmap extends StatelessWidget {
   }
 
   String _formatSymptomName(String symptom) {
-    return symptom.split('_').map((word) => 
-        word[0].toUpperCase() + word.substring(1)).join(' ');
+    return symptom
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 
   Color _getCorrelationColor(double correlation) {

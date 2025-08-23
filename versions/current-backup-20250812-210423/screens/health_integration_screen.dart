@@ -1,11 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import '../services/health_service.dart';
 import '../services/health_kit_service.dart';
-import '../services/theme_service.dart';
-import '../theme/app_theme.dart';
 import '../models/cycle_models.dart';
 
 class HealthIntegrationScreen extends StatefulWidget {
@@ -26,9 +22,9 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
   bool _importOnSetup = false;
   
   // HealthKit specific state
-  bool _healthKitInitialized = false;
-  bool _healthKitHasPermissions = false;
-  Map<String, dynamic> _healthKitSummary = {};
+  final bool _healthKitInitialized = false;
+  final bool _healthKitHasPermissions = false;
+  final Map<String, dynamic> _healthKitSummary = {};
 
   @override
   void initState() {
@@ -518,7 +514,7 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
                   ),
                 ],
               ),
-            );}).toList(),
+            );}),
           ],
         ),
       ),

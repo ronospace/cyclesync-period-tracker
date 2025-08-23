@@ -473,7 +473,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                           builder: (context, child) {
                             return Transform.scale(
                               scale: _buttonScaleAnimation.value,
-                              child: Container(
+                              child: SizedBox(
                                 width: double.infinity,
                                 height: 56,
                                 child: ElevatedButton(

@@ -79,7 +79,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.failedToLoadExistingLog(e.toString()) ?? 'Failed to load existing log: $e'),
+            content: Text(l10n.failedToLoadExistingLog(e.toString()) ?? 'Failed to load existing log: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -113,7 +113,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
               children: [
                 const Icon(Icons.check_circle, color: Colors.white),
                 const SizedBox(width: 8),
-                Text(l10n?.dailyLogSaved ?? 'Daily log saved!'),
+                Text(l10n.dailyLogSaved ?? 'Daily log saved!'),
               ],
             ),
             backgroundColor: Colors.green,
@@ -128,7 +128,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.failedToSaveLog(e.toString()) ?? 'Failed to save log: $e'),
+            content: Text(l10n.failedToSaveLog(e.toString()) ?? 'Failed to save log: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -158,7 +158,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
             Icon(Icons.mood, color: Colors.purple.shade600, size: 20),
             const SizedBox(width: 8),
             Text(
-              AppLocalizations.of(context)?.mood ?? 'Mood',
+              AppLocalizations.of(context).mood ?? 'Mood',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade700,
@@ -264,7 +264,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)?.quickLogTemplates ?? 'Quick Log Templates',
+          AppLocalizations.of(context).quickLogTemplates ?? 'Quick Log Templates',
           style: TextStyle(
             fontWeight: FontWeight.w600,
             color: Colors.grey.shade700,
@@ -332,7 +332,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
                 Icon(Icons.today, color: Colors.blue.shade600),
                 const SizedBox(width: 8),
                 Text(
-                  '${AppLocalizations.of(context)?.dailyLogTitle ?? 'Daily Log'} - ${DateFormat.yMMMd().format(_selectedDate)}',
+                  '${AppLocalizations.of(context).dailyLogTitle ?? 'Daily Log'} - ${DateFormat.yMMMd().format(_selectedDate)}',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -346,7 +346,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      AppLocalizations.of(context)?.updated ?? 'Updated',
+                      AppLocalizations.of(context).updated ?? 'Updated',
                       style: TextStyle(
                         color: Colors.blue.shade700,
                         fontSize: 12,
@@ -371,7 +371,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
             
             // Energy Slider
             _buildSliderSection(
-              AppLocalizations.of(context)?.energy ?? 'Energy',
+              AppLocalizations.of(context).energy ?? 'Energy',
               Icons.battery_charging_full,
               Colors.orange.shade600,
               _energy,
@@ -383,7 +383,7 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
             
             // Pain Slider
             _buildSliderSection(
-              AppLocalizations.of(context)?.painLevel ?? 'Pain Level',
+              AppLocalizations.of(context).painLevel ?? 'Pain Level',
               Icons.healing,
               Colors.red.shade600,
               _pain,
@@ -397,8 +397,8 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
             TextField(
               controller: _notesController,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)?.notesOptional ?? 'Notes (optional)',
-                hintText: AppLocalizations.of(context)?.howAreYouFeelingToday ?? 'How are you feeling today?',
+                labelText: AppLocalizations.of(context).notesOptional ?? 'Notes (optional)',
+                hintText: AppLocalizations.of(context).howAreYouFeelingToday ?? 'How are you feeling today?',
                 border: const OutlineInputBorder(),
                 prefixIcon: Icon(Icons.note, color: Colors.grey.shade600),
               ),
@@ -421,8 +421,8 @@ class _QuickDailyLogWidgetState extends State<QuickDailyLogWidget> {
                     )
                   : const Icon(Icons.save),
                 label: Text(_isSaving 
-                  ? (AppLocalizations.of(context)?.saving ?? 'Saving...') 
-                  : (AppLocalizations.of(context)?.saveDailyLog ?? 'Save Daily Log')),
+                  ? (AppLocalizations.of(context).saving ?? 'Saving...') 
+                  : (AppLocalizations.of(context).saveDailyLog ?? 'Save Daily Log')),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue.shade600,
                   foregroundColor: Colors.white,

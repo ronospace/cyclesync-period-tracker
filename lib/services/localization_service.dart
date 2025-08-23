@@ -4,10 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalizationService extends ChangeNotifier {
   static const String _localeKey = 'selected_locale';
   static LocalizationService? _instance;
-  
+
   Locale _currentLocale = const Locale('en', 'US');
   bool _isInitialized = false;
-  
+
   // Singleton instance
   static LocalizationService get instance {
     _instance ??= LocalizationService();
@@ -27,7 +27,6 @@ class LocalizationService extends ChangeNotifier {
     Locale('ar'), // Arabic (MENA, 400M speakers, big digital adoption)
     Locale('pt'), // Portuguese (Brazil + Portugal + Africa)
     Locale('fr'), // French (France + Canada + West/Central Africa)
-    
     // === Tier 2: Regional dominance (growing digital markets) ===
     Locale('de'), // German (DACH region, strong healthtech adoption)
     Locale('ru'), // Russian (Russia + CIS, still large despite issues)
@@ -35,12 +34,19 @@ class LocalizationService extends ChangeNotifier {
     Locale('ko'), // Korean (huge digital health adoption)
     Locale('it'), // Italian (Italy + partially Switzerland)
     Locale('tr'), // Turkish (Turkey + diaspora in Europe/Middle East)
-    
     // === Tier 3: Selective emerging & strategic ===
-    Locale('sw'), // Swahili (East Africa, growing digital market, under-served femtech)
-    Locale('bn'), // Bengali (Bangladesh + India, ~250M speakers, fast-growing mobile)
-    Locale('id'), // Indonesian/Bahasa (massive smartphone penetration, under-served femtech)
-    Locale('fa'), // Persian/Farsi (Iran + diaspora, ~100M speakers, huge demand for women's health)
+    Locale(
+      'sw',
+    ), // Swahili (East Africa, growing digital market, under-served femtech)
+    Locale(
+      'bn',
+    ), // Bengali (Bangladesh + India, ~250M speakers, fast-growing mobile)
+    Locale(
+      'id',
+    ), // Indonesian/Bahasa (massive smartphone penetration, under-served femtech)
+    Locale(
+      'fa',
+    ), // Persian/Farsi (Iran + diaspora, ~100M speakers, huge demand for women's health)
   ];
 
   // Language display names for all 36 supported languages
@@ -53,9 +59,15 @@ class LocalizationService extends ChangeNotifier {
     'fr_FR': {'name': 'French', 'nativeName': 'Français'},
     'de_DE': {'name': 'German', 'nativeName': 'Deutsch'},
     'it_IT': {'name': 'Italian', 'nativeName': 'Italiano'},
-    'pt_BR': {'name': 'Portuguese (Brazil)', 'nativeName': 'Português (Brasil)'},
-    'pt_PT': {'name': 'Portuguese (Portugal)', 'nativeName': 'Português (Portugal)'},
-    
+    'pt_BR': {
+      'name': 'Portuguese (Brazil)',
+      'nativeName': 'Português (Brasil)',
+    },
+    'pt_PT': {
+      'name': 'Portuguese (Portugal)',
+      'nativeName': 'Português (Portugal)',
+    },
+
     // Asian Languages
     'zh_CN': {'name': 'Chinese (Simplified)', 'nativeName': '中文 (简体)'},
     'zh_TW': {'name': 'Chinese (Traditional)', 'nativeName': '中文 (繁體)'},
@@ -66,7 +78,7 @@ class LocalizationService extends ChangeNotifier {
     'vi_VN': {'name': 'Vietnamese', 'nativeName': 'Tiếng Việt'},
     'id_ID': {'name': 'Indonesian', 'nativeName': 'Bahasa Indonesia'},
     'ms_MY': {'name': 'Malay', 'nativeName': 'Bahasa Melayu'},
-    
+
     // European Languages
     'ru_RU': {'name': 'Russian', 'nativeName': 'Русский'},
     'pl_PL': {'name': 'Polish', 'nativeName': 'Polski'},
@@ -78,13 +90,13 @@ class LocalizationService extends ChangeNotifier {
     'cs_CZ': {'name': 'Czech', 'nativeName': 'Čeština'},
     'hu_HU': {'name': 'Hungarian', 'nativeName': 'Magyar'},
     'ro_RO': {'name': 'Romanian', 'nativeName': 'Română'},
-    
+
     // Middle Eastern & African Languages
     'ar_SA': {'name': 'Arabic', 'nativeName': 'العربية'},
     'tr_TR': {'name': 'Turkish', 'nativeName': 'Türkçe'},
     'he_IL': {'name': 'Hebrew', 'nativeName': 'עברית'},
     'sw_KE': {'name': 'Swahili', 'nativeName': 'Kiswahili'},
-    
+
     // Other Important Languages
     'bn_BD': {'name': 'Bengali', 'nativeName': 'বাংলা'},
     'ur_PK': {'name': 'Urdu', 'nativeName': 'اردو'},
@@ -102,7 +114,7 @@ class LocalizationService extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLocaleString = prefs.getString(_localeKey);
-      
+
       if (savedLocaleString != null) {
         final parts = savedLocaleString.split('_');
         if (parts.length == 2) {
@@ -114,11 +126,12 @@ class LocalizationService extends ChangeNotifier {
       } else {
         // Use system locale if supported
         final systemLocale = _getSystemLocale();
-        if (supportedLocales.contains(systemLocale) && _isSafeLocale(systemLocale)) {
+        if (supportedLocales.contains(systemLocale) &&
+            _isSafeLocale(systemLocale)) {
           _currentLocale = systemLocale;
         }
       }
-      
+
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
@@ -138,10 +151,13 @@ class LocalizationService extends ChangeNotifier {
     if (_currentLocale == locale) return;
 
     _currentLocale = locale;
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_localeKey, '${locale.languageCode}_${locale.countryCode}');
+      await prefs.setString(
+        _localeKey,
+        '${locale.languageCode}_${locale.countryCode}',
+      );
     } catch (e) {
       debugPrint('Error saving locale: $e');
     }
@@ -152,7 +168,7 @@ class LocalizationService extends ChangeNotifier {
   /// Get system locale
   Locale _getSystemLocale() {
     final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-    
+
     // Try to match with supported locales
     for (final supportedLocale in supportedLocales) {
       if (supportedLocale.languageCode == systemLocale.languageCode) {
@@ -161,14 +177,14 @@ class LocalizationService extends ChangeNotifier {
         }
       }
     }
-    
+
     // Fall back to language-only match
     for (final supportedLocale in supportedLocales) {
       if (supportedLocale.languageCode == systemLocale.languageCode) {
         return supportedLocale;
       }
     }
-    
+
     // Default to English
     return const Locale('en', 'US');
   }
@@ -177,23 +193,26 @@ class LocalizationService extends ChangeNotifier {
   String getLanguageName(Locale locale, {bool useNativeName = false}) {
     final key = _getLanguageKey(locale);
     final languageData = _languageNames[key];
-    
+
     if (languageData == null) {
       return '${locale.languageCode}${locale.countryCode != null ? '_${locale.countryCode}' : ''}';
     }
-    
+
     return useNativeName ? languageData['nativeName']! : languageData['name']!;
   }
 
   /// Get current language display name
   String get currentLanguageName => getLanguageName(_currentLocale);
-  String get currentLanguageNativeName => getLanguageName(_currentLocale, useNativeName: true);
+  String get currentLanguageNativeName =>
+      getLanguageName(_currentLocale, useNativeName: true);
 
   /// Check if current locale is RTL
-  bool get isRTL => ['ar', 'he', 'fa', 'ur'].contains(_currentLocale.languageCode);
+  bool get isRTL =>
+      ['ar', 'he', 'fa', 'ur'].contains(_currentLocale.languageCode);
 
   /// Get text direction
-  TextDirection get textDirection => isRTL ? TextDirection.rtl : TextDirection.ltr;
+  TextDirection get textDirection =>
+      isRTL ? TextDirection.rtl : TextDirection.ltr;
 
   /// Get language key that maps to _languageNames
   String _getLanguageKey(Locale locale) {
@@ -202,16 +221,16 @@ class LocalizationService extends ChangeNotifier {
     if (_languageNames.containsKey(exactKey)) {
       return exactKey;
     }
-    
+
     // Try to find a key with the same language code
     final possibleKeys = _languageNames.keys.where(
-      (key) => key.startsWith('${locale.languageCode}_')
+      (key) => key.startsWith('${locale.languageCode}_'),
     );
-    
+
     if (possibleKeys.isNotEmpty) {
       return possibleKeys.first; // Return first matching language
     }
-    
+
     // Fallback to English
     return 'en_US';
   }
@@ -221,18 +240,20 @@ class LocalizationService extends ChangeNotifier {
     return supportedLocales.map((locale) {
       final key = _getLanguageKey(locale);
       final languageData = _languageNames[key];
-      
+
       if (languageData == null) {
         // Fallback if no language data found
         return {
           'locale': locale,
-          'name': '${locale.languageCode}${locale.countryCode != null ? ' (${locale.countryCode})' : ''}',
-          'nativeName': '${locale.languageCode}${locale.countryCode != null ? ' (${locale.countryCode})' : ''}',
+          'name':
+              '${locale.languageCode}${locale.countryCode != null ? ' (${locale.countryCode})' : ''}',
+          'nativeName':
+              '${locale.languageCode}${locale.countryCode != null ? ' (${locale.countryCode})' : ''}',
           'isSelected': locale == _currentLocale,
           'flag': _getFlagEmoji(locale),
         };
       }
-      
+
       return {
         'locale': locale,
         'name': languageData['name'],
@@ -246,55 +267,92 @@ class LocalizationService extends ChangeNotifier {
   /// Get flag emoji for locale
   String _getFlagEmoji(Locale locale) {
     final key = _getLanguageKey(locale);
-    
+
     switch (key) {
       // Major Languages
-      case 'en_US': return '🇺🇸'; // United States
-      case 'en_GB': return '🇬🇧'; // United Kingdom
-      case 'es_ES': return '🇪🇸'; // Spain
-      case 'es_MX': return '🇲🇽'; // Mexico
-      case 'fr_FR': return '🇫🇷'; // France
-      case 'de_DE': return '🇩🇪'; // Germany
-      case 'it_IT': return '🇮🇹'; // Italy
-      case 'pt_BR': return '🇧🇷'; // Brazil
-      case 'pt_PT': return '🇵🇹'; // Portugal
-      
+      case 'en_US':
+        return '🇺🇸'; // United States
+      case 'en_GB':
+        return '🇬🇧'; // United Kingdom
+      case 'es_ES':
+        return '🇪🇸'; // Spain
+      case 'es_MX':
+        return '🇲🇽'; // Mexico
+      case 'fr_FR':
+        return '🇫🇷'; // France
+      case 'de_DE':
+        return '🇩🇪'; // Germany
+      case 'it_IT':
+        return '🇮🇹'; // Italy
+      case 'pt_BR':
+        return '🇧🇷'; // Brazil
+      case 'pt_PT':
+        return '🇵🇹'; // Portugal
+
       // Asian Languages
-      case 'zh_CN': return '🇨🇳'; // China
-      case 'zh_TW': return '🇹🇼'; // Taiwan
-      case 'ja_JP': return '🇯🇵'; // Japan
-      case 'ko_KR': return '🇰🇷'; // South Korea
-      case 'hi_IN': return '🇮🇳'; // India
-      case 'th_TH': return '🇹🇭'; // Thailand
-      case 'vi_VN': return '🇻🇳'; // Vietnam
-      case 'id_ID': return '🇮🇩'; // Indonesia
-      case 'ms_MY': return '🇲🇾'; // Malaysia
-      
+      case 'zh_CN':
+        return '🇨🇳'; // China
+      case 'zh_TW':
+        return '🇹🇼'; // Taiwan
+      case 'ja_JP':
+        return '🇯🇵'; // Japan
+      case 'ko_KR':
+        return '🇰🇷'; // South Korea
+      case 'hi_IN':
+        return '🇮🇳'; // India
+      case 'th_TH':
+        return '🇹🇭'; // Thailand
+      case 'vi_VN':
+        return '🇻🇳'; // Vietnam
+      case 'id_ID':
+        return '🇮🇩'; // Indonesia
+      case 'ms_MY':
+        return '🇲🇾'; // Malaysia
+
       // European Languages
-      case 'ru_RU': return '🇷🇺'; // Russia
-      case 'pl_PL': return '🇵🇱'; // Poland
-      case 'nl_NL': return '🇳🇱'; // Netherlands
-      case 'sv_SE': return '🇸🇪'; // Sweden
-      case 'no_NO': return '🇳🇴'; // Norway
-      case 'da_DK': return '🇩🇰'; // Denmark
-      case 'fi_FI': return '🇫🇮'; // Finland
-      case 'cs_CZ': return '🇨🇿'; // Czech Republic
-      case 'hu_HU': return '🇭🇺'; // Hungary
-      case 'ro_RO': return '🇷🇴'; // Romania
-      
+      case 'ru_RU':
+        return '🇷🇺'; // Russia
+      case 'pl_PL':
+        return '🇵🇱'; // Poland
+      case 'nl_NL':
+        return '🇳🇱'; // Netherlands
+      case 'sv_SE':
+        return '🇸🇪'; // Sweden
+      case 'no_NO':
+        return '🇳🇴'; // Norway
+      case 'da_DK':
+        return '🇩🇰'; // Denmark
+      case 'fi_FI':
+        return '🇫🇮'; // Finland
+      case 'cs_CZ':
+        return '🇨🇿'; // Czech Republic
+      case 'hu_HU':
+        return '🇭🇺'; // Hungary
+      case 'ro_RO':
+        return '🇷🇴'; // Romania
+
       // Middle Eastern & African Languages
-      case 'ar_SA': return '🇸🇦'; // Saudi Arabia
-      case 'tr_TR': return '🇹🇷'; // Turkey
-      case 'he_IL': return '🇮🇱'; // Israel
-      case 'sw_KE': return '🇰🇪'; // Kenya
-      
+      case 'ar_SA':
+        return '🇸🇦'; // Saudi Arabia
+      case 'tr_TR':
+        return '🇹🇷'; // Turkey
+      case 'he_IL':
+        return '🇮🇱'; // Israel
+      case 'sw_KE':
+        return '🇰🇪'; // Kenya
+
       // Other Important Languages
-      case 'bn_BD': return '🇧🇩'; // Bangladesh
-      case 'ur_PK': return '🇵🇰'; // Pakistan
-      case 'fa_IR': return '🇮🇷'; // Iran
-      case 'uk_UA': return '🇺🇦'; // Ukraine
-      
-      default: return '🌐'; // Globe for unsupported
+      case 'bn_BD':
+        return '🇧🇩'; // Bangladesh
+      case 'ur_PK':
+        return '🇵🇰'; // Pakistan
+      case 'fa_IR':
+        return '🇮🇷'; // Iran
+      case 'uk_UA':
+        return '🇺🇦'; // Ukraine
+
+      default:
+        return '🌐'; // Globe for unsupported
     }
   }
 
@@ -328,7 +386,7 @@ class LocalizationService extends ChangeNotifier {
   String formatTime(DateTime time) {
     final hour = time.hour;
     final minute = time.minute.toString().padLeft(2, '0');
-    
+
     switch (_currentLocale.languageCode) {
       case 'en':
         // 12-hour format
@@ -393,7 +451,7 @@ class LocalizationService extends ChangeNotifier {
       'sw', // Swahili (app_sw.arb)
       'ar', // Arabic (app_ar.arb)
     };
-    
+
     return safeLanguageCodes.contains(locale.languageCode);
   }
 }

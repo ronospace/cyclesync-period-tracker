@@ -43,11 +43,11 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
 
   Widget _buildCycleCard(Map<String, dynamic> cycle) {
     final dateFormat = DateFormat.yMMMd();
-    
+
     // Handle different date formats
     DateTime? startDate;
     DateTime? endDate;
-    
+
     try {
       if (cycle['start'] != null) {
         if (cycle['start'] is DateTime) {
@@ -59,7 +59,7 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
           startDate = DateTime.parse(cycle['start'].toString());
         }
       }
-      
+
       if (cycle['end'] != null) {
         if (cycle['end'] is DateTime) {
           endDate = cycle['end'] as DateTime;
@@ -85,10 +85,7 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.pink.shade100,
-          child: Icon(
-            Icons.calendar_today,
-            color: Colors.pink.shade700,
-          ),
+          child: Icon(Icons.calendar_today, color: Colors.pink.shade700),
         ),
         title: Text(
           startDate != null && endDate != null
@@ -99,15 +96,11 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (cycleDays != null)
-              Text('Duration: $cycleDays days'),
+            if (cycleDays != null) Text('Duration: $cycleDays days'),
             if (cycle['created_at'] != null)
               Text(
                 'Logged: ${DateFormat.yMMMd().add_jm().format(DateTime.parse(cycle['created_at']))}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
           ],
         ),
@@ -139,7 +132,9 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Cycle'),
-        content: const Text('Are you sure you want to delete this cycle entry?'),
+        content: const Text(
+          'Are you sure you want to delete this cycle entry?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -177,15 +172,15 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
           duration: Duration(seconds: 2),
         ),
       );
-      
+
       // Delete the cycle using FirebaseService
       await FirebaseService.deleteCycle(cycleId: cycleId);
-      
+
       // Remove from local list for immediate UI update
       setState(() {
         _cycles.removeWhere((cycle) => cycle['id'] == cycleId);
       });
-      
+
       // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -197,11 +192,13 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
       }
     } catch (e) {
       debugPrint('Error deleting cycle: $e');
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to delete: ${e.toString().split(':').last.trim()}'),
+            content: Text(
+              'Failed to delete: ${e.toString().split(':').last.trim()}',
+            ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 4),
           ),
@@ -221,10 +218,7 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
           onPressed: () => context.go('/home'),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadCycles,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadCycles),
         ],
       ),
       body: _isLoading
@@ -239,70 +233,67 @@ class _CycleHistoryScreenState extends State<CycleHistoryScreen> {
               ),
             )
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.red.shade300,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Failed to load cycles',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Text(
-                          _error!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey.shade600),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _loadCycles,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Try Again'),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.red.shade300,
                   ),
-                )
-              : _cycles.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.event_note,
-                            size: 64,
-                            color: Colors.grey.shade300,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No cycles logged yet',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          const Text('Start tracking your cycles to see them here'),
-                          const SizedBox(height: 24),
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Log Your First Cycle'),
-                          ),
-                        ],
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: _loadCycles,
-                      child: ListView.builder(
-                        itemCount: _cycles.length,
-                        itemBuilder: (context, index) => _buildCycleCard(_cycles[index]),
-                      ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load cycles',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Text(
+                      _error!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey.shade600),
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _loadCycles,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            )
+          : _cycles.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.event_note, size: 64, color: Colors.grey.shade300),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No cycles logged yet',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('Start tracking your cycles to see them here'),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Log Your First Cycle'),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadCycles,
+              child: ListView.builder(
+                itemCount: _cycles.length,
+                itemBuilder: (context, index) =>
+                    _buildCycleCard(_cycles[index]),
+              ),
+            ),
     );
   }
 }

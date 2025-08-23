@@ -30,8 +30,10 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
-      debugPrint('🔥 FirebaseService: Starting enhanced save for user ${user.uid}');
+
+      debugPrint(
+        '🔥 FirebaseService: Starting enhanced save for user ${user.uid}',
+      );
       debugPrint('🔥 FirebaseService: Data keys: ${cycleData.keys.join(", ")}');
 
       // Create the document reference first
@@ -39,14 +41,14 @@ class FirebaseService {
           .collection('users')
           .doc(user.uid)
           .collection('cycles');
-      
+
       // Add metadata to the cycle data
       final enhancedData = {
         ...cycleData,
         'user_id': user.uid,
         'timestamp': FieldValue.serverTimestamp(),
       };
-      
+
       // Add with explicit timeout and proper error handling
       await docRef
           .add(enhancedData)
@@ -56,7 +58,8 @@ class FirebaseService {
               throw FirebaseException(
                 plugin: 'cloud_firestore',
                 code: 'timeout',
-                message: 'Operation timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
+                message:
+                    'Operation timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
               );
             },
           );
@@ -65,7 +68,7 @@ class FirebaseService {
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error in enhanced save: $e');
       debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
-      
+
       // Re-throw with more context
       if (e is FirebaseException) {
         throw FirebaseException(
@@ -87,7 +90,7 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       debugPrint('🔥 FirebaseService: Starting save for user ${user.uid}');
       debugPrint('🔥 FirebaseService: Start: $startDate, End: $endDate');
 
@@ -96,14 +99,15 @@ class FirebaseService {
           .collection('users')
           .doc(user.uid)
           .collection('cycles');
-      
+
       // Add with explicit timeout and proper error handling
       await docRef
           .add({
             'start': startDate,
             'end': endDate,
             'timestamp': FieldValue.serverTimestamp(),
-            'created_at': DateTime.now().toIso8601String(), // Fallback timestamp
+            'created_at': DateTime.now()
+                .toIso8601String(), // Fallback timestamp
           })
           .timeout(
             timeout,
@@ -111,7 +115,8 @@ class FirebaseService {
               throw FirebaseException(
                 plugin: 'cloud_firestore',
                 code: 'timeout',
-                message: 'Operation timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
+                message:
+                    'Operation timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
               );
             },
           );
@@ -120,7 +125,7 @@ class FirebaseService {
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error occurred: $e');
       debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
-      
+
       // Re-throw with more context
       if (e is FirebaseException) {
         throw FirebaseException(
@@ -141,26 +146,32 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
-      debugPrint('🔥 FirebaseService: Starting daily log save for user ${user.uid}');
-      debugPrint('🔥 FirebaseService: Daily log data keys: ${dailyLogData.keys.join(", ")}');
+
+      debugPrint(
+        '🔥 FirebaseService: Starting daily log save for user ${user.uid}',
+      );
+      debugPrint(
+        '🔥 FirebaseService: Daily log data keys: ${dailyLogData.keys.join(", ")}',
+      );
 
       // Create the document reference
       final docRef = _firestore
           .collection('users')
           .doc(user.uid)
           .collection('daily_logs');
-      
+
       // Add metadata to the daily log data
       final enhancedData = {
         ...dailyLogData,
         'user_id': user.uid,
         'timestamp': FieldValue.serverTimestamp(),
       };
-      
+
       // Use date as document ID to ensure one log per day
-      final dateKey = (dailyLogData['date'] as DateTime).toIso8601String().split('T')[0];
-      
+      final dateKey = (dailyLogData['date'] as DateTime)
+          .toIso8601String()
+          .split('T')[0];
+
       // Set (upsert) with explicit timeout and proper error handling
       await docRef
           .doc(dateKey)
@@ -171,7 +182,8 @@ class FirebaseService {
               throw FirebaseException(
                 plugin: 'cloud_firestore',
                 code: 'timeout',
-                message: 'Daily log save timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
+                message:
+                    'Daily log save timed out after ${timeout.inSeconds} seconds. Please check your internet connection.',
               );
             },
           );
@@ -180,7 +192,7 @@ class FirebaseService {
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error in daily log save: $e');
       debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
-      
+
       // Re-throw with more context
       if (e is FirebaseException) {
         throw FirebaseException(
@@ -201,9 +213,9 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       final dateKey = date.toIso8601String().split('T')[0];
-      
+
       final doc = await _firestore
           .collection('users')
           .doc(user.uid)
@@ -211,12 +223,9 @@ class FirebaseService {
           .doc(dateKey)
           .get()
           .timeout(timeout);
-      
+
       if (doc.exists) {
-        return {
-          'id': doc.id,
-          ...doc.data() as Map<String, dynamic>,
-        };
+        return {'id': doc.id, ...doc.data() as Map<String, dynamic>};
       }
       return null;
     } catch (e) {
@@ -233,7 +242,7 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       Query query = _firestore
           .collection('users')
           .doc(user.uid)
@@ -246,11 +255,10 @@ class FirebaseService {
       }
 
       final QuerySnapshot snapshot = await query.get().timeout(timeout);
-      
-      return snapshot.docs.map((doc) => {
-        'id': doc.id,
-        ...doc.data() as Map<String, dynamic>,
-      }).toList();
+
+      return snapshot.docs
+          .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+          .toList();
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error getting cycles: $e');
       throw Exception('Failed to fetch cycles: $e');
@@ -263,14 +271,10 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       // Try a simple read operation
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get()
-          .timeout(timeout);
-      
+      await _firestore.collection('users').doc(user.uid).get().timeout(timeout);
+
       debugPrint('🔥 FirebaseService: Connection check successful');
       return true;
     } catch (e) {
@@ -286,7 +290,7 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       debugPrint('🔥 FirebaseService: Starting delete for cycle $cycleId');
       debugPrint('🔥 FirebaseService: User: ${user.uid}');
 
@@ -302,7 +306,7 @@ class FirebaseService {
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error deleting cycle: $e');
       debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
-      
+
       // Re-throw with more context
       if (e is FirebaseException) {
         throw FirebaseException(
@@ -325,10 +329,12 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       debugPrint('🔥 FirebaseService: Starting update for cycle $cycleId');
       debugPrint('🔥 FirebaseService: User: ${user.uid}');
-      debugPrint('🔥 FirebaseService: New Start: $startDate, New End: $endDate');
+      debugPrint(
+        '🔥 FirebaseService: New Start: $startDate, New End: $endDate',
+      );
 
       await _firestore
           .collection('users')
@@ -346,7 +352,7 @@ class FirebaseService {
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error updating cycle: $e');
       debugPrint('🔥 FirebaseService: Error type: ${e.runtimeType}');
-      
+
       // Re-throw with more context
       if (e is FirebaseException) {
         throw FirebaseException(
@@ -364,10 +370,10 @@ class FirebaseService {
   static Future<void> initializeUser() async {
     try {
       final user = _requireAuth();
-      
+
       final userDoc = _firestore.collection('users').doc(user.uid);
       final docSnapshot = await userDoc.get();
-      
+
       if (!docSnapshot.exists) {
         await userDoc.set({
           'created_at': FieldValue.serverTimestamp(),
@@ -384,7 +390,6 @@ class FirebaseService {
 
   // DAILY LOGGING METHODS
 
-
   /// Get daily log entries for a date range
   static Future<List<Map<String, dynamic>>> getDailyLogs({
     DateTime? startDate,
@@ -394,7 +399,7 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       Query query = _firestore
           .collection('users')
           .doc(user.uid)
@@ -413,11 +418,10 @@ class FirebaseService {
       }
 
       final QuerySnapshot snapshot = await query.get().timeout(timeout);
-      
-      return snapshot.docs.map((doc) => {
-        'id': doc.id,
-        ...doc.data() as Map<String, dynamic>,
-      }).toList();
+
+      return snapshot.docs
+          .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+          .toList();
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error getting daily logs: $e');
       throw Exception('Failed to fetch daily logs: $e');
@@ -431,9 +435,9 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       final dateString = date.toIso8601String().split('T')[0];
-      
+
       final DocumentSnapshot doc = await _firestore
           .collection('users')
           .doc(user.uid)
@@ -443,12 +447,9 @@ class FirebaseService {
           .timeout(timeout);
 
       if (doc.exists) {
-        return {
-          'id': doc.id,
-          ...doc.data() as Map<String, dynamic>,
-        };
+        return {'id': doc.id, ...doc.data() as Map<String, dynamic>};
       }
-      
+
       return null;
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error getting daily log for date: $e');
@@ -463,9 +464,9 @@ class FirebaseService {
   }) async {
     try {
       final user = _requireAuth();
-      
+
       final dateString = date.toIso8601String().split('T')[0];
-      
+
       await _firestore
           .collection('users')
           .doc(user.uid)
@@ -477,7 +478,7 @@ class FirebaseService {
       debugPrint('🔥 FirebaseService: Daily log deleted successfully');
     } catch (e) {
       debugPrint('🔥 FirebaseService: Error deleting daily log: $e');
-      
+
       if (e is FirebaseException) {
         throw FirebaseException(
           plugin: e.plugin,

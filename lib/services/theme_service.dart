@@ -5,7 +5,7 @@ import '../theme/app_theme.dart';
 class ThemeService extends ChangeNotifier {
   static const String _themeKey = 'theme_mode';
   static const String _useSystemThemeKey = 'use_system_theme';
-  
+
   ThemeMode _themeMode = ThemeMode.system;
   bool _useSystemTheme = true;
   bool _isInitialized = false;
@@ -21,7 +21,8 @@ class ThemeService extends ChangeNotifier {
       case ThemeMode.dark:
         return true;
       case ThemeMode.system:
-        return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark;
+        return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+            Brightness.dark;
     }
   }
 
@@ -32,12 +33,12 @@ class ThemeService extends ChangeNotifier {
   Future<void> init() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       final savedTheme = prefs.getString(_themeKey);
       final savedUseSystemTheme = prefs.getBool(_useSystemThemeKey) ?? true;
-      
+
       _useSystemTheme = savedUseSystemTheme;
-      
+
       if (savedTheme != null && !_useSystemTheme) {
         switch (savedTheme) {
           case 'light':
@@ -54,7 +55,7 @@ class ThemeService extends ChangeNotifier {
       } else {
         _themeMode = ThemeMode.system;
       }
-      
+
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
@@ -66,10 +67,10 @@ class ThemeService extends ChangeNotifier {
 
   Future<void> setThemeMode(ThemeMode mode) async {
     if (_themeMode == mode) return;
-    
+
     _themeMode = mode;
     _useSystemTheme = mode == ThemeMode.system;
-    
+
     await _saveThemePreferences();
     notifyListeners();
   }
@@ -86,13 +87,13 @@ class ThemeService extends ChangeNotifier {
   // Set to use system theme
   Future<void> setUseSystemTheme(bool useSystem) async {
     if (_useSystemTheme == useSystem) return;
-    
+
     _useSystemTheme = useSystem;
-    
+
     if (useSystem) {
       _themeMode = ThemeMode.system;
     }
-    
+
     await _saveThemePreferences();
     notifyListeners();
   }
@@ -101,7 +102,7 @@ class ThemeService extends ChangeNotifier {
   Future<void> _saveThemePreferences() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       String themeString;
       switch (_themeMode) {
         case ThemeMode.light:
@@ -115,7 +116,7 @@ class ThemeService extends ChangeNotifier {
           themeString = 'system';
           break;
       }
-      
+
       await prefs.setString(_themeKey, themeString);
       await prefs.setBool(_useSystemThemeKey, _useSystemTheme);
     } catch (e) {
@@ -142,27 +143,23 @@ class ThemeService extends ChangeNotifier {
 
   // Get theme-appropriate colors
   Color getPrimaryColor(BuildContext context) {
-    return isDarkModeEnabled(context) 
-        ? AppTheme.primaryPink.withOpacity(0.8)
+    return isDarkModeEnabled(context)
+        ? AppTheme.primaryPink.withValues(alpha: 0.8)
         : AppTheme.primaryPink;
   }
 
   Color getBackgroundColor(BuildContext context) {
-    return isDarkModeEnabled(context) 
+    return isDarkModeEnabled(context)
         ? const Color(0xFF121212)
         : const Color(0xFFFAFAFA);
   }
 
   Color getSurfaceColor(BuildContext context) {
-    return isDarkModeEnabled(context) 
-        ? const Color(0xFF1E1E1E)
-        : Colors.white;
+    return isDarkModeEnabled(context) ? const Color(0xFF1E1E1E) : Colors.white;
   }
 
   Color getTextColor(BuildContext context) {
-    return isDarkModeEnabled(context) 
-        ? Colors.white
-        : Colors.black87;
+    return isDarkModeEnabled(context) ? Colors.white : Colors.black87;
   }
 
   // Use our advanced themes
@@ -174,14 +171,14 @@ class ThemeService extends ChangeNotifier {
 
   // Get chart colors based on current theme
   Map<String, Color> getChartColors(BuildContext context) {
-    return isDarkModeEnabled(context) 
+    return isDarkModeEnabled(context)
         ? AppTheme.darkChartColors
         : AppTheme.lightChartColors;
   }
 
   // Get calendar colors based on current theme
   Map<String, Color> getCalendarColors(BuildContext context) {
-    return isDarkModeEnabled(context) 
+    return isDarkModeEnabled(context)
         ? AppTheme.calendarDarkColors
         : AppTheme.calendarLightColors;
   }
@@ -193,7 +190,7 @@ class ThemeService extends ChangeNotifier {
 
   // Get theme-appropriate gradient
   LinearGradient getPrimaryGradient(BuildContext context) {
-    return isDarkModeEnabled(context) 
+    return isDarkModeEnabled(context)
         ? AppTheme.darkGradient
         : AppTheme.primaryGradient;
   }
@@ -202,7 +199,7 @@ class ThemeService extends ChangeNotifier {
   Future<void> resetToDefault() async {
     _themeMode = ThemeMode.system;
     _useSystemTheme = true;
-    
+
     await _saveThemePreferences();
     notifyListeners();
   }

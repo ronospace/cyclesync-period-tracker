@@ -1,9 +1,5 @@
 /// Data models for social sharing and community features
-enum SharePermission {
-  viewOnly,
-  fullAccess,
-  limitedAnalytics,
-}
+enum SharePermission { viewOnly, fullAccess, limitedAnalytics }
 
 enum DataType {
   cyclePattern,
@@ -24,11 +20,7 @@ enum ProviderType {
   other,
 }
 
-enum ContributionLevel {
-  minimal,
-  standard,
-  comprehensive,
-}
+enum ContributionLevel { minimal, standard, comprehensive }
 
 enum InsightCategory {
   cyclePattern,
@@ -42,16 +34,13 @@ class DateRange {
   final DateTime start;
   final DateTime end;
 
-  DateRange({
-    required this.start,
-    required this.end,
-  });
+  DateRange({required this.start, required this.end});
 
   Duration get duration => end.difference(start);
-  
+
   bool contains(DateTime date) {
-    return date.isAfter(start.subtract(const Duration(days: 1))) && 
-           date.isBefore(end.add(const Duration(days: 1)));
+    return date.isAfter(start.subtract(const Duration(days: 1))) &&
+        date.isBefore(end.add(const Duration(days: 1)));
   }
 
   @override
@@ -78,12 +67,12 @@ class ShareResult {
   });
 
   ShareResult.error(String errorMessage)
-      : success = false,
-        shareId = null,
-        shareToken = null,
-        accessUrl = null,
-        message = 'Error occurred',
-        error = errorMessage;
+    : success = false,
+      shareId = null,
+      shareToken = null,
+      accessUrl = null,
+      message = 'Error occurred',
+      error = errorMessage;
 }
 
 class ProviderAccessResult {
@@ -104,12 +93,12 @@ class ProviderAccessResult {
   });
 
   ProviderAccessResult.error(String errorMessage)
-      : success = false,
-        accessId = null,
-        accessToken = null,
-        dashboardUrl = null,
-        message = 'Error occurred',
-        error = errorMessage;
+    : success = false,
+      accessId = null,
+      accessToken = null,
+      dashboardUrl = null,
+      message = 'Error occurred',
+      error = errorMessage;
 }
 
 class SharedDataResult {
@@ -130,12 +119,12 @@ class SharedDataResult {
   });
 
   SharedDataResult.error(String errorMessage)
-      : success = false,
-        shareInfo = null,
-        cycles = null,
-        analytics = null,
-        summary = null,
-        error = errorMessage;
+    : success = false,
+      shareInfo = null,
+      cycles = null,
+      analytics = null,
+      summary = null,
+      error = errorMessage;
 }
 
 class ShareInfo {
@@ -199,12 +188,8 @@ class CommunityInsightResult {
   final bool success;
   final List<CommunityInsight>? insights;
   final String? error;
-  
-  CommunityInsightResult({
-    required this.success,
-    this.insights,
-    this.error,
-  });
+
+  CommunityInsightResult({required this.success, this.insights, this.error});
 }
 
 class CommunityInsight {
@@ -214,7 +199,8 @@ class CommunityInsight {
   final InsightCategory category;
   final int supportCount;
   final DateTime createdAt;
-  
+  final String? value;
+
   CommunityInsight({
     required this.id,
     required this.title,
@@ -222,16 +208,12 @@ class CommunityInsight {
     required this.category,
     required this.supportCount,
     required this.createdAt,
+    this.value,
   });
 }
 
 // Gen Z/Millennial Social Feed Models
-enum FeedCategory {
-  forYou,
-  stories,
-  tips,
-  support,
-}
+enum FeedCategory { forYou, stories, tips, support }
 
 class FeedPost {
   final String id;
@@ -246,7 +228,7 @@ class FeedPost {
   final int comments;
   final int shares;
   bool isLiked;
-  
+
   FeedPost({
     required this.id,
     required this.userId,
@@ -261,7 +243,7 @@ class FeedPost {
     required this.shares,
     this.isLiked = false,
   });
-  
+
   factory FeedPost.fromMap(Map<String, dynamic> map) {
     return FeedPost(
       id: map['id'] ?? '',
@@ -271,7 +253,9 @@ class FeedPost {
       category: FeedCategory.values[map['category'] ?? 0],
       tags: List<String>.from(map['tags'] ?? []),
       location: map['location'] ?? 'Global',
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
       likes: map['likes'] ?? 0,
       comments: map['comments'] ?? 0,
       shares: map['shares'] ?? 0,
@@ -298,20 +282,9 @@ class FeedPost {
 }
 
 // Challenge and Achievement Models
-enum ChallengeType {
-  daily,
-  weekly,
-  monthly,
-  community,
-}
+enum ChallengeType { daily, weekly, monthly, community }
 
-enum AchievementType {
-  tracking,
-  consistency,
-  community,
-  wellness,
-  knowledge,
-}
+enum AchievementType { tracking, consistency, community, wellness, knowledge }
 
 class Challenge {
   final String id;
@@ -325,7 +298,7 @@ class Challenge {
   final List<String> participants;
   final String reward;
   final bool isCompleted;
-  
+
   Challenge({
     required this.id,
     required this.title,
@@ -339,9 +312,10 @@ class Challenge {
     required this.reward,
     this.isCompleted = false,
   });
-  
+
   double get progressPercentage => currentProgress / targetValue;
-  bool get isActive => DateTime.now().isBefore(endDate) && DateTime.now().isAfter(startDate);
+  bool get isActive =>
+      DateTime.now().isBefore(endDate) && DateTime.now().isAfter(startDate);
 }
 
 class Achievement {
@@ -353,7 +327,7 @@ class Achievement {
   final DateTime unlockedAt;
   final int points;
   final bool isRare;
-  
+
   Achievement({
     required this.id,
     required this.title,
@@ -427,12 +401,12 @@ class MySharedDataResult {
   });
 
   MySharedDataResult.error(String errorMessage)
-      : success = false,
-        activeShares = null,
-        expiredShares = null,
-        providerAccess = null,
-        totalShares = null,
-        error = errorMessage;
+    : success = false,
+      activeShares = null,
+      expiredShares = null,
+      providerAccess = null,
+      totalShares = null,
+      error = errorMessage;
 }
 
 class ShareSummary {
@@ -464,7 +438,7 @@ class ShareSummary {
   String get timeRemaining {
     if (expiresAt == null) return 'No expiration';
     if (isExpired) return 'Expired';
-    
+
     final remaining = expiresAt!.difference(DateTime.now());
     if (remaining.inDays > 0) {
       return '${remaining.inDays} days remaining';
@@ -633,7 +607,11 @@ extension ContributionLevelExtension on ContributionLevel {
       case ContributionLevel.minimal:
         return [DataType.cyclePattern];
       case ContributionLevel.standard:
-        return [DataType.cyclePattern, DataType.symptoms, DataType.flowIntensity];
+        return [
+          DataType.cyclePattern,
+          DataType.symptoms,
+          DataType.flowIntensity,
+        ];
       case ContributionLevel.comprehensive:
         return [
           DataType.cyclePattern,

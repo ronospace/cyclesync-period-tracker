@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../models/cycle_models.dart';
-import '../../models/daily_log_models.dart';
 import '../../services/firebase_service.dart';
 import '../../services/advanced_health_kit_service.dart';
 import '../cache/data_cache_manager.dart';
@@ -617,7 +615,7 @@ class DataSyncManager {
       mood: primary.mood ?? secondary.mood,
       energyLevel: primary.energyLevel ?? secondary.energyLevel,
       sleepQuality: primary.sleepQuality ?? secondary.sleepQuality,
-      tags: [...primary.tags, ...secondary.tags].toSet().toList(),
+      tags: <dynamic>{...primary.tags, ...secondary.tags}.toList(),
       lastUpdated: DateTime.now(),
     );
 

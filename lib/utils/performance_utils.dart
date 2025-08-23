@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 
 /// Utility class for optimizing app performance
 class PerformanceUtils {
-  
   /// Enable performance overlay (debug mode only)
   static void enablePerformanceOverlay() {
     assert(() {
@@ -14,7 +12,7 @@ class PerformanceUtils {
       return true;
     }());
   }
-  
+
   /// Optimize widget builds with const constructors
   static Widget optimizedContainer({
     Key? key,
@@ -39,7 +37,7 @@ class PerformanceUtils {
       child: child,
     );
   }
-  
+
   /// Optimized card widget with caching
   static Widget buildOptimizedCard({
     required Widget child,
@@ -53,15 +51,13 @@ class PerformanceUtils {
       margin: margin ?? const EdgeInsets.all(8.0),
       elevation: elevation ?? 4.0,
       color: color,
-      shape: shape ?? RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: padding != null 
-        ? Padding(padding: padding, child: child)
-        : child,
+      shape:
+          shape ??
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: padding != null ? Padding(padding: padding, child: child) : child,
     );
   }
-  
+
   /// Create optimized list view with performance enhancements
   static Widget buildOptimizedListView({
     required int itemCount,
@@ -82,7 +78,7 @@ class PerformanceUtils {
       itemBuilder: itemBuilder,
     );
   }
-  
+
   /// Optimized image widget with caching and performance
   static Widget buildOptimizedImage({
     required String imagePath,
@@ -101,7 +97,7 @@ class PerformanceUtils {
       filterQuality: FilterQuality.medium,
     );
   }
-  
+
   /// Debounced search widget for performance
   static Widget buildDebouncedSearchField({
     required Function(String) onSearch,
@@ -116,7 +112,7 @@ class PerformanceUtils {
       controller: controller,
     );
   }
-  
+
   /// Optimize heavy computations with isolates (placeholder for future implementation)
   static Future<T> computeHeavyOperation<T>(
     Future<T> Function() computation,
@@ -125,7 +121,7 @@ class PerformanceUtils {
     // In future, can be moved to isolates for CPU-intensive tasks
     return await computation();
   }
-  
+
   /// Memory-efficient builder for large datasets
   static Widget buildLazyLoadedList<T>({
     required List<T> items,
@@ -142,27 +138,27 @@ class PerformanceUtils {
       loadingWidget: loadingWidget,
     );
   }
-  
+
   /// Reduce widget rebuilds with RepaintBoundary
   static Widget buildRepaintBoundary(Widget child) {
     return RepaintBoundary(child: child);
   }
-  
+
   /// Optimize animations with reduced motion support
   static Duration getOptimizedAnimationDuration(BuildContext context) {
     final isReduceAnimations = MediaQuery.of(context).disableAnimations;
-    return isReduceAnimations 
-        ? Duration.zero 
+    return isReduceAnimations
+        ? Duration.zero
         : const Duration(milliseconds: 300);
   }
-  
+
   /// Precache important images for better performance
   static Future<void> precacheImportantImages(BuildContext context) async {
     // Add important images to precache
     const imagePaths = [
       // Add your app's important image paths here
     ];
-    
+
     for (String path in imagePaths) {
       try {
         await precacheImage(AssetImage(path), context);
@@ -194,13 +190,13 @@ class _DebouncedSearchField extends StatefulWidget {
 class _DebouncedSearchFieldState extends State<_DebouncedSearchField> {
   late TextEditingController _controller;
   late Timer _debounceTimer;
-  
+
   @override
   void initState() {
     super.initState();
     _controller = widget.controller ?? TextEditingController();
   }
-  
+
   @override
   void dispose() {
     if (widget.controller == null) {
@@ -209,14 +205,14 @@ class _DebouncedSearchFieldState extends State<_DebouncedSearchField> {
     _debounceTimer.cancel();
     super.dispose();
   }
-  
+
   void _onSearchChanged(String query) {
     _debounceTimer.cancel();
     _debounceTimer = Timer(widget.debounceDelay, () {
       widget.onSearch(query);
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -225,9 +221,7 @@ class _DebouncedSearchFieldState extends State<_DebouncedSearchField> {
       decoration: InputDecoration(
         hintText: widget.hintText ?? 'Search...',
         prefixIcon: const Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -257,7 +251,7 @@ class _LazyLoadedListState<T> extends State<_LazyLoadedList<T>> {
   late ScrollController _controller;
   int _currentlyLoaded = 0;
   bool _isLoadingMore = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -265,7 +259,7 @@ class _LazyLoadedListState<T> extends State<_LazyLoadedList<T>> {
     _controller.addListener(_scrollListener);
     _currentlyLoaded = widget.itemsPerPage.clamp(0, widget.items.length);
   }
-  
+
   @override
   void dispose() {
     if (widget.controller == null) {
@@ -273,45 +267,48 @@ class _LazyLoadedListState<T> extends State<_LazyLoadedList<T>> {
     }
     super.dispose();
   }
-  
+
   void _scrollListener() {
-    if (_controller.position.pixels >= _controller.position.maxScrollExtent * 0.8) {
+    if (_controller.position.pixels >=
+        _controller.position.maxScrollExtent * 0.8) {
       _loadMoreItems();
     }
   }
-  
+
   void _loadMoreItems() {
     if (_isLoadingMore || _currentlyLoaded >= widget.items.length) return;
-    
+
     setState(() {
       _isLoadingMore = true;
     });
-    
+
     // Simulate loading delay for smooth UX
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
         setState(() {
-          _currentlyLoaded = (_currentlyLoaded + widget.itemsPerPage)
-              .clamp(0, widget.items.length);
+          _currentlyLoaded = (_currentlyLoaded + widget.itemsPerPage).clamp(
+            0,
+            widget.items.length,
+          );
           _isLoadingMore = false;
         });
       }
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final displayItems = widget.items.take(_currentlyLoaded).toList();
-    
+
     return ListView.builder(
       controller: _controller,
       itemCount: displayItems.length + (_isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
         if (index >= displayItems.length) {
-          return widget.loadingWidget ?? 
+          return widget.loadingWidget ??
               const Center(child: CircularProgressIndicator());
         }
-        
+
         return widget.itemBuilder(context, displayItems[index]);
       },
     );

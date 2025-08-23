@@ -13,7 +13,7 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    
+
     // Color Scheme
     colorScheme: ColorScheme.fromSeed(
       seedColor: primaryPink,
@@ -45,9 +45,7 @@ class AppTheme {
       color: Colors.white,
       elevation: 2,
       shadowColor: Colors.black.withValues(alpha: 0.1),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
 
     // Elevated Button Theme
@@ -57,9 +55,7 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 2,
         shadowColor: primaryPink.withValues(alpha: 0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
@@ -68,17 +64,12 @@ class AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryPink,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
 
     // Icon Theme
-    iconTheme: const IconThemeData(
-      color: Colors.black87,
-      size: 24,
-    ),
+    iconTheme: const IconThemeData(color: Colors.black87, size: 24),
 
     // Input Decoration Theme
     inputDecorationTheme: InputDecorationTheme(
@@ -125,9 +116,7 @@ class AppTheme {
       backgroundColor: Colors.grey.shade100,
       selectedColor: primaryPink.withValues(alpha: 0.2),
       labelStyle: const TextStyle(color: Colors.black87),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     ),
   );
 
@@ -135,17 +124,20 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    
+
     // Color Scheme
     colorScheme: ColorScheme.fromSeed(
       seedColor: primaryPink,
       brightness: Brightness.dark,
-      primary: primaryPink.withValues(alpha: 0.8),
-      secondary: primaryPurple.withValues(alpha: 0.8),
-      tertiary: accentBlue.withValues(alpha: 0.8),
+      primary: const Color(0xFFFF4081), // Brighter pink for better contrast
+      secondary: const Color(0xFFE040FB), // Brighter purple
+      tertiary: const Color(0xFF40C4FF), // Brighter blue
       surface: const Color(0xFF1E1E1E),
       background: const Color(0xFF121212),
-      error: errorRed.withValues(alpha: 0.8),
+      onSurface: const Color(0xFFE5E5E5), // High contrast white text
+      onSurfaceVariant: const Color(0xFFB8B8B8), // Medium contrast gray text
+      onBackground: const Color(0xFFE5E5E5), // High contrast white text
+      error: const Color(0xFFFF5252), // Brighter red for visibility
     ),
 
     // App Bar Theme
@@ -167,9 +159,7 @@ class AppTheme {
       color: const Color(0xFF2A2A2A),
       elevation: 4,
       shadowColor: Colors.black.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
 
     // Elevated Button Theme
@@ -179,9 +169,7 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 2,
         shadowColor: primaryPink.withValues(alpha: 0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     ),
@@ -190,17 +178,12 @@ class AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryPink.withValues(alpha: 0.8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
 
     // Icon Theme
-    iconTheme: const IconThemeData(
-      color: Colors.white70,
-      size: 24,
-    ),
+    iconTheme: const IconThemeData(color: Colors.white70, size: 24),
 
     // Input Decoration Theme
     inputDecorationTheme: InputDecorationTheme(
@@ -216,7 +199,10 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: primaryPink.withValues(alpha: 0.8), width: 2),
+        borderSide: BorderSide(
+          color: primaryPink.withValues(alpha: 0.8),
+          width: 2,
+        ),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -247,9 +233,7 @@ class AppTheme {
       backgroundColor: const Color(0xFF2A2A2A),
       selectedColor: primaryPink.withValues(alpha: 0.3),
       labelStyle: const TextStyle(color: Colors.white70),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     ),
   );
 
@@ -265,7 +249,7 @@ class AppTheme {
   // Chart Colors for Light Theme
   static const Map<String, Color> lightChartColors = {
     'heartRate': Color(0xFFE91E63),
-    'hrv': Color(0xFF2196F3), 
+    'hrv': Color(0xFF2196F3),
     'sleep': Color(0xFF9C27B0),
     'temperature': Color(0xFFFF9800),
     'activity': Color(0xFF4CAF50),
@@ -279,7 +263,7 @@ class AppTheme {
   // Chart Colors for Dark Theme
   static const Map<String, Color> darkChartColors = {
     'heartRate': Color(0xFFFF4081),
-    'hrv': Color(0xFF40C4FF), 
+    'hrv': Color(0xFF40C4FF),
     'sleep': Color(0xFFE040FB),
     'temperature': Color(0xFFFFAB40),
     'activity': Color(0xFF69F0AE),
@@ -382,4 +366,55 @@ class AppTheme {
   static const double elevationLow = 2.0;
   static const double elevationMedium = 4.0;
   static const double elevationHigh = 8.0;
+
+  // Theme Helper Methods
+  static Color getTextColor(BuildContext context, {bool? isSecondary}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    if (isSecondary == true) {
+      return isDark ? const Color(0xFFB8B8B8) : const Color(0xFF757575);
+    }
+    return isDark ? const Color(0xFFE5E5E5) : const Color(0xFF212121);
+  }
+
+  static Color getSubtitleColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? const Color(0xFFB8B8B8) : const Color(0xFF757575);
+  }
+
+  static Color getCardColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? const Color(0xFF2A2A2A) : Colors.white;
+  }
+
+  static Color getBackgroundColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA);
+  }
+
+  // Improved Health Colors for Dark Mode
+  static Map<String, Color> getHealthColors(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    if (isDark) {
+      return {
+        'menstruation': const Color(0xFFFF4081), // Brighter pink
+        'fertile': const Color(0xFF69F0AE), // Brighter green
+        'ovulation': const Color(0xFF40C4FF), // Brighter blue
+        'luteal': const Color(0xFFE040FB), // Brighter purple
+        'predicted': const Color(0xFFFFAB40), // Brighter orange
+      };
+    }
+    return healthColors;
+  }
+
+  // Chart colors based on theme
+  static Map<String, Color> getChartColors(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? darkChartColors : lightChartColors;
+  }
+
+  // Calendar colors based on theme
+  static Map<String, Color> getCalendarColors(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? calendarDarkColors : calendarLightColors;
+  }
 }

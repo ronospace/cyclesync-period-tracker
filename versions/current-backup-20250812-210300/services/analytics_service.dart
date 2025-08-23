@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 
 class AnalyticsService {
   /// Calculate comprehensive cycle statistics

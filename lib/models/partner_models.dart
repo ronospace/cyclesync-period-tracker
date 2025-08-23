@@ -12,71 +12,64 @@ enum PartnerType {
 }
 
 /// Partner relationship status
-enum PartnerStatus {
-  invited,
-  accepted,
-  blocked,
-  removed,
-}
+enum PartnerStatus { invited, accepted, blocked, removed }
 
 /// Types of data that can be shared with partners
 enum SharedDataType {
-  cycleStart,           // Period start dates
-  cycleLength,          // Cycle duration
-  symptoms,             // Daily symptoms
-  mood,                 // Mood tracking
-  fertility,            // Fertility window
-  intimacy,             // Intimacy tracking
-  medications,          // Birth control, supplements
-  appointments,         // Doctor appointments
-  predictions,          // AI predictions
-  analytics,            // Cycle analytics
-  reminders,            // Shared reminders
-  notes,                // Personal notes
-  
+  cycleStart, // Period start dates
+  cycleLength, // Cycle duration
+  symptoms, // Daily symptoms
+  mood, // Mood tracking
+  fertility, // Fertility window
+  intimacy, // Intimacy tracking
+  medications, // Birth control, supplements
+  appointments, // Doctor appointments
+  predictions, // AI predictions
+  analytics, // Cycle analytics
+  reminders, // Shared reminders
+  notes, // Personal notes
   // Legacy compatibility aliases
-  periodDates,          // Alias for cycleStart
-  moods,               // Alias for mood
-  flowIntensity,       // Flow intensity data
-  temperature,         // Basal body temperature
-  cervicalMucus,       // Cervical mucus observations
-  sexualActivity,      // Sexual activity tracking
+  periodDates, // Alias for cycleStart
+  moods, // Alias for mood
+  flowIntensity, // Flow intensity data
+  temperature, // Basal body temperature
+  cervicalMucus, // Cervical mucus observations
+  sexualActivity, // Sexual activity tracking
 }
 
 /// Permission levels for shared data
 enum SharingPermissionLevel {
-  view,                 // Can only view
-  comment,              // Can view and add comments
-  remind,               // Can view, comment, and send reminders
-  edit,                 // Full access (rare, mainly for healthcare providers)
-  
+  view, // Can only view
+  comment, // Can view and add comments
+  remind, // Can view, comment, and send reminders
+  edit, // Full access (rare, mainly for healthcare providers)
   // Legacy compatibility alias
-  viewOnly,            // Alias for view
+  viewOnly, // Alias for view
 }
 
 /// Main partner relationship model
 class PartnerRelationship {
   final String id;
-  final String userId;              // User who initiated the relationship
-  final String partnerId;          // Partner's user ID
-  final String partnerEmail;       // Partner's email for invitation
-  final String? partnerName;       // Partner's display name
-  final String? partnerPhotoUrl;   // Partner's profile photo
+  final String userId; // User who initiated the relationship
+  final String partnerId; // Partner's user ID
+  final String partnerEmail; // Partner's email for invitation
+  final String? partnerName; // Partner's display name
+  final String? partnerPhotoUrl; // Partner's profile photo
   final PartnerType type;
   final PartnerStatus status;
   final DateTime createdAt;
   final DateTime? acceptedAt;
   final DateTime? lastActiveAt;
-  
+
   // Sharing configuration
   final Map<SharedDataType, SharingPermissionLevel> sharingPermissions;
   final bool isNotificationsEnabled;
   final bool isLocationSharingEnabled;
   final bool isEmergencyContactEnabled;
-  
+
   // Custom settings
-  final String? customTitle;        // Custom relationship title
-  final String? nickname;          // Nickname for partner
+  final String? customTitle; // Custom relationship title
+  final String? nickname; // Nickname for partner
   final Map<String, dynamic>? metadata;
 
   const PartnerRelationship({
@@ -134,9 +127,12 @@ class PartnerRelationship {
       acceptedAt: acceptedAt ?? this.acceptedAt,
       lastActiveAt: lastActiveAt ?? this.lastActiveAt,
       sharingPermissions: sharingPermissions ?? this.sharingPermissions,
-      isNotificationsEnabled: isNotificationsEnabled ?? this.isNotificationsEnabled,
-      isLocationSharingEnabled: isLocationSharingEnabled ?? this.isLocationSharingEnabled,
-      isEmergencyContactEnabled: isEmergencyContactEnabled ?? this.isEmergencyContactEnabled,
+      isNotificationsEnabled:
+          isNotificationsEnabled ?? this.isNotificationsEnabled,
+      isLocationSharingEnabled:
+          isLocationSharingEnabled ?? this.isLocationSharingEnabled,
+      isEmergencyContactEnabled:
+          isEmergencyContactEnabled ?? this.isEmergencyContactEnabled,
       customTitle: customTitle ?? this.customTitle,
       nickname: nickname ?? this.nickname,
       metadata: metadata ?? this.metadata,
@@ -186,9 +182,15 @@ class PartnerRelationship {
         (e) => e.name == map['status'],
         orElse: () => PartnerStatus.invited,
       ),
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
-      acceptedAt: map['acceptedAt'] != null ? DateTime.parse(map['acceptedAt']) : null,
-      lastActiveAt: map['lastActiveAt'] != null ? DateTime.parse(map['lastActiveAt']) : null,
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      acceptedAt: map['acceptedAt'] != null
+          ? DateTime.parse(map['acceptedAt'])
+          : null,
+      lastActiveAt: map['lastActiveAt'] != null
+          ? DateTime.parse(map['lastActiveAt'])
+          : null,
       sharingPermissions: _parseSharedPermissions(map['sharingPermissions']),
       isNotificationsEnabled: map['isNotificationsEnabled'] ?? true,
       isLocationSharingEnabled: map['isLocationSharingEnabled'] ?? false,
@@ -203,18 +205,20 @@ class PartnerRelationship {
     dynamic permissions,
   ) {
     if (permissions is! Map) return {};
-    
+
     final result = <SharedDataType, SharingPermissionLevel>{};
     permissions.forEach((key, value) {
       try {
         final dataType = SharedDataType.values.firstWhere((e) => e.name == key);
-        final permLevel = SharingPermissionLevel.values.firstWhere((e) => e.name == value);
+        final permLevel = SharingPermissionLevel.values.firstWhere(
+          (e) => e.name == value,
+        );
         result[dataType] = permLevel;
       } catch (e) {
         debugPrint('Error parsing permission: $key -> $value');
       }
     });
-    
+
     return result;
   }
 
@@ -260,13 +264,20 @@ class PartnerRelationship {
 
   String _getPartnerTypeDisplayName(PartnerType type) {
     switch (type) {
-      case PartnerType.romanticPartner: return 'Partner';
-      case PartnerType.spouse: return 'Spouse';
-      case PartnerType.friend: return 'Friend';
-      case PartnerType.familyMember: return 'Family';
-      case PartnerType.doctor: return 'Doctor';
-      case PartnerType.coach: return 'Coach';
-      case PartnerType.custom: return 'Contact';
+      case PartnerType.romanticPartner:
+        return 'Partner';
+      case PartnerType.spouse:
+        return 'Spouse';
+      case PartnerType.friend:
+        return 'Friend';
+      case PartnerType.familyMember:
+        return 'Family';
+      case PartnerType.doctor:
+        return 'Doctor';
+      case PartnerType.coach:
+        return 'Coach';
+      case PartnerType.custom:
+        return 'Contact';
     }
   }
 
@@ -277,12 +288,7 @@ class PartnerRelationship {
 }
 
 /// Actions that partners can perform
-enum PartnerAction {
-  view,
-  comment,
-  remind,
-  edit,
-}
+enum PartnerAction { view, comment, remind, edit }
 
 /// Partner invitation model
 class PartnerInvitation {
@@ -350,24 +356,24 @@ class PartnerInvitation {
         orElse: () => PartnerType.custom,
       ),
       customMessage: map['customMessage'],
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
-      expiresAt: map['expiresAt'] != null ? DateTime.parse(map['expiresAt']) : null,
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      expiresAt: map['expiresAt'] != null
+          ? DateTime.parse(map['expiresAt'])
+          : null,
       status: InvitationStatus.values.firstWhere(
         (e) => e.name == map['status'],
         orElse: () => InvitationStatus.pending,
       ),
-      proposedPermissions: PartnerRelationship._parseSharedPermissions(map['proposedPermissions']),
+      proposedPermissions: PartnerRelationship._parseSharedPermissions(
+        map['proposedPermissions'],
+      ),
     );
   }
 }
 
-enum InvitationStatus {
-  pending,
-  accepted,
-  declined,
-  expired,
-  cancelled,
-}
+enum InvitationStatus { pending, accepted, declined, expired, cancelled }
 
 /// Shared data entry between partners
 class SharedDataEntry {
@@ -418,7 +424,9 @@ class SharedDataEntry {
         orElse: () => SharedDataType.notes,
       ),
       data: map['data'] ?? {},
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       comments: (map['comments'] as List<dynamic>? ?? [])
           .map((c) => PartnerComment.fromMap(c))
           .toList(),
@@ -462,7 +470,9 @@ class PartnerComment {
       userId: map['userId'] ?? '',
       userName: map['userName'] ?? '',
       content: map['content'] ?? '',
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       type: CommentType.values.firstWhere(
         (e) => e.name == map['type'],
         orElse: () => CommentType.comment,
@@ -471,12 +481,7 @@ class PartnerComment {
   }
 }
 
-enum CommentType {
-  comment,
-  supportMessage,
-  reminder,
-  celebration,
-}
+enum CommentType { comment, supportMessage, reminder, celebration }
 
 /// Partner notification model
 class PartnerNotification {
@@ -532,7 +537,9 @@ class PartnerNotification {
       title: map['title'] ?? '',
       message: map['message'] ?? '',
       data: map['data'],
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       isRead: map['isRead'] ?? false,
     );
   }
@@ -558,7 +565,8 @@ typedef SharingTemplate = SharingTemplates;
 
 /// Default sharing templates for different partner types
 class SharingTemplates {
-  static const Map<PartnerType, Map<SharedDataType, SharingPermissionLevel>> defaults = {
+  static const Map<PartnerType, Map<SharedDataType, SharingPermissionLevel>>
+  defaults = {
     PartnerType.romanticPartner: {
       SharedDataType.cycleStart: SharingPermissionLevel.comment,
       SharedDataType.fertility: SharingPermissionLevel.comment,
@@ -606,28 +614,33 @@ class SharingTemplates {
   };
 
   /// Get default sharing permissions for partner type
-  static Map<SharedDataType, SharingPermissionLevel> getDefaultPermissions(PartnerType type) {
+  static Map<SharedDataType, SharingPermissionLevel> getDefaultPermissions(
+    PartnerType type,
+  ) {
     return Map.from(defaults[type] ?? {});
   }
 
   /// Get suggested permissions based on relationship context
   static Map<SharedDataType, SharingPermissionLevel> getSuggestedPermissions(
-    PartnerType type,
-    {bool isLongDistance = false, bool isTryingToConceive = false}
-  ) {
+    PartnerType type, {
+    bool isLongDistance = false,
+    bool isTryingToConceive = false,
+  }) {
     var permissions = getDefaultPermissions(type);
-    
-    if (isLongDistance && (type == PartnerType.romanticPartner || type == PartnerType.spouse)) {
+
+    if (isLongDistance &&
+        (type == PartnerType.romanticPartner || type == PartnerType.spouse)) {
       permissions[SharedDataType.mood] = SharingPermissionLevel.comment;
       permissions[SharedDataType.notes] = SharingPermissionLevel.comment;
     }
-    
-    if (isTryingToConceive && (type == PartnerType.romanticPartner || type == PartnerType.spouse)) {
+
+    if (isTryingToConceive &&
+        (type == PartnerType.romanticPartner || type == PartnerType.spouse)) {
       permissions[SharedDataType.fertility] = SharingPermissionLevel.comment;
       permissions[SharedDataType.intimacy] = SharingPermissionLevel.comment;
       permissions[SharedDataType.predictions] = SharingPermissionLevel.comment;
     }
-    
+
     return permissions;
   }
 }

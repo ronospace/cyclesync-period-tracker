@@ -10,10 +10,7 @@ enum ShareType { healthcare, partner }
 class ShareDataDialog extends StatefulWidget {
   final ShareType type;
 
-  const ShareDataDialog({
-    super.key,
-    required this.type,
-  });
+  const ShareDataDialog({super.key, required this.type});
 
   @override
   State<ShareDataDialog> createState() => _ShareDataDialogState();
@@ -28,7 +25,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
   final TextEditingController _providerNameController = TextEditingController();
-  
+
   SharePermission _selectedPermission = SharePermission.viewOnly;
   ProviderType _selectedProviderType = ProviderType.gynecologist;
   Set<DataType> _selectedDataTypes = {DataType.cyclePattern};
@@ -78,7 +75,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.type == ShareType.healthcare 
+        title: widget.type == ShareType.healthcare
             ? 'Share with Healthcare Provider'
             : 'Share with Partner',
         actions: [
@@ -121,7 +118,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
         children: List.generate(5, (index) {
           final isActive = index <= _currentStep;
           final isCompleted = index < _currentStep;
-          
+
           return Expanded(
             child: Row(
               children: [
@@ -129,7 +126,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                   Expanded(
                     child: Container(
                       height: 2,
-                      color: isCompleted 
+                      color: isCompleted
                           ? Theme.of(context).primaryColor
                           : Colors.grey.shade300,
                     ),
@@ -139,7 +136,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                   height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isActive 
+                    color: isActive
                         ? Theme.of(context).primaryColor
                         : Colors.grey.shade300,
                   ),
@@ -149,7 +146,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                         : Text(
                             '${index + 1}',
                             style: TextStyle(
-                              color: isActive ? Colors.white : Colors.grey.shade600,
+                              color: isActive
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
@@ -160,7 +159,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                   Expanded(
                     child: Container(
                       height: 2,
-                      color: isCompleted 
+                      color: isCompleted
                           ? Theme.of(context).primaryColor
                           : Colors.grey.shade300,
                     ),
@@ -193,7 +192,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 32),
-          
+
           if (widget.type == ShareType.healthcare) ...[
             TextFormField(
               controller: _providerNameController,
@@ -205,7 +204,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             DropdownButtonFormField<ProviderType>(
               value: _selectedProviderType,
               decoration: const InputDecoration(
@@ -216,7 +215,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
               items: ProviderType.values.map((type) {
                 return DropdownMenuItem(
                   value: type,
-                  child: Text(type.name.replaceAll(RegExp(r'([A-Z])'), ' \$1').trim()),
+                  child: Text(
+                    type.name.replaceAll(RegExp(r'([A-Z])'), ' \$1').trim(),
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -227,12 +228,12 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
             ),
             const SizedBox(height: 16),
           ],
-          
+
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              labelText: widget.type == ShareType.healthcare 
+              labelText: widget.type == ShareType.healthcare
                   ? 'Provider Email *'
                   : 'Partner Email *',
               hintText: 'example@email.com',
@@ -247,11 +248,13 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 24),
           SwitchListTile(
             title: const Text('Include personal message'),
-            subtitle: const Text('Add a personalized note with your shared data'),
+            subtitle: const Text(
+              'Add a personalized note with your shared data',
+            ),
             value: _includePersonalMessage,
             onChanged: (value) {
               setState(() {
@@ -259,7 +262,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
               });
             },
           ),
-          
+
           if (_includePersonalMessage) ...[
             const SizedBox(height: 16),
             TextFormField(
@@ -304,7 +307,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 32),
-          
+
           ...SharePermission.values.map((permission) {
             return Card(
               margin: const EdgeInsets.only(bottom: 16),
@@ -322,10 +325,14 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                     Wrap(
                       spacing: 4,
                       children: permission.allowedDataTypes
-                          .map((type) => Chip(
-                                label: Text(type.displayName),
-                                backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                              ))
+                          .map(
+                            (type) => Chip(
+                              label: Text(type.displayName),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).primaryColor.withValues(alpha: 0.1),
+                            ),
+                          )
                           .toList(),
                     ),
                   ],
@@ -372,62 +379,64 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 32),
-          
-          ...DataType.values.where((type) => 
-            _selectedPermission.allowedDataTypes.contains(type)
-          ).map((dataType) {
-            final isSelected = _selectedDataTypes.contains(dataType);
-            final isSensitive = dataType.isSensitive;
-            
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: CheckboxListTile(
-                title: Row(
-                  children: [
-                    Text(
-                      dataType.displayName,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    if (isSensitive) ...[
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.warning,
-                        size: 16,
-                        color: Colors.orange.shade600,
-                      ),
-                    ],
-                  ],
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-                    Text(dataType.description),
-                    if (isSensitive) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Contains sensitive personal information',
-                        style: TextStyle(
-                          color: Colors.orange.shade600,
-                          fontSize: 12,
+
+          ...DataType.values
+              .where(
+                (type) => _selectedPermission.allowedDataTypes.contains(type),
+              )
+              .map((dataType) {
+                final isSelected = _selectedDataTypes.contains(dataType);
+                final isSensitive = dataType.isSensitive;
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: CheckboxListTile(
+                    title: Row(
+                      children: [
+                        Text(
+                          dataType.displayName,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
-                      ),
-                    ],
-                  ],
-                ),
-                value: isSelected,
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      _selectedDataTypes.add(dataType);
-                    } else {
-                      _selectedDataTypes.remove(dataType);
-                    }
-                  });
-                },
-              ),
-            );
-          }),
+                        if (isSensitive) ...[
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.warning,
+                            size: 16,
+                            color: Colors.orange.shade600,
+                          ),
+                        ],
+                      ],
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(dataType.description),
+                        if (isSensitive) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            'Contains sensitive personal information',
+                            style: TextStyle(
+                              color: Colors.orange.shade600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    value: isSelected,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          _selectedDataTypes.add(dataType);
+                        } else {
+                          _selectedDataTypes.remove(dataType);
+                        }
+                      });
+                    },
+                  ),
+                );
+              }),
 
           const SizedBox(height: 24),
           Card(
@@ -472,7 +481,11 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                             setState(() {
                               final now = DateTime.now();
                               _selectedDateRange = DateRange(
-                                start: DateTime(now.year, now.month - 6, now.day),
+                                start: DateTime(
+                                  now.year,
+                                  now.month - 6,
+                                  now.day,
+                                ),
                                 end: now,
                               );
                             });
@@ -520,12 +533,15 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                       const SizedBox(width: 8),
                       const Text(
                         'Access Duration',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   ...([
                     (const Duration(days: 7), '1 Week'),
                     (const Duration(days: 30), '1 Month'),
@@ -537,7 +553,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                       title: Text(option.$2),
                       subtitle: option.$1 != null
                           ? Text('Expires in ${option.$1!.inDays} days')
-                          : const Text('Access never expires (can be revoked manually)'),
+                          : const Text(
+                              'Access never expires (can be revoked manually)',
+                            ),
                       value: option.$1,
                       groupValue: _selectedExpiration,
                       onChanged: (value) {
@@ -558,7 +576,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
               children: [
                 SwitchListTile(
                   title: const Text('Send notification email'),
-                  subtitle: const Text('Notify recipient about shared data access'),
+                  subtitle: const Text(
+                    'Notify recipient about shared data access',
+                  ),
                   value: _sendNotification,
                   onChanged: (value) {
                     setState(() {
@@ -569,7 +589,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                 const Divider(height: 1),
                 SwitchListTile(
                   title: const Text('Require access confirmation'),
-                  subtitle: const Text('Recipient must confirm before accessing data'),
+                  subtitle: const Text(
+                    'Recipient must confirm before accessing data',
+                  ),
                   value: false,
                   onChanged: null, // Feature for future implementation
                 ),
@@ -581,7 +603,8 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
           _buildInfoCard(
             title: 'Access Management',
             icon: Icons.info,
-            content: 'You can view all your shares, check access history, and revoke access at any time from the Social & Sharing section.',
+            content:
+                'You can view all your shares, check access history, and revoke access at any time from the Social & Sharing section.',
             color: Colors.blue,
           ),
         ],
@@ -617,19 +640,38 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Divider(),
-                  
+
                   if (widget.type == ShareType.healthcare) ...[
-                    _buildReviewRow('Provider Name', _providerNameController.text),
-                    _buildReviewRow('Provider Type', _selectedProviderType.name),
+                    _buildReviewRow(
+                      'Provider Name',
+                      _providerNameController.text,
+                    ),
+                    _buildReviewRow(
+                      'Provider Type',
+                      _selectedProviderType.name,
+                    ),
                   ],
                   _buildReviewRow('Email', _emailController.text),
-                  _buildReviewRow('Access Level', _selectedPermission.displayName),
-                  _buildReviewRow('Data Types', _selectedDataTypes.map((e) => e.displayName).join(', ')),
-                  _buildReviewRow('Date Range', _selectedDateRange?.toString() ?? 'Not selected'),
-                  _buildReviewRow('Expires', _selectedExpiration != null 
-                      ? 'In ${_selectedExpiration!.inDays} days'
-                      : 'Never'),
-                  if (_includePersonalMessage && _messageController.text.isNotEmpty)
+                  _buildReviewRow(
+                    'Access Level',
+                    _selectedPermission.displayName,
+                  ),
+                  _buildReviewRow(
+                    'Data Types',
+                    _selectedDataTypes.map((e) => e.displayName).join(', '),
+                  ),
+                  _buildReviewRow(
+                    'Date Range',
+                    _selectedDateRange?.toString() ?? 'Not selected',
+                  ),
+                  _buildReviewRow(
+                    'Expires',
+                    _selectedExpiration != null
+                        ? 'In ${_selectedExpiration!.inDays} days'
+                        : 'Never',
+                  ),
+                  if (_includePersonalMessage &&
+                      _messageController.text.isNotEmpty)
                     _buildReviewRow('Message', _messageController.text),
                 ],
               ),
@@ -668,7 +710,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                   ),
                   const SizedBox(height: 16),
                   CheckboxListTile(
-                    title: const Text('I agree to the privacy terms and data sharing policy'),
+                    title: const Text(
+                      'I agree to the privacy terms and data sharing policy',
+                    ),
                     value: _agreeToPolicies,
                     onChanged: (value) {
                       setState(() {
@@ -694,7 +738,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -730,7 +774,7 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
     required Color color,
   }) {
     return Card(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -781,8 +825,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
     switch (_currentStep) {
       case 0:
         return _emailController.text.isNotEmpty &&
-               RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_emailController.text) &&
-               (widget.type != ShareType.healthcare || _providerNameController.text.isNotEmpty);
+            RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_emailController.text) &&
+            (widget.type != ShareType.healthcare ||
+                _providerNameController.text.isNotEmpty);
       case 1:
         return true; // Permission always selected
       case 2:
@@ -828,11 +873,13 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
       initialDateRange: DateTimeRange(
-        start: _selectedDateRange?.start ?? DateTime.now().subtract(const Duration(days: 180)),
+        start:
+            _selectedDateRange?.start ??
+            DateTime.now().subtract(const Duration(days: 180)),
         end: _selectedDateRange?.end ?? DateTime.now(),
       ),
     );
-    
+
     if (picked != null) {
       setState(() {
         _selectedDateRange = DateRange(start: picked.start, end: picked.end);
@@ -851,7 +898,9 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
         permission: _selectedPermission,
         dateRange: _selectedDateRange!,
         dataTypes: _selectedDataTypes.toList(),
-        personalMessage: _includePersonalMessage ? _messageController.text.trim() : null,
+        personalMessage: _includePersonalMessage
+            ? _messageController.text.trim()
+            : null,
         expiration: _selectedExpiration,
       );
 
@@ -902,14 +951,21 @@ class _ShareDataDialogState extends State<ShareDataDialog> {
                     Expanded(
                       child: Text(
                         result.accessUrl!,
-                        style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     IconButton(
                       onPressed: () {
-                        Clipboard.setData(ClipboardData(text: result.accessUrl!));
+                        Clipboard.setData(
+                          ClipboardData(text: result.accessUrl!),
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('URL copied to clipboard')),
+                          const SnackBar(
+                            content: Text('URL copied to clipboard'),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.copy),

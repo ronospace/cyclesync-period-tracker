@@ -188,7 +188,7 @@ class CycleData {
   static List<Symptom> _parseSymptoms(dynamic symptoms) {
     if (symptoms == null) return [];
     if (symptoms is! List) return [];
-    
+
     return symptoms
         .map((name) => Symptom.fromName(name.toString()))
         .where((symptom) => symptom != null)
@@ -229,7 +229,7 @@ enum FlowIntensity {
   heavy('Heavy', Colors.red, Icons.bloodtype);
 
   const FlowIntensity(this.displayName, this.color, this.icon);
-  
+
   final String displayName;
   final Color color;
   final IconData icon;
@@ -238,7 +238,7 @@ enum FlowIntensity {
 /// Wellbeing data structure
 class WellbeingData {
   final double mood; // 1-5 scale
-  final double energy; // 1-5 scale  
+  final double energy; // 1-5 scale
   final double pain; // 1-5 scale
 
   const WellbeingData({
@@ -274,11 +274,7 @@ class WellbeingData {
     return 'None';
   }
 
-  WellbeingData copyWith({
-    double? mood,
-    double? energy,
-    double? pain,
-  }) {
+  WellbeingData copyWith({double? mood, double? energy, double? pain}) {
     return WellbeingData(
       mood: mood ?? this.mood,
       energy: energy ?? this.energy,
@@ -349,7 +345,7 @@ class Symptom {
       color: Colors.green,
       category: 'Physical',
     ),
-    
+
     // Emotional symptoms
     Symptom(
       name: 'mood_swings',
@@ -379,7 +375,7 @@ class Symptom {
       color: Colors.indigo,
       category: 'Emotional',
     ),
-    
+
     // Other symptoms
     Symptom(
       name: 'acne',
@@ -438,7 +434,7 @@ class CycleAnalytics {
   /// Calculate analytics from cycle data
   factory CycleAnalytics.fromCycles(List<CycleData> cycles) {
     final completedCycles = cycles.where((c) => c.isCompleted).toList();
-    
+
     if (completedCycles.isEmpty) {
       return CycleAnalytics(
         cycles: cycles,
@@ -450,28 +446,45 @@ class CycleAnalytics {
     }
 
     // Calculate average cycle length
-    final totalLength = completedCycles.fold(0, (sum, cycle) => sum + cycle.lengthInDays);
+    final totalLength = completedCycles.fold(
+      0,
+      (sum, cycle) => sum + cycle.lengthInDays,
+    );
     final averageLength = totalLength / completedCycles.length;
 
     // Calculate regularity score (based on standard deviation)
-    final lengths = completedCycles.map((c) => c.lengthInDays.toDouble()).toList();
-    final variance = lengths.fold(0.0, (sum, length) => sum + (length - averageLength) * (length - averageLength)) / lengths.length;
+    final lengths = completedCycles
+        .map((c) => c.lengthInDays.toDouble())
+        .toList();
+    final variance =
+        lengths.fold(
+          0.0,
+          (sum, length) =>
+              sum + (length - averageLength) * (length - averageLength),
+        ) /
+        lengths.length;
     final standardDeviation = variance > 0 ? variance.sqrtSafe() : 0.0;
     final regularity = (100 - (standardDeviation * 10)).clamp(0.0, 100.0);
 
     // Calculate symptom frequency
     final symptomFreq = <String, double>{};
     for (final symptom in Symptom.allSymptoms) {
-      final count = cycles.where((c) => c.symptoms.any((s) => s.name == symptom.name)).length;
+      final count = cycles
+          .where((c) => c.symptoms.any((s) => s.name == symptom.name))
+          .length;
       symptomFreq[symptom.name] = cycles.isEmpty ? 0 : count / cycles.length;
     }
 
     // Calculate wellbeing averages
     final wellbeingAvg = <String, double>{};
     if (cycles.isNotEmpty) {
-      wellbeingAvg['mood'] = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / cycles.length;
-      wellbeingAvg['energy'] = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) / cycles.length;
-      wellbeingAvg['pain'] = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.pain) / cycles.length;
+      wellbeingAvg['mood'] =
+          cycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / cycles.length;
+      wellbeingAvg['energy'] =
+          cycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) /
+          cycles.length;
+      wellbeingAvg['pain'] =
+          cycles.fold(0.0, (sum, c) => sum + c.wellbeing.pain) / cycles.length;
     }
 
     return CycleAnalytics(
@@ -489,18 +502,27 @@ class CycleAnalytics {
 
     // Sort by start date (most recent first)
     completedCycles.sort((a, b) => b.startDate.compareTo(a.startDate));
-    
+
     // Take last 3 cycles for prediction
     final recentCycles = completedCycles.take(3).toList();
-    final avgLength = recentCycles.fold(0, (sum, c) => sum + c.lengthInDays) / recentCycles.length;
-    
+    final avgLength =
+        recentCycles.fold(0, (sum, c) => sum + c.lengthInDays) /
+        recentCycles.length;
+
     final lastCycleEnd = recentCycles.first.endDate!;
     final predictedStart = lastCycleEnd.add(Duration(days: avgLength.round()));
-    final predictedEnd = predictedStart.add(Duration(days: avgLength.round() - 1));
-    
+    final predictedEnd = predictedStart.add(
+      Duration(days: avgLength.round() - 1),
+    );
+
     // Calculate confidence based on regularity
     final lengths = recentCycles.map((c) => c.lengthInDays).toList();
-    final variance = lengths.fold(0.0, (sum, length) => sum + (length - avgLength) * (length - avgLength)) / lengths.length;
+    final variance =
+        lengths.fold(
+          0.0,
+          (sum, length) => sum + (length - avgLength) * (length - avgLength),
+        ) /
+        lengths.length;
     final confidence = (100 - variance * 10).clamp(50.0, 95.0);
 
     return CyclePrediction(
@@ -526,8 +548,10 @@ class CyclePrediction {
     required this.basedOnCycles,
   });
 
-  int get daysUntilPredicted => predictedStartDate.difference(DateTime.now()).inDays;
-  int get predictedLength => predictedEndDate.difference(predictedStartDate).inDays + 1;
+  int get daysUntilPredicted =>
+      predictedStartDate.difference(DateTime.now()).inDays;
+  int get predictedLength =>
+      predictedEndDate.difference(predictedStartDate).inDays + 1;
 }
 
 /// Helper extension for double sqrt
@@ -572,45 +596,44 @@ class CycleFilter {
   List<CycleData> apply(List<CycleData> cycles) {
     return cycles.where((cycle) {
       // Date range filter
-      if (startDate != null && cycle.startDate.isBefore(startDate!)) return false;
+      if (startDate != null && cycle.startDate.isBefore(startDate!))
+        return false;
       if (endDate != null && cycle.startDate.isAfter(endDate!)) return false;
-      
+
       // Flow intensity filter
-      if (flowIntensities != null && !flowIntensities!.contains(cycle.flowIntensity)) return false;
-      
+      if (flowIntensities != null &&
+          !flowIntensities!.contains(cycle.flowIntensity))
+        return false;
+
       // Symptom filter
       if (symptoms != null && symptoms!.isNotEmpty) {
-        final hasSymptom = symptoms!.any((symptom) => 
-          cycle.symptoms.any((cycleSymptom) => cycleSymptom.name == symptom.name));
+        final hasSymptom = symptoms!.any(
+          (symptom) => cycle.symptoms.any(
+            (cycleSymptom) => cycleSymptom.name == symptom.name,
+          ),
+        );
         if (!hasSymptom) return false;
       }
-      
+
       // Wellbeing filters
       if (minMood != null && cycle.wellbeing.mood < minMood!) return false;
       if (maxMood != null && cycle.wellbeing.mood > maxMood!) return false;
-      if (minEnergy != null && cycle.wellbeing.energy < minEnergy!) return false;
-      if (maxEnergy != null && cycle.wellbeing.energy > maxEnergy!) return false;
+      if (minEnergy != null && cycle.wellbeing.energy < minEnergy!)
+        return false;
+      if (maxEnergy != null && cycle.wellbeing.energy > maxEnergy!)
+        return false;
       if (minPain != null && cycle.wellbeing.pain < minPain!) return false;
       if (maxPain != null && cycle.wellbeing.pain > maxPain!) return false;
-      
+
       return true;
     }).toList();
   }
 }
 
 // AI Insight Types
-enum InsightType {
-  cycle,
-  symptom,
-  wellness,
-  prediction,
-}
+enum InsightType { cycle, symptom, wellness, prediction }
 
-enum InsightPriority {
-  low,
-  medium,
-  high,
-}
+enum InsightPriority { low, medium, high }
 
 class AIInsight {
   final String id;

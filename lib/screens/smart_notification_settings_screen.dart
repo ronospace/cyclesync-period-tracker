@@ -9,13 +9,15 @@ class SmartNotificationSettingsScreen extends StatefulWidget {
   const SmartNotificationSettingsScreen({super.key});
 
   @override
-  State<SmartNotificationSettingsScreen> createState() => _SmartNotificationSettingsScreenState();
+  State<SmartNotificationSettingsScreen> createState() =>
+      _SmartNotificationSettingsScreenState();
 }
 
-class _SmartNotificationSettingsScreenState extends State<SmartNotificationSettingsScreen> {
+class _SmartNotificationSettingsScreenState
+    extends State<SmartNotificationSettingsScreen> {
   bool _isLoading = true;
   bool _notificationsEnabled = false;
-  
+
   // Smart Notification Categories
   final Map<String, bool> _smartPreferences = {
     'predictive': true,
@@ -24,7 +26,7 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
     'medication': true,
     'wellness': true,
   };
-  
+
   // Scheduling preferences
   TimeOfDay _preferredTime = const TimeOfDay(hour: 9, minute: 0);
   bool _weekendsEnabled = true;
@@ -40,18 +42,22 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
   Future<void> _loadSettings() async {
     try {
       // Check if notifications are enabled
-      _notificationsEnabled = await NotificationService.areNotificationsEnabled();
-      
+      _notificationsEnabled =
+          await NotificationService.areNotificationsEnabled();
+
       // Load preferences from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      
+
       setState(() {
-        _smartPreferences['predictive'] = prefs.getBool('smart_predictive') ?? true;
+        _smartPreferences['predictive'] =
+            prefs.getBool('smart_predictive') ?? true;
         _smartPreferences['insights'] = prefs.getBool('smart_insights') ?? true;
-        _smartPreferences['health_alerts'] = prefs.getBool('smart_health_alerts') ?? true;
-        _smartPreferences['medication'] = prefs.getBool('smart_medication') ?? true;
+        _smartPreferences['health_alerts'] =
+            prefs.getBool('smart_health_alerts') ?? true;
+        _smartPreferences['medication'] =
+            prefs.getBool('smart_medication') ?? true;
         _smartPreferences['wellness'] = prefs.getBool('smart_wellness') ?? true;
-        
+
         _preferredTime = TimeOfDay(
           hour: prefs.getInt('preferred_hour') ?? 9,
           minute: prefs.getInt('preferred_minute') ?? 0,
@@ -59,7 +65,7 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
         _weekendsEnabled = prefs.getBool('weekends_enabled') ?? true;
         _maxDailyNotifications = prefs.getInt('max_daily_notifications') ?? 3;
         _doNotDisturbMode = prefs.getBool('do_not_disturb') ?? false;
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -71,24 +77,27 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
   Future<void> _saveSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Save smart preferences
       await prefs.setBool('smart_predictive', _smartPreferences['predictive']!);
       await prefs.setBool('smart_insights', _smartPreferences['insights']!);
-      await prefs.setBool('smart_health_alerts', _smartPreferences['health_alerts']!);
+      await prefs.setBool(
+        'smart_health_alerts',
+        _smartPreferences['health_alerts']!,
+      );
       await prefs.setBool('smart_medication', _smartPreferences['medication']!);
       await prefs.setBool('smart_wellness', _smartPreferences['wellness']!);
-      
+
       // Save scheduling preferences
       await prefs.setInt('preferred_hour', _preferredTime.hour);
       await prefs.setInt('preferred_minute', _preferredTime.minute);
       await prefs.setBool('weekends_enabled', _weekendsEnabled);
       await prefs.setInt('max_daily_notifications', _maxDailyNotifications);
       await prefs.setBool('do_not_disturb', _doNotDisturbMode);
-      
+
       // Update smart notification service
       await SmartNotificationService.updateSmartPreferences(_smartPreferences);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -115,7 +124,7 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
     setState(() {
       _notificationsEnabled = granted;
     });
-    
+
     if (granted) {
       await _saveSettings();
     }
@@ -140,7 +149,7 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('🔔 Smart Notifications'),
@@ -191,7 +200,9 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
             Row(
               children: [
                 Icon(
-                  _notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
+                  _notificationsEnabled
+                      ? Icons.notifications_active
+                      : Icons.notifications_off,
                   color: _notificationsEnabled ? Colors.green : Colors.orange,
                 ),
                 const SizedBox(width: 8),
@@ -308,7 +319,7 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -322,7 +333,9 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
                 Text(
                   description,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                    color: theme.textTheme.bodySmall?.color?.withValues(
+                      alpha: 0.7,
+                    ),
                   ),
                 ),
               ],
@@ -365,7 +378,9 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
             ListTile(
               leading: const Icon(Icons.access_time),
               title: const Text('Preferred Time'),
-              subtitle: Text('Receive notifications around ${_preferredTime.format(context)}'),
+              subtitle: Text(
+                'Receive notifications around ${_preferredTime.format(context)}',
+              ),
               trailing: TextButton(
                 onPressed: _notificationsEnabled ? () => _selectTime() : null,
                 child: const Text('Change'),
@@ -386,14 +401,13 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
             ListTile(
               leading: const Icon(Icons.notifications_none),
               title: const Text('Daily Notification Limit'),
-              subtitle: Text('Maximum $_maxDailyNotifications notifications per day'),
+              subtitle: Text(
+                'Maximum $_maxDailyNotifications notifications per day',
+              ),
               trailing: DropdownButton<int>(
                 value: _maxDailyNotifications,
                 items: [1, 2, 3, 4, 5]
-                    .map((i) => DropdownMenuItem(
-                          value: i,
-                          child: Text('$i'),
-                        ))
+                    .map((i) => DropdownMenuItem(value: i, child: Text('$i')))
                     .toList(),
                 onChanged: _notificationsEnabled
                     ? (value) {
@@ -434,7 +448,9 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
             SwitchListTile(
               secondary: const Icon(Icons.do_not_disturb),
               title: const Text('Smart Do Not Disturb'),
-              subtitle: const Text('Automatically reduce notifications during stressful periods'),
+              subtitle: const Text(
+                'Automatically reduce notifications during stressful periods',
+              ),
               value: _doNotDisturbMode,
               onChanged: _notificationsEnabled
                   ? (value) {
@@ -499,7 +515,7 @@ class _SmartNotificationSettingsScreenState extends State<SmartNotificationSetti
       context: context,
       initialTime: _preferredTime,
     );
-    
+
     if (time != null) {
       setState(() => _preferredTime = time);
       _saveSettings();

@@ -2,7 +2,9 @@ import 'dart:math';
 
 class AnalyticsService {
   /// Calculate comprehensive cycle statistics
-  static CycleStatistics calculateStatistics(List<Map<String, dynamic>> cycles) {
+  static CycleStatistics calculateStatistics(
+    List<Map<String, dynamic>> cycles,
+  ) {
     if (cycles.isEmpty) {
       return CycleStatistics.empty();
     }
@@ -26,17 +28,20 @@ class AnalyticsService {
 
       if (startDate != null && endDate != null) {
         final length = endDate.difference(startDate).inDays + 1;
-        if (length > 0 && length <= 60) { // Sanity check
+        if (length > 0 && length <= 60) {
+          // Sanity check
           cycleLengths.add(length);
-          cycleData.add(CycleData(
-            id: cycle['id'] ?? '',
-            startDate: startDate,
-            endDate: endDate,
-            length: length,
-            flow: cycle['flow']?.toString(),
-            symptoms: _parseSymptoms(cycle['symptoms']),
-            notes: cycle['notes']?.toString(),
-          ));
+          cycleData.add(
+            CycleData(
+              id: cycle['id'] ?? '',
+              startDate: startDate,
+              endDate: endDate,
+              length: length,
+              flow: cycle['flow']?.toString(),
+              symptoms: _parseSymptoms(cycle['symptoms']),
+              notes: cycle['notes']?.toString(),
+            ),
+          );
         }
       }
     }
@@ -49,24 +54,30 @@ class AnalyticsService {
     cycleData.sort((a, b) => b.startDate.compareTo(a.startDate));
 
     // Calculate statistics
-    final averageLength = cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
+    final averageLength =
+        cycleLengths.reduce((a, b) => a + b) / cycleLengths.length;
     final shortestCycle = cycleLengths.reduce(min);
     final longestCycle = cycleLengths.reduce(max);
-    
+
     // Calculate standard deviation
-    final variance = cycleLengths
-        .map((length) => pow(length - averageLength, 2))
-        .reduce((a, b) => a + b) / cycleLengths.length;
+    final variance =
+        cycleLengths
+            .map((length) => pow(length - averageLength, 2))
+            .reduce((a, b) => a + b) /
+        cycleLengths.length;
     final standardDeviation = sqrt(variance);
 
     // Calculate trends
     final trends = _calculateTrends(cycleData);
-    
+
     // Calculate prediction accuracy
     final predictionAccuracy = _calculatePredictionAccuracy(cycleData);
 
     // Calculate cycle regularity score (0-100, higher is more regular)
-    final regularityScore = _calculateRegularityScore(cycleLengths, standardDeviation);
+    final regularityScore = _calculateRegularityScore(
+      cycleLengths,
+      standardDeviation,
+    );
 
     return CycleStatistics(
       totalCycles: completedCycles.length,
@@ -96,11 +107,17 @@ class AnalyticsService {
     final n = lengths.length;
     final sumX = List.generate(n, (i) => i + 1).reduce((a, b) => a + b);
     final sumY = lengths.reduce((a, b) => a + b);
-    final sumXY = List.generate(n, (i) => (i + 1) * lengths[i]).reduce((a, b) => a + b);
-    final sumX2 = List.generate(n, (i) => (i + 1) * (i + 1)).reduce((a, b) => a + b);
+    final sumXY = List.generate(
+      n,
+      (i) => (i + 1) * lengths[i],
+    ).reduce((a, b) => a + b);
+    final sumX2 = List.generate(
+      n,
+      (i) => (i + 1) * (i + 1),
+    ).reduce((a, b) => a + b);
 
     final slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-    
+
     TrendDirection lengthTrend;
     if (slope.abs() < 0.1) {
       lengthTrend = TrendDirection.stable;
@@ -121,12 +138,20 @@ class AnalyticsService {
   }
 
   /// Analyze symptom patterns and trends
-  static Map<String, SymptomTrend> _analyzeSymptomTrends(List<CycleData> cycles) {
+  static Map<String, SymptomTrend> _analyzeSymptomTrends(
+    List<CycleData> cycles,
+  ) {
     final symptomFrequency = <String, List<bool>>{};
-    
+
     for (final cycle in cycles) {
-      final allPossibleSymptoms = ['cramps', 'headache', 'mood_swings', 'fatigue', 'bloating'];
-      
+      final allPossibleSymptoms = [
+        'cramps',
+        'headache',
+        'mood_swings',
+        'fatigue',
+        'bloating',
+      ];
+
       for (final symptom in allPossibleSymptoms) {
         symptomFrequency[symptom] ??= [];
         symptomFrequency[symptom]!.add(cycle.symptoms.contains(symptom));
@@ -134,21 +159,21 @@ class AnalyticsService {
     }
 
     final trends = <String, SymptomTrend>{};
-    
+
     for (final entry in symptomFrequency.entries) {
       final symptom = entry.key;
       final occurrences = entry.value;
-      
+
       if (occurrences.length >= 3) {
         final recent = occurrences.take(3).where((x) => x).length;
         final older = occurrences.skip(3).where((x) => x).length;
         final olderTotal = max(1, occurrences.skip(3).length);
-        
+
         final recentFreq = recent / 3.0;
         final olderFreq = older / olderTotal;
-        
+
         final change = recentFreq - olderFreq;
-        
+
         TrendDirection direction;
         if (change.abs() < 0.2) {
           direction = TrendDirection.stable;
@@ -157,7 +182,7 @@ class AnalyticsService {
         } else {
           direction = TrendDirection.decreasing;
         }
-        
+
         trends[symptom] = SymptomTrend(
           frequency: recentFreq,
           trend: direction,
@@ -165,7 +190,7 @@ class AnalyticsService {
         );
       }
     }
-    
+
     return trends;
   }
 
@@ -179,36 +204,49 @@ class AnalyticsService {
     for (int i = 1; i < min(cycles.length, 6); i++) {
       final actualCycle = cycles[i - 1];
       final previousCycles = cycles.skip(i).toList();
-      
+
       if (previousCycles.length >= 2) {
         // Calculate predicted start date based on previous cycles
-        final avgLength = previousCycles
-            .take(3)
-            .map((c) => c.length)
-            .reduce((a, b) => a + b) / min(3, previousCycles.length);
-        
+        final avgLength =
+            previousCycles
+                .take(3)
+                .map((c) => c.length)
+                .reduce((a, b) => a + b) /
+            min(3, previousCycles.length);
+
         final lastCycleEnd = previousCycles.first.endDate;
-        final predictedStart = lastCycleEnd.add(Duration(days: avgLength.round()));
-        
+        final predictedStart = lastCycleEnd.add(
+          Duration(days: avgLength.round()),
+        );
+
         // Calculate accuracy (inverse of days difference, capped at 7 days)
-        final daysDifference = (actualCycle.startDate.difference(predictedStart).inDays).abs();
+        final daysDifference =
+            (actualCycle.startDate.difference(predictedStart).inDays).abs();
         final accuracy = max(0.0, 1.0 - (daysDifference / 7.0));
-        
+
         totalAccuracy += accuracy;
         validPredictions++;
       }
     }
 
-    return validPredictions > 0 ? (totalAccuracy / validPredictions) * 100 : 0.0;
+    return validPredictions > 0
+        ? (totalAccuracy / validPredictions) * 100
+        : 0.0;
   }
 
   /// Calculate regularity score (0-100, higher = more regular)
-  static double _calculateRegularityScore(List<int> lengths, double standardDeviation) {
+  static double _calculateRegularityScore(
+    List<int> lengths,
+    double standardDeviation,
+  ) {
     if (lengths.length < 2) return 100.0;
 
     // Score based on standard deviation (lower deviation = higher score)
     // Perfect regularity (std dev = 0) = 100, high variation (std dev > 7) = 0
-    final regularityFromVariation = max(0.0, 100.0 - (standardDeviation * 14.3));
+    final regularityFromVariation = max(
+      0.0,
+      100.0 - (standardDeviation * 14.3),
+    );
 
     // Bonus for having cycles within "normal" range (21-35 days)
     final normalCycles = lengths.where((l) => l >= 21 && l <= 35).length;
@@ -229,17 +267,24 @@ class AnalyticsService {
     }
 
     // Get recent cycles for prediction
-    final recentCycles = completedCycles
-        .take(6)
-        .map((c) => CycleData(
-              id: c['id'] ?? '',
-              startDate: _parseDate(c['start'])!,
-              endDate: _parseDate(c['end'])!,
-              length: _parseDate(c['end'])!.difference(_parseDate(c['start'])!).inDays + 1,
-            ))
-        .where((c) => c.length > 0 && c.length <= 60)
-        .toList()
-      ..sort((a, b) => b.endDate.compareTo(a.endDate));
+    final recentCycles =
+        completedCycles
+            .take(6)
+            .map(
+              (c) => CycleData(
+                id: c['id'] ?? '',
+                startDate: _parseDate(c['start'])!,
+                endDate: _parseDate(c['end'])!,
+                length:
+                    _parseDate(
+                      c['end'],
+                    )!.difference(_parseDate(c['start'])!).inDays +
+                    1,
+              ),
+            )
+            .where((c) => c.length > 0 && c.length <= 60)
+            .toList()
+          ..sort((a, b) => b.endDate.compareTo(a.endDate));
 
     if (recentCycles.isEmpty) {
       return CyclePrediction.empty();
@@ -248,32 +293,36 @@ class AnalyticsService {
     // Calculate weighted average (more weight to recent cycles)
     double weightedSum = 0;
     double totalWeight = 0;
-    
+
     for (int i = 0; i < recentCycles.length; i++) {
       final weight = 1.0 / (i + 1); // More recent cycles get higher weight
       weightedSum += recentCycles[i].length * weight;
       totalWeight += weight;
     }
-    
+
     final predictedLength = (weightedSum / totalWeight).round();
-    
+
     // Predict next cycle start
     final lastCycleEnd = recentCycles.first.endDate;
     final predictedStart = lastCycleEnd.add(Duration(days: predictedLength));
-    final predictedEnd = predictedStart.add(Duration(days: predictedLength - 1));
-    
+    final predictedEnd = predictedStart.add(
+      Duration(days: predictedLength - 1),
+    );
+
     // Calculate confidence based on regularity
     final lengths = recentCycles.map((c) => c.length).toList();
     final avgLength = lengths.reduce((a, b) => a + b) / lengths.length;
-    final variance = lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) / lengths.length;
+    final variance =
+        lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) /
+        lengths.length;
     final standardDeviation = sqrt(variance);
-    
+
     final confidence = max(0.5, 1.0 - (standardDeviation / 10.0));
-    
+
     // Predict ovulation (typically 14 days before period, but can vary 12-16 days)
     final ovulationStart = predictedStart.subtract(const Duration(days: 16));
     final ovulationEnd = predictedStart.subtract(const Duration(days: 12));
-    
+
     return CyclePrediction(
       nextCycleStart: predictedStart,
       nextCycleEnd: predictedEnd,
@@ -287,7 +336,7 @@ class AnalyticsService {
   /// Parse date from various formats
   static DateTime? _parseDate(dynamic date) {
     if (date == null) return null;
-    
+
     try {
       if (date is DateTime) {
         return date;
@@ -304,13 +353,17 @@ class AnalyticsService {
   /// Parse symptoms from various formats
   static List<String> _parseSymptoms(dynamic symptoms) {
     if (symptoms == null) return [];
-    
+
     if (symptoms is List) {
       return symptoms.map((s) => s.toString()).toList();
     } else if (symptoms is String) {
-      return symptoms.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+      return symptoms
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
-    
+
     return [];
   }
 }
@@ -343,17 +396,17 @@ class CycleStatistics {
   });
 
   factory CycleStatistics.empty() => CycleStatistics(
-        totalCycles: 0,
-        averageLength: 0,
-        shortestCycle: 0,
-        longestCycle: 0,
-        standardDeviation: 0,
-        regularityScore: 0,
-        trends: CycleTrends.empty(),
-        predictionAccuracy: 0,
-        recentCycles: [],
-        cycleLengthHistory: [],
-      );
+    totalCycles: 0,
+    averageLength: 0,
+    shortestCycle: 0,
+    longestCycle: 0,
+    standardDeviation: 0,
+    regularityScore: 0,
+    trends: CycleTrends.empty(),
+    predictionAccuracy: 0,
+    recentCycles: [],
+    cycleLengthHistory: [],
+  );
 }
 
 class CycleData {
@@ -388,10 +441,10 @@ class CycleTrends {
   });
 
   factory CycleTrends.empty() => CycleTrends(
-        lengthTrend: TrendDirection.stable,
-        lengthTrendValue: 0,
-        symptomTrends: {},
-      );
+    lengthTrend: TrendDirection.stable,
+    lengthTrendValue: 0,
+    symptomTrends: {},
+  );
 }
 
 class SymptomTrend {
@@ -424,13 +477,13 @@ class CyclePrediction {
   });
 
   factory CyclePrediction.empty() => CyclePrediction(
-        nextCycleStart: DateTime.now(),
-        nextCycleEnd: DateTime.now(),
-        predictedLength: 0,
-        confidence: 0,
-        ovulationWindow: DateRange(DateTime.now(), DateTime.now()),
-        daysUntilNext: 0,
-      );
+    nextCycleStart: DateTime.now(),
+    nextCycleEnd: DateTime.now(),
+    predictedLength: 0,
+    confidence: 0,
+    ovulationWindow: DateRange(DateTime.now(), DateTime.now()),
+    daysUntilNext: 0,
+  );
 }
 
 class DateRange {

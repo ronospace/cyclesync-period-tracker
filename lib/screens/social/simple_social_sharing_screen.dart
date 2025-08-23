@@ -29,14 +29,18 @@ class SimpleSocialSharingScreen extends StatelessWidget {
                   children: [
                     const Text(
                       '🔗 Quick Share',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: () => _showHealthcareProviderDialog(context),
+                            onPressed: () =>
+                                _showHealthcareProviderDialog(context),
                             icon: const Icon(Icons.local_hospital),
                             label: const Text('Healthcare\nProvider'),
                           ),
@@ -55,9 +59,9 @@ class SimpleSocialSharingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Provider Access Section
             Card(
               child: Padding(
@@ -66,11 +70,17 @@ class SimpleSocialSharingScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.security, color: Theme.of(context).primaryColor),
+                        Icon(
+                          Icons.security,
+                          color: Theme.of(context).primaryColor,
+                        ),
                         const SizedBox(width: 8),
                         const Text(
                           'Secure Provider Access',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -91,9 +101,9 @@ class SimpleSocialSharingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Community Section
             Card(
               child: Padding(
@@ -102,11 +112,17 @@ class SimpleSocialSharingScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.groups, color: Theme.of(context).primaryColor),
+                        Icon(
+                          Icons.groups,
+                          color: Theme.of(context).primaryColor,
+                        ),
                         const SizedBox(width: 8),
                         const Text(
                           'Community Research',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -127,9 +143,9 @@ class SimpleSocialSharingScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Privacy Info
             Card(
               color: Colors.blue.shade50,
@@ -177,17 +193,11 @@ class SimpleSocialSharingScreen extends StatelessWidget {
   }
 
   void _showPartnerDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => _PartnerSharingDialog(),
-    );
+    showDialog(context: context, builder: (context) => _PartnerSharingDialog());
   }
 
   void _showProviderAccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => _ProviderAccessDialog(),
-    );
+    showDialog(context: context, builder: (context) => _ProviderAccessDialog());
   }
 
   void _showCommunityDialog(BuildContext context) {
@@ -201,7 +211,8 @@ class SimpleSocialSharingScreen extends StatelessWidget {
 // Healthcare Provider Dialog
 class _HealthcareProviderDialog extends StatefulWidget {
   @override
-  _HealthcareProviderDialogState createState() => _HealthcareProviderDialogState();
+  _HealthcareProviderDialogState createState() =>
+      _HealthcareProviderDialogState();
 }
 
 class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
@@ -209,7 +220,7 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
   final _providerNameController = TextEditingController();
   final _providerEmailController = TextEditingController();
   final _notesController = TextEditingController();
-  
+
   String _selectedDuration = '30 days';
   Set<String> _selectedData = {'Cycle patterns', 'Symptoms', 'Daily logs'};
 
@@ -226,12 +237,20 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
           children: [
             Row(
               children: [
-                Icon(Icons.local_hospital, color: Theme.of(context).primaryColor),
+                Icon(
+                  Icons.local_hospital,
+                  color: Theme.of(context).primaryColor,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text('Share with Healthcare Provider', 
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    'Share with Healthcare Provider',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -241,7 +260,7 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
             ),
             const Divider(),
             const SizedBox(height: 16),
-            
+
             Expanded(
               child: SingleChildScrollView(
                 child: Form(
@@ -255,10 +274,11 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
                         ),
-                        validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                        validator: (value) =>
+                            value?.isEmpty ?? true ? 'Required' : null,
                       ),
                       const SizedBox(height: 16),
-                      
+
                       TextFormField(
                         controller: _providerEmailController,
                         keyboardType: TextInputType.emailAddress,
@@ -269,39 +289,51 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
                         ),
                         validator: (value) {
                           if (value?.isEmpty ?? true) return 'Required';
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
+                          if (!RegExp(
+                            r'^[^@]+@[^@]+\.[^@]+',
+                          ).hasMatch(value!)) {
                             return 'Please enter a valid email';
                           }
                           return null;
                         },
                       ),
-                  const SizedBox(height: 16),
-                  
-                  DropdownButtonFormField<String>(
-                    value: _selectedDuration,
-                    decoration: const InputDecoration(
-                      labelText: 'Access Duration',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.timer),
-                    ),
-                    items: ['7 days', '30 days', '90 days', '1 year']
-                        .map((duration) => DropdownMenuItem(
-                              value: duration,
-                              child: Text(duration),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() => _selectedDuration = value!);
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
+                      const SizedBox(height: 16),
+
+                      DropdownButtonFormField<String>(
+                        value: _selectedDuration,
+                        decoration: const InputDecoration(
+                          labelText: 'Access Duration',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.timer),
+                        ),
+                        items: ['7 days', '30 days', '90 days', '1 year']
+                            .map(
+                              (duration) => DropdownMenuItem(
+                                value: duration,
+                                child: Text(duration),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() => _selectedDuration = value!);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
                       const SizedBox(height: 12),
                       const Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Data to Share:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          'Data to Share:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      ...['Cycle patterns', 'Symptoms', 'Daily logs', 'Analytics'].map(
+                      ...[
+                        'Cycle patterns',
+                        'Symptoms',
+                        'Daily logs',
+                        'Analytics',
+                      ].map(
                         (dataType) => CheckboxListTile(
                           title: Text(dataType),
                           value: _selectedData.contains(dataType),
@@ -321,7 +353,7 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -354,14 +386,16 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
       barrierDismissible: false,
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
-    
+
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pop(context); // Close loading
       Navigator.pop(context); // Close dialog
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Successfully shared data with ${_providerNameController.text}'),
+          content: Text(
+            'Successfully shared data with ${_providerNameController.text}',
+          ),
           backgroundColor: Colors.green,
         ),
       );
@@ -402,9 +436,11 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                 Icon(Icons.favorite, color: Colors.pink),
                 const SizedBox(width: 8),
                 const Expanded(
-                  child: Text('Share with Partner', 
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    'Share with Partner',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -413,14 +449,14 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
               ],
             ),
             const Divider(),
-            
+
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
-                    
+
                     Form(
                       key: _formKey,
                       child: TextFormField(
@@ -436,7 +472,9 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                           if (value?.isEmpty ?? true) {
                             return 'Email is required';
                           }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value!)) {
+                          if (!RegExp(
+                            r'^[^@]+@[^@]+\.[^@]+',
+                          ).hasMatch(value!)) {
                             return 'Please enter a valid email';
                           }
                           return null;
@@ -444,10 +482,17 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
-                    const Text('What to Share:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ...['Cycle predictions', 'Mood tracking', 'Symptoms', 'Fertility window']
-                        .map(
+
+                    const Text(
+                      'What to Share:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    ...[
+                      'Cycle predictions',
+                      'Mood tracking',
+                      'Symptoms',
+                      'Fertility window',
+                    ].map(
                       (dataType) => CheckboxListTile(
                         title: Text(dataType),
                         value: _selectedData.contains(dataType),
@@ -462,7 +507,7 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                         },
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
                     Card(
                       color: Colors.pink.shade50,
@@ -470,7 +515,11 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                         padding: const EdgeInsets.all(12),
                         child: Row(
                           children: [
-                            Icon(Icons.info, color: Colors.pink.shade700, size: 20),
+                            Icon(
+                              Icons.info,
+                              color: Colors.pink.shade700,
+                              size: 20,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -486,7 +535,7 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -522,7 +571,7 @@ class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
       );
       return;
     }
-    
+
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -544,7 +593,7 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
   final _providerNameController = TextEditingController();
   final _clinicController = TextEditingController();
   final _emailController = TextEditingController();
-  
+
   String _accessType = 'Read-only';
   Set<String> _permissions = {'View cycle data', 'Generate reports'};
 
@@ -563,8 +612,10 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
               children: [
                 Icon(Icons.security, color: Theme.of(context).primaryColor),
                 const SizedBox(width: 8),
-                const Text('Create Provider Access', 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Create Provider Access',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -573,14 +624,14 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
               ],
             ),
             const Divider(),
-            
+
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
-                    
+
                     Form(
                       key: _formKey,
                       child: Column(
@@ -591,10 +642,11 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
                               labelText: 'Provider Name',
                               border: OutlineInputBorder(),
                             ),
-                            validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+                            validator: (value) =>
+                                value?.isEmpty ?? true ? 'Required' : null,
                           ),
                           const SizedBox(height: 16),
-                          
+
                           TextFormField(
                             controller: _clinicController,
                             decoration: const InputDecoration(
@@ -603,7 +655,7 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           TextFormField(
                             controller: _emailController,
                             decoration: const InputDecoration(
@@ -617,7 +669,7 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           DropdownButtonFormField<String>(
                             value: _accessType,
                             decoration: const InputDecoration(
@@ -625,18 +677,31 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
                               border: OutlineInputBorder(),
                             ),
                             items: ['Read-only', 'Limited write', 'Full access']
-                                .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+                                .map(
+                                  (type) => DropdownMenuItem(
+                                    value: type,
+                                    child: Text(type),
+                                  ),
+                                )
                                 .toList(),
-                            onChanged: (value) => setState(() => _accessType = value!),
+                            onChanged: (value) =>
+                                setState(() => _accessType = value!),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           const Align(
                             alignment: Alignment.centerLeft,
-                            child: Text('Permissions:', style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(
+                              'Permissions:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
-                          ...['View cycle data', 'Generate reports', 'Add notes', 'Export data']
-                              .map(
+                          ...[
+                            'View cycle data',
+                            'Generate reports',
+                            'Add notes',
+                            'Export data',
+                          ].map(
                             (permission) => CheckboxListTile(
                               title: Text(permission),
                               value: _permissions.contains(permission),
@@ -658,7 +723,7 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -698,7 +763,8 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
 // Community Research Dialog
 class _CommunityResearchDialog extends StatefulWidget {
   @override
-  _CommunityResearchDialogState createState() => _CommunityResearchDialogState();
+  _CommunityResearchDialogState createState() =>
+      _CommunityResearchDialogState();
 }
 
 class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
@@ -720,8 +786,10 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
               children: [
                 Icon(Icons.groups, color: Theme.of(context).primaryColor),
                 const SizedBox(width: 8),
-                const Text('Join Community Research', 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Join Community Research',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -730,23 +798,30 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
               ],
             ),
             const Divider(),
-            
+
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
-                    
+
                     const Text(
                       'Help improve menstrual health understanding by contributing anonymous data to research.',
                       style: TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 16),
-                    
-                    const Text('Research Areas:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ...['Cycle patterns', 'Symptom research', 'Health correlations', 'Treatment outcomes']
-                        .map(
+
+                    const Text(
+                      'Research Areas:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    ...[
+                      'Cycle patterns',
+                      'Symptom research',
+                      'Health correlations',
+                      'Treatment outcomes',
+                    ].map(
                       (area) => CheckboxListTile(
                         title: Text(area),
                         value: _researchAreas.contains(area),
@@ -761,7 +836,7 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
                         },
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
                     Card(
                       color: Colors.blue.shade50,
@@ -771,7 +846,11 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.privacy_tip, color: Colors.blue.shade700, size: 20),
+                                Icon(
+                                  Icons.privacy_tip,
+                                  color: Colors.blue.shade700,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Privacy Protection',
@@ -794,18 +873,21 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
                         ),
                       ),
                     ),
-                    
+
                     CheckboxListTile(
-                      title: const Text('I agree to the privacy terms and conditions'),
+                      title: const Text(
+                        'I agree to the privacy terms and conditions',
+                      ),
                       value: _agreedToTerms,
-                      onChanged: (value) => setState(() => _agreedToTerms = value ?? false),
+                      onChanged: (value) =>
+                          setState(() => _agreedToTerms = value ?? false),
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                   ],
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -816,7 +898,9 @@ class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: _agreedToTerms ? () => _joinCommunity(context) : null,
+                  onPressed: _agreedToTerms
+                      ? () => _joinCommunity(context)
+                      : null,
                   child: const Text('Join Community'),
                 ),
               ],

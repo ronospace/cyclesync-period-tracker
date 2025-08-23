@@ -2,27 +2,29 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/partner_models.dart';
-import '../models/cycle_models.dart';
-import 'firebase_service.dart';
-import 'user_service.dart';
 import 'error_service.dart';
-import 'notification_service.dart';
+import 'cycle_reminder_integration_service.dart'; // For CycleEntry class
 
 /// Service for managing partner relationships and data sharing
 class PartnerSharingService {
   static PartnerSharingService? _instance;
-  static PartnerSharingService get instance => _instance ??= PartnerSharingService._();
-  
+  static PartnerSharingService get instance =>
+      _instance ??= PartnerSharingService._();
+
   PartnerSharingService._();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Collection references
-  CollectionReference get _relationshipsCollection => _firestore.collection('partner_relationships');
-  CollectionReference get _invitationsCollection => _firestore.collection('partner_invitations');
-  CollectionReference get _sharedDataCollection => _firestore.collection('shared_data');
-  CollectionReference get _partnerNotificationsCollection => _firestore.collection('partner_notifications');
+  CollectionReference get _relationshipsCollection =>
+      _firestore.collection('partner_relationships');
+  CollectionReference get _invitationsCollection =>
+      _firestore.collection('partner_invitations');
+  CollectionReference get _sharedDataCollection =>
+      _firestore.collection('shared_data');
+  CollectionReference get _partnerNotificationsCollection =>
+      _firestore.collection('partner_notifications');
 
   /// Send partner invitation
   Future<String?> sendPartnerInvitation({
@@ -36,20 +38,29 @@ class PartnerSharingService {
       if (user == null) throw Exception('User not authenticated');
 
       // Check if invitation already exists
-      final existingInvitation = await _findExistingInvitation(user.email!, partnerEmail);
-      if (existingInvitation != null && existingInvitation.status == InvitationStatus.pending) {
+      final existingInvitation = await _findExistingInvitation(
+        user.email!,
+        partnerEmail,
+      );
+      if (existingInvitation != null &&
+          existingInvitation.status == InvitationStatus.pending) {
         throw Exception('Invitation already sent to this email');
       }
 
       // Check if relationship already exists
-      final existingRelationship = await _findExistingRelationship(user.uid, partnerEmail);
+      final existingRelationship = await _findExistingRelationship(
+        user.uid,
+        partnerEmail,
+      );
       if (existingRelationship != null) {
         throw Exception('Relationship already exists with this partner');
       }
 
       final invitationId = _invitationsCollection.doc().id;
-      final permissions = customPermissions ?? SharingTemplates.getDefaultPermissions(relationshipType);
-      
+      final permissions =
+          customPermissions ??
+          SharingTemplates.getDefaultPermissions(relationshipType);
+
       final invitation = PartnerInvitation(
         id: invitationId,
         fromUserId: user.uid,
@@ -64,10 +75,10 @@ class PartnerSharingService {
       );
 
       await _invitationsCollection.doc(invitationId).set(invitation.toMap());
-      
+
       // Send email notification (if email service is available)
       await _sendInvitationEmail(invitation);
-      
+
       debugPrint('Partner invitation sent: $invitationId');
       return invitationId;
     } catch (e) {
@@ -85,9 +96,15 @@ class PartnerSharingService {
         .where('toEmail', isEqualTo: user.email)
         .where('status', isEqualTo: InvitationStatus.pending.name)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => PartnerInvitation.fromMap(doc.data() as Map<String, dynamic>))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => PartnerInvitation.fromMap(
+                  doc.data() as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
+        );
   }
 
   /// Get sent invitations by current user
@@ -99,26 +116,36 @@ class PartnerSharingService {
         .where('fromUserId', isEqualTo: user.uid)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => PartnerInvitation.fromMap(doc.data() as Map<String, dynamic>))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => PartnerInvitation.fromMap(
+                  doc.data() as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
+        );
   }
 
   /// Alias for getSentInvitations for compatibility
-  Stream<List<PartnerInvitation>> getSentInvitationsStream() => getSentInvitations();
+  Stream<List<PartnerInvitation>> getSentInvitationsStream() =>
+      getSentInvitations();
 
   /// Alias for getPendingInvitations for compatibility
-  Stream<List<PartnerInvitation>> getReceivedInvitationsStream() => getPendingInvitations();
+  Stream<List<PartnerInvitation>> getReceivedInvitationsStream() =>
+      getPendingInvitations();
 
   /// Alias for getPartnerRelationships for compatibility
-  Stream<List<PartnerRelationship>> getPartnersStream() => getPartnerRelationships();
+  Stream<List<PartnerRelationship>> getPartnersStream() =>
+      getPartnerRelationships();
 
   /// Alias for getSharedData for compatibility
-  Stream<List<SharedDataEntry>> getSharedDataStream(String relationshipId) => getSharedData(relationshipId);
+  Stream<List<SharedDataEntry>> getSharedDataStream(String relationshipId) =>
+      getSharedData(relationshipId);
 
   /// Alias methods for dashboard compatibility
-  Future<bool> removePartner(String relationshipId) => removePartnerRelationship(relationshipId);
-  Future<bool> cancelPartnerInvitation(String invitationId) => declinePartnerInvitation(invitationId);
+  Future<bool> cancelPartnerInvitation(String invitationId) =>
+      declinePartnerInvitation(invitationId);
 
   /// Accept partner invitation
   Future<bool> acceptPartnerInvitation(String invitationId) async {
@@ -126,16 +153,21 @@ class PartnerSharingService {
       final user = _auth.currentUser;
       if (user == null) throw Exception('User not authenticated');
 
-      final invitationDoc = await _invitationsCollection.doc(invitationId).get();
+      final invitationDoc = await _invitationsCollection
+          .doc(invitationId)
+          .get();
       if (!invitationDoc.exists) throw Exception('Invitation not found');
 
-      final invitation = PartnerInvitation.fromMap(invitationDoc.data() as Map<String, dynamic>);
-      
+      final invitation = PartnerInvitation.fromMap(
+        invitationDoc.data() as Map<String, dynamic>,
+      );
+
       // Check if invitation is still valid
       if (invitation.status != InvitationStatus.pending) {
         throw Exception('Invitation is no longer valid');
       }
-      if (invitation.expiresAt != null && invitation.expiresAt!.isBefore(DateTime.now())) {
+      if (invitation.expiresAt != null &&
+          invitation.expiresAt!.isBefore(DateTime.now())) {
         throw Exception('Invitation has expired');
       }
 
@@ -160,8 +192,10 @@ class PartnerSharingService {
 
       // Reciprocal relationship (from invitee to inviter)
       final reciprocalRelationshipId = _relationshipsCollection.doc().id;
-      final reciprocalPermissions = _getReciprocalPermissions(invitation.proposedPermissions);
-      
+      final reciprocalPermissions = _getReciprocalPermissions(
+        invitation.proposedPermissions,
+      );
+
       final reciprocalRelationship = PartnerRelationship(
         id: reciprocalRelationshipId,
         userId: user.uid,
@@ -177,11 +211,17 @@ class PartnerSharingService {
 
       // Batch write to ensure atomicity
       final batch = _firestore.batch();
-      
+
       // Create relationships
-      batch.set(_relationshipsCollection.doc(relationshipId), primaryRelationship.toMap());
-      batch.set(_relationshipsCollection.doc(reciprocalRelationshipId), reciprocalRelationship.toMap());
-      
+      batch.set(
+        _relationshipsCollection.doc(relationshipId),
+        primaryRelationship.toMap(),
+      );
+      batch.set(
+        _relationshipsCollection.doc(reciprocalRelationshipId),
+        reciprocalRelationship.toMap(),
+      );
+
       // Update invitation status
       batch.update(_invitationsCollection.doc(invitationId), {
         'status': InvitationStatus.accepted.name,
@@ -230,9 +270,15 @@ class PartnerSharingService {
         .where('status', isEqualTo: PartnerStatus.accepted.name)
         .orderBy('acceptedAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => PartnerRelationship.fromMap(doc.data() as Map<String, dynamic>))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => PartnerRelationship.fromMap(
+                  doc.data() as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
+        );
   }
 
   /// Update sharing permissions for a relationship
@@ -245,10 +291,14 @@ class PartnerSharingService {
       if (user == null) throw Exception('User not authenticated');
 
       await _relationshipsCollection.doc(relationshipId).update({
-        'sharingPermissions': permissions.map((key, value) => MapEntry(key.name, value.name)),
+        'sharingPermissions': permissions.map(
+          (key, value) => MapEntry(key.name, value.name),
+        ),
       });
 
-      debugPrint('Sharing permissions updated for relationship: $relationshipId');
+      debugPrint(
+        'Sharing permissions updated for relationship: $relationshipId',
+      );
       return true;
     } catch (e) {
       ErrorService.logError(e, context: 'Update sharing permissions');
@@ -309,17 +359,22 @@ class PartnerSharingService {
         .orderBy('timestamp', descending: true)
         .limit(50)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => SharedDataEntry.fromMap(doc.data() as Map<String, dynamic>))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) =>
+                    SharedDataEntry.fromMap(doc.data() as Map<String, dynamic>),
+              )
+              .toList(),
+        );
   }
 
   /// Add comment to shared data
   Future<bool> addCommentToSharedData(
     String sharedDataId,
-    String content,
-    {CommentType type = CommentType.comment}
-  ) async {
+    String content, {
+    CommentType type = CommentType.comment,
+  }) async {
     try {
       final user = _auth.currentUser;
       if (user == null) throw Exception('User not authenticated');
@@ -368,11 +423,13 @@ class PartnerSharingService {
         timestamp: DateTime.now(),
       );
 
-      await _partnerNotificationsCollection.doc(notificationId).set(notification.toMap());
-      
+      await _partnerNotificationsCollection
+          .doc(notificationId)
+          .set(notification.toMap());
+
       // Also send local notification if service is available
       // NotificationService.instance.sendLocalNotification(title, message);
-      
+
       return true;
     } catch (e) {
       ErrorService.logError(e, context: 'Send partner notification');
@@ -390,9 +447,15 @@ class PartnerSharingService {
         .orderBy('timestamp', descending: true)
         .limit(50)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => PartnerNotification.fromMap(doc.data() as Map<String, dynamic>))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => PartnerNotification.fromMap(
+                  doc.data() as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
+        );
   }
 
   /// Mark notification as read
@@ -425,7 +488,7 @@ class PartnerSharingService {
           .get();
 
       final batch = _firestore.batch();
-      
+
       // Remove primary relationship
       batch.update(_relationshipsCollection.doc(relationshipId), {
         'status': PartnerStatus.removed.name,
@@ -433,9 +496,7 @@ class PartnerSharingService {
 
       // Remove reciprocal relationship
       for (final doc in reciprocalQuery.docs) {
-        batch.update(doc.reference, {
-          'status': PartnerStatus.removed.name,
-        });
+        batch.update(doc.reference, {'status': PartnerStatus.removed.name});
       }
 
       await batch.commit();
@@ -460,43 +521,26 @@ class PartnerSharingService {
           .get();
 
       for (final doc in relationshipsSnapshot.docs) {
-        final relationship = PartnerRelationship.fromMap(doc.data() as Map<String, dynamic>);
-        
+        final relationship = PartnerRelationship.fromMap(
+          doc.data() as Map<String, dynamic>,
+        );
+
         // Check what data types this partner has access to and auto-share
-        if (relationship.hasAccessTo(SharedDataType.cycleStart) && cycleData.startDate != null) {
-          await shareCycleData(
-            relationship.id,
-            SharedDataType.cycleStart,
-            {
-              'date': cycleData.startDate!.toIso8601String(),
-              'flow': cycleData.flowLevel,
-              'autoShared': true,
-            },
-          );
+        if (relationship.hasAccessTo(SharedDataType.cycleStart) &&
+            cycleData.startDate != null) {
+          await shareCycleData(relationship.id, SharedDataType.cycleStart, {
+            'date': cycleData.startDate!.toIso8601String(),
+            'autoShared': true,
+          });
         }
 
-        if (relationship.hasAccessTo(SharedDataType.symptoms) && cycleData.symptoms != null) {
-          await shareCycleData(
-            relationship.id,
-            SharedDataType.symptoms,
-            {
-              'symptoms': cycleData.symptoms,
-              'date': DateTime.now().toIso8601String(),
-              'autoShared': true,
-            },
-          );
-        }
-
-        if (relationship.hasAccessTo(SharedDataType.mood) && cycleData.moodLevel != null) {
-          await shareCycleData(
-            relationship.id,
-            SharedDataType.mood,
-            {
-              'level': cycleData.moodLevel,
-              'date': DateTime.now().toIso8601String(),
-              'autoShared': true,
-            },
-          );
+        if (relationship.hasAccessTo(SharedDataType.symptoms) &&
+            cycleData.symptoms != null) {
+          await shareCycleData(relationship.id, SharedDataType.symptoms, {
+            'symptoms': cycleData.symptoms,
+            'date': DateTime.now().toIso8601String(),
+            'autoShared': true,
+          });
         }
       }
     } catch (e) {
@@ -516,9 +560,12 @@ class PartnerSharingService {
           .get();
 
       for (final doc in relationshipsSnapshot.docs) {
-        final relationship = PartnerRelationship.fromMap(doc.data() as Map<String, dynamic>);
-        
-        if (relationship.hasAccessTo(SharedDataType.cycleStart) && relationship.isNotificationsEnabled) {
+        final relationship = PartnerRelationship.fromMap(
+          doc.data() as Map<String, dynamic>,
+        );
+
+        if (relationship.hasAccessTo(SharedDataType.cycleStart) &&
+            relationship.isNotificationsEnabled) {
           await _sendPartnerNotification(
             relationship.id,
             user.uid,
@@ -547,7 +594,10 @@ class PartnerSharingService {
           .get();
 
       return snapshot.docs
-          .map((doc) => PartnerRelationship.fromMap(doc.data() as Map<String, dynamic>))
+          .map(
+            (doc) =>
+                PartnerRelationship.fromMap(doc.data() as Map<String, dynamic>),
+          )
           .toList();
     } catch (e) {
       ErrorService.logError(e, context: 'Get emergency contacts');
@@ -557,16 +607,21 @@ class PartnerSharingService {
 
   /// Helper methods
 
-  Future<PartnerInvitation?> _findExistingInvitation(String fromEmail, String toEmail) async {
+  Future<PartnerInvitation?> _findExistingInvitation(
+    String fromEmail,
+    String toEmail,
+  ) async {
     try {
       final snapshot = await _invitationsCollection
           .where('fromUserEmail', isEqualTo: fromEmail)
           .where('toEmail', isEqualTo: toEmail)
           .where('status', isEqualTo: InvitationStatus.pending.name)
           .get();
-      
+
       if (snapshot.docs.isNotEmpty) {
-        return PartnerInvitation.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+        return PartnerInvitation.fromMap(
+          snapshot.docs.first.data() as Map<String, dynamic>,
+        );
       }
       return null;
     } catch (e) {
@@ -574,16 +629,21 @@ class PartnerSharingService {
     }
   }
 
-  Future<PartnerRelationship?> _findExistingRelationship(String userId, String partnerEmail) async {
+  Future<PartnerRelationship?> _findExistingRelationship(
+    String userId,
+    String partnerEmail,
+  ) async {
     try {
       final snapshot = await _relationshipsCollection
           .where('userId', isEqualTo: userId)
           .where('partnerEmail', isEqualTo: partnerEmail)
           .where('status', isEqualTo: PartnerStatus.accepted.name)
           .get();
-      
+
       if (snapshot.docs.isNotEmpty) {
-        return PartnerRelationship.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+        return PartnerRelationship.fromMap(
+          snapshot.docs.first.data() as Map<String, dynamic>,
+        );
       }
       return null;
     } catch (e) {
@@ -613,18 +673,42 @@ class PartnerSharingService {
 
   String _getDataTypeDisplayName(SharedDataType dataType) {
     switch (dataType) {
-      case SharedDataType.cycleStart: return 'period start';
-      case SharedDataType.cycleLength: return 'cycle length';
-      case SharedDataType.symptoms: return 'symptoms';
-      case SharedDataType.mood: return 'mood';
-      case SharedDataType.fertility: return 'fertility data';
-      case SharedDataType.intimacy: return 'intimacy';
-      case SharedDataType.medications: return 'medications';
-      case SharedDataType.appointments: return 'appointments';
-      case SharedDataType.predictions: return 'predictions';
-      case SharedDataType.analytics: return 'analytics';
-      case SharedDataType.reminders: return 'reminders';
-      case SharedDataType.notes: return 'notes';
+      case SharedDataType.cycleStart:
+        return 'period start';
+      case SharedDataType.cycleLength:
+        return 'cycle length';
+      case SharedDataType.symptoms:
+        return 'symptoms';
+      case SharedDataType.mood:
+        return 'mood';
+      case SharedDataType.fertility:
+        return 'fertility data';
+      case SharedDataType.intimacy:
+        return 'intimacy';
+      case SharedDataType.medications:
+        return 'medications';
+      case SharedDataType.appointments:
+        return 'appointments';
+      case SharedDataType.predictions:
+        return 'predictions';
+      case SharedDataType.analytics:
+        return 'analytics';
+      case SharedDataType.reminders:
+        return 'reminders';
+      case SharedDataType.notes:
+        return 'notes';
+      case SharedDataType.periodDates:
+        return 'period dates';
+      case SharedDataType.moods:
+        return 'moods';
+      case SharedDataType.flowIntensity:
+        return 'flow intensity';
+      case SharedDataType.temperature:
+        return 'temperature';
+      case SharedDataType.cervicalMucus:
+        return 'cervical mucus';
+      case SharedDataType.sexualActivity:
+        return 'sexual activity';
     }
   }
 
@@ -651,7 +735,9 @@ class PartnerSharingService {
 
       if (expiredQuery.docs.isNotEmpty) {
         await batch.commit();
-        debugPrint('Cleaned up ${expiredQuery.docs.length} expired invitations');
+        debugPrint(
+          'Cleaned up ${expiredQuery.docs.length} expired invitations',
+        );
       }
     } catch (e) {
       ErrorService.logError(e, context: 'Cleanup expired invitations');
@@ -701,4 +787,5 @@ class PartnerSharingService {
   Future<bool> removePartner(String relationshipId) async {
     return await removePartnerRelationship(relationshipId);
   }
+
 }

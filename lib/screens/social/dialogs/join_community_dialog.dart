@@ -31,9 +31,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Join Community Research',
-      ),
+      appBar: const CustomAppBar(title: 'Join Community Research'),
       body: LoadingOverlay(
         isLoading: _isLoading,
         child: Column(
@@ -65,7 +63,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
         children: List.generate(4, (index) {
           final isActive = index <= _currentStep;
           final isCompleted = index < _currentStep;
-          
+
           return Expanded(
             child: Row(
               children: [
@@ -73,7 +71,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                   Expanded(
                     child: Container(
                       height: 2,
-                      color: isCompleted 
+                      color: isCompleted
                           ? Theme.of(context).primaryColor
                           : Colors.grey.shade300,
                     ),
@@ -83,7 +81,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                   height: 28,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isActive 
+                    color: isActive
                         ? Theme.of(context).primaryColor
                         : Colors.grey.shade300,
                   ),
@@ -93,7 +91,9 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                         : Text(
                             '${index + 1}',
                             style: TextStyle(
-                              color: isActive ? Colors.white : Colors.grey.shade600,
+                              color: isActive
+                                  ? Colors.white
+                                  : Colors.grey.shade600,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
@@ -104,7 +104,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                   Expanded(
                     child: Container(
                       height: 2,
-                      color: isCompleted 
+                      color: isCompleted
                           ? Theme.of(context).primaryColor
                           : Colors.grey.shade300,
                     ),
@@ -125,7 +125,11 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
         children: [
           Row(
             children: [
-              Icon(Icons.groups, size: 48, color: Theme.of(context).primaryColor),
+              Icon(
+                Icons.groups,
+                size: 48,
+                color: Theme.of(context).primaryColor,
+              ),
               const SizedBox(width: 16),
               const Expanded(
                 child: Text(
@@ -136,37 +140,41 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           const Text(
             'Help advance menstrual health research by contributing anonymous data to our community insights.',
             style: TextStyle(fontSize: 16, height: 1.5),
           ),
-          
+
           const SizedBox(height: 32),
           _buildBenefitCard(
             icon: Icons.science,
             title: 'Advance Medical Research',
-            description: 'Your anonymous data helps researchers understand menstrual health patterns and improve care for everyone.',
+            description:
+                'Your anonymous data helps researchers understand menstrual health patterns and improve care for everyone.',
           ),
-          
+
           _buildBenefitCard(
             icon: Icons.insights,
             title: 'Gain Community Insights',
-            description: 'Access aggregated insights about cycle patterns, symptoms, and wellbeing from thousands of anonymous users.',
+            description:
+                'Access aggregated insights about cycle patterns, symptoms, and wellbeing from thousands of anonymous users.',
           ),
-          
+
           _buildBenefitCard(
             icon: Icons.privacy_tip,
             title: '100% Anonymous & Private',
-            description: 'Your personal information is never shared. All data is completely anonymized before analysis.',
+            description:
+                'Your personal information is never shared. All data is completely anonymized before analysis.',
           ),
-          
+
           _buildBenefitCard(
             icon: Icons.volunteer_activism,
             title: 'Help Others',
-            description: 'Contribute to a better understanding of menstrual health that benefits all menstruating individuals.',
+            description:
+                'Contribute to a better understanding of menstrual health that benefits all menstruating individuals.',
           ),
-          
+
           const SizedBox(height: 24),
           Card(
             color: Colors.green.shade50,
@@ -226,7 +234,10 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
               child: RadioListTile<ContributionLevel>(
                 title: Text(
                   level.displayName,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,21 +250,29 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                     const SizedBox(height: 12),
                     const Text(
                       'Includes:',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Wrap(
                       spacing: 4,
                       runSpacing: 4,
                       children: level.includedDataTypes
-                          .map((type) => Chip(
-                                label: Text(
-                                  type.displayName,
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                                backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ))
+                          .map(
+                            (type) => Chip(
+                              label: Text(
+                                type.displayName,
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).primaryColor.withValues(alpha: 0.1),
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          )
                           .toList(),
                     ),
                   ],
@@ -264,9 +283,15 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                   setState(() {
                     _preferences = CommunityDataPreferences(
                       contributionLevel: value!,
-                      shareCyclePatterns: level.includedDataTypes.contains(DataType.cyclePattern),
-                      shareSymptomTrends: level.includedDataTypes.contains(DataType.symptoms),
-                      shareWellbeingData: level.includedDataTypes.contains(DataType.wellbeing),
+                      shareCyclePatterns: level.includedDataTypes.contains(
+                        DataType.cyclePattern,
+                      ),
+                      shareSymptomTrends: level.includedDataTypes.contains(
+                        DataType.symptoms,
+                      ),
+                      shareWellbeingData: level.includedDataTypes.contains(
+                        DataType.wellbeing,
+                      ),
                       shareAgeRange: _preferences.shareAgeRange,
                       shareGeographicRegion: _preferences.shareGeographicRegion,
                     );
@@ -289,7 +314,10 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                       const SizedBox(width: 8),
                       const Text(
                         'Additional Demographics (Optional)',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -299,10 +327,12 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   CheckboxListTile(
                     title: const Text('Share age range (e.g., 25-29)'),
-                    subtitle: const Text('Helps understand age-related patterns'),
+                    subtitle: const Text(
+                      'Helps understand age-related patterns',
+                    ),
                     value: _preferences.shareAgeRange,
                     onChanged: (value) {
                       setState(() {
@@ -312,15 +342,20 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                           shareSymptomTrends: _preferences.shareSymptomTrends,
                           shareWellbeingData: _preferences.shareWellbeingData,
                           shareAgeRange: value ?? false,
-                          shareGeographicRegion: _preferences.shareGeographicRegion,
+                          shareGeographicRegion:
+                              _preferences.shareGeographicRegion,
                         );
                       });
                     },
                   ),
-                  
+
                   CheckboxListTile(
-                    title: const Text('Share geographic region (e.g., North America)'),
-                    subtitle: const Text('Helps understand regional differences'),
+                    title: const Text(
+                      'Share geographic region (e.g., North America)',
+                    ),
+                    subtitle: const Text(
+                      'Helps understand regional differences',
+                    ),
                     value: _preferences.shareGeographicRegion,
                     onChanged: (value) {
                       setState(() {
@@ -352,7 +387,11 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
         children: [
           Row(
             children: [
-              Icon(Icons.security, size: 32, color: Theme.of(context).primaryColor),
+              Icon(
+                Icons.security,
+                size: 32,
+                color: Theme.of(context).primaryColor,
+              ),
               const SizedBox(width: 12),
               const Expanded(
                 child: Text(
@@ -367,27 +406,31 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
           _buildPrivacyFeature(
             icon: Icons.visibility_off,
             title: 'Complete Anonymization',
-            description: 'All personal identifiers are removed before data analysis. Your identity cannot be traced back from the research data.',
+            description:
+                'All personal identifiers are removed before data analysis. Your identity cannot be traced back from the research data.',
           ),
-          
+
           _buildPrivacyFeature(
             icon: Icons.lock,
             title: 'Secure Data Processing',
-            description: 'Data is encrypted and processed using industry-standard security protocols. Only aggregated insights are generated.',
+            description:
+                'Data is encrypted and processed using industry-standard security protocols. Only aggregated insights are generated.',
           ),
-          
+
           _buildPrivacyFeature(
             icon: Icons.group_remove,
             title: 'No Individual Profiling',
-            description: 'Your specific data patterns are never analyzed individually. All insights are based on large group statistics.',
+            description:
+                'Your specific data patterns are never analyzed individually. All insights are based on large group statistics.',
           ),
-          
+
           _buildPrivacyFeature(
             icon: Icons.settings,
             title: 'Full Control',
-            description: 'You can modify your preferences or stop contributing at any time. Past contributions remain anonymous.',
+            description:
+                'You can modify your preferences or stop contributing at any time. Past contributions remain anonymous.',
           ),
-          
+
           const SizedBox(height: 24),
           Card(
             color: Colors.blue.shade50,
@@ -425,7 +468,9 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
 
           const SizedBox(height: 20),
           CheckboxListTile(
-            title: const Text('I understand how my data will be anonymized and used'),
+            title: const Text(
+              'I understand how my data will be anonymized and used',
+            ),
             value: _understoodPrivacy,
             onChanged: (value) {
               setState(() {
@@ -461,10 +506,21 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Divider(),
-                  _buildSummaryRow('Contribution Level', _preferences.contributionLevel.displayName),
+                  _buildSummaryRow(
+                    'Contribution Level',
+                    _preferences.contributionLevel.displayName,
+                  ),
                   _buildSummaryRow('Data Types', _getIncludedDataTypes()),
-                  _buildSummaryRow('Age Range', _preferences.shareAgeRange ? 'Included' : 'Not included'),
-                  _buildSummaryRow('Geographic Region', _preferences.shareGeographicRegion ? 'Included' : 'Not included'),
+                  _buildSummaryRow(
+                    'Age Range',
+                    _preferences.shareAgeRange ? 'Included' : 'Not included',
+                  ),
+                  _buildSummaryRow(
+                    'Geographic Region',
+                    _preferences.shareGeographicRegion
+                        ? 'Included'
+                        : 'Not included',
+                  ),
                 ],
               ),
             ),
@@ -510,8 +566,12 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
 
           const SizedBox(height: 24),
           CheckboxListTile(
-            title: const Text('I understand and agree to participate in community research'),
-            subtitle: const Text('You can change these preferences at any time in settings'),
+            title: const Text(
+              'I understand and agree to participate in community research',
+            ),
+            subtitle: const Text(
+              'You can change these preferences at any time in settings',
+            ),
             value: _agreeToContribution,
             onChanged: (value) {
               setState(() {
@@ -521,7 +581,9 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
           ),
 
           CheckboxListTile(
-            title: const Text('I have read and understand the research participation information'),
+            title: const Text(
+              'I have read and understand the research participation information',
+            ),
             value: _readResearchInfo,
             onChanged: (value) {
               setState(() {
@@ -561,7 +623,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -605,7 +667,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -752,7 +814,7 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
     if (_preferences.shareCyclePatterns) types.add('Cycle patterns');
     if (_preferences.shareSymptomTrends) types.add('Symptoms');
     if (_preferences.shareWellbeingData) types.add('Wellbeing');
-    
+
     return types.isEmpty ? 'None selected' : types.join(', ');
   }
 
@@ -762,7 +824,9 @@ class _JoinCommunityDialogState extends State<JoinCommunityDialog> {
     });
 
     try {
-      final success = await SocialService.joinCommunityDataSharing(_preferences);
+      final success = await SocialService.joinCommunityDataSharing(
+        _preferences,
+      );
 
       setState(() {
         _isLoading = false;

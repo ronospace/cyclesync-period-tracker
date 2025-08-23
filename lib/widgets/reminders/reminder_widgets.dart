@@ -4,7 +4,6 @@ import '../../models/reminder_models.dart';
 import '../../services/reminder_service.dart';
 import '../../services/notification_permission_service.dart';
 import '../../screens/add_reminder_screen.dart';
-import '../../screens/reminders_screen.dart';
 
 /// Quick reminder card widget for dashboard/home screen
 class ReminderQuickCard extends StatelessWidget {
@@ -32,10 +31,7 @@ class ReminderQuickCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 const Text(
                   'Today\'s Reminders',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 if (todaysReminders.isNotEmpty)
@@ -64,23 +60,17 @@ class ReminderQuickCard extends StatelessWidget {
           Icon(
             Icons.check_circle_outline,
             size: 48,
-            color: Colors.green.withOpacity(0.5),
+            color: Colors.green.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 12),
           const Text(
             'No reminders today',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 4),
           Text(
             'You\'re all set! Enjoy your day.',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
           const SizedBox(height: 16),
           OutlinedButton.icon(
@@ -96,16 +86,14 @@ class ReminderQuickCard extends StatelessWidget {
   Widget _buildRemindersList(BuildContext context) {
     return Column(
       children: [
-        ...todaysReminders.take(3).map((reminder) => 
-          _ReminderQuickItem(reminder: reminder)),
+        ...todaysReminders
+            .take(3)
+            .map((reminder) => _ReminderQuickItem(reminder: reminder)),
         if (todaysReminders.length > 3) ...[
           const SizedBox(height: 8),
           Text(
             '+ ${todaysReminders.length - 3} more reminders',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 12),
           ),
         ],
         const SizedBox(height: 12),
@@ -145,9 +133,7 @@ class ReminderQuickCard extends StatelessWidget {
   void _navigateToAddReminder(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddReminderScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddReminderScreen()),
     );
   }
 }
@@ -164,10 +150,10 @@ class _ReminderQuickItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _getReminderColor(reminder.type).withOpacity(0.1),
+        color: _getReminderColor(reminder.type).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: _getReminderColor(reminder.type).withOpacity(0.3),
+          color: _getReminderColor(reminder.type).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -176,7 +162,7 @@ class _ReminderQuickItem extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: _getReminderColor(reminder.type).withOpacity(0.2),
+              color: _getReminderColor(reminder.type).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
@@ -201,10 +187,7 @@ class _ReminderQuickItem extends StatelessWidget {
                 if (reminder.nextOccurrence != null)
                   Text(
                     _formatTime(reminder.nextOccurrence!),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
               ],
             ),
@@ -217,27 +200,43 @@ class _ReminderQuickItem extends StatelessWidget {
 
   Color _getReminderColor(ReminderType type) {
     switch (type) {
-      case ReminderType.cyclePrediction: return Colors.pink;
-      case ReminderType.medication: return Colors.blue;
-      case ReminderType.appointment: return Colors.green;
-      case ReminderType.symptomTracking: return Colors.purple;
-      case ReminderType.waterIntake: return Colors.cyan;
-      case ReminderType.exercise: return Colors.orange;
-      case ReminderType.selfCare: return Colors.indigo;
-      case ReminderType.custom: return Colors.grey;
+      case ReminderType.cyclePrediction:
+        return Colors.pink;
+      case ReminderType.medication:
+        return Colors.blue;
+      case ReminderType.appointment:
+        return Colors.green;
+      case ReminderType.symptomTracking:
+        return Colors.purple;
+      case ReminderType.waterIntake:
+        return Colors.cyan;
+      case ReminderType.exercise:
+        return Colors.orange;
+      case ReminderType.selfCare:
+        return Colors.indigo;
+      case ReminderType.custom:
+        return Colors.grey;
     }
   }
 
   String _getReminderEmoji(ReminderType type) {
     switch (type) {
-      case ReminderType.cyclePrediction: return '🌸';
-      case ReminderType.medication: return '💊';
-      case ReminderType.appointment: return '📅';
-      case ReminderType.symptomTracking: return '📝';
-      case ReminderType.waterIntake: return '💧';
-      case ReminderType.exercise: return '🏃‍♀️';
-      case ReminderType.selfCare: return '🧘‍♀️';
-      case ReminderType.custom: return '⏰';
+      case ReminderType.cyclePrediction:
+        return '🌸';
+      case ReminderType.medication:
+        return '💊';
+      case ReminderType.appointment:
+        return '📅';
+      case ReminderType.symptomTracking:
+        return '📝';
+      case ReminderType.waterIntake:
+        return '💧';
+      case ReminderType.exercise:
+        return '🏃‍♀️';
+      case ReminderType.selfCare:
+        return '🧘‍♀️';
+      case ReminderType.custom:
+        return '⏰';
     }
   }
 
@@ -280,7 +279,9 @@ class _ReminderQuickActions extends StatelessWidget {
   }
 
   Future<void> _completeReminder(BuildContext context) async {
-    final success = await ReminderService.instance.markReminderCompleted(reminder.id);
+    final success = await ReminderService.instance.markReminderCompleted(
+      reminder.id,
+    );
     if (success && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -359,10 +360,7 @@ class _QuickActionBottomSheet extends StatelessWidget {
               const SizedBox(height: 20),
               const Text(
                 'Quick Actions',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               GridView.count(
@@ -434,7 +432,7 @@ class _QuickActionBottomSheet extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Material(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -448,10 +446,7 @@ class _QuickActionBottomSheet extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: color,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, color: color),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -492,9 +487,7 @@ class _QuickActionBottomSheet extends StatelessWidget {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const AddReminderScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const AddReminderScreen()),
     );
   }
 
@@ -602,7 +595,12 @@ class ReminderStatsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 24),
@@ -617,10 +615,7 @@ class ReminderStatsWidget extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
           textAlign: TextAlign.center,
         ),
       ],
@@ -639,9 +634,14 @@ class ReminderStatsWidget extends StatelessWidget {
             Text('Total Reminders: ${stats['total'] ?? 0}'),
             Text('Active Reminders: ${stats['active'] ?? 0}'),
             Text('Completed Today: ${stats['completed_today'] ?? 0}'),
-            Text('Completion Rate: ${((stats['completion_rate'] ?? 0.0) * 100).round()}%'),
+            Text(
+              'Completion Rate: ${((stats['completion_rate'] ?? 0.0) * 100).round()}%',
+            ),
             const SizedBox(height: 16),
-            const Text('By Type:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'By Type:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             ...((stats['by_type'] as Map<String, int>? ?? {}).entries.map(
               (entry) => Text('${entry.key}: ${entry.value}'),
             )),
@@ -663,10 +663,12 @@ class NotificationPermissionBanner extends StatefulWidget {
   const NotificationPermissionBanner({super.key});
 
   @override
-  State<NotificationPermissionBanner> createState() => _NotificationPermissionBannerState();
+  State<NotificationPermissionBanner> createState() =>
+      _NotificationPermissionBannerState();
 }
 
-class _NotificationPermissionBannerState extends State<NotificationPermissionBanner> {
+class _NotificationPermissionBannerState
+    extends State<NotificationPermissionBanner> {
   bool _hasPermission = true;
   bool _isLoading = false;
 
@@ -696,9 +698,9 @@ class _NotificationPermissionBannerState extends State<NotificationPermissionBan
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

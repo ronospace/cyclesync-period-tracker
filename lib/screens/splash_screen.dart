@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../services/user_profile_service.dart';
+import '../providers/user_provider.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
 class SplashScreen extends StatefulWidget {
@@ -17,13 +19,13 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _logoAnimationController;
   late AnimationController _textAnimationController;
   late AnimationController _backgroundAnimationController;
-  
+
   late Animation<double> _logoScaleAnimation;
   late Animation<double> _logoRotationAnimation;
   late Animation<double> _textFadeAnimation;
   late Animation<Offset> _textSlideAnimation;
   late Animation<double> _backgroundAnimation;
-  
+
   bool _isInitialized = false;
 
   @override
@@ -39,58 +41,54 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
-    _logoScaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoAnimationController,
-      curve: Curves.elasticOut,
-    ));
-    
-    _logoRotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 0.1,
-    ).animate(CurvedAnimation(
-      parent: _logoAnimationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _logoScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: Curves.elasticOut,
+      ),
+    );
+
+    _logoRotationAnimation = Tween<double>(begin: 0.0, end: 0.1).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     // Text animations
     _textAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
-    _textFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _textAnimationController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _textAnimationController,
-      curve: Curves.easeOutCubic,
-    ));
+
+    _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _textAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _textSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _textAnimationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Background animation
     _backgroundAnimationController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
-    
-    _backgroundAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _backgroundAnimationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _backgroundAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     // Start animations sequence
     _startAnimationSequence();
@@ -122,16 +120,15 @@ class _SplashScreenState extends State<SplashScreen>
         Future.delayed(const Duration(milliseconds: 2500)),
         _performInitialization(),
       ]);
-      
+
       if (mounted) {
         setState(() {
           _isInitialized = true;
         });
       }
-      
+
       // Navigate to appropriate screen
       _navigateToNextScreen();
-      
     } catch (error) {
       foundation.debugPrint('Splash screen initialization error: $error');
       // Still navigate even if there's an error
@@ -146,28 +143,21 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _navigateToNextScreen() async {
     if (!mounted) return;
-    
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      context.go('/login');
-      return;
-    }
 
-    // User is logged in, check if they need onboarding
     try {
-      final needsOnboarding = await UserProfileService.needsOnboarding();
-      
-      if (needsOnboarding) {
-        // New user needs to set up their profile
-        context.go('/display-name-setup');
-      } else {
-        // Existing user can go to home
-        context.go('/home');
+      // Auto-initialize test user for demo purposes
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      if (!userProvider.isLoggedIn) {
+        await userProvider.initializeTestUser('Ronos');
+        foundation.debugPrint('✅ Test user auto-initialized');
       }
-    } catch (e) {
-      foundation.debugPrint('Error checking onboarding status: $e');
-      // Default to home if we can't check
+
+      // Always go to home screen after test user is initialized
       context.go('/home');
+    } catch (e) {
+      foundation.debugPrint('Error initializing test user: $e');
+      // Fallback to login if test user initialization fails
+      context.go('/login');
     }
   }
 
@@ -226,7 +216,7 @@ class _SplashScreenState extends State<SplashScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(flex: 2),
-                  
+
                   // Animated Logo
                   AnimatedBuilder(
                     animation: _logoAnimationController,
@@ -243,10 +233,7 @@ class _SplashScreenState extends State<SplashScreen>
                               gradient: const LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.white,
-                                  Color(0xFFF8BBD9),
-                                ],
+                                colors: [Colors.white, Color(0xFFF8BBD9)],
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -258,19 +245,16 @@ class _SplashScreenState extends State<SplashScreen>
                               ],
                             ),
                             child: const Center(
-                              child: Text(
-                                '🌸',
-                                style: TextStyle(fontSize: 60),
-                              ),
+                              child: Text('🌸', style: TextStyle(fontSize: 60)),
                             ),
                           ),
                         ),
                       );
                     },
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Animated App Name
                   AnimatedBuilder(
                     animation: _textAnimationController,
@@ -282,7 +266,7 @@ class _SplashScreenState extends State<SplashScreen>
                           child: Column(
                             children: [
                               Text(
-                                'CycleSync',
+                                'FlowSense',
                                 style: TextStyle(
                                   fontSize: 42,
                                   fontWeight: FontWeight.bold,
@@ -313,9 +297,9 @@ class _SplashScreenState extends State<SplashScreen>
                       );
                     },
                   ),
-                  
+
                   const Spacer(flex: 2),
-                  
+
                   // Loading Indicator
                   if (!_isInitialized) ...[
                     SizedBox(
@@ -338,9 +322,9 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 60),
-                  
+
                   // Bottom branding
                   AnimatedBuilder(
                     animation: _textAnimationController,
@@ -390,7 +374,7 @@ class _SplashScreenState extends State<SplashScreen>
                       );
                     },
                   ),
-                  
+
                   const SizedBox(height: 40),
                 ],
               ),

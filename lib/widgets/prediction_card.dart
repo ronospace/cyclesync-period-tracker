@@ -59,9 +59,9 @@ class PredictionCard extends StatelessWidget {
             children: [
               Text(
                 'AI Predictions',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               Text(
                 'Based on your cycle patterns',
@@ -80,7 +80,7 @@ class PredictionCard extends StatelessWidget {
   Widget _buildConfidenceBadge(BuildContext context) {
     final confidence = (predictions.confidence * 100).toInt();
     final color = _getConfidenceColor(confidence);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -103,42 +103,50 @@ class PredictionCard extends StatelessWidget {
 
     // Next period prediction
     if (predictions.nextPeriodDate != null) {
-      items.add(_buildPredictionItem(
-        context,
-        icon: Icons.water_drop,
-        iconColor: Colors.red.shade400,
-        title: 'Next Period',
-        subtitle: _formatNextPeriod(predictions.nextPeriodDate!),
-        detail: _getPeriodDetail(predictions.nextPeriodDate!),
-      ));
+      items.add(
+        _buildPredictionItem(
+          context,
+          icon: Icons.water_drop,
+          iconColor: Colors.red.shade400,
+          title: 'Next Period',
+          subtitle: _formatNextPeriod(predictions.nextPeriodDate!),
+          detail: _getPeriodDetail(predictions.nextPeriodDate!),
+        ),
+      );
     }
 
     // Fertility window prediction
-    if (predictions.fertilityWindowStart != null && 
+    if (predictions.fertilityWindowStart != null &&
         predictions.fertilityWindowEnd != null) {
-      items.add(_buildPredictionItem(
-        context,
-        icon: Icons.favorite,
-        iconColor: Colors.pink.shade400,
-        title: 'Fertile Window',
-        subtitle: _formatFertilityWindow(
-          predictions.fertilityWindowStart!,
-          predictions.fertilityWindowEnd!,
+      items.add(
+        _buildPredictionItem(
+          context,
+          icon: Icons.favorite,
+          iconColor: Colors.pink.shade400,
+          title: 'Fertile Window',
+          subtitle: _formatFertilityWindow(
+            predictions.fertilityWindowStart!,
+            predictions.fertilityWindowEnd!,
+          ),
+          detail: _getFertilityDetail(),
         ),
-        detail: _getFertilityDetail(),
-      ));
+      );
     }
 
     // Ovulation prediction
     if (predictions.ovulationDate != null) {
-      items.add(_buildPredictionItem(
-        context,
-        icon: Icons.circle,
-        iconColor: Colors.purple.shade400,
-        title: 'Ovulation',
-        subtitle: DateFormat('EEEE, MMM d').format(predictions.ovulationDate!),
-        detail: _getOvulationDetail(predictions.ovulationDate!),
-      ));
+      items.add(
+        _buildPredictionItem(
+          context,
+          icon: Icons.circle,
+          iconColor: Colors.purple.shade400,
+          title: 'Ovulation',
+          subtitle: DateFormat(
+            'EEEE, MMM d',
+          ).format(predictions.ovulationDate!),
+          detail: _getOvulationDetail(predictions.ovulationDate!),
+        ),
+      );
     }
 
     if (items.isEmpty) {
@@ -146,10 +154,14 @@ class PredictionCard extends StatelessWidget {
     }
 
     return Column(
-      children: items.map((item) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: item,
-      )).toList(),
+      children: items
+          .map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: item,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -178,11 +190,7 @@ class PredictionCard extends StatelessWidget {
               color: iconColor.withAlpha(20),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 16,
-            ),
+            child: Icon(icon, color: iconColor, size: 16),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -191,9 +199,9 @@ class PredictionCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -208,7 +216,9 @@ class PredictionCard extends StatelessWidget {
                   Text(
                     detail,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(150),
                     ),
                   ),
                 ],
@@ -224,7 +234,9 @@ class PredictionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withAlpha(60),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -237,9 +249,9 @@ class PredictionCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Building Predictions',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -300,7 +312,7 @@ class PredictionCard extends StatelessWidget {
   String _formatNextPeriod(DateTime date) {
     final now = DateTime.now();
     final daysUntil = date.difference(now).inDays;
-    
+
     if (daysUntil <= 0) {
       return 'Expected now';
     } else if (daysUntil == 1) {
@@ -315,7 +327,7 @@ class PredictionCard extends StatelessWidget {
   String _getPeriodDetail(DateTime date) {
     final now = DateTime.now();
     final daysUntil = date.difference(now).inDays;
-    
+
     if (daysUntil <= 3) {
       return 'Prepare with period supplies';
     } else if (daysUntil <= 7) {
@@ -327,7 +339,7 @@ class PredictionCard extends StatelessWidget {
 
   String _formatFertilityWindow(DateTime start, DateTime end) {
     final now = DateTime.now();
-    
+
     if (now.isAfter(start) && now.isBefore(end)) {
       return 'Active now';
     } else if (start.isAfter(now)) {
@@ -349,7 +361,7 @@ class PredictionCard extends StatelessWidget {
   String _getOvulationDetail(DateTime date) {
     final now = DateTime.now();
     final daysUntil = date.difference(now).inDays;
-    
+
     if (daysUntil == 0) {
       return 'Peak fertility today';
     } else if (daysUntil == 1) {

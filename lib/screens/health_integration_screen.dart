@@ -11,19 +11,20 @@ class HealthIntegrationScreen extends StatefulWidget {
   const HealthIntegrationScreen({super.key});
 
   @override
-  State<HealthIntegrationScreen> createState() => _HealthIntegrationScreenState();
+  State<HealthIntegrationScreen> createState() =>
+      _HealthIntegrationScreenState();
 }
 
 class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
   final HealthKitService _healthKitService = HealthKitService();
-  
+
   HealthIntegrationStatus? _status;
   bool _isLoading = false;
   String? _lastSyncResult;
   DateTime? _lastSyncTime;
   bool _autoSyncEnabled = true;
   bool _importOnSetup = false;
-  
+
   // HealthKit specific state
   bool _healthKitInitialized = false;
   bool _healthKitHasPermissions = false;
@@ -37,7 +38,7 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
 
   Future<void> _checkHealthStatus() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final status = await HealthService.getIntegrationStatus();
       setState(() {
@@ -59,10 +60,10 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
 
   Future<void> _requestPermissions() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final granted = await HealthService.requestPermissions();
-      
+
       if (granted) {
         HapticFeedback.lightImpact();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,9 +72,9 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         await _checkHealthStatus();
-        
+
         if (_importOnSetup) {
           await _importHealthData();
         }
@@ -93,32 +94,35 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
         ),
       );
     }
-    
+
     setState(() => _isLoading = false);
   }
 
   Future<void> _importHealthData() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final result = await HealthService.importHealthData();
-      
+
       setState(() {
         _lastSyncResult = result.summary;
         _lastSyncTime = DateTime.now();
         _isLoading = false;
       });
-      
+
       if (result.success) {
         HapticFeedback.lightImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('📥 ${result.summary}'),
             backgroundColor: Colors.green,
-            action: result.importedCount > 0 ? SnackBarAction(
-              label: 'View Cycles',
-              onPressed: () => Navigator.of(context).pushReplacementNamed('/cycles'),
-            ) : null,
+            action: result.importedCount > 0
+                ? SnackBarAction(
+                    label: 'View Cycles',
+                    onPressed: () =>
+                        Navigator.of(context).pushReplacementNamed('/cycles'),
+                  )
+                : null,
           ),
         );
       } else {
@@ -135,7 +139,7 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
         _lastSyncTime = DateTime.now();
         _isLoading = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('❌ Import failed: ${e.toString()}'),
@@ -147,16 +151,16 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
 
   Future<void> _bulkSyncToHealth() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final result = await HealthService.bulkSyncToHealth();
-      
+
       setState(() {
         _lastSyncResult = result.summary;
         _lastSyncTime = DateTime.now();
         _isLoading = false;
       });
-      
+
       if (result.success) {
         HapticFeedback.lightImpact();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -179,7 +183,7 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
         _lastSyncTime = DateTime.now();
         _isLoading = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('❌ Sync failed: ${e.toString()}'),
@@ -202,29 +206,32 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
 
     if (dateRange != null) {
       setState(() => _isLoading = true);
-      
+
       try {
         final result = await HealthService.importHealthData(
           startDate: dateRange.start,
           endDate: dateRange.end,
         );
-        
+
         setState(() {
           _lastSyncResult = result.summary;
           _lastSyncTime = DateTime.now();
           _isLoading = false;
         });
-        
+
         if (result.success) {
           HapticFeedback.lightImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('📥 ${result.summary}'),
               backgroundColor: Colors.green,
-              action: result.importedCount > 0 ? SnackBarAction(
-                label: 'View Cycles',
-                onPressed: () => Navigator.of(context).pushReplacementNamed('/cycles'),
-              ) : null,
+              action: result.importedCount > 0
+                  ? SnackBarAction(
+                      label: 'View Cycles',
+                      onPressed: () =>
+                          Navigator.of(context).pushReplacementNamed('/cycles'),
+                    )
+                  : null,
             ),
           );
         } else {
@@ -241,7 +248,7 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
           _lastSyncTime = DateTime.now();
           _isLoading = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('❌ Import failed: ${e.toString()}'),
@@ -275,13 +282,13 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
                   _status!.canSync
                       ? Icons.health_and_safety
                       : _status!.isSupported
-                          ? Icons.warning_amber
-                          : Icons.error_outline,
+                      ? Icons.warning_amber
+                      : Icons.error_outline,
                   color: _status!.canSync
                       ? Colors.green
                       : _status!.isSupported
-                          ? Colors.orange
-                          : Colors.red,
+                      ? Colors.orange
+                      : Colors.red,
                   size: 28,
                 ),
                 const SizedBox(width: 12),
@@ -300,14 +307,14 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
                         _status!.canSync
                             ? 'Active & Ready'
                             : _status!.isSupported
-                                ? 'Setup Required'
-                                : 'Not Available',
+                            ? 'Setup Required'
+                            : 'Not Available',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: _status!.canSync
                               ? Colors.green
                               : _status!.isSupported
-                                  ? Colors.orange
-                                  : Colors.red,
+                              ? Colors.orange
+                              : Colors.red,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -327,7 +334,8 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
                 children: [
                   Checkbox(
                     value: _importOnSetup,
-                    onChanged: (value) => setState(() => _importOnSetup = value ?? false),
+                    onChanged: (value) =>
+                        setState(() => _importOnSetup = value ?? false),
                   ),
                   Expanded(
                     child: Text(
@@ -371,23 +379,25 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
           children: [
             Text(
               'Sync Controls',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             // Auto-sync toggle
             SwitchListTile(
               title: const Text('Auto-sync new cycles'),
-              subtitle: const Text('Automatically sync new cycle data to Health app'),
+              subtitle: const Text(
+                'Automatically sync new cycle data to Health app',
+              ),
               value: _autoSyncEnabled,
               onChanged: (value) => setState(() => _autoSyncEnabled = value),
               secondary: const Icon(Icons.sync),
             ),
-            
+
             const Divider(),
-            
+
             // Import data button
             ListTile(
               leading: const Icon(Icons.download, color: Colors.green),
@@ -396,9 +406,9 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: _isLoading ? null : _showImportDialog,
             ),
-            
+
             const Divider(),
-            
+
             // Export data button
             ListTile(
               leading: const Icon(Icons.upload, color: Colors.blue),
@@ -427,11 +437,7 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.history,
-                  color: Colors.grey[600],
-                  size: 20,
-                ),
+                Icon(Icons.history, color: Colors.grey[600], size: 20),
                 const SizedBox(width: 8),
                 Text(
                   'Last Sync',
@@ -450,9 +456,9 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
             const SizedBox(height: 4),
             Text(
               'At ${_lastSyncTime!.hour.toString().padLeft(2, '0')}:${_lastSyncTime!.minute.toString().padLeft(2, '0')} on ${_lastSyncTime!.day}/${_lastSyncTime!.month}/${_lastSyncTime!.year}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             ),
           ],
         ),
@@ -466,10 +472,26 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
     }
 
     const supportedTypes = [
-      {'icon': Icons.water_drop, 'name': 'Menstrual Flow', 'desc': 'Flow intensity and dates'},
-      {'icon': Icons.mood, 'name': 'Mood Tracking', 'desc': 'Daily mood levels'},
-      {'icon': Icons.notes, 'name': 'Symptoms & Notes', 'desc': 'Symptom observations'},
-      {'icon': Icons.favorite, 'name': 'General Wellbeing', 'desc': 'Energy and pain levels'},
+      {
+        'icon': Icons.water_drop,
+        'name': 'Menstrual Flow',
+        'desc': 'Flow intensity and dates',
+      },
+      {
+        'icon': Icons.mood,
+        'name': 'Mood Tracking',
+        'desc': 'Daily mood levels',
+      },
+      {
+        'icon': Icons.notes,
+        'name': 'Symptoms & Notes',
+        'desc': 'Symptom observations',
+      },
+      {
+        'icon': Icons.favorite,
+        'name': 'General Wellbeing',
+        'desc': 'Energy and pain levels',
+      },
     ];
 
     return Card(
@@ -481,43 +503,43 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
           children: [
             Text(
               'Synced Data Types',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            ...supportedTypes.map((type) { return Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Row(
-                children: [
-                  Icon(
-                    type['icon'] as IconData,
-                    color: Colors.purple,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          type['name'] as String,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          type['desc'] as String,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
+            ...supportedTypes.map((type) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  children: [
+                    Icon(
+                      type['icon'] as IconData,
+                      color: Colors.purple,
+                      size: 20,
                     ),
-                  ),
-                ],
-              ),
-            );}).toList(),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            type['name'] as String,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            type['desc'] as String,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ],
         ),
       ),
@@ -560,10 +582,8 @@ class _HealthIntegrationScreenState extends State<HealthIntegrationScreen> {
           ),
           if (_isLoading)
             Container(
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              color: Colors.black.withValues(alpha: 0.3),
+              child: const Center(child: CircularProgressIndicator()),
             ),
         ],
       ),

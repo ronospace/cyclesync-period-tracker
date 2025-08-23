@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 // Mock health data types and classes for now
 // In a real implementation, these would come from the health package
@@ -28,16 +27,9 @@ enum HealthDataUnit {
   KILOCALORIE,
 }
 
-enum HealthDataAccess {
-  READ,
-  WRITE,
-  READ_WRITE,
-}
+enum HealthDataAccess { READ, WRITE, READ_WRITE }
 
-enum SourcePlatform {
-  appleHealth,
-  googleFit,
-}
+enum SourcePlatform { appleHealth, googleFit }
 
 class HealthDataPoint {
   final num value;
@@ -84,17 +76,17 @@ class Health {
   ) async {
     // Mock implementation - return sample data
     await Future.delayed(const Duration(milliseconds: 800));
-    
+
     final List<HealthDataPoint> mockData = [];
     final now = DateTime.now();
-    
+
     for (final type in types) {
       // Generate some mock data points
       for (int i = 0; i < 7; i++) {
         final date = now.subtract(Duration(days: i));
         num value;
         HealthDataUnit unit;
-        
+
         switch (type) {
           case HealthDataType.HEART_RATE:
             value = 65 + (i * 2) + (DateTime.now().millisecond % 10);
@@ -106,7 +98,8 @@ class Health {
             break;
           case HealthDataType.SLEEP_IN_BED:
           case HealthDataType.SLEEP_ASLEEP:
-            value = 420 + (DateTime.now().millisecond % 60); // ~7 hours in minutes
+            value =
+                420 + (DateTime.now().millisecond % 60); // ~7 hours in minutes
             unit = HealthDataUnit.MINUTE;
             break;
           case HealthDataType.BODY_TEMPERATURE:
@@ -117,20 +110,25 @@ class Health {
             value = DateTime.now().millisecond % 100;
             unit = HealthDataUnit.COUNT;
         }
-        
-        mockData.add(HealthDataPoint(
-          value: value,
-          type: type,
-          unit: unit,
-          dateFrom: date,
-          dateTo: date,
-          sourcePlatform: Platform.isIOS ? SourcePlatform.appleHealth : SourcePlatform.googleFit,
-          sourceId: 'mock_source',
-          sourceApp: 'CycleSync',
-        ));
+
+        mockData.add(
+          HealthDataPoint(
+            value: value,
+            type: type,
+            unit: unit,
+            dateFrom: date,
+            dateTo: date,
+            sourcePlatform:
+                (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
+                ? SourcePlatform.appleHealth
+                : SourcePlatform.googleFit,
+            sourceId: 'mock_source',
+            sourceApp: 'CycleSync',
+          ),
+        );
       }
     }
-    
+
     return mockData;
   }
 
@@ -172,7 +170,10 @@ class HealthKitService {
   ];
 
   bool get isInitialized => _isInitialized;
-  bool get isSupported => Platform.isIOS || Platform.isAndroid;
+  bool get isSupported =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.android);
   List<HealthDataType> get supportedDataTypes => List.from(_supportedDataTypes);
 
   /// Initialize Health Kit service
@@ -184,7 +185,7 @@ class HealthKitService {
 
     try {
       _health = Health();
-      
+
       // Request permissions for supported data types
       _dataTypes = _supportedDataTypes.where((type) {
         return _isDataTypeSupported(type);
@@ -261,9 +262,7 @@ class HealthKitService {
   }
 
   /// Get recent heart rate data
-  Future<List<HealthDataPoint>> getHeartRateData({
-    int daysBack = 7,
-  }) async {
+  Future<List<HealthDataPoint>> getHeartRateData({int daysBack = 7}) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: daysBack));
 
@@ -275,26 +274,19 @@ class HealthKitService {
   }
 
   /// Get recent sleep data
-  Future<List<HealthDataPoint>> getSleepData({
-    int daysBack = 7,
-  }) async {
+  Future<List<HealthDataPoint>> getSleepData({int daysBack = 7}) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: daysBack));
 
     return await getHealthData(
       startDate: startDate,
       endDate: endDate,
-      types: [
-        HealthDataType.SLEEP_IN_BED,
-        HealthDataType.SLEEP_ASLEEP,
-      ],
+      types: [HealthDataType.SLEEP_IN_BED, HealthDataType.SLEEP_ASLEEP],
     );
   }
 
   /// Get recent step count data
-  Future<List<HealthDataPoint>> getStepsData({
-    int daysBack = 7,
-  }) async {
+  Future<List<HealthDataPoint>> getStepsData({int daysBack = 7}) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: daysBack));
 
@@ -306,9 +298,7 @@ class HealthKitService {
   }
 
   /// Get body temperature data
-  Future<List<HealthDataPoint>> getTemperatureData({
-    int daysBack = 30,
-  }) async {
+  Future<List<HealthDataPoint>> getTemperatureData({int daysBack = 30}) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: daysBack));
 
@@ -320,9 +310,7 @@ class HealthKitService {
   }
 
   /// Get workout data
-  Future<List<HealthDataPoint>> getWorkoutData({
-    int daysBack = 30,
-  }) async {
+  Future<List<HealthDataPoint>> getWorkoutData({int daysBack = 30}) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: daysBack));
 
@@ -351,7 +339,9 @@ class HealthKitService {
         unit: unit ?? _getDefaultUnit(type),
         dateFrom: date,
         dateTo: date,
-        sourcePlatform: Platform.isIOS ? SourcePlatform.appleHealth : SourcePlatform.googleFit,
+        sourcePlatform: (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
+            ? SourcePlatform.appleHealth
+            : SourcePlatform.googleFit,
         sourceId: '',
         sourceApp: '',
       );
@@ -380,15 +370,15 @@ class HealthKitService {
   }) async {
     // Note: Menstrual flow data requires special handling
     // This would need platform-specific implementation
-    
+
     try {
       // For iOS, we would write menstrual flow data
-      if (Platform.isIOS) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
         // Implementation would go here for iOS HealthKit
         debugPrint('HealthKit: Would sync cycle data to iOS HealthKit');
-      } 
+      }
       // For Android, sync with Google Fit
-      else if (Platform.isAndroid) {
+      else if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         debugPrint('HealthKit: Would sync cycle data to Google Fit');
       }
 
@@ -400,9 +390,7 @@ class HealthKitService {
   }
 
   /// Get aggregated health summary
-  Future<Map<String, dynamic>> getHealthSummary({
-    int daysBack = 7,
-  }) async {
+  Future<Map<String, dynamic>> getHealthSummary({int daysBack = 7}) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: daysBack));
 
@@ -417,13 +405,11 @@ class HealthKitService {
         heartRateData.map((e) => e.value).toList(),
       );
 
-      final totalSteps = _calculateSum(
-        stepsData.map((e) => e.value).toList(),
-      );
+      final totalSteps = _calculateSum(stepsData.map((e) => e.value).toList());
 
-      final avgSleepHours = _calculateAverage(
-        sleepData.map((e) => e.value).toList(),
-      ) / 60; // Convert minutes to hours
+      final avgSleepHours =
+          _calculateAverage(sleepData.map((e) => e.value).toList()) /
+          60; // Convert minutes to hours
 
       return {
         'period': '$daysBack days',
@@ -447,10 +433,10 @@ class HealthKitService {
   /// Check if a data type is supported on current platform
   bool _isDataTypeSupported(HealthDataType type) {
     try {
-      if (Platform.isIOS) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
         // iOS HealthKit supports most types
         return true;
-      } else if (Platform.isAndroid) {
+      } else if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         // Google Fit has different supported types
         const androidSupported = [
           HealthDataType.HEART_RATE,

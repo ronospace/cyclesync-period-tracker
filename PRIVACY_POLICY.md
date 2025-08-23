@@ -1,10 +1,10 @@
-# Privacy Policy for CycleSync
+# Privacy Policy for FlowSense
 
 Last updated: August 18, 2024
 
 ## Introduction
 
-CycleSync ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our menstrual cycle tracking application.
+FlowSense ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our menstrual cycle tracking application.
 
 ## Information We Collect
 
@@ -74,11 +74,11 @@ You have the right to:
 
 ## Children's Privacy
 
-CycleSync is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13.
+FlowSense is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13.
 
 ## International Users
 
-By using CycleSync, users outside the United States consent to the transfer of their information to the United States.
+By using FlowSense, users outside the United States consent to the transfer of their information to the United States.
 
 ## Changes to This Policy
 
@@ -87,8 +87,8 @@ We may update this Privacy Policy from time to time. We will notify users of any
 ## Contact Us
 
 For questions about this Privacy Policy or your data, contact us at:
-- Email: privacy@cyclesync.app
-- Website: https://cyclesync.app/privacy
+- Email: privacy@flowsense.app
+- Website: https://flowsense.app/privacy
 
 ## Compliance
 

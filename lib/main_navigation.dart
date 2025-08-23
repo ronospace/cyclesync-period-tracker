@@ -4,7 +4,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -14,16 +14,16 @@ void main() async {
     // Firebase initialization error logged
   }
 
-  runApp(const CycleSyncApp());
+  runApp(const MoodSyncApp());
 }
 
-class CycleSyncApp extends StatelessWidget {
-  const CycleSyncApp({super.key});
+class MoodSyncApp extends StatelessWidget {
+  const MoodSyncApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'CycleSync',
+      title: 'MoodSync',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -46,32 +46,22 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('CycleSync'),
+        title: const Text('MoodSync'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Icon(
-              Icons.favorite,
-              size: 120,
-              color: Colors.pink,
-            ),
+            const Icon(Icons.favorite, size: 120, color: Colors.pink),
             const SizedBox(height: 24),
             const Text(
-              'Welcome to CycleSync',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              'Welcome to MoodSync',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(
               'Your personal cycle tracking companion',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 32),
             Card(
@@ -96,9 +86,7 @@ class WelcomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     const Text(
                       'Firebase integration is active and ready to use.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
@@ -144,7 +132,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CycleSync Home'),
+        title: const Text('MoodSync Home'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
@@ -154,10 +142,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             const Text(
               'Your Cycle Dashboard',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Expanded(
@@ -222,11 +207,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 48,
-                color: color,
-              ),
+              Icon(icon, size: 48, color: color),
               const SizedBox(height: 12),
               Text(
                 title,
@@ -258,10 +239,35 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
   int selectedEnergy = 3;
   List<String> selectedSymptoms = [];
 
-  final List<String> flowLevels = ['None', 'Light', 'Medium', 'Heavy', 'Very Heavy'];
-  final List<String> moodLevels = ['Very Low', 'Low', 'Neutral', 'Good', 'Excellent'];
-  final List<String> energyLevels = ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
-  final List<String> symptoms = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Mood Swings', 'Breast Tenderness'];
+  final List<String> flowLevels = [
+    'None',
+    'Light',
+    'Medium',
+    'Heavy',
+    'Very Heavy',
+  ];
+  final List<String> moodLevels = [
+    'Very Low',
+    'Low',
+    'Neutral',
+    'Good',
+    'Excellent',
+  ];
+  final List<String> energyLevels = [
+    'Very Low',
+    'Low',
+    'Moderate',
+    'High',
+    'Very High',
+  ];
+  final List<String> symptoms = [
+    'Cramps',
+    'Headache',
+    'Bloating',
+    'Fatigue',
+    'Mood Swings',
+    'Breast Tenderness',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -501,10 +507,7 @@ class _CycleLoggingScreenState extends State<CycleLoggingScreen> {
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        child: const Text(
-          'Save Entry',
-          style: TextStyle(fontSize: 16),
-        ),
+        child: const Text('Save Entry', style: TextStyle(fontSize: 16)),
       ),
     );
   }
@@ -610,26 +613,24 @@ class AnalyticsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            ...insights.map((insight) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.check_circle,
-                    size: 16,
-                    color: color,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      insight,
-                      style: const TextStyle(fontSize: 14),
+            ...insights.map(
+              (insight) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.check_circle, size: 16, color: color),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        insight,
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),

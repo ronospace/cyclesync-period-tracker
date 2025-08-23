@@ -1,18 +1,17 @@
-
 /// Types of social communities/chatrooms
 enum CommunityType {
-  general,              // General cycle discussion
-  ttc,                 // Trying to conceive
-  pcos,                // PCOS support
-  endometriosis,       // Endometriosis support
-  teenagers,           // Teen support
-  postpartum,          // Postpartum cycles
-  menopause,           // Menopause transition
-  birthControl,        // Birth control discussion
-  nutrition,           // Diet and nutrition
-  fitness,             // Exercise and fitness
-  wellness,            // Mental health and wellness
-  custom,              // Custom communities
+  general, // General cycle discussion
+  ttc, // Trying to conceive
+  pcos, // PCOS support
+  endometriosis, // Endometriosis support
+  teenagers, // Teen support
+  postpartum, // Postpartum cycles
+  menopause, // Menopause transition
+  birthControl, // Birth control discussion
+  nutrition, // Diet and nutrition
+  fitness, // Exercise and fitness
+  wellness, // Mental health and wellness
+  custom, // Custom communities
 }
 
 /// Community/Chatroom model
@@ -78,7 +77,9 @@ class Community {
         orElse: () => CommunityType.general,
       ),
       imageUrl: map['imageUrl'],
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
       createdBy: map['createdBy'] ?? '',
       moderators: List<String>.from(map['moderators'] ?? []),
       memberCount: map['memberCount'] ?? 0,
@@ -155,7 +156,7 @@ class CommunityStats {
     return CommunityStats(
       totalMessages: map['totalMessages'] ?? 0,
       activeMembers: map['activeMembers'] ?? 0,
-      lastActivity: map['lastActivity'] != null 
+      lastActivity: map['lastActivity'] != null
           ? DateTime.parse(map['lastActivity'])
           : DateTime.now(),
       dailyMessages: map['dailyMessages'] ?? 0,
@@ -235,8 +236,12 @@ class CommunityMessage {
         (e) => e.name == map['type'],
         orElse: () => MessageType.text,
       ),
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
-      editedAt: map['editedAt'] != null ? DateTime.parse(map['editedAt']) : null,
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
+      editedAt: map['editedAt'] != null
+          ? DateTime.parse(map['editedAt'])
+          : null,
       reactions: (map['reactions'] as List<dynamic>? ?? [])
           .map((r) => MessageReaction.fromMap(r))
           .toList(),
@@ -275,11 +280,7 @@ class MessageReaction {
   });
 
   Map<String, dynamic> toMap() {
-    return {
-      'emoji': emoji,
-      'userIds': userIds,
-      'count': count,
-    };
+    return {'emoji': emoji, 'userIds': userIds, 'count': count};
   }
 
   factory MessageReaction.fromMap(Map<String, dynamic> map) {
@@ -335,12 +336,7 @@ class MessageAttachment {
   }
 }
 
-enum AttachmentType {
-  image,
-  video,
-  document,
-  audio,
-}
+enum AttachmentType { image, video, document, audio }
 
 /// Community membership model
 class CommunityMembership {
@@ -397,9 +393,11 @@ class CommunityMembership {
         (e) => e.name == map['role'],
         orElse: () => MembershipRole.member,
       ),
-      joinedAt: DateTime.parse(map['joinedAt'] ?? DateTime.now().toIso8601String()),
-      lastActiveAt: map['lastActiveAt'] != null 
-          ? DateTime.parse(map['lastActiveAt']) 
+      joinedAt: DateTime.parse(
+        map['joinedAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      lastActiveAt: map['lastActiveAt'] != null
+          ? DateTime.parse(map['lastActiveAt'])
           : null,
       status: MembershipStatus.values.firstWhere(
         (e) => e.name == map['status'],
@@ -411,20 +409,9 @@ class CommunityMembership {
   }
 }
 
-enum MembershipRole {
-  member,
-  moderator,
-  admin,
-  founder,
-}
+enum MembershipRole { member, moderator, admin, founder }
 
-enum MembershipStatus {
-  active,
-  inactive,
-  banned,
-  left,
-  pending,
-}
+enum MembershipStatus { active, inactive, banned, left, pending }
 
 /// App review model
 class AppReview {
@@ -491,14 +478,18 @@ class AppReview {
       rating: map['rating'] ?? 0,
       title: map['title'],
       comment: map['comment'],
-      category: map['category'] != null 
+      category: map['category'] != null
           ? ReviewCategory.values.firstWhere(
               (e) => e.name == map['category'],
               orElse: () => ReviewCategory.general,
             )
           : null,
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: map['updatedAt'] != null ? DateTime.parse(map['updatedAt']) : null,
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.parse(map['updatedAt'])
+          : null,
       isVerified: map['isVerified'] ?? false,
       isPublic: map['isPublic'] ?? true,
       helpfulVotes: List<String>.from(map['helpfulVotes'] ?? []),
@@ -521,12 +512,7 @@ enum ReviewCategory {
   features,
 }
 
-enum ReviewStatus {
-  pending,
-  approved,
-  rejected,
-  flagged,
-}
+enum ReviewStatus { pending, approved, rejected, flagged }
 
 /// User social profile
 class SocialProfile {
@@ -576,7 +562,9 @@ class SocialProfile {
       displayName: map['displayName'] ?? '',
       bio: map['bio'],
       photoUrl: map['photoUrl'],
-      joinedDate: DateTime.parse(map['joinedDate'] ?? DateTime.now().toIso8601String()),
+      joinedDate: DateTime.parse(
+        map['joinedDate'] ?? DateTime.now().toIso8601String(),
+      ),
       isPublic: map['isPublic'] ?? true,
       stats: SocialStats.fromMap(map['stats'] ?? {}),
       badges: List<String>.from(map['badges'] ?? []),
@@ -622,7 +610,7 @@ class SocialStats {
       helpfulVotes: map['helpfulVotes'] ?? 0,
       reviewsWritten: map['reviewsWritten'] ?? 0,
       averageRating: map['averageRating']?.toDouble() ?? 0.0,
-      lastActive: map['lastActive'] != null 
+      lastActive: map['lastActive'] != null
           ? DateTime.parse(map['lastActive'])
           : DateTime.now(),
     );
@@ -719,8 +707,12 @@ class CommunityPoll {
       options: (map['options'] as List<dynamic>? ?? [])
           .map((o) => PollOption.fromMap(o))
           .toList(),
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
-      expiresAt: map['expiresAt'] != null ? DateTime.parse(map['expiresAt']) : null,
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      expiresAt: map['expiresAt'] != null
+          ? DateTime.parse(map['expiresAt'])
+          : null,
       allowMultipleChoice: map['allowMultipleChoice'] ?? false,
       isAnonymous: map['isAnonymous'] ?? false,
       isActive: map['isActive'] ?? true,
@@ -743,12 +735,7 @@ class PollOption {
   });
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'text': text,
-      'voters': voters,
-      'voteCount': voteCount,
-    };
+    return {'id': id, 'text': text, 'voters': voters, 'voteCount': voteCount};
   }
 
   factory PollOption.fromMap(Map<String, dynamic> map) {
@@ -767,7 +754,8 @@ class CommunityTemplates {
     Community(
       id: 'general',
       name: 'General Discussion',
-      description: 'Open discussion about menstrual health, cycles, and experiences',
+      description:
+          'Open discussion about menstrual health, cycles, and experiences',
       type: CommunityType.general,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
@@ -785,7 +773,8 @@ class CommunityTemplates {
     Community(
       id: 'pcos',
       name: 'PCOS Support',
-      description: 'Community for those with PCOS to share experiences and support',
+      description:
+          'Community for those with PCOS to share experiences and support',
       type: CommunityType.pcos,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',
@@ -794,7 +783,8 @@ class CommunityTemplates {
     Community(
       id: 'teens',
       name: 'Teen Support',
-      description: 'A safe space for teenagers to learn and discuss menstrual health',
+      description:
+          'A safe space for teenagers to learn and discuss menstrual health',
       type: CommunityType.teenagers,
       createdAt: DateTime(2024, 1, 1),
       createdBy: 'system',

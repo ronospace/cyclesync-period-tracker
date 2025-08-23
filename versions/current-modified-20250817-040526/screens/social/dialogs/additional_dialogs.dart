@@ -256,7 +256,7 @@ class _PartnerSharingDialogState extends State<PartnerSharingDialog> {
                 title: Text(option.$2),
                 subtitle: Text(option.$3),
                 value: option.$1,
-                groupValue: _accessDuration == null ? null : _accessDuration,
+                groupValue: _accessDuration,
                 onChanged: (value) {
                   setState(() {
                     _accessDuration = value ?? const Duration(days: 90);

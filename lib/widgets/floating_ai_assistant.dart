@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/ai_assistant_service.dart';
@@ -7,11 +8,8 @@ import 'ai_assistant_chat.dart';
 /// Floating AI Assistant Button with contextual intelligence
 class FloatingAIAssistant extends StatefulWidget {
   final AIAssistantService? assistantService;
-  
-  const FloatingAIAssistant({
-    super.key,
-    this.assistantService,
-  });
+
+  const FloatingAIAssistant({super.key, this.assistantService});
 
   @override
   State<FloatingAIAssistant> createState() => _FloatingAIAssistantState();
@@ -23,7 +21,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
   late AnimationController _fabController;
   late AnimationController _overlayController;
   late AnimationController _quickActionsController;
-  
+
   late Animation<double> _fabAnimation;
   late Animation<double> _overlayAnimation;
   late Animation<double> _quickActionsAnimation;
@@ -35,15 +33,15 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
   @override
   void initState() {
     super.initState();
-    
+
     _assistantService = widget.assistantService ?? AIAssistantService();
-    
+
     // Animation controllers
     _fabController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _overlayController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -55,29 +53,20 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
     );
 
     // Animations
-    _fabAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _fabController,
-      curve: Curves.easeOutBack,
-    ));
+    _fabAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _fabController, curve: Curves.easeOutBack),
+    );
 
-    _overlayAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _overlayController,
-      curve: Curves.easeOutCubic,
-    ));
+    _overlayAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _overlayController, curve: Curves.easeOutCubic),
+    );
 
-    _quickActionsAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _quickActionsController,
-      curve: Curves.easeOutQuart,
-    ));
+    _quickActionsAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _quickActionsController,
+        curve: Curves.easeOutQuart,
+      ),
+    );
 
     // Initialize service and start animation
     _initializeService();
@@ -89,7 +78,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
 
   Future<void> _initializeService() async {
     await _assistantService.initialize();
-    
+
     // Generate contextual insights periodically
     _generatePeriodicInsights();
   }
@@ -122,7 +111,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
 
   void _onTap() {
     HapticFeedback.mediumImpact();
-    
+
     if (_assistantService.isVisible) {
       _hideAssistant();
     } else {
@@ -161,22 +150,20 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
 
   void _showQuickActionsOverlay() {
     _removeOverlay();
-    
+
     _overlayEntry = OverlayEntry(
       builder: (context) => _buildQuickActionsOverlay(),
     );
-    
+
     Overlay.of(context).insert(_overlayEntry!);
     _overlayController.forward();
   }
 
   void _showChatOverlay() {
     _removeChatOverlay();
-    
-    _chatOverlayEntry = OverlayEntry(
-      builder: (context) => _buildChatOverlay(),
-    );
-    
+
+    _chatOverlayEntry = OverlayEntry(builder: (context) => _buildChatOverlay());
+
     Overlay.of(context).insert(_chatOverlayEntry!);
   }
 
@@ -206,7 +193,8 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
             onLongPress: _onLongPress,
             child: AIAssistantAvatar(
               onTap: _onTap,
-              isActive: _assistantService.isVisible || _assistantService.isLoading,
+              isActive:
+                  _assistantService.isVisible || _assistantService.isLoading,
               hasNotification: _assistantService.hasNewSuggestions,
             ),
           ),
@@ -226,7 +214,9 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
               _toggleQuickActions();
             },
             child: Container(
-              color: Colors.black.withOpacity(0.3 * _overlayAnimation.value),
+              color: Colors.black.withValues(
+                alpha: 0.3 * _overlayAnimation.value,
+              ),
               child: Stack(
                 children: [
                   // Position quick actions near the FAB
@@ -249,7 +239,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
 
   Widget _buildQuickActionsList() {
     final suggestions = _assistantService.currentSuggestions.take(4).toList();
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -262,7 +252,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 8,
                 spreadRadius: 0,
                 offset: const Offset(0, 2),
@@ -271,27 +261,29 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
           ),
           child: Text(
             'Quick Actions',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // Quick action buttons
         ...suggestions.asMap().entries.map((entry) {
           final index = entry.key;
           final suggestion = entry.value;
-          
+
           return Padding(
-            padding: EdgeInsets.only(bottom: index < suggestions.length - 1 ? 8 : 0),
+            padding: EdgeInsets.only(
+              bottom: index < suggestions.length - 1 ? 8 : 0,
+            ),
             child: _buildQuickActionButton(suggestion),
           );
         }),
-        
+
         const SizedBox(height: 8),
-        
+
         // Open chat action
         _buildQuickActionButton(
           AISuggestion(
@@ -311,7 +303,10 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
     );
   }
 
-  Widget _buildQuickActionButton(AISuggestion suggestion, {VoidCallback? onTap}) {
+  Widget _buildQuickActionButton(
+    AISuggestion suggestion, {
+    VoidCallback? onTap,
+  }) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 250),
       child: Material(
@@ -319,16 +314,20 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
         borderRadius: BorderRadius.circular(16),
         elevation: 3,
         child: InkWell(
-          onTap: onTap ?? () {
-            HapticFeedback.lightImpact();
-            if (suggestion.action != null) {
-              suggestion.action!();
-            } else {
-              _assistantService.sendMessage('${suggestion.actionText}: ${suggestion.title}');
-              _showAssistant();
-            }
-            _toggleQuickActions();
-          },
+          onTap:
+              onTap ??
+              () {
+                HapticFeedback.lightImpact();
+                if (suggestion.action != null) {
+                  suggestion.action!();
+                } else {
+                  _assistantService.sendMessage(
+                    '${suggestion.actionText}: ${suggestion.title}',
+                  );
+                  _showAssistant();
+                }
+                _toggleQuickActions();
+              },
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -339,7 +338,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: suggestion.color.withOpacity(0.1),
+                    color: suggestion.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -348,9 +347,9 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
                     color: suggestion.color,
                   ),
                 ),
-                
+
                 const SizedBox(width: 12),
-                
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,14 +363,19 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      
+
                       if (suggestion.description.isNotEmpty) ...[
                         const SizedBox(height: 2),
                         Text(
                           suggestion.description,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color
+                                    ?.withValues(alpha: 0.7),
+                              ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -379,13 +383,15 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(width: 8),
-                
+
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 14,
-                  color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.color?.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -404,7 +410,7 @@ class _FloatingAIAssistantState extends State<FloatingAIAssistant>
           _hideAssistant();
         },
         child: Container(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           child: GestureDetector(
             onTap: () {}, // Prevent closing when tapping on chat
             child: Align(
@@ -440,9 +446,7 @@ class PositionedFloatingAIAssistant extends StatelessWidget {
       alignment: alignment,
       child: Container(
         margin: margin,
-        child: FloatingAIAssistant(
-          assistantService: assistantService,
-        ),
+        child: FloatingAIAssistant(assistantService: assistantService),
       ),
     );
   }
@@ -483,7 +487,7 @@ class _AIAssistantWrapperState extends State<AIAssistantWrapper> {
     return Stack(
       children: [
         widget.child,
-        
+
         if (widget.enabled)
           PositionedFloatingAIAssistant(
             assistantService: _assistantService,
@@ -494,6 +498,3 @@ class _AIAssistantWrapperState extends State<AIAssistantWrapper> {
     );
   }
 }
-
-// Timer import
-import 'dart:async';

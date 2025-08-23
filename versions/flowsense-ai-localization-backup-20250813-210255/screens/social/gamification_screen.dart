@@ -320,7 +320,7 @@ class _GamificationScreenState extends State<GamificationScreen>
           ..._activeChallenges
               .where((c) => c.type == ChallengeType.daily)
               .map((challenge) => _buildChallengeCard(challenge))
-              .toList(),
+              ,
           
           const SizedBox(height: 16),
           
@@ -338,7 +338,7 @@ class _GamificationScreenState extends State<GamificationScreen>
           ..._activeChallenges
               .where((c) => c.type == ChallengeType.weekly)
               .map((challenge) => _buildChallengeCard(challenge))
-              .toList(),
+              ,
           
           const SizedBox(height: 16),
           
@@ -356,7 +356,7 @@ class _GamificationScreenState extends State<GamificationScreen>
           ..._activeChallenges
               .where((c) => c.type == ChallengeType.community)
               .map((challenge) => _buildChallengeCard(challenge))
-              .toList(),
+              ,
         ],
       ),
     );
@@ -576,7 +576,7 @@ class _GamificationScreenState extends State<GamificationScreen>
               opacity: _achievementAnimationController,
               child: _buildAchievementCard(achievement),
             ),
-          ).toList(),
+          ),
           
           const SizedBox(height: 24),
         ],

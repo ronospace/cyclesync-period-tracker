@@ -8,12 +8,12 @@ class LoadingIndicator extends StatelessWidget {
   final bool showMessage;
 
   const LoadingIndicator({
-    Key? key,
+    super.key,
     this.message,
     this.size = 40.0,
     this.color,
     this.showMessage = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,9 @@ class LoadingIndicator extends StatelessWidget {
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -51,10 +53,10 @@ class OverlayLoadingIndicator extends StatelessWidget {
   final bool isLoading;
 
   const OverlayLoadingIndicator({
-    Key? key,
+    super.key,
     this.message,
     this.isLoading = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,9 @@ class AnalyticsEngine {
 
   Future<CycleAnalytics> generateCycleAnalytics(List<CycleData> cycles) async {
     try {
-      debugPrint('📊 Generating cycle analytics for ${cycles.length} cycles...');
+      debugPrint(
+        '📊 Generating cycle analytics for ${cycles.length} cycles...',
+      );
       return CycleAnalytics.fromCycles(cycles);
     } catch (e) {
       debugPrint('❌ Error generating cycle analytics: $e');

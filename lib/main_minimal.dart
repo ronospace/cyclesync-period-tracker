@@ -31,16 +31,9 @@ class TestScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 64,
-            ),
+            Icon(Icons.check_circle, color: Colors.green, size: 64),
             SizedBox(height: 16),
-            Text(
-              'Flutter is working!',
-              style: TextStyle(fontSize: 24),
-            ),
+            Text('Flutter is working!', style: TextStyle(fontSize: 24)),
             SizedBox(height: 8),
             Text(
               'The banner error has been bypassed.',

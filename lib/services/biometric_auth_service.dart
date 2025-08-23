@@ -8,12 +8,13 @@ import 'error_service.dart';
 /// Service for handling biometric authentication (Face ID, Touch ID, Fingerprint)
 class BiometricAuthService {
   static BiometricAuthService? _instance;
-  static BiometricAuthService get instance => _instance ??= BiometricAuthService._();
-  
+  static BiometricAuthService get instance =>
+      _instance ??= BiometricAuthService._();
+
   BiometricAuthService._();
 
   final LocalAuthentication _localAuth = LocalAuthentication();
-  
+
   // SharedPreferences keys
   static const String _biometricEnabledKey = 'biometric_enabled';
   static const String _biometricFailedAttemptsKey = 'biometric_failed_attempts';
@@ -84,22 +85,25 @@ class BiometricAuthService {
     try {
       // First check if biometrics are available
       if (!await isBiometricAvailable()) {
-        throw Exception('Biometric authentication not available on this device');
+        throw Exception(
+          'Biometric authentication not available on this device',
+        );
       }
 
       // Test biometric authentication before enabling
       final isAuthenticated = await authenticateWithBiometric(
-        reason: 'Please verify your identity to enable biometric authentication',
+        reason:
+            'Please verify your identity to enable biometric authentication',
       );
 
       if (isAuthenticated) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool(_biometricEnabledKey, true);
         await prefs.setBool(_biometricSetupCompletedKey, true);
-        
+
         // Reset failed attempts on successful setup
         await _resetFailedAttempts();
-        
+
         debugPrint('Biometric authentication enabled');
         return true;
       } else {
@@ -118,7 +122,7 @@ class BiometricAuthService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_biometricEnabledKey, false);
       await _resetFailedAttempts();
-      
+
       debugPrint('Biometric authentication disabled');
       return true;
     } catch (e) {
@@ -148,7 +152,7 @@ class BiometricAuthService {
         throw Exception('Too many failed attempts. Please try again later.');
       }
 
-      final defaultReason = Platform.isIOS 
+      final defaultReason = Platform.isIOS
           ? 'Please verify your identity to access CycleSync'
           : 'Verify your identity to continue';
 
@@ -173,7 +177,7 @@ class BiometricAuthService {
     } on PlatformException catch (e) {
       await _recordFailedAttempt();
       ErrorService.logError(e, context: 'Biometric authentication');
-      
+
       // Handle specific error codes
       switch (e.code) {
         case 'NotAvailable':
@@ -181,7 +185,9 @@ class BiometricAuthService {
         case 'NotEnrolled':
           throw Exception('No biometric credentials enrolled');
         case 'LockedOut':
-          throw Exception('Biometric authentication locked due to too many attempts');
+          throw Exception(
+            'Biometric authentication locked due to too many attempts',
+          );
         case 'PermanentlyLockedOut':
           throw Exception('Biometric authentication permanently locked');
         case 'UserCancel':
@@ -199,11 +205,9 @@ class BiometricAuthService {
   }
 
   /// Authenticate with fallback to device credentials (passcode/PIN/pattern)
-  Future<bool> authenticateWithFallback({
-    String? reason,
-  }) async {
+  Future<bool> authenticateWithFallback({String? reason}) async {
     try {
-      final defaultReason = Platform.isIOS 
+      final defaultReason = Platform.isIOS
           ? 'Please verify your identity to access CycleSync'
           : 'Verify your identity to continue';
 
@@ -227,7 +231,7 @@ class BiometricAuthService {
       }
     } on PlatformException catch (e) {
       ErrorService.logError(e, context: 'Fallback authentication');
-      
+
       switch (e.code) {
         case 'UserCancel':
           return false;
@@ -244,8 +248,9 @@ class BiometricAuthService {
   Future<bool> shouldPromptBiometricSetup() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final setupCompleted = prefs.getBool(_biometricSetupCompletedKey) ?? false;
-      
+      final setupCompleted =
+          prefs.getBool(_biometricSetupCompletedKey) ?? false;
+
       // Only prompt if setup not completed and biometrics are available
       return !setupCompleted && await isBiometricAvailable();
     } catch (e) {
@@ -296,7 +301,9 @@ class BiometricAuthService {
   Future<String> getBiometricStatusMessage() async {
     final status = await getBiometricAuthStatus();
     final biometricNames = await getAvailableBiometricNames();
-    final biometricName = biometricNames.isNotEmpty ? biometricNames.first : 'biometric';
+    final biometricName = biometricNames.isNotEmpty
+        ? biometricNames.first
+        : 'biometric';
 
     switch (status) {
       case BiometricAuthStatus.notAvailable:
@@ -321,7 +328,10 @@ class BiometricAuthService {
       final prefs = await SharedPreferences.getInstance();
       final currentAttempts = prefs.getInt(_biometricFailedAttemptsKey) ?? 0;
       await prefs.setInt(_biometricFailedAttemptsKey, currentAttempts + 1);
-      await prefs.setInt(_lastFailedAttemptKey, DateTime.now().millisecondsSinceEpoch);
+      await prefs.setInt(
+        _lastFailedAttemptKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
     } catch (e) {
       ErrorService.logError(e, context: 'Record failed attempt');
     }
@@ -342,13 +352,15 @@ class BiometricAuthService {
       final prefs = await SharedPreferences.getInstance();
       final failedAttempts = prefs.getInt(_biometricFailedAttemptsKey) ?? 0;
       final lastFailedAttempt = prefs.getInt(_lastFailedAttemptKey) ?? 0;
-      
+
       // Rate limit after 5 failed attempts
       if (failedAttempts >= 5) {
-        final lastAttemptTime = DateTime.fromMillisecondsSinceEpoch(lastFailedAttempt);
+        final lastAttemptTime = DateTime.fromMillisecondsSinceEpoch(
+          lastFailedAttempt,
+        );
         final now = DateTime.now();
         final timeSinceLastAttempt = now.difference(lastAttemptTime);
-        
+
         // Allow retry after 5 minutes
         if (timeSinceLastAttempt.inMinutes < 5) {
           return true;
@@ -358,25 +370,26 @@ class BiometricAuthService {
           return false;
         }
       }
-      
+
       return false;
     } catch (e) {
       return false;
     }
   }
 
-
   /// Get remaining time for rate limit
   Future<Duration?> getRateLimitRemainingTime() async {
     try {
       if (!await _isRateLimited()) return null;
-      
+
       final prefs = await SharedPreferences.getInstance();
       final lastFailedAttempt = prefs.getInt(_lastFailedAttemptKey) ?? 0;
-      final lastAttemptTime = DateTime.fromMillisecondsSinceEpoch(lastFailedAttempt);
+      final lastAttemptTime = DateTime.fromMillisecondsSinceEpoch(
+        lastFailedAttempt,
+      );
       final now = DateTime.now();
       final elapsed = now.difference(lastAttemptTime);
-      
+
       const cooldownDuration = Duration(minutes: 5);
       return cooldownDuration - elapsed;
     } catch (e) {
@@ -392,7 +405,7 @@ class BiometricAuthService {
       await prefs.remove(_biometricFailedAttemptsKey);
       await prefs.remove(_lastFailedAttemptKey);
       await prefs.remove(_biometricSetupCompletedKey);
-      
+
       debugPrint('Biometric data cleared');
     } catch (e) {
       ErrorService.logError(e, context: 'Clear biometric data');
@@ -404,8 +417,8 @@ class BiometricAuthService {
     try {
       final biometrics = await getAvailableBiometrics();
       return biometrics.contains(BiometricType.strong) ||
-             biometrics.contains(BiometricType.face) ||
-             biometrics.contains(BiometricType.fingerprint);
+          biometrics.contains(BiometricType.face) ||
+          biometrics.contains(BiometricType.fingerprint);
     } catch (e) {
       return false;
     }
@@ -442,8 +455,8 @@ extension BiometricAuthStatusExtension on BiometricAuthStatus {
   }
 
   bool get isUsable => this == BiometricAuthStatus.ready;
-  
-  bool get needsSetup => 
-      this == BiometricAuthStatus.notEnrolled || 
+
+  bool get needsSetup =>
+      this == BiometricAuthStatus.notEnrolled ||
       this == BiometricAuthStatus.disabled;
 }

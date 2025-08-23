@@ -211,7 +211,7 @@ class _HealthcareProviderDialogState extends State<_HealthcareProviderDialog> {
   final _notesController = TextEditingController();
   
   String _selectedDuration = '30 days';
-  Set<String> _selectedData = {'Cycle patterns', 'Symptoms', 'Daily logs'};
+  final Set<String> _selectedData = {'Cycle patterns', 'Symptoms', 'Daily logs'};
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +366,7 @@ class _PartnerSharingDialog extends StatefulWidget {
 
 class _PartnerSharingDialogState extends State<_PartnerSharingDialog> {
   final _emailController = TextEditingController();
-  Set<String> _selectedData = {'Cycle predictions', 'Mood tracking'};
+  final Set<String> _selectedData = {'Cycle predictions', 'Mood tracking'};
 
   @override
   Widget build(BuildContext context) {
@@ -487,7 +487,7 @@ class _ProviderAccessDialogState extends State<_ProviderAccessDialog> {
   final _emailController = TextEditingController();
   
   String _accessType = 'Read-only';
-  Set<String> _permissions = {'View cycle data', 'Generate reports'};
+  final Set<String> _permissions = {'View cycle data', 'Generate reports'};
 
   @override
   Widget build(BuildContext context) {
@@ -633,7 +633,7 @@ class _CommunityResearchDialog extends StatefulWidget {
 
 class _CommunityResearchDialogState extends State<_CommunityResearchDialog> {
   bool _agreedToTerms = false;
-  Set<String> _researchAreas = {'Cycle patterns', 'Symptom research'};
+  final Set<String> _researchAreas = {'Cycle patterns', 'Symptom research'};
 
   @override
   Widget build(BuildContext context) {

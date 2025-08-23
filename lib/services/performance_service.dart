@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for optimizing app performance and startup time
@@ -8,7 +7,7 @@ class PerformanceService {
   static const int _maxCacheSize = 100; // Maximum number of cached items
   static final Map<String, dynamic> _memoryCache = <String, dynamic>{};
   static SharedPreferences? _prefs;
-  
+
   /// Initialize performance service
   static Future<void> initialize() async {
     try {
@@ -41,29 +40,37 @@ class PerformanceService {
   static Future<void> cachePersistently(String key, String data) async {
     try {
       await _prefs?.setString('$_cacheKeyPrefix$key', data);
-      await _prefs?.setInt('${_cacheKeyPrefix}${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
+      await _prefs?.setInt(
+        '$_cacheKeyPrefix${key}_timestamp',
+        DateTime.now().millisecondsSinceEpoch,
+      );
     } catch (e) {
       debugPrint('❌ PerformanceService: Failed to cache data persistently: $e');
     }
   }
 
   /// Retrieve cached data if still valid
-  static Future<String?> getPersistentCache(String key, {Duration maxAge = const Duration(hours: 24)}) async {
+  static Future<String?> getPersistentCache(
+    String key, {
+    Duration maxAge = const Duration(hours: 24),
+  }) async {
     try {
-      final timestamp = _prefs?.getInt('${_cacheKeyPrefix}${key}_timestamp');
+      final timestamp = _prefs?.getInt('$_cacheKeyPrefix${key}_timestamp');
       if (timestamp == null) return null;
 
       final cacheDate = DateTime.fromMillisecondsSinceEpoch(timestamp);
       if (DateTime.now().difference(cacheDate) > maxAge) {
         // Cache expired, clean it up
         await _prefs?.remove('$_cacheKeyPrefix$key');
-        await _prefs?.remove('${_cacheKeyPrefix}${key}_timestamp');
+        await _prefs?.remove('$_cacheKeyPrefix${key}_timestamp');
         return null;
       }
 
       return _prefs?.getString('$_cacheKeyPrefix$key');
     } catch (e) {
-      debugPrint('❌ PerformanceService: Failed to retrieve persistent cache: $e');
+      debugPrint(
+        '❌ PerformanceService: Failed to retrieve persistent cache: $e',
+      );
       return null;
     }
   }
@@ -72,14 +79,17 @@ class PerformanceService {
   static Future<void> _cleanupOldCache() async {
     try {
       final keys = _prefs?.getKeys() ?? <String>{};
-      final cacheKeys = keys.where((key) => key.startsWith(_cacheKeyPrefix)).toList();
-      
+      final cacheKeys = keys
+          .where((key) => key.startsWith(_cacheKeyPrefix))
+          .toList();
+
       for (final key in cacheKeys) {
         if (key.endsWith('_timestamp')) {
           final timestamp = _prefs?.getInt(key);
           if (timestamp != null) {
             final cacheDate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-            if (DateTime.now().difference(cacheDate) > const Duration(days: 7)) {
+            if (DateTime.now().difference(cacheDate) >
+                const Duration(days: 7)) {
               // Remove expired cache
               final dataKey = key.replaceAll('_timestamp', '');
               await _prefs?.remove(dataKey);
@@ -98,13 +108,13 @@ class PerformanceService {
     try {
       // Preload user preferences
       await _preloadUserPreferences();
-      
+
       // Warm up image cache for common assets
       await _preloadAssets();
-      
+
       // Initialize Firebase connections
       await _initializeFirebaseConnections();
-      
+
       debugPrint('✅ PerformanceService: Critical data preloaded');
     } catch (e) {
       debugPrint('❌ PerformanceService: Failed to preload critical data: $e');
@@ -116,16 +126,19 @@ class PerformanceService {
       // Cache theme preferences
       final themeMode = _prefs?.getString('theme_mode') ?? 'system';
       cacheInMemory('theme_mode', themeMode);
-      
+
       // Cache notification preferences
-      final notificationsEnabled = _prefs?.getBool('notifications_enabled') ?? true;
+      final notificationsEnabled =
+          _prefs?.getBool('notifications_enabled') ?? true;
       cacheInMemory('notifications_enabled', notificationsEnabled);
-      
+
       // Cache health integration status
       final healthIntegration = _prefs?.getBool('health_integration') ?? false;
       cacheInMemory('health_integration', healthIntegration);
     } catch (e) {
-      debugPrint('❌ PerformanceService: Failed to preload user preferences: $e');
+      debugPrint(
+        '❌ PerformanceService: Failed to preload user preferences: $e',
+      );
     }
   }
 
@@ -133,7 +146,9 @@ class PerformanceService {
     try {
       // Note: Asset preloading disabled to avoid warnings
       // In production, add actual image assets here
-      debugPrint('✅ PerformanceService: Asset preloading skipped (no assets configured)');
+      debugPrint(
+        '✅ PerformanceService: Asset preloading skipped (no assets configured)',
+      );
     } catch (e) {
       debugPrint('❌ PerformanceService: Failed to preload assets: $e');
     }
@@ -145,7 +160,9 @@ class PerformanceService {
       // This will be implemented when we have proper Firebase mocks
       debugPrint('🔥 PerformanceService: Firebase connections warmed up');
     } catch (e) {
-      debugPrint('❌ PerformanceService: Failed to warm up Firebase connections: $e');
+      debugPrint(
+        '❌ PerformanceService: Failed to warm up Firebase connections: $e',
+      );
     }
   }
 
@@ -153,14 +170,16 @@ class PerformanceService {
   static Future<void> clearAllCaches() async {
     try {
       _memoryCache.clear();
-      
+
       final keys = _prefs?.getKeys() ?? <String>{};
-      final cacheKeys = keys.where((key) => key.startsWith(_cacheKeyPrefix)).toList();
-      
+      final cacheKeys = keys
+          .where((key) => key.startsWith(_cacheKeyPrefix))
+          .toList();
+
       for (final key in cacheKeys) {
         await _prefs?.remove(key);
       }
-      
+
       debugPrint('✅ PerformanceService: All caches cleared');
     } catch (e) {
       debugPrint('❌ PerformanceService: Failed to clear caches: $e');
@@ -173,7 +192,8 @@ class PerformanceService {
       'memory_cache_size': _memoryCache.length,
       'memory_cache_keys': _memoryCache.keys.length,
       'max_cache_size': _maxCacheSize,
-      'cache_usage_percentage': (_memoryCache.length / _maxCacheSize * 100).round(),
+      'cache_usage_percentage': (_memoryCache.length / _maxCacheSize * 100)
+          .round(),
     };
   }
 
@@ -183,13 +203,15 @@ class PerformanceService {
       // Enable performance overlays in debug mode
       if (kDebugMode) {
         // These would be used for performance monitoring
-        debugPrint('🔧 PerformanceService: Debug performance monitoring enabled');
+        debugPrint(
+          '🔧 PerformanceService: Debug performance monitoring enabled',
+        );
       }
 
       // Adjust cache size based on available memory
       // This is a simplified approach - in production, you'd use more sophisticated memory detection
       _adjustCacheSize();
-      
+
       debugPrint('✅ PerformanceService: Performance optimized for device');
     } catch (e) {
       debugPrint('❌ PerformanceService: Failed to optimize for device: $e');
@@ -247,10 +269,12 @@ class PerformanceService {
 /// Extensions for performance-optimized operations
 extension PerformanceUtils on String {
   /// Check if a string is cached
-  bool get isCached => PerformanceService.getCacheFromMemory<String>(this) != null;
+  bool get isCached =>
+      PerformanceService.getCacheFromMemory<String>(this) != null;
 
   /// Cache this string
-  void cacheString(dynamic data) => PerformanceService.cacheInMemory(this, data);
+  void cacheString(dynamic data) =>
+      PerformanceService.cacheInMemory(this, data);
 }
 
 /// Performance monitoring widget

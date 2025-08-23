@@ -14,46 +14,50 @@ import 'services/localization_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize error handling first
   await ErrorService.initialize();
-  
+
   try {
     // Initialize Firebase
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
     // Initialize performance optimizations
     await PerformanceService.initialize();
-    
+
     // Initialize services
     final themeService = ThemeService();
     await themeService.init();
-    
+
     final localizationService = LocalizationService();
     await localizationService.initialize();
-    
+
     // Initialize HealthKit service (don't await - let it initialize in background)
     final healthKitService = HealthKitService();
     healthKitService.initialize();
-    
+
     // Preload critical data for faster startup
     await PerformanceService.preloadCriticalData();
-    
+
     // Optimize performance for device
     PerformanceService.optimizeForDevice();
-    
+
     // Initialize notifications (don't await - let it initialize in background)
     NotificationService.initialize();
     SmartNotificationService.initialize();
-    
+
     // Start performance monitoring in debug mode
     PerformanceService.startPerformanceMonitoring();
-    
-    runApp(MyApp(
-      themeService: themeService,
-      localizationService: localizationService,
-      healthKitService: healthKitService,
-    ));
+
+    runApp(
+      MyApp(
+        themeService: themeService,
+        localizationService: localizationService,
+        healthKitService: healthKitService,
+      ),
+    );
   } catch (error, stackTrace) {
     // Log startup error
     ErrorService.logError(
@@ -62,7 +66,7 @@ void main() async {
       context: 'App Startup',
       severity: ErrorSeverity.fatal,
     );
-    
+
     // Still try to run the app with minimal functionality
     runApp(const ErrorApp());
   }
@@ -72,7 +76,7 @@ class MyApp extends StatelessWidget {
   final ThemeService themeService;
   final LocalizationService localizationService;
   final HealthKitService healthKitService;
-  
+
   const MyApp({
     super.key,
     required this.themeService,
@@ -113,14 +117,14 @@ class MyApp extends StatelessWidget {
                   return supportedLocale;
                 }
               }
-              
+
               // Try to find language match
               for (final supportedLocale in supportedLocales) {
                 if (supportedLocale.languageCode == locale?.languageCode) {
                   return supportedLocale;
                 }
               }
-              
+
               // Return default (English)
               return const Locale('en', 'US');
             },
@@ -148,11 +152,7 @@ class ErrorApp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 80,
-                  color: Colors.red.shade400,
-                ),
+                Icon(Icons.error_outline, size: 80, color: Colors.red.shade400),
                 const SizedBox(height: 24),
                 Text(
                   'Startup Error',
@@ -166,10 +166,7 @@ class ErrorApp extends StatelessWidget {
                 Text(
                   'CycleSync encountered an error during startup. Please restart the app.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.red.shade600,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.red.shade600),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(

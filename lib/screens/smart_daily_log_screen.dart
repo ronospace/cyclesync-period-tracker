@@ -15,16 +15,17 @@ class SmartDailyLogScreen extends StatefulWidget {
   State<SmartDailyLogScreen> createState() => _SmartDailyLogScreenState();
 }
 
-class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerProviderStateMixin {
+class _SmartDailyLogScreenState extends State<SmartDailyLogScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  
+
   DateTime _selectedDate = DateTime.now();
   final _notesController = TextEditingController();
   bool _isSaving = false;
   bool _isLoading = false;
-  
+
   // Tracking data
   double _moodLevel = 3.0;
   double _energyLevel = 3.0;
@@ -33,29 +34,122 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
   double _sleepQuality = 3.0;
   int _waterIntake = 8; // glasses
   int _exerciseMinutes = 0;
-  
+
   final Set<String> _selectedSymptoms = <String>{};
-  final List<String> _moodLabels = ['Very Low', 'Low', 'Neutral', 'Good', 'Excellent'];
-  final List<String> _energyLabels = ['Exhausted', 'Low', 'Normal', 'High', 'Energetic'];
-  final List<String> _painLabels = ['None', 'Mild', 'Moderate', 'Severe', 'Extreme'];
-  final List<String> _stressLabels = ['Very Calm', 'Relaxed', 'Neutral', 'Stressed', 'Very Stressed'];
-  final List<String> _sleepLabels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
-  
-  final List<SymptomOption> _symptomOptions = [
-    SymptomOption('cramps', 'Cramps', Icons.healing, Colors.red),
-    SymptomOption('headache', 'Headache', Icons.psychology_alt, Colors.orange),
-    SymptomOption('mood_swings', 'Mood Swings', Icons.sentiment_very_dissatisfied, Colors.purple),
-    SymptomOption('fatigue', 'Fatigue', Icons.battery_0_bar, Colors.grey),
-    SymptomOption('bloating', 'Bloating', Icons.expand, Colors.blue),
-    SymptomOption('breast_tenderness', 'Breast Tenderness', Icons.favorite_border, Colors.pink),
-    SymptomOption('nausea', 'Nausea', Icons.sick, Colors.green),
-    SymptomOption('back_pain', 'Back Pain', Icons.accessibility_new, Colors.brown),
-    SymptomOption('acne', 'Acne', Icons.face_retouching_natural, Colors.amber),
-    SymptomOption('food_cravings', 'Food Cravings', Icons.restaurant, Colors.deepOrange),
-    SymptomOption('insomnia', 'Sleep Issues', Icons.bedtime_off, Colors.indigo),
-    SymptomOption('hot_flashes', 'Hot Flashes', Icons.whatshot, Colors.deepOrange),
+  final List<String> _moodLabels = [
+    'Very Low',
+    'Low',
+    'Neutral',
+    'Good',
+    'Excellent',
   ];
-  
+  final List<String> _energyLabels = [
+    'Exhausted',
+    'Low',
+    'Normal',
+    'High',
+    'Energetic',
+  ];
+  final List<String> _painLabels = [
+    'None',
+    'Mild',
+    'Moderate',
+    'Severe',
+    'Extreme',
+  ];
+  final List<String> _stressLabels = [
+    'Very Calm',
+    'Relaxed',
+    'Neutral',
+    'Stressed',
+    'Very Stressed',
+  ];
+  final List<String> _sleepLabels = [
+    'Poor',
+    'Fair',
+    'Good',
+    'Very Good',
+    'Excellent',
+  ];
+
+  final List<SymptomOption> _symptomOptions = [
+    SymptomOption('cramps', 'Cramps', Icons.healing, AppTheme.errorRed),
+    SymptomOption(
+      'headache',
+      'Headache',
+      Icons.psychology_alt,
+      AppTheme.warningOrange,
+    ),
+    SymptomOption(
+      'mood_swings',
+      'Mood Swings',
+      Icons.sentiment_very_dissatisfied,
+      AppTheme.primaryPurple,
+    ),
+    SymptomOption(
+      'fatigue',
+      'Fatigue',
+      Icons.battery_0_bar,
+      const Color(0xFF757575),
+    ),
+    SymptomOption('bloating', 'Bloating', Icons.expand, AppTheme.accentBlue),
+    SymptomOption(
+      'breast_tenderness',
+      'Breast Tenderness',
+      Icons.favorite_border,
+      AppTheme.primaryPink,
+    ),
+    SymptomOption('nausea', 'Nausea', Icons.sick, AppTheme.successGreen),
+    SymptomOption(
+      'back_pain',
+      'Back Pain',
+      Icons.accessibility_new,
+      const Color(0xFF8D6E63),
+    ),
+    SymptomOption(
+      'acne',
+      'Acne',
+      Icons.face_retouching_natural,
+      const Color(0xFFFFC107),
+    ),
+    SymptomOption(
+      'food_cravings',
+      'Food Cravings',
+      Icons.restaurant,
+      const Color(0xFFFF5722),
+    ),
+    SymptomOption(
+      'insomnia',
+      'Sleep Issues',
+      Icons.bedtime_off,
+      const Color(0xFF3F51B5),
+    ),
+    SymptomOption(
+      'hot_flashes',
+      'Hot Flashes',
+      Icons.whatshot,
+      const Color(0xFFFF5722),
+    ),
+  ];
+
+  // Helper method to get appropriate colors for different level types
+  Color _getLevelColor(String type) {
+    switch (type) {
+      case 'mood':
+        return AppTheme.warningOrange;
+      case 'energy':
+        return AppTheme.successGreen;
+      case 'pain':
+        return AppTheme.errorRed;
+      case 'stress':
+        return AppTheme.warningOrange;
+      case 'sleep':
+        return AppTheme.accentBlue;
+      default:
+        return AppTheme.primaryPink;
+    }
+  }
+
   // AI Insights
   List<AIInsight> _aiInsights = [];
   Map<String, dynamic>? _predictions;
@@ -86,7 +180,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
 
   Future<void> _loadDailyData() async {
     setState(() => _isLoading = true);
-    
+
     try {
       // Load existing daily log data for selected date
       final dailyData = await _getDailyLogForDate(_selectedDate);
@@ -100,10 +194,12 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
           _waterIntake = dailyData['water_intake']?.toInt() ?? 8;
           _exerciseMinutes = dailyData['exercise_minutes']?.toInt() ?? 0;
           _notesController.text = dailyData['notes'] ?? '';
-          
+
           if (dailyData['symptoms'] != null) {
             _selectedSymptoms.clear();
-            _selectedSymptoms.addAll((dailyData['symptoms'] as List).cast<String>());
+            _selectedSymptoms.addAll(
+              (dailyData['symptoms'] as List).cast<String>(),
+            );
           }
         });
       }
@@ -127,10 +223,12 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
   Future<void> _generateAIInsights() async {
     try {
       final cycleData = await FirebaseService.getCycles(limit: 10);
-      
+
       // Convert Firebase data to CycleData objects
-      final cycles = cycleData.map((data) => CycleData.fromFirestore(data)).toList();
-      
+      final cycles = cycleData
+          .map((data) => CycleData.fromFirestore(data))
+          .toList();
+
       // Generate cycle insights using AI
       final insights = await AIInsightsEngine.generatePersonalizedInsights(
         cycles: cycles,
@@ -138,7 +236,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
           'focus_areas': ['cycle_prediction', 'symptom_patterns', 'wellness'],
         },
       );
-      
+
       // Get AI predictions for various metrics
       final predictions = await TensorFlowPredictionService.getCyclePredictions(
         cycles: cycles,
@@ -149,7 +247,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
           'stress': _stressLevel,
         },
       );
-      
+
       setState(() {
         _aiInsights = insights;
         _predictions = predictions;
@@ -161,9 +259,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
 
   Future<void> _saveDailyLog() async {
     if (_isSaving) return;
-    
+
     setState(() => _isSaving = true);
-    
+
     try {
       final dailyLogData = {
         'date': _selectedDate,
@@ -181,27 +279,36 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
 
       // Save to Firebase (implement this method in FirebaseService)
       await FirebaseService.saveDailyLog(dailyLogData);
-      
+
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.dailyLogSavedFor(DateFormat.yMMMd().format(_selectedDate)) ?? 'Daily log saved for ${DateFormat.yMMMd().format(_selectedDate)}'),
+            content: Text(
+              l10n.dailyLogSavedFor(DateFormat.yMMMd().format(_selectedDate)) ??
+                  'Daily log saved for ${DateFormat.yMMMd().format(_selectedDate)}',
+            ),
           ),
         );
-        
+
         // Regenerate insights with new data
         _generateAIInsights();
+
+        // Navigate to onboarding completion screen for next steps
+        context.go('/onboarding-complete');
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.errorSavingDailyLog(e.toString()) ?? 'Error saving daily log: $e'),
+            content: Text(
+              l10n.errorSavingDailyLog(e.toString()) ??
+                  'Error saving daily log: $e',
+            ),
             backgroundColor: Colors.red,
             action: SnackBarAction(
-              label: l10n?.retry ?? 'Retry',
+              label: l10n.retry ?? 'Retry',
               textColor: Colors.white,
               onPressed: _saveDailyLog,
             ),
@@ -229,8 +336,11 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)?.loggingFor ?? 'Logging for',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    AppLocalizations.of(context).loggingFor ?? 'Logging for',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.getSubtitleColor(context),
+                    ),
                   ),
                   Text(
                     DateFormat.yMMMMEEEEd().format(_selectedDate),
@@ -258,7 +368,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 }
               },
               icon: const Icon(Icons.edit_calendar),
-              label: Text(AppLocalizations.of(context)?.change ?? 'Change'),
+              label: Text(AppLocalizations.of(context).change ?? 'Change'),
             ),
           ],
         ),
@@ -273,60 +383,60 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDateSelector(),
-          
+
           // Mood
           _buildLevelCard(
-            title: AppLocalizations.of(context)?.moodLevel ?? 'Mood Level',
+            title: AppLocalizations.of(context).moodLevel ?? 'Mood Level',
             icon: Icons.sentiment_satisfied_alt,
-            color: Colors.amber,
+            color: _getLevelColor('mood'),
             value: _moodLevel,
             labels: _moodLabels,
             onChanged: (value) => setState(() => _moodLevel = value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Energy
           _buildLevelCard(
-            title: AppLocalizations.of(context)?.energyLevel ?? 'Energy Level',
+            title: AppLocalizations.of(context).energyLevel ?? 'Energy Level',
             icon: Icons.battery_charging_full,
-            color: Colors.green,
+            color: _getLevelColor('energy'),
             value: _energyLevel,
             labels: _energyLabels,
             onChanged: (value) => setState(() => _energyLevel = value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Pain
           _buildLevelCard(
-            title: AppLocalizations.of(context)?.painLevel ?? 'Pain Level',
+            title: AppLocalizations.of(context).painLevel ?? 'Pain Level',
             icon: Icons.healing,
-            color: Colors.red,
+            color: _getLevelColor('pain'),
             value: _painLevel,
             labels: _painLabels,
             onChanged: (value) => setState(() => _painLevel = value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Stress
           _buildLevelCard(
-            title: AppLocalizations.of(context)?.stressLevel ?? 'Stress Level',
+            title: AppLocalizations.of(context).stressLevel ?? 'Stress Level',
             icon: Icons.psychology,
-            color: Colors.orange,
+            color: _getLevelColor('stress'),
             value: _stressLevel,
             labels: _stressLabels,
             onChanged: (value) => setState(() => _stressLevel = value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Sleep Quality
           _buildLevelCard(
-            title: AppLocalizations.of(context)?.sleepQuality ?? 'Sleep Quality',
+            title: AppLocalizations.of(context).sleepQuality ?? 'Sleep Quality',
             icon: Icons.bedtime,
-            color: Colors.indigo,
+            color: _getLevelColor('sleep'),
             value: _sleepQuality,
             labels: _sleepLabels,
             onChanged: (value) => setState(() => _sleepQuality = value),
@@ -351,11 +461,15 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.local_drink, color: Colors.blue),
+                      Icon(Icons.local_drink, color: AppTheme.accentBlue),
                       const SizedBox(width: 8),
                       Text(
-                        AppLocalizations.of(context)?.waterIntake ?? 'Water Intake',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        AppLocalizations.of(context).waterIntake ??
+                            'Water Intake',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -365,16 +479,18 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                      color: AppTheme.accentBlue,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       IconButton(
-                        onPressed: _waterIntake > 0 ? () => setState(() => _waterIntake--) : null,
+                        onPressed: _waterIntake > 0
+                            ? () => setState(() => _waterIntake--)
+                            : null,
                         icon: const Icon(Icons.remove_circle),
-                        color: Colors.red,
+                        color: AppTheme.errorRed,
                       ),
                       Expanded(
                         child: Slider(
@@ -382,14 +498,17 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                           min: 0,
                           max: 15,
                           divisions: 15,
-                          activeColor: Colors.blue,
-                          onChanged: (value) => setState(() => _waterIntake = value.round()),
+                          activeColor: AppTheme.accentBlue,
+                          onChanged: (value) =>
+                              setState(() => _waterIntake = value.round()),
                         ),
                       ),
                       IconButton(
-                        onPressed: _waterIntake < 15 ? () => setState(() => _waterIntake++) : null,
+                        onPressed: _waterIntake < 15
+                            ? () => setState(() => _waterIntake++)
+                            : null,
                         icon: const Icon(Icons.add_circle),
-                        color: Colors.green,
+                        color: AppTheme.successGreen,
                       ),
                     ],
                   ),
@@ -402,7 +521,11 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                           height: 20,
                           margin: const EdgeInsets.symmetric(horizontal: 1),
                           decoration: BoxDecoration(
-                            color: index < _waterIntake ? Colors.blue : Colors.grey.shade300,
+                            color: index < _waterIntake
+                                ? AppTheme.accentBlue
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.outline.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -413,9 +536,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Exercise
           Card(
             child: Padding(
@@ -425,11 +548,14 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.fitness_center, color: Colors.green),
+                      Icon(Icons.fitness_center, color: AppTheme.successGreen),
                       const SizedBox(width: 8),
                       Text(
-                        AppLocalizations.of(context)?.exercise ?? 'Exercise',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        AppLocalizations.of(context).exercise ?? 'Exercise',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -439,16 +565,18 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: AppTheme.successGreen,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       IconButton(
-                        onPressed: _exerciseMinutes >= 15 ? () => setState(() => _exerciseMinutes -= 15) : null,
+                        onPressed: _exerciseMinutes >= 15
+                            ? () => setState(() => _exerciseMinutes -= 15)
+                            : null,
                         icon: const Icon(Icons.remove_circle),
-                        color: Colors.red,
+                        color: AppTheme.errorRed,
                       ),
                       Expanded(
                         child: Slider(
@@ -456,14 +584,17 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                           min: 0,
                           max: 180,
                           divisions: 12,
-                          activeColor: Colors.green,
-                          onChanged: (value) => setState(() => _exerciseMinutes = value.round()),
+                          activeColor: AppTheme.successGreen,
+                          onChanged: (value) =>
+                              setState(() => _exerciseMinutes = value.round()),
                         ),
                       ),
                       IconButton(
-                        onPressed: _exerciseMinutes < 180 ? () => setState(() => _exerciseMinutes += 15) : null,
+                        onPressed: _exerciseMinutes < 180
+                            ? () => setState(() => _exerciseMinutes += 15)
+                            : null,
                         icon: const Icon(Icons.add_circle),
-                        color: Colors.green,
+                        color: AppTheme.successGreen,
                       ),
                     ],
                   ),
@@ -471,18 +602,26 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: (_exerciseMinutes / 30).clamp(0.0, 1.0),
-                    backgroundColor: Colors.grey.shade300,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.3),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppTheme.successGreen,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _exerciseMinutes >= 30 
+                    _exerciseMinutes >= 30
                         ? '🎉 Daily goal achieved!'
-                    : '${30 - _exerciseMinutes} ${AppLocalizations.of(context)?.minutes ?? 'min'} to reach daily goal',
+                        : '${30 - _exerciseMinutes} ${AppLocalizations.of(context).minutes ?? 'min'} to reach daily goal',
                     style: TextStyle(
                       fontSize: 12,
-                      color: _exerciseMinutes >= 30 ? Colors.green : Colors.grey.shade600,
-                      fontWeight: _exerciseMinutes >= 30 ? FontWeight.bold : FontWeight.normal,
+                      color: _exerciseMinutes >= 30
+                          ? AppTheme.successGreen
+                          : AppTheme.getSubtitleColor(context),
+                      fontWeight: _exerciseMinutes >= 30
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -507,51 +646,59 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)?.symptomsToday ?? 'Symptoms Today',
+                    AppLocalizations.of(context).symptomsToday ??
+                        'Symptoms Today',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    AppLocalizations.of(context)?.tapSymptomsExperienced ?? 'Tap any symptoms you experienced today:',
-                    style: TextStyle(color: Colors.grey.shade600),
+                    AppLocalizations.of(context).tapSymptomsExperienced ??
+                        'Tap any symptoms you experienced today:',
+                    style: TextStyle(color: AppTheme.getSubtitleColor(context)),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   if (_selectedSymptoms.isNotEmpty)
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.pink.shade50,
+                        color: AppTheme.primaryPink.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.pink.shade200),
+                        border: Border.all(
+                          color: AppTheme.primaryPink.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Text(
-                        AppLocalizations.of(context)?.symptomSelected(_selectedSymptoms.length) ?? '',
+                        AppLocalizations.of(
+                              context,
+                            ).symptomSelected(_selectedSymptoms.length) ??
+                            '',
                         style: TextStyle(
-                          color: Colors.pink.shade700,
+                          color: AppTheme.primaryPink,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Symptoms grid
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 3,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
                     itemCount: _symptomOptions.length,
                     itemBuilder: (context, index) {
                       final symptom = _symptomOptions[index];
                       final isSelected = _selectedSymptoms.contains(symptom.id);
-                      
+
                       return GestureDetector(
                         onTap: () {
                           setState(() {
@@ -564,10 +711,14 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isSelected ? symptom.color.withOpacity(0.1) : Colors.grey.shade50,
+                            color: isSelected
+                                ? symptom.color.withValues(alpha: 0.1)
+                                : Colors.grey.shade50,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isSelected ? symptom.color : Colors.grey.shade300,
+                              color: isSelected
+                                  ? symptom.color
+                                  : Colors.grey.shade300,
                               width: isSelected ? 2 : 1,
                             ),
                           ),
@@ -576,7 +727,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                               const SizedBox(width: 12),
                               Icon(
                                 symptom.icon,
-                                color: isSelected ? symptom.color : Colors.grey.shade600,
+                                color: isSelected
+                                    ? symptom.color
+                                    : Colors.grey.shade600,
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
@@ -584,8 +737,12 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                                 child: Text(
                                   symptom.name,
                                   style: TextStyle(
-                                    color: isSelected ? symptom.color : Colors.grey.shade700,
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                    color: isSelected
+                                        ? symptom.color
+                                        : Colors.grey.shade700,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -600,9 +757,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Notes Section
           Card(
             child: Padding(
@@ -611,21 +768,24 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)?.dailyNotes ?? 'Daily Notes',
+                    AppLocalizations.of(context).dailyNotes ?? 'Daily Notes',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    AppLocalizations.of(context)?.howFeelingToday ?? 'How are you feeling today? Any thoughts or observations?',
-                    style: TextStyle(color: Colors.grey.shade600),
+                    AppLocalizations.of(context).howFeelingToday ??
+                        'How are you feeling today? Any thoughts or observations?',
+                    style: TextStyle(color: AppTheme.getSubtitleColor(context)),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   TextField(
                     controller: _notesController,
                     maxLines: 4,
                     decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)?.feelingGreatToday ?? 'e.g., Feeling great today, had a good workout...',
+                      hintText:
+                          AppLocalizations.of(context).feelingGreatToday ??
+                          'e.g., Feeling great today, had a good workout...',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -653,7 +813,10 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 16),
-                      Text(AppLocalizations.of(context)?.generatingAIInsights ?? 'Generating AI insights...'),
+                      Text(
+                        AppLocalizations.of(context).generatingAIInsights ??
+                            'Generating AI insights...',
+                      ),
                     ],
                   ),
                 ),
@@ -673,34 +836,40 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                           Icon(Icons.auto_awesome, color: Colors.purple),
                           const SizedBox(width: 8),
                           Text(
-                            AppLocalizations.of(context)?.aiPredictions ?? 'AI Predictions',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            AppLocalizations.of(context).aiPredictions ??
+                                'AI Predictions',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      
+
                       if (_predictions!['next_period'] != null)
                         _buildPredictionItem(
-                          AppLocalizations.of(context)?.nextPeriod ?? 'Next Period',
+                          AppLocalizations.of(context).nextPeriod ??
+                              'Next Period',
                           _predictions!['next_period']['date'],
                           _predictions!['next_period']['confidence'],
                           Icons.event,
                           Colors.red,
                         ),
-                      
+
                       if (_predictions!['ovulation'] != null)
                         _buildPredictionItem(
-                          AppLocalizations.of(context)?.ovulation ?? 'Ovulation',
+                          AppLocalizations.of(context).ovulation ?? 'Ovulation',
                           _predictions!['ovulation']['date'],
                           _predictions!['ovulation']['confidence'],
                           Icons.favorite,
                           Colors.pink,
                         ),
-                      
+
                       if (_predictions!['cycle_irregularity'] != null)
                         _buildPredictionItem(
-                          AppLocalizations.of(context)?.cycleRegularity ?? 'Cycle Regularity',
+                          AppLocalizations.of(context).cycleRegularity ??
+                              'Cycle Regularity',
                           _predictions!['cycle_irregularity']['risk_level'],
                           _predictions!['cycle_irregularity']['confidence'],
                           Icons.warning,
@@ -710,13 +879,13 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                   ),
                 ),
               ),
-            
+
             const SizedBox(height: 16),
-            
+
             // AI Insights
             if (_aiInsights.isNotEmpty) ...[
               Text(
-                '🧠 ${AppLocalizations.of(context)?.personalInsights ?? 'Personal Insights'}',
+                '🧠 ${AppLocalizations.of(context).personalInsights ?? 'Personal Insights'}',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -726,7 +895,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: _getInsightColor(insight.type).withOpacity(0.2),
+                      backgroundColor: _getInsightColor(
+                        insight.type,
+                      ).withValues(alpha: 0.2),
                       child: Icon(
                         _getInsightIcon(insight.type),
                         color: _getInsightColor(insight.type),
@@ -749,15 +920,24 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Icon(Icons.lightbulb_outline, size: 48, color: Colors.grey),
+                      Icon(
+                        Icons.lightbulb_outline,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(height: 8),
                       Text(
-                        AppLocalizations.of(context)?.noInsightsYet ?? 'No insights yet',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        AppLocalizations.of(context).noInsightsYet ??
+                            'No insights yet',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        AppLocalizations.of(context)?.keepTrackingForInsights ?? 'Keep tracking your daily data to get personalized AI insights!',
+                        AppLocalizations.of(context).keepTrackingForInsights ??
+                            'Keep tracking your daily data to get personalized AI insights!',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey),
                       ),
@@ -799,7 +979,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Current level display
             Center(
               child: Column(
@@ -826,9 +1006,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Slider
             Slider(
               value: value,
@@ -838,7 +1018,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
               activeColor: color,
               onChanged: onChanged,
             ),
-            
+
             // Scale labels
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -870,7 +1050,10 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(value),
                 const SizedBox(height: 4),
                 LinearProgressIndicator(
@@ -880,7 +1063,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${(confidence * 100).toStringAsFixed(0)}% ${AppLocalizations.of(context)?.confidence ?? 'confidence'}',
+                  '${(confidence * 100).toStringAsFixed(0)}% ${AppLocalizations.of(context).confidence ?? 'confidence'}',
                   style: const TextStyle(fontSize: 10, color: Colors.grey),
                 ),
               ],
@@ -922,7 +1105,9 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('🌸 ${AppLocalizations.of(context)?.smartDailyLog ?? 'Smart Daily Log'}'),
+        title: Text(
+          '🌸 ${AppLocalizations.of(context).smartDailyLog ?? 'Smart Daily Log'}',
+        ),
         backgroundColor: Colors.pink.shade50,
         foregroundColor: Colors.pink.shade700,
         elevation: 0,
@@ -944,7 +1129,7 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
             TextButton.icon(
               onPressed: _saveDailyLog,
               icon: const Icon(Icons.save),
-              label: Text(AppLocalizations.of(context)?.save ?? 'Save'),
+              label: Text(AppLocalizations.of(context).save ?? 'Save'),
               style: TextButton.styleFrom(
                 foregroundColor: Colors.pink.shade700,
               ),
@@ -956,10 +1141,22 @@ class _SmartDailyLogScreenState extends State<SmartDailyLogScreen> with TickerPr
           unselectedLabelColor: Colors.grey.shade600,
           indicatorColor: Colors.pink.shade600,
           tabs: [
-            Tab(icon: Icon(Icons.sentiment_satisfied_alt), text: AppLocalizations.of(context)?.wellbeing ?? 'Wellbeing'),
-            Tab(icon: Icon(Icons.fitness_center), text: AppLocalizations.of(context)?.lifestyle ?? 'Lifestyle'),
-            Tab(icon: Icon(Icons.healing), text: AppLocalizations.of(context)?.symptoms ?? 'Symptoms'),
-            Tab(icon: Icon(Icons.auto_awesome), text: AppLocalizations.of(context)?.aiInsights ?? 'AI Insights'),
+            Tab(
+              icon: Icon(Icons.sentiment_satisfied_alt),
+              text: AppLocalizations.of(context).wellbeing ?? 'Wellbeing',
+            ),
+            Tab(
+              icon: Icon(Icons.fitness_center),
+              text: AppLocalizations.of(context).lifestyle ?? 'Lifestyle',
+            ),
+            Tab(
+              icon: Icon(Icons.healing),
+              text: AppLocalizations.of(context).symptoms ?? 'Symptoms',
+            ),
+            Tab(
+              icon: Icon(Icons.auto_awesome),
+              text: AppLocalizations.of(context).aiInsights ?? 'AI Insights',
+            ),
           ],
         ),
       ),

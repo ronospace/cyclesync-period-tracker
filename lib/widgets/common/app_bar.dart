@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.leading,
@@ -23,7 +23,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation = 0,
     this.centerTitle = true,
     this.onBackPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +36,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: actions,
-      leading: leading ?? (onBackPressed != null 
-        ? IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: onBackPressed,
-          ) 
-        : null),
+      leading:
+          leading ??
+          (onBackPressed != null
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: onBackPressed,
+                )
+              : null),
       automaticallyImplyLeading: automaticallyImplyLeading,
       backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.surface,
-      foregroundColor: foregroundColor ?? Theme.of(context).colorScheme.onSurface,
+      foregroundColor:
+          foregroundColor ?? Theme.of(context).colorScheme.onSurface,
       elevation: elevation,
       centerTitle: centerTitle,
       surfaceTintColor: Colors.transparent,

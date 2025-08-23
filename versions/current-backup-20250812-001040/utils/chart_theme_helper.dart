@@ -128,7 +128,7 @@ class ChartThemeHelper {
       getTooltipItems: tooltipItems ?? (touchedSpots) {
         return touchedSpots.map((spot) {
           return LineTooltipItem(
-            '${spot.y.toStringAsFixed(1)}',
+            spot.y.toStringAsFixed(1),
             TextStyle(
               color: colors['text'],
               fontWeight: FontWeight.bold,
@@ -152,7 +152,7 @@ class ChartThemeHelper {
       tooltipRoundedRadius: 8,
       getTooltipItem: tooltipItem ?? (group, groupIndex, rod, rodIndex) {
         return BarTooltipItem(
-          '${rod.toY.toStringAsFixed(1)}',
+          rod.toY.toStringAsFixed(1),
           TextStyle(
             color: colors['text'],
             fontWeight: FontWeight.bold,

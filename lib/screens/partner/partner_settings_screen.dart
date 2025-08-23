@@ -14,7 +14,7 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
   bool _allowComments = true;
   bool _allowPartnerInvitations = true;
   Duration _autoShareFrequency = const Duration(hours: 24);
-  
+
   final List<DataType> _defaultSharedDataTypes = [
     DataType.cycleLength,
     DataType.periodDates,
@@ -93,7 +93,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
           const Divider(height: 1),
           SwitchListTile(
             title: const Text('Notifications'),
-            subtitle: const Text('Receive notifications about partner activity'),
+            subtitle: const Text(
+              'Receive notifications about partner activity',
+            ),
             value: _notificationsEnabled,
             onChanged: (value) {
               setState(() {
@@ -126,9 +128,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
           children: [
             Text(
               'Default Data Types',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
             Text(
@@ -167,7 +169,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
         children: [
           SwitchListTile(
             title: const Text('Auto-Share Data'),
-            subtitle: const Text('Automatically share new cycle data with partners'),
+            subtitle: const Text(
+              'Automatically share new cycle data with partners',
+            ),
             value: _autoShareEnabled,
             onChanged: (value) {
               setState(() {
@@ -228,7 +232,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
           ListTile(
             leading: const Icon(Icons.article_outlined),
             title: const Text('Quick Share Templates'),
-            subtitle: const Text('Create templates for common sharing scenarios'),
+            subtitle: const Text(
+              'Create templates for common sharing scenarios',
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: _manageSharingTemplates,
           ),
@@ -403,25 +409,26 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
           title: const Text('Auto-Share Frequency'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              const Duration(hours: 1),
-              const Duration(hours: 6),
-              const Duration(hours: 12),
-              const Duration(hours: 24),
-              const Duration(days: 7),
-            ].map((duration) {
-              return RadioListTile<Duration>(
-                title: Text(_getFrequencyText(duration)),
-                value: duration,
-                groupValue: _autoShareFrequency,
-                onChanged: (value) {
-                  setState(() {
-                    _autoShareFrequency = value!;
-                  });
-                  Navigator.of(context).pop();
-                },
-              );
-            }).toList(),
+            children:
+                [
+                  const Duration(hours: 1),
+                  const Duration(hours: 6),
+                  const Duration(hours: 12),
+                  const Duration(hours: 24),
+                  const Duration(days: 7),
+                ].map((duration) {
+                  return RadioListTile<Duration>(
+                    title: Text(_getFrequencyText(duration)),
+                    value: duration,
+                    groupValue: _autoShareFrequency,
+                    onChanged: (value) {
+                      setState(() {
+                        _autoShareFrequency = value!;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  );
+                }).toList(),
           ),
         );
       },
@@ -487,11 +494,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
 
   void _exportSharedData() async {
     try {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Preparing data export...'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Preparing data export...')));
 
       // In a real implementation, this would:
       // 1. Collect all shared data
@@ -510,11 +515,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Export failed: $e'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Export failed: $e')));
       }
     }
   }
@@ -522,9 +525,7 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
   void _manageSharingTemplates() {
     // Navigate to template management screen
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Template management coming soon!'),
-      ),
+      const SnackBar(content: Text('Template management coming soon!')),
     );
   }
 
@@ -544,18 +545,14 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
 
   void _editTemplate(String templateId) {
     // Navigate to template editor
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Editing template: $templateId'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Editing template: $templateId')));
   }
 
   void _duplicateTemplate(String templateId) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Template "$templateId" duplicated'),
-      ),
+      SnackBar(content: Text('Template "$templateId" duplicated')),
     );
   }
 
@@ -604,11 +601,9 @@ class _PartnerSettingsScreenState extends State<PartnerSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving settings: $e'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error saving settings: $e')));
       }
     }
   }

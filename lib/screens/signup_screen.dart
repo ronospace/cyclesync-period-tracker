@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/app_logo.dart';
+import '../services/user_profile_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -23,7 +24,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      context.go('/home');
+
+      // Initialize user profile for new user
+      await UserProfileService.initializeNewUser();
+
+      // Redirect to display name setup for onboarding
+      context.go('/display-name-setup');
     } catch (e) {
       setState(() => _error = 'Sign up failed: ${e.toString()}');
     }
@@ -40,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -48,8 +54,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.primary.withOpacity(0.1),
-              theme.colorScheme.secondary.withOpacity(0.05),
+              theme.colorScheme.primary.withValues(alpha: 0.1),
+              theme.colorScheme.secondary.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -75,16 +81,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         const Spacer(),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Compact Logo and Welcome
                     Column(
                       children: [
-                        const AppLogo(
-                          size: 80,
-                          showText: false,
-                        ),
+                        const AppLogo(size: 80, showText: false),
                         const SizedBox(height: 16),
                         Text(
                           l10n?.createAccount ?? 'Create Account',
@@ -95,7 +98,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          l10n?.joinCycleSyncCommunity ?? 'Join the CycleSync community',
+                          l10n?.joinFlowSenseCommunity ??
+                              'Join the FlowSense community',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -103,13 +107,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 32),
-              
+
                     // Sign Up Form Card
                     Card(
                       elevation: 8,
-                      shadowColor: theme.colorScheme.primary.withOpacity(0.2),
+                      shadowColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.2,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -128,12 +134,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 filled: true,
-                                fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                                fillColor: theme.colorScheme.surfaceVariant
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 16),
-                            
+
                             // Password Field
                             TextField(
                               controller: _passwordController,
@@ -145,13 +152,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 prefixIcon: const Icon(Icons.lock_outlined),
                                 filled: true,
-                                fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-                                helperText: l10n?.passwordHelp ?? 'At least 6 characters',
+                                fillColor: theme.colorScheme.surfaceVariant
+                                    .withValues(alpha: 0.3),
+                                helperText:
+                                    l10n?.passwordHelp ??
+                                    'At least 6 characters',
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Sign Up Button
                             SizedBox(
                               width: double.infinity,
@@ -160,7 +170,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: theme.colorScheme.primary,
                                   foregroundColor: theme.colorScheme.onPrimary,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -169,18 +181,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 child: Text(
                                   l10n?.signUp ?? 'Create Account',
                                   style: const TextStyle(
-                                    fontSize: 16, 
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 16),
-                            
+
                             // Terms and Privacy Text
                             Text(
-                              l10n?.termsAgreement ?? 'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                              l10n?.termsAgreement ??
+                                  'By creating an account, you agree to our Terms of Service and Privacy Policy',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
@@ -190,15 +203,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Sign In Link
                     TextButton(
                       onPressed: () => context.go('/login'),
                       child: RichText(
                         text: TextSpan(
-                          text: l10n?.alreadyHaveAccount ?? 'Already have an account? ',
+                          text:
+                              l10n?.alreadyHaveAccount ??
+                              'Already have an account? ',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -214,7 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    
+
                     // Error Display
                     if (_error != null)
                       Container(
@@ -224,13 +239,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: theme.colorScheme.errorContainer,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: theme.colorScheme.error.withOpacity(0.3),
+                            color: theme.colorScheme.error.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
-                              Icons.error_outline, 
+                              Icons.error_outline,
                               color: theme.colorScheme.error,
                               size: 20,
                             ),

@@ -12,14 +12,14 @@ import 'firebase_service.dart';
 /// personalized insights, and adaptive learning capabilities
 class SmartNotificationService {
   // Remove instance - use static methods instead
-  
+
   // Enhanced Notification Categories
   static const String _categoryPredictive = 'predictive';
   static const String _categoryInsights = 'insights';
   static const String _categoryHealth = 'health_alerts';
   static const String _categoryMedication = 'medication';
   static const String _categoryWellness = 'wellness';
-  
+
   // Enhanced Notification IDs (1000+ range for smart notifications)
   static const int _baseID = 1000;
   static const int _predictiveStartID = 1001;
@@ -45,12 +45,12 @@ class SmartNotificationService {
 
     try {
       debugPrint('🧠 Starting Smart Notification Analysis...');
-      
+
       // Get user's recent data
       final cycleData = await FirebaseService.getCycles();
       final cycles = cycleData.map((c) => CycleData.fromFirestore(c)).toList();
       final dailyLogs = await _getDailyLogs();
-      
+
       // Run all analysis modules
       await Future.wait([
         _analyzePredictivePatterns(cycles),
@@ -61,7 +61,7 @@ class SmartNotificationService {
         _detectIrregularPatterns(cycles),
         _scheduleWeeklyInsights(cycles, dailyLogs),
       ]);
-      
+
       debugPrint('✅ Smart Notification Analysis Complete');
     } catch (e) {
       debugPrint('❌ Error in smart analysis: $e');
@@ -73,64 +73,79 @@ class SmartNotificationService {
     if (cycles.length < 3) return;
 
     final predictions = _calculateAdvancedPredictions(cycles);
-    
+
     // Enhanced cycle start prediction with confidence levels
     if (predictions['nextCycleStart'] != null) {
       final confidence = predictions['confidence'] ?? 0.0;
-      final daysAway = predictions['nextCycleStart'].difference(DateTime.now()).inDays;
-      
+      final daysAway = predictions['nextCycleStart']
+          .difference(DateTime.now())
+          .inDays;
+
       if (daysAway >= 2 && daysAway <= 5) {
         String title, body;
-        
+
         if (confidence > 0.8) {
           title = '🎯 High Confidence Prediction';
-          body = 'Your cycle will likely start in $daysAway days (${(confidence * 100).toInt()}% confidence)';
+          body =
+              'Your cycle will likely start in $daysAway days (${(confidence * 100).toInt()}% confidence)';
         } else if (confidence > 0.6) {
           title = '📊 Cycle Prediction';
-          body = 'Your cycle may start in $daysAway days. Track symptoms for better accuracy!';
+          body =
+              'Your cycle may start in $daysAway days. Track symptoms for better accuracy!';
         } else {
           title = '🤔 Uncertain Pattern';
-          body = 'Your cycle data shows irregular patterns. Consider tracking more consistently.';
+          body =
+              'Your cycle data shows irregular patterns. Consider tracking more consistently.';
         }
-        
+
         await _scheduleSmartNotification(
           id: _predictiveStartID,
           title: title,
           body: body,
           scheduledDate: DateTime.now().add(Duration(hours: 2)),
           category: _categoryPredictive,
-          priority: confidence > 0.7 ? NotificationPriority.high : NotificationPriority.defaultPriority,
+          priority: confidence > 0.7
+              ? NotificationPriority.high
+              : NotificationPriority.defaultPriority,
         );
       }
     }
   }
 
   /// 🧡 Mood and Energy Pattern Analysis
-  static Future<void> _analyzeMoodAndEnergyPatterns(List<DailyLogEntry> dailyLogs) async {
+  static Future<void> _analyzeMoodAndEnergyPatterns(
+    List<DailyLogEntry> dailyLogs,
+  ) async {
     if (dailyLogs.length < 7) return;
 
     final recentLogs = dailyLogs.take(7).toList();
-    final moodTrend = _calculateTrend(recentLogs.map((l) => l.mood?.toDouble() ?? 5.0).toList());
-    final energyTrend = _calculateTrend(recentLogs.map((l) => l.energy?.toDouble() ?? 5.0).toList());
-    
+    final moodTrend = _calculateTrend(
+      recentLogs.map((l) => l.mood?.toDouble() ?? 5.0).toList(),
+    );
+    final energyTrend = _calculateTrend(
+      recentLogs.map((l) => l.energy?.toDouble() ?? 5.0).toList(),
+    );
+
     // Detect concerning patterns
     if (moodTrend < -0.5 && energyTrend < -0.3) {
       await _scheduleSmartNotification(
         id: _moodPatternID,
         title: '💙 Wellness Check',
-        body: 'I noticed your mood and energy have been declining. Consider some self-care activities today.',
+        body:
+            'I noticed your mood and energy have been declining. Consider some self-care activities today.',
         scheduledDate: DateTime.now().add(Duration(hours: 1)),
         category: _categoryWellness,
         priority: NotificationPriority.high,
       );
     }
-    
+
     // Positive pattern recognition
     if (moodTrend > 0.5 && energyTrend > 0.3) {
       await _scheduleSmartNotification(
         id: _energyPatternID,
         title: '✨ Great Momentum!',
-        body: 'Your mood and energy are trending upward! This might be a great time for new activities.',
+        body:
+            'Your mood and energy are trending upward! This might be a great time for new activities.',
         scheduledDate: DateTime.now().add(Duration(hours: 3)),
         category: _categoryInsights,
         priority: NotificationPriority.defaultPriority,
@@ -139,31 +154,48 @@ class SmartNotificationService {
   }
 
   /// 🏥 Health Trends Analysis
-  static Future<void> _analyzeHealthTrends(List<CycleData> cycles, List<DailyLogEntry> dailyLogs) async {
+  static Future<void> _analyzeHealthTrends(
+    List<CycleData> cycles,
+    List<DailyLogEntry> dailyLogs,
+  ) async {
     final insights = <String>[];
-    
+
     // Analyze cycle irregularity
     if (cycles.length >= 3) {
-      final lengths = cycles.where((c) => c.lengthInDays > 0).map((c) => c.lengthInDays).toList();
+      final lengths = cycles
+          .where((c) => c.lengthInDays > 0)
+          .map((c) => c.lengthInDays)
+          .toList();
       if (lengths.isNotEmpty) {
         final avgLength = lengths.reduce((a, b) => a + b) / lengths.length;
-        final variance = lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) / lengths.length;
-        
-        if (variance > 16) { // High variance in cycle length
-          insights.add('Your cycle length varies significantly. Consider consulting with a healthcare provider.');
+        final variance =
+            lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) /
+            lengths.length;
+
+        if (variance > 16) {
+          // High variance in cycle length
+          insights.add(
+            'Your cycle length varies significantly. Consider consulting with a healthcare provider.',
+          );
         }
       }
     }
-    
+
     // Analyze pain patterns
-    final recentPain = dailyLogs.take(14).where((l) => l.pain != null).map((l) => l.pain!).toList();
+    final recentPain = dailyLogs
+        .take(14)
+        .where((l) => l.pain != null)
+        .map((l) => l.pain!)
+        .toList();
     if (recentPain.isNotEmpty) {
       final avgPain = recentPain.reduce((a, b) => a + b) / recentPain.length;
       if (avgPain > 7) {
-        insights.add('Your pain levels have been consistently high. Consider tracking specific symptoms and discussing with a doctor.');
+        insights.add(
+          'Your pain levels have been consistently high. Consider tracking specific symptoms and discussing with a doctor.',
+        );
       }
     }
-    
+
     if (insights.isNotEmpty) {
       await _scheduleSmartNotification(
         id: _healthInsightID,
@@ -177,42 +209,50 @@ class SmartNotificationService {
   }
 
   /// 💊 Intelligent Medication Reminders
-  static Future<void> _scheduleMedicationReminders(List<CycleData> cycles) async {
+  static Future<void> _scheduleMedicationReminders(
+    List<CycleData> cycles,
+  ) async {
     if (cycles.isEmpty) return;
-    
+
     // Predict when user might need pain medication based on cycle phase
     final currentCycle = cycles.firstWhere(
       (c) => c.endDate == null,
       orElse: () => cycles.first,
     );
-    
-    if (currentCycle.startDate != null) {
-      final daysSinceStart = DateTime.now().difference(currentCycle.startDate!).inDays;
-      
-      // Day 1-3: Likely to need pain relief
-      if (daysSinceStart >= 0 && daysSinceStart <= 3) {
-        await _scheduleSmartNotification(
-          id: _medicationReminderID,
-          title: '💊 Medication Reminder',
-          body: 'Based on your cycle phase, you might want to have pain relief ready today.',
-          scheduledDate: DateTime.now().add(Duration(hours: 2)),
-          category: _categoryMedication,
-          priority: NotificationPriority.defaultPriority,
-        );
-      }
+
+    final daysSinceStart = DateTime.now()
+        .difference(currentCycle.startDate)
+        .inDays;
+
+    // Day 1-3: Likely to need pain relief
+    if (daysSinceStart >= 0 && daysSinceStart <= 3) {
+      await _scheduleSmartNotification(
+        id: _medicationReminderID,
+        title: '💊 Medication Reminder',
+        body:
+            'Based on your cycle phase, you might want to have pain relief ready today.',
+        scheduledDate: DateTime.now().add(Duration(hours: 2)),
+        category: _categoryMedication,
+        priority: NotificationPriority.defaultPriority,
+      );
     }
   }
 
   /// 🌸 Wellness Check Scheduling
-  static Future<void> _scheduleWellnessChecks(List<DailyLogEntry> dailyLogs) async {
-    final lastLog = dailyLogs.isNotEmpty ? dailyLogs.first.date : DateTime.now().subtract(Duration(days: 2));
+  static Future<void> _scheduleWellnessChecks(
+    List<DailyLogEntry> dailyLogs,
+  ) async {
+    final lastLog = dailyLogs.isNotEmpty
+        ? dailyLogs.first.date
+        : DateTime.now().subtract(Duration(days: 2));
     final daysSinceLastLog = DateTime.now().difference(lastLog).inDays;
-    
+
     if (daysSinceLastLog >= 3) {
       await _scheduleSmartNotification(
         id: _wellnessCheckID,
         title: '🌸 Wellness Check-in',
-        body: 'It\'s been a few days since your last log. How are you feeling today?',
+        body:
+            'It\'s been a few days since your last log. How are you feeling today?',
         scheduledDate: DateTime.now().add(Duration(hours: 1)),
         category: _categoryWellness,
         priority: NotificationPriority.defaultPriority,
@@ -223,18 +263,22 @@ class SmartNotificationService {
   /// 🚨 Irregular Pattern Detection
   static Future<void> _detectIrregularPatterns(List<CycleData> cycles) async {
     if (cycles.length < 3) return;
-    
+
     // Detect very long or very short cycles
-    final recentCycles = cycles.take(3).where((c) => c.lengthInDays > 0).toList();
+    final recentCycles = cycles
+        .take(3)
+        .where((c) => c.lengthInDays > 0)
+        .toList();
     if (recentCycles.isNotEmpty) {
       final lengths = recentCycles.map((c) => c.lengthInDays).toList();
       final hasIrregular = lengths.any((l) => l < 21 || l > 35);
-      
+
       if (hasIrregular) {
         await _scheduleSmartNotification(
           id: _irregularPatternID,
           title: '⚠️ Pattern Alert',
-          body: 'Your recent cycles show irregular lengths. Consider tracking more details and consulting a healthcare provider.',
+          body:
+              'Your recent cycles show irregular lengths. Consider tracking more details and consulting a healthcare provider.',
           scheduledDate: DateTime.now().add(Duration(hours: 6)),
           category: _categoryHealth,
           priority: NotificationPriority.high,
@@ -244,15 +288,18 @@ class SmartNotificationService {
   }
 
   /// 📊 Weekly Insights Summary
-  static Future<void> _scheduleWeeklyInsights(List<CycleData> cycles, List<DailyLogEntry> dailyLogs) async {
+  static Future<void> _scheduleWeeklyInsights(
+    List<CycleData> cycles,
+    List<DailyLogEntry> dailyLogs,
+  ) async {
     final now = DateTime.now();
     final isMonday = now.weekday == 1;
     final isMorning = now.hour >= 8 && now.hour <= 10;
-    
+
     if (!isMonday || !isMorning) return;
-    
+
     final insights = _generateWeeklyInsights(cycles, dailyLogs);
-    
+
     if (insights.isNotEmpty) {
       await _scheduleSmartNotification(
         id: _weeklyInsightID,
@@ -274,30 +321,39 @@ class SmartNotificationService {
       return await FirebaseService.getDailyLogs(
         startDate: startDate,
         endDate: endDate,
-      ).then((logs) => logs.map((log) => _convertToDailyLogEntry(log)).toList());
+      ).then(
+        (logs) => logs.map((log) => _convertToDailyLogEntry(log)).toList(),
+      );
     } catch (e) {
       debugPrint('Error fetching daily logs: $e');
       return [];
     }
   }
 
-  static Map<String, dynamic> _calculateAdvancedPredictions(List<CycleData> cycles) {
+  static Map<String, dynamic> _calculateAdvancedPredictions(
+    List<CycleData> cycles,
+  ) {
     if (cycles.length < 3) return {};
-    
+
     final completedCycles = cycles.where((c) => c.lengthInDays > 0).toList();
     if (completedCycles.length < 3) return {};
-    
+
     final lengths = completedCycles.take(6).map((c) => c.lengthInDays).toList();
     final avgLength = lengths.reduce((a, b) => a + b) / lengths.length;
-    
+
     // Calculate confidence based on consistency
-    final variance = lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) / lengths.length;
-    final confidence = max(0.0, min(1.0, 1.0 - (variance / 25.0))); // Normalize variance to confidence
-    
+    final variance =
+        lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) /
+        lengths.length;
+    final confidence = max(
+      0.0,
+      min(1.0, 1.0 - (variance / 25.0)),
+    ); // Normalize variance to confidence
+
     // Find most recent cycle end
     final lastCycle = completedCycles.first;
     final nextStart = lastCycle.endDate?.add(Duration(days: avgLength.round()));
-    
+
     return {
       'nextCycleStart': nextStart,
       'averageLength': avgLength.round(),
@@ -308,42 +364,51 @@ class SmartNotificationService {
 
   static double _calculateTrend(List<double> values) {
     if (values.length < 2) return 0.0;
-    
+
     final n = values.length;
     double sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-    
+
     for (int i = 0; i < n; i++) {
       sumX += i;
       sumY += values[i];
       sumXY += i * values[i];
       sumXX += i * i;
     }
-    
+
     final slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     return slope.isNaN ? 0.0 : slope;
   }
 
-  static String _generateWeeklyInsights(List<CycleData> cycles, List<DailyLogEntry> dailyLogs) {
+  static String _generateWeeklyInsights(
+    List<CycleData> cycles,
+    List<DailyLogEntry> dailyLogs,
+  ) {
     final insights = <String>[];
-    
+
     // Cycle insights
     if (cycles.isNotEmpty) {
       final completedCycles = cycles.where((c) => c.lengthInDays > 0).toList();
       if (completedCycles.isNotEmpty) {
-        final avgLength = completedCycles
-            .map((c) => c.lengthInDays)
-            .fold(0, (a, b) => a + b) / completedCycles.length;
+        final avgLength =
+            completedCycles
+                .map((c) => c.lengthInDays)
+                .fold(0, (a, b) => a + b) /
+            completedCycles.length;
         insights.add('Average cycle: ${avgLength.round()} days');
       }
     }
-    
+
     // Mood insights
-    final recentMoods = dailyLogs.take(7).where((l) => l.mood != null).map((l) => l.mood!).toList();
+    final recentMoods = dailyLogs
+        .take(7)
+        .where((l) => l.mood != null)
+        .map((l) => l.mood!)
+        .toList();
     if (recentMoods.isNotEmpty) {
       final avgMood = recentMoods.reduce((a, b) => a + b) / recentMoods.length;
       insights.add('Weekly mood avg: ${avgMood.toStringAsFixed(1)}/10');
     }
-    
+
     return insights.join(' • ');
   }
 
@@ -358,7 +423,7 @@ class SmartNotificationService {
   }) async {
     // Use enhanced notification details based on category
     final details = _buildNotificationDetails(category, priority);
-    
+
     try {
       await FlutterLocalNotificationsPlugin().zonedSchedule(
         id,
@@ -369,18 +434,21 @@ class SmartNotificationService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: payload ?? category,
       );
-      
+
       debugPrint('🔔 Scheduled smart notification: $title');
     } catch (e) {
       debugPrint('❌ Error scheduling smart notification: $e');
     }
   }
 
-  static NotificationDetails _buildNotificationDetails(String category, NotificationPriority priority) {
+  static NotificationDetails _buildNotificationDetails(
+    String category,
+    NotificationPriority priority,
+  ) {
     String channelId, channelName, channelDescription;
     Importance importance;
     Priority androidPriority;
-    
+
     switch (category) {
       case _categoryPredictive:
         channelId = 'predictive_notifications';
@@ -392,7 +460,8 @@ class SmartNotificationService {
       case _categoryHealth:
         channelId = 'health_alerts';
         channelName = 'Health Alerts';
-        channelDescription = 'Important health pattern alerts and recommendations';
+        channelDescription =
+            'Important health pattern alerts and recommendations';
         importance = Importance.max;
         androidPriority = Priority.max;
         break;
@@ -493,14 +562,16 @@ class SmartNotificationService {
   }
 
   /// Update notification preferences and reschedule
-  static Future<void> updateSmartPreferences(Map<String, bool> preferences) async {
+  static Future<void> updateSmartPreferences(
+    Map<String, bool> preferences,
+  ) async {
     // Cancel disabled notification categories
     for (final entry in preferences.entries) {
       if (!entry.value) {
         await cancelSmartNotifications(entry.key);
       }
     }
-    
+
     // Run analysis again to reschedule enabled notifications
     if (preferences.values.any((enabled) => enabled)) {
       await runSmartAnalysis();
@@ -509,10 +580,4 @@ class SmartNotificationService {
 }
 
 /// Notification priority levels
-enum NotificationPriority {
-  min,
-  low,
-  defaultPriority,
-  high,
-  max,
-}
+enum NotificationPriority { min, low, defaultPriority, high, max }

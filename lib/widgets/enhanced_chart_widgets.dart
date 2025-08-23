@@ -11,11 +11,11 @@ class WellbeingTrendChart extends StatefulWidget {
   final Function(String) onMetricChanged;
 
   const WellbeingTrendChart({
-    Key? key,
+    super.key,
     required this.trends,
     required this.selectedMetric,
     required this.onMetricChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<WellbeingTrendChart> createState() => _WellbeingTrendChartState();
@@ -48,10 +48,7 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
               ],
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              height: 250,
-              child: _buildChart(),
-            ),
+            SizedBox(height: 250, child: _buildChart()),
             const SizedBox(height: 16),
             _buildMetricSummary(),
           ],
@@ -100,16 +97,10 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
           horizontalInterval: 1,
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: Colors.grey[300]!,
-              strokeWidth: 0.5,
-            );
+            return FlLine(color: Colors.grey[300]!, strokeWidth: 0.5);
           },
           getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: Colors.grey[300]!,
-              strokeWidth: 0.5,
-            );
+            return FlLine(color: Colors.grey[300]!, strokeWidth: 0.5);
           },
         ),
         titlesData: FlTitlesData(
@@ -127,7 +118,6 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
                 }
                 final date = trendData[value.toInt()].date;
                 return SideTitleWidget(
-                  axisSide: meta.axisSide,
                   child: Text(
                     '${date.month}/${date.day}',
                     style: const TextStyle(fontSize: 10),
@@ -168,7 +158,7 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
             isCurved: true,
             gradient: LinearGradient(
               colors: [
-                _getMetricColor(widget.selectedMetric).withOpacity(0.5),
+                _getMetricColor(widget.selectedMetric).withValues(alpha: 0.5),
                 _getMetricColor(widget.selectedMetric),
               ],
             ),
@@ -191,8 +181,8 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  _getMetricColor(widget.selectedMetric).withOpacity(0.3),
-                  _getMetricColor(widget.selectedMetric).withOpacity(0.1),
+                  _getMetricColor(widget.selectedMetric).withValues(alpha: 0.3),
+                  _getMetricColor(widget.selectedMetric).withValues(alpha: 0.1),
                 ],
               ),
             ),
@@ -200,44 +190,49 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
         ],
         lineTouchData: LineTouchData(
           enabled: true,
-          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-            setState(() {
-              if (touchResponse != null &&
-                  touchResponse.lineBarSpots != null &&
-                  touchResponse.lineBarSpots!.isNotEmpty) {
-                touchedIndex = touchResponse.lineBarSpots!.first.spotIndex;
-              } else {
-                touchedIndex = null;
-              }
-            });
-          },
-          getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
-            return spotIndexes.map((spotIndex) {
-              return TouchedSpotIndicatorData(
-                FlLine(
-                  color: _getMetricColor(widget.selectedMetric),
-                  strokeWidth: 2,
-                ),
-                FlDotData(
-                  getDotPainter: (spot, percent, barData, index) {
-                    return FlDotCirclePainter(
-                      radius: 8,
+          touchCallback:
+              (FlTouchEvent event, LineTouchResponse? touchResponse) {
+                setState(() {
+                  if (touchResponse != null &&
+                      touchResponse.lineBarSpots != null &&
+                      touchResponse.lineBarSpots!.isNotEmpty) {
+                    touchedIndex = touchResponse.lineBarSpots!.first.spotIndex;
+                  } else {
+                    touchedIndex = null;
+                  }
+                });
+              },
+          getTouchedSpotIndicator:
+              (LineChartBarData barData, List<int> spotIndexes) {
+                return spotIndexes.map((spotIndex) {
+                  return TouchedSpotIndicatorData(
+                    FlLine(
                       color: _getMetricColor(widget.selectedMetric),
                       strokeWidth: 2,
-                      strokeColor: Colors.white,
-                    );
-                  },
-                ),
-              );
-            }).toList();
-          },
+                    ),
+                    FlDotData(
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: 8,
+                          color: _getMetricColor(widget.selectedMetric),
+                          strokeWidth: 2,
+                          strokeColor: Colors.white,
+                        );
+                      },
+                    ),
+                  );
+                }).toList();
+              },
           touchTooltipData: LineTouchTooltipData(
-            tooltipBgColor: _getMetricColor(widget.selectedMetric).withOpacity(0.9),
+            backgroundColor: _getMetricColor(
+              widget.selectedMetric,
+            ).withValues(alpha: 0.9),
             tooltipRoundedRadius: 8,
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((barSpot) {
                 final flSpot = barSpot;
-                if (flSpot.x.toInt() >= 0 && flSpot.x.toInt() < trendData.length) {
+                if (flSpot.x.toInt() >= 0 &&
+                    flSpot.x.toInt() < trendData.length) {
                   final date = trendData[flSpot.x.toInt()].date;
                   return LineTooltipItem(
                     '${widget.selectedMetric}: ${flSpot.y.toStringAsFixed(1)}\n${date.month}/${date.day}/${date.year}',
@@ -259,23 +254,39 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
   Widget _buildMetricSummary() {
     final average = _getAverageValue();
     final trend = _calculateTrend();
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _getMetricColor(widget.selectedMetric).withOpacity(0.1),
+        color: _getMetricColor(widget.selectedMetric).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildSummaryItem('Average', average.toStringAsFixed(1), Icons.analytics),
           _buildSummaryItem(
-            'Trend', 
-            trend > 0 ? 'Improving' : trend < 0 ? 'Declining' : 'Stable',
-            trend > 0 ? Icons.trending_up : trend < 0 ? Icons.trending_down : Icons.trending_flat,
+            'Average',
+            average.toStringAsFixed(1),
+            Icons.analytics,
           ),
-          _buildSummaryItem('Records', _getTrendData().length.toString(), Icons.data_usage),
+          _buildSummaryItem(
+            'Trend',
+            trend > 0
+                ? 'Improving'
+                : trend < 0
+                ? 'Declining'
+                : 'Stable',
+            trend > 0
+                ? Icons.trending_up
+                : trend < 0
+                ? Icons.trending_down
+                : Icons.trending_flat,
+          ),
+          _buildSummaryItem(
+            'Records',
+            _getTrendData().length.toString(),
+            Icons.data_usage,
+          ),
         ],
       ),
     );
@@ -294,13 +305,7 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
             fontSize: 16,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
       ],
     );
   }
@@ -334,13 +339,17 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
   double _calculateTrend() {
     final data = _getTrendData();
     if (data.length < 2) return 0.0;
-    
+
     final firstHalf = data.take(data.length ~/ 2);
     final secondHalf = data.skip(data.length ~/ 2);
-    
-    final firstAvg = firstHalf.map((p) => p.value).reduce((a, b) => a + b) / firstHalf.length;
-    final secondAvg = secondHalf.map((p) => p.value).reduce((a, b) => a + b) / secondHalf.length;
-    
+
+    final firstAvg =
+        firstHalf.map((p) => p.value).reduce((a, b) => a + b) /
+        firstHalf.length;
+    final secondAvg =
+        secondHalf.map((p) => p.value).reduce((a, b) => a + b) /
+        secondHalf.length;
+
     return secondAvg - firstAvg;
   }
 
@@ -361,13 +370,11 @@ class _WellbeingTrendChartState extends State<WellbeingTrendChart> {
 class SymptomCorrelationHeatmap extends StatefulWidget {
   final SymptomCorrelationMatrix matrix;
 
-  const SymptomCorrelationHeatmap({
-    Key? key,
-    required this.matrix,
-  }) : super(key: key);
+  const SymptomCorrelationHeatmap({super.key, required this.matrix});
 
   @override
-  State<SymptomCorrelationHeatmap> createState() => _SymptomCorrelationHeatmapState();
+  State<SymptomCorrelationHeatmap> createState() =>
+      _SymptomCorrelationHeatmapState();
 }
 
 class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
@@ -407,16 +414,16 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
           children: [
             Text(
               'Symptom Correlation Heatmap',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               'Discover which symptoms tend to occur together',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 20),
             _buildHeatmap(),
@@ -435,7 +442,7 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
   Widget _buildHeatmap() {
     final symptoms = widget.matrix.symptoms;
     final cellSize = (MediaQuery.of(context).size.width - 80) / symptoms.length;
-    
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Column(
@@ -445,27 +452,29 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
           Row(
             children: [
               SizedBox(width: cellSize), // Space for row headers
-              ...symptoms.map((symptom) => SizedBox(
-                width: cellSize,
-                height: 40,
-                child: Center(
-                  child: RotatedBox(
-                    quarterTurns: 1,
-                    child: Text(
-                      symptom,
-                      style: const TextStyle(fontSize: 10),
-                      overflow: TextOverflow.ellipsis,
+              ...symptoms.map(
+                (symptom) => SizedBox(
+                  width: cellSize,
+                  height: 40,
+                  child: Center(
+                    child: RotatedBox(
+                      quarterTurns: 1,
+                      child: Text(
+                        symptom,
+                        style: const TextStyle(fontSize: 10),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
-              )),
+              ),
             ],
           ),
           // Heatmap cells
           ...symptoms.asMap().entries.map((entry) {
             final rowIndex = entry.key;
             final rowSymptom = entry.value;
-            
+
             return Row(
               children: [
                 // Row header
@@ -484,33 +493,47 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
                 ...symptoms.asMap().entries.map((colEntry) {
                   final colIndex = colEntry.key;
                   final colSymptom = colEntry.value;
-                  final correlation = widget.matrix.getCorrelation(rowSymptom, colSymptom);
-                  
+                  final correlation = widget.matrix.getCorrelation(
+                    rowSymptom,
+                    colSymptom,
+                  );
+
                   return GestureDetector(
-                    onTap: () => _selectCell(rowSymptom, colSymptom, correlation),
+                    onTap: () =>
+                        _selectCell(rowSymptom, colSymptom, correlation),
                     child: Container(
                       width: cellSize,
                       height: cellSize,
                       decoration: BoxDecoration(
                         color: _getCorrelationColor(correlation),
                         border: Border.all(
-                          color: (selectedSymptom1 == rowSymptom && selectedSymptom2 == colSymptom) ||
-                                 (selectedSymptom1 == colSymptom && selectedSymptom2 == rowSymptom)
+                          color:
+                              (selectedSymptom1 == rowSymptom &&
+                                      selectedSymptom2 == colSymptom) ||
+                                  (selectedSymptom1 == colSymptom &&
+                                      selectedSymptom2 == rowSymptom)
                               ? Colors.black
                               : Colors.grey[300]!,
-                          width: (selectedSymptom1 == rowSymptom && selectedSymptom2 == colSymptom) ||
-                                 (selectedSymptom1 == colSymptom && selectedSymptom2 == rowSymptom)
+                          width:
+                              (selectedSymptom1 == rowSymptom &&
+                                      selectedSymptom2 == colSymptom) ||
+                                  (selectedSymptom1 == colSymptom &&
+                                      selectedSymptom2 == rowSymptom)
                               ? 2
                               : 0.5,
                         ),
                       ),
                       child: Center(
                         child: Text(
-                          correlation.abs() > 0.1 ? correlation.toStringAsFixed(2) : '',
+                          correlation.abs() > 0.1
+                              ? correlation.toStringAsFixed(2)
+                              : '',
                           style: TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.bold,
-                            color: correlation.abs() > 0.5 ? Colors.white : Colors.black,
+                            color: correlation.abs() > 0.5
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ),
@@ -537,9 +560,9 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
         children: [
           Text(
             'Correlation Details',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -551,9 +574,9 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
             children: [
               Text(
                 'Correlation: ${selectedCorrelation?.toStringAsFixed(3) ?? 'N/A'}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(width: 16),
               Container(
@@ -586,9 +609,9 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
       children: [
         Text(
           'Correlation Strength',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Row(
@@ -620,10 +643,7 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
             ),
           ),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 10),
-          ),
+          Text(label, style: const TextStyle(fontSize: 10)),
         ],
       ),
     );
@@ -662,15 +682,15 @@ class _SymptomCorrelationHeatmapState extends State<SymptomCorrelationHeatmap> {
   String _getCorrelationDescription(double correlation) {
     final absCorr = correlation.abs();
     if (absCorr > 0.7) {
-      return correlation > 0 
+      return correlation > 0
           ? 'These symptoms very often occur together'
           : 'These symptoms rarely occur together';
     } else if (absCorr > 0.5) {
-      return correlation > 0 
+      return correlation > 0
           ? 'These symptoms often occur together'
           : 'These symptoms sometimes avoid each other';
     } else if (absCorr > 0.3) {
-      return correlation > 0 
+      return correlation > 0
           ? 'These symptoms sometimes occur together'
           : 'These symptoms have a slight negative relationship';
     } else if (absCorr > 0.1) {

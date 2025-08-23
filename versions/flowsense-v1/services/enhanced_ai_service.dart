@@ -1,7 +1,5 @@
 import 'dart:math' as math;
-import '../models/cycle_models.dart';
 import 'advanced_health_kit_service.dart';
-import 'firebase_service.dart';
 
 // Import the data models from AdvancedHealthKitService
 

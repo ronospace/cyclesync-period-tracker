@@ -14,7 +14,8 @@ class DailyLogScreen extends StatefulWidget {
   State<DailyLogScreen> createState() => _DailyLogScreenState();
 }
 
-class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProviderStateMixin {
+class _DailyLogScreenState extends State<DailyLogScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   DateTime _selectedDate = DateTime.now();
   List<DailyLogEntry> _recentLogs = [];
@@ -35,17 +36,17 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
 
   Future<void> _loadRecentLogs() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final now = DateTime.now();
       final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-      
+
       final logsData = await FirebaseService.getDailyLogs(
         startDate: thirtyDaysAgo,
         endDate: now,
         limit: 30,
       );
-      
+
       final logs = logsData.map((data) {
         return DailyLogEntry(
           id: data['id'],
@@ -59,7 +60,7 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
           updatedAt: DateTime.now(),
         );
       }).toList();
-      
+
       setState(() {
         _recentLogs = logs;
       });
@@ -68,7 +69,9 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n?.failedToLoadLogs(e.toString()) ?? 'Failed to load logs: $e'),
+            content: Text(
+              l10n.failedToLoadLogs(e.toString()) ?? 'Failed to load logs: $e',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -86,10 +89,18 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
           // Date Selector
           Card(
             child: ListTile(
-              leading: Icon(Icons.calendar_today, color: Theme.of(context).colorScheme.primary),
-              title: Text(AppLocalizations.of(context)?.selectedDate ?? 'Selected Date'),
+              leading: Icon(
+                Icons.calendar_today,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              title: Text(
+                AppLocalizations.of(context).selectedDate ?? 'Selected Date',
+              ),
               subtitle: Text(DateFormat.yMMMEd().format(_selectedDate)),
-              trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              trailing: Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
@@ -103,9 +114,9 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
               },
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Quick Log Widget
           QuickDailyLogWidget(
             selectedDate: _selectedDate,
@@ -126,24 +137,34 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5)),
+            Icon(
+              Icons.history,
+              size: 64,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 16),
             Text(
-              AppLocalizations.of(context)?.noDailyLogsYet ?? 'No daily logs yet',
+              AppLocalizations.of(context).noDailyLogsYet ??
+                  'No daily logs yet',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              AppLocalizations.of(context)?.startLoggingDailyMood ?? 'Start logging your daily mood and energy',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              AppLocalizations.of(context).startLoggingDailyMood ??
+                  'Start logging your daily mood and energy',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () => _tabController.animateTo(0),
               icon: const Icon(Icons.add),
-              label: Text(AppLocalizations.of(context)?.logToday ?? 'Log Today'),
+              label: Text(AppLocalizations.of(context).logToday ?? 'Log Today'),
             ),
           ],
         ),
@@ -186,9 +207,9 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                 _buildOverallMoodIndicator(log),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Metrics
             Row(
               children: [
@@ -205,7 +226,7 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                   const SizedBox(width: 8),
                   Expanded(
                     child: _buildMetricChip(
-                      AppLocalizations.of(context)?.energy ?? 'Energy',
+                      AppLocalizations.of(context).energy ?? 'Energy',
                       log.energyDescription,
                       Icons.battery_charging_full,
                       log.energyColor,
@@ -216,7 +237,7 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                   const SizedBox(width: 8),
                   Expanded(
                     child: _buildMetricChip(
-                      AppLocalizations.of(context)?.painLevel ?? 'Pain',
+                      AppLocalizations.of(context).painLevel ?? 'Pain',
                       log.painDescription,
                       Icons.healing,
                       log.painColor,
@@ -225,12 +246,12 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                 ],
               ],
             ),
-            
+
             // Symptoms
             if (log.symptoms.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(
-                AppLocalizations.of(context)?.symptoms ?? 'Symptoms',
+                AppLocalizations.of(context).symptoms ?? 'Symptoms',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -245,7 +266,10 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                   final symptom = Symptom.fromName(symptomName);
                   if (symptom == null) {
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surfaceContainer,
                         borderRadius: BorderRadius.circular(12),
@@ -261,11 +285,16 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                     );
                   }
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: symptom.color.withOpacity(0.1),
+                      color: symptom.color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: symptom.color.withOpacity(0.3)),
+                      border: Border.all(
+                        color: symptom.color.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -297,7 +326,7 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                   ),
                 ),
             ],
-            
+
             // Notes
             if (log.notes.isNotEmpty) ...[
               const SizedBox(height: 12),
@@ -312,7 +341,7 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)?.notes ?? 'Notes',
+                      AppLocalizations.of(context).notes ?? 'Notes',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -337,13 +366,18 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildMetricChip(String label, String value, IconData icon, Color color) {
+  Widget _buildMetricChip(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -379,14 +413,10 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: moodRating.color.withOpacity(0.1),
+        color: moodRating.color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Icon(
-        moodRating.icon,
-        color: moodRating.color,
-        size: 20,
-      ),
+      child: Icon(moodRating.icon, color: moodRating.color, size: 20),
     );
   }
 
@@ -394,12 +424,19 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('📝 ${AppLocalizations.of(context)?.dailyLogTitle ?? 'Daily Log'}'),
+        title: Text(
+          '📝 ${AppLocalizations.of(context).dailyLogTitle ?? 'Daily Log'}',
+        ),
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => context.go('/home'),
         ),
         bottom: TabBar(
@@ -410,27 +447,27 @@ class _DailyLogScreenState extends State<DailyLogScreen> with SingleTickerProvid
           tabs: [
             Tab(
               icon: Icon(Icons.add_circle_outline),
-              text: AppLocalizations.of(context)?.logToday ?? 'Log Today',
+              text: AppLocalizations.of(context).logToday ?? 'Log Today',
             ),
             Tab(
               icon: Icon(Icons.history),
-              text: AppLocalizations.of(context)?.history ?? 'History',
+              text: AppLocalizations.of(context).history ?? 'History',
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onSurface),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: _loadRecentLogs,
           ),
         ],
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildQuickLogTab(),
-          _buildHistoryTab(),
-        ],
+        children: [_buildQuickLogTab(), _buildHistoryTab()],
       ),
     );
   }

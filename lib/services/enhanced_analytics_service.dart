@@ -6,11 +6,10 @@ import '../models/daily_log_models.dart';
 /// 🚀 Enhanced Analytics Service for Mission Alpha
 /// Advanced data processing for interactive charts and correlations
 class EnhancedAnalyticsService {
-  
   /// Calculate mood, energy, and pain trends over time
   static WellbeingTrends calculateWellbeingTrends(
-    List<CycleData> cycles, 
-    List<DailyLogEntry> dailyLogs
+    List<CycleData> cycles,
+    List<DailyLogEntry> dailyLogs,
   ) {
     if (cycles.isEmpty && dailyLogs.isEmpty) {
       return WellbeingTrends.empty();
@@ -48,7 +47,7 @@ class EnhancedAnalyticsService {
   /// Calculate symptom correlation matrix
   static SymptomCorrelationMatrix calculateSymptomCorrelations(
     List<CycleData> cycles,
-    List<DailyLogEntry> dailyLogs
+    List<DailyLogEntry> dailyLogs,
   ) {
     final allSymptoms = <String>{};
     final symptomOccurrences = <String, List<bool>>{};
@@ -116,9 +115,21 @@ class EnhancedAnalyticsService {
     final completedCycles = cycles.where((c) => c.isCompleted).toList();
     if (completedCycles.isEmpty) return CyclePhaseAnalysis.empty();
 
-    final menstrualPhase = PhaseData(name: 'Menstrual', days: 1, dayRange: [1, 5]);
-    final follicularPhase = PhaseData(name: 'Follicular', days: 6, dayRange: [6, 13]);
-    final ovulatoryPhase = PhaseData(name: 'Ovulatory', days: 14, dayRange: [14, 16]);
+    final menstrualPhase = PhaseData(
+      name: 'Menstrual',
+      days: 1,
+      dayRange: [1, 5],
+    );
+    final follicularPhase = PhaseData(
+      name: 'Follicular',
+      days: 6,
+      dayRange: [6, 13],
+    );
+    final ovulatoryPhase = PhaseData(
+      name: 'Ovulatory',
+      days: 14,
+      dayRange: [14, 16],
+    );
     final lutealPhase = PhaseData(name: 'Luteal', days: 17, dayRange: [17, 28]);
 
     // Analyze symptoms by phase
@@ -139,12 +150,12 @@ class EnhancedAnalyticsService {
     for (final cycle in completedCycles) {
       final cycleLength = cycle.lengthInDays;
       final adjustedPhases = _adjustPhasesForCycleLength(cycleLength);
-      
+
       // Assign symptoms to phases (simplified - using cycle start for now)
       final phase = _getPhaseForDay(1, adjustedPhases);
-      
+
       for (final symptom in cycle.symptoms) {
-        phaseSymptoms[phase]![symptom.name] = 
+        phaseSymptoms[phase]![symptom.name] =
             (phaseSymptoms[phase]![symptom.name] ?? 0) + 1;
       }
 
@@ -175,7 +186,9 @@ class EnhancedAnalyticsService {
   }
 
   /// Generate advanced cycle predictions with confidence intervals
-  static AdvancedPrediction generateAdvancedPredictions(List<CycleData> cycles) {
+  static AdvancedPrediction generateAdvancedPredictions(
+    List<CycleData> cycles,
+  ) {
     if (cycles.length < 3) return AdvancedPrediction.empty();
 
     final completedCycles = cycles.where((c) => c.isCompleted).toList();
@@ -186,17 +199,21 @@ class EnhancedAnalyticsService {
 
     final lengths = completedCycles.take(6).map((c) => c.lengthInDays).toList();
     final avgLength = lengths.reduce((a, b) => a + b) / lengths.length;
-    
+
     // Calculate variance for confidence
-    final variance = lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) / lengths.length;
+    final variance =
+        lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) /
+        lengths.length;
     final stdDev = sqrt(variance);
     final confidence = max(0.5, min(0.95, 1.0 - (stdDev / avgLength)));
 
     final lastCycle = completedCycles.first;
     final nextStart = lastCycle.endDate!.add(Duration(days: avgLength.round()));
-    
+
     // Confidence intervals
-    final lowerBound = nextStart.subtract(Duration(days: (stdDev * 1.96).round()));
+    final lowerBound = nextStart.subtract(
+      Duration(days: (stdDev * 1.96).round()),
+    );
     final upperBound = nextStart.add(Duration(days: (stdDev * 1.96).round()));
 
     // Ovulation prediction (14 days before next cycle, typically)
@@ -234,7 +251,9 @@ class EnhancedAnalyticsService {
       if (completedCycles.length >= 3) {
         final lengths = completedCycles.map((c) => c.lengthInDays).toList();
         final avgLength = lengths.reduce((a, b) => a + b) / lengths.length;
-        final variance = lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) / lengths.length;
+        final variance =
+            lengths.map((l) => pow(l - avgLength, 2)).reduce((a, b) => a + b) /
+            lengths.length;
         final regularityScore = max(0.0, 100 - (variance * 3));
         scores['Cycle Regularity'] = regularityScore;
       }
@@ -248,11 +267,16 @@ class EnhancedAnalyticsService {
     for (final log in dailyLogs) {
       if (log.mood != null) allMoodData.add(log.mood!);
     }
-    
+
     if (allMoodData.isNotEmpty) {
       final avgMood = allMoodData.reduce((a, b) => a + b) / allMoodData.length;
-      final moodVariance = allMoodData.map((m) => pow(m - avgMood, 2)).reduce((a, b) => a + b) / allMoodData.length;
-      final moodScore = max(0.0, min(100.0, (avgMood * 20) - (moodVariance * 10)));
+      final moodVariance =
+          allMoodData.map((m) => pow(m - avgMood, 2)).reduce((a, b) => a + b) /
+          allMoodData.length;
+      final moodScore = max(
+        0.0,
+        min(100.0, (avgMood * 20) - (moodVariance * 10)),
+      );
       scores['Mood Stability'] = moodScore;
     }
 
@@ -264,9 +288,10 @@ class EnhancedAnalyticsService {
     for (final log in dailyLogs) {
       if (log.energy != null) allEnergyData.add(log.energy!);
     }
-    
+
     if (allEnergyData.isNotEmpty) {
-      final avgEnergy = allEnergyData.reduce((a, b) => a + b) / allEnergyData.length;
+      final avgEnergy =
+          allEnergyData.reduce((a, b) => a + b) / allEnergyData.length;
       final energyScore = (avgEnergy * 20).clamp(0.0, 100.0);
       scores['Energy Level'] = energyScore;
     }
@@ -279,7 +304,7 @@ class EnhancedAnalyticsService {
     for (final log in dailyLogs) {
       if (log.pain != null) allPainData.add(log.pain!);
     }
-    
+
     if (allPainData.isNotEmpty) {
       final avgPain = allPainData.reduce((a, b) => a + b) / allPainData.length;
       final painScore = max(0.0, 100 - (avgPain * 20));
@@ -287,14 +312,11 @@ class EnhancedAnalyticsService {
     }
 
     // Overall score (weighted average)
-    final overall = scores.values.isEmpty 
-        ? 0.0 
+    final overall = scores.values.isEmpty
+        ? 0.0
         : scores.values.reduce((a, b) => a + b) / scores.length;
 
-    return HealthScore(
-      overall: overall,
-      breakdown: scores,
-    );
+    return HealthScore(overall: overall, breakdown: scores);
   }
 
   // Helper methods
@@ -302,11 +324,10 @@ class EnhancedAnalyticsService {
   static List<TrendPoint> _createTrendData(Map<DateTime, double> data) {
     final sortedEntries = data.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
-    
-    return sortedEntries.map((entry) => TrendPoint(
-      date: entry.key,
-      value: entry.value,
-    )).toList();
+
+    return sortedEntries
+        .map((entry) => TrendPoint(date: entry.key, value: entry.value))
+        .toList();
   }
 
   static double _calculateAverage(Iterable<double> values) {
@@ -323,12 +344,17 @@ class EnhancedAnalyticsService {
 
     final sumX = xInt.reduce((a, b) => a + b);
     final sumY = yInt.reduce((a, b) => a + b);
-    final sumXY = List.generate(n, (i) => xInt[i] * yInt[i]).reduce((a, b) => a + b);
+    final sumXY = List.generate(
+      n,
+      (i) => xInt[i] * yInt[i],
+    ).reduce((a, b) => a + b);
     final sumX2 = xInt.map((v) => v * v).reduce((a, b) => a + b);
     final sumY2 = yInt.map((v) => v * v).reduce((a, b) => a + b);
 
     final numerator = (n * sumXY) - (sumX * sumY);
-    final denominator = sqrt(((n * sumX2) - (sumX * sumX)) * ((n * sumY2) - (sumY * sumY)));
+    final denominator = sqrt(
+      ((n * sumX2) - (sumX * sumX)) * ((n * sumY2) - (sumY * sumY)),
+    );
 
     if (denominator == 0) return 0.0;
     return (numerator / denominator).clamp(-1.0, 1.0);

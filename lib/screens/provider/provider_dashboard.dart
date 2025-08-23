@@ -8,10 +8,7 @@ import '../../widgets/loading_overlay.dart';
 class ProviderDashboard extends StatefulWidget {
   final String shareToken;
 
-  const ProviderDashboard({
-    super.key,
-    required this.shareToken,
-  });
+  const ProviderDashboard({super.key, required this.shareToken});
 
   @override
   State<ProviderDashboard> createState() => _ProviderDashboardState();
@@ -45,7 +42,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
 
     try {
       final result = await SocialService.getSharedData(widget.shareToken);
-      
+
       setState(() {
         _sharedData = result;
         _isLoading = false;
@@ -68,7 +65,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         title: const Text('CycleSync - Provider Dashboard'),
         backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
-        bottom: _sharedData?.success == true 
+        bottom: _sharedData?.success == true
             ? TabBar(
                 controller: _tabController,
                 labelColor: Colors.white,
@@ -83,10 +80,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
               )
             : null,
       ),
-      body: LoadingOverlay(
-        isLoading: _isLoading,
-        child: _buildBody(),
-      ),
+      body: LoadingOverlay(isLoading: _isLoading, child: _buildBody()),
     );
   }
 
@@ -117,11 +111,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: Colors.red.shade300,
-            ),
+            Icon(Icons.error_outline, size: 80, color: Colors.red.shade300),
             const SizedBox(height: 24),
             Text(
               'Access Error',
@@ -149,9 +139,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
   }
 
   Widget _buildEmptyState() {
-    return const Center(
-      child: Text('No data available'),
-    );
+    return const Center(child: Text('No data available'));
   }
 
   Widget _buildOverviewTab() {
@@ -183,23 +171,24 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Row(
-            children: [
-              const Icon(Icons.person, color: Colors.teal),
-              const SizedBox(width: 8),
-              const Text(
-                'Patient Information',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const Divider(),
-          _buildInfoRow('Patient Email', shareInfo.ownerEmail),
-          _buildInfoRow('Data Period', shareInfo.dateRange.toString()),
-          _buildInfoRow('Access Level', shareInfo.permission.displayName),
-          if (shareInfo.personalMessage != null && shareInfo.personalMessage!.isNotEmpty)
-            _buildInfoRow('Message', shareInfo.personalMessage!),
-        ],
+            Row(
+              children: [
+                const Icon(Icons.person, color: Colors.teal),
+                const SizedBox(width: 8),
+                const Text(
+                  'Patient Information',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const Divider(),
+            _buildInfoRow('Patient Email', shareInfo.ownerEmail),
+            _buildInfoRow('Data Period', shareInfo.dateRange.toString()),
+            _buildInfoRow('Access Level', shareInfo.permission.displayName),
+            if (shareInfo.personalMessage != null &&
+                shareInfo.personalMessage!.isNotEmpty)
+              _buildInfoRow('Message', shareInfo.personalMessage!),
+          ],
         ),
       ),
     );
@@ -213,22 +202,22 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Row(
-            children: [
-              Icon(Icons.summarize, color: Colors.blue.shade700),
-              const SizedBox(width: 8),
-              Text(
-                'Data Summary',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
+            Row(
+              children: [
+                Icon(Icons.summarize, color: Colors.blue.shade700),
+                const SizedBox(width: 8),
+                Text(
+                  'Data Summary',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue.shade700,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(summary),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(summary),
           ],
         ),
       ),
@@ -242,31 +231,31 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          const Text(
-            'Quick Statistics',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatColumn(
-                analytics.totalCycles.toString(),
-                'Total Cycles',
-                Icons.calendar_month,
-              ),
-              _buildStatColumn(
-                analytics.averageCycleLength?.toStringAsFixed(1) ?? 'N/A',
-                'Avg Length (days)',
-                Icons.timeline,
-              ),
-              _buildStatColumn(
-                '${(analytics.cycleRegularity * 100).toStringAsFixed(0)}%',
-                'Regularity',
-                Icons.show_chart,
-              ),
-            ],
-          ),
+            const Text(
+              'Quick Statistics',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatColumn(
+                  analytics.totalCycles.toString(),
+                  'Total Cycles',
+                  Icons.calendar_month,
+                ),
+                _buildStatColumn(
+                  analytics.averageCycleLength?.toStringAsFixed(1) ?? 'N/A',
+                  'Avg Length (days)',
+                  Icons.timeline,
+                ),
+                _buildStatColumn(
+                  '${(analytics.cycleRegularity * 100).toStringAsFixed(0)}%',
+                  'Regularity',
+                  Icons.show_chart,
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -280,28 +269,30 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Row(
-            children: [
-              const Icon(Icons.security, color: Colors.green),
-              const SizedBox(width: 8),
-              const Text(
-                'Data Permissions',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(shareInfo.permission.description),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: shareInfo.permission.allowedDataTypes
-                .map((type) => Chip(
+            Row(
+              children: [
+                const Icon(Icons.security, color: Colors.green),
+                const SizedBox(width: 8),
+                const Text(
+                  'Data Permissions',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(shareInfo.permission.description),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: shareInfo.permission.allowedDataTypes
+                  .map(
+                    (type) => Chip(
                       label: Text(type.displayName),
                       backgroundColor: Colors.green.shade50,
-                    ))
-                .toList(),
-          ),
+                    ),
+                  )
+                  .toList(),
+            ),
           ],
         ),
       ),
@@ -332,7 +323,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
 
   Widget _buildPatternsTab() {
     final cycles = _sharedData!.cycles!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -351,14 +342,15 @@ class _ProviderDashboardState extends State<ProviderDashboard>
     final cycleLengths = cycles
         .where((cycle) => cycle['start'] != null && cycle['end'] != null)
         .map((cycle) {
-      final start = cycle['start'] is DateTime 
-          ? cycle['start'] as DateTime
-          : DateTime.parse(cycle['start'].toString());
-      final end = cycle['end'] is DateTime 
-          ? cycle['end'] as DateTime
-          : DateTime.parse(cycle['end'].toString());
-      return end.difference(start).inDays + 1;
-    }).toList();
+          final start = cycle['start'] is DateTime
+              ? cycle['start'] as DateTime
+              : DateTime.parse(cycle['start'].toString());
+          final end = cycle['end'] is DateTime
+              ? cycle['end'] as DateTime
+              : DateTime.parse(cycle['end'].toString());
+          return end.difference(start).inDays + 1;
+        })
+        .toList();
 
     if (cycleLengths.isEmpty) {
       return const Card(
@@ -407,11 +399,15 @@ class _ProviderDashboardState extends State<ProviderDashboard>
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: cycleLengths.asMap().entries
-                          .map((entry) => FlSpot(
-                                entry.key.toDouble(),
-                                entry.value.toDouble(),
-                              ))
+                      spots: cycleLengths
+                          .asMap()
+                          .entries
+                          .map(
+                            (entry) => FlSpot(
+                              entry.key.toDouble(),
+                              entry.value.toDouble(),
+                            ),
+                          )
                           .toList(),
                       isCurved: true,
                       color: Colors.teal,
@@ -448,10 +444,10 @@ class _ProviderDashboardState extends State<ProviderDashboard>
   }
 
   Widget _buildCycleItem(Map<String, dynamic> cycle) {
-    final start = cycle['start'] is DateTime 
+    final start = cycle['start'] is DateTime
         ? cycle['start'] as DateTime
         : DateTime.parse(cycle['start'].toString());
-    final end = cycle['end'] is DateTime 
+    final end = cycle['end'] is DateTime
         ? cycle['end'] as DateTime
         : DateTime.parse(cycle['end'].toString());
     final length = end.difference(start).inDays + 1;
@@ -495,7 +491,8 @@ class _ProviderDashboardState extends State<ProviderDashboard>
                 ],
               ),
             ),
-            if (cycle['symptoms'] != null && (cycle['symptoms'] as List).isNotEmpty)
+            if (cycle['symptoms'] != null &&
+                (cycle['symptoms'] as List).isNotEmpty)
               Chip(
                 label: Text('${(cycle['symptoms'] as List).length} symptoms'),
                 backgroundColor: Colors.orange.shade100,
@@ -508,11 +505,11 @@ class _ProviderDashboardState extends State<ProviderDashboard>
 
   Widget _buildSymptomFrequencyChart(List<Map<String, dynamic>> cycles) {
     final symptomCounts = <String, int>{};
-    
+
     for (final cycle in cycles) {
       if (cycle['symptoms'] != null) {
         for (final symptom in cycle['symptoms'] as List) {
-          symptomCounts[symptom.toString()] = 
+          symptomCounts[symptom.toString()] =
               (symptomCounts[symptom.toString()] ?? 0) + 1;
         }
       }
@@ -541,27 +538,30 @@ class _ProviderDashboardState extends State<ProviderDashboard>
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ...sortedSymptoms.take(5).map((symptom) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(symptom.key),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: LinearProgressIndicator(
-                      value: symptom.value / cycles.length,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.teal),
+            ...sortedSymptoms
+                .take(5)
+                .map(
+                  (symptom) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Expanded(flex: 2, child: Text(symptom.key)),
+                        Expanded(
+                          flex: 3,
+                          child: LinearProgressIndicator(
+                            value: symptom.value / cycles.length,
+                            backgroundColor: Colors.grey.shade200,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.teal,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('${symptom.value}'),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Text('${symptom.value}'),
-                ],
-              ),
-            )),
+                ),
           ],
         ),
       ),
@@ -570,7 +570,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
 
   Widget _buildAnalyticsTab() {
     final analytics = _sharedData!.analytics!;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -632,10 +632,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
           Icon(icon, color: Colors.teal, size: 20),
           const SizedBox(width: 12),
           Expanded(child: Text(label)),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -654,7 +651,11 @@ class _ProviderDashboardState extends State<ProviderDashboard>
             ),
             const SizedBox(height: 16),
             _buildWellbeingBar('Mood Level', wellbeing.mood / 10, Colors.blue),
-            _buildWellbeingBar('Energy Level', wellbeing.energy / 10, Colors.green),
+            _buildWellbeingBar(
+              'Energy Level',
+              wellbeing.energy / 10,
+              Colors.green,
+            ),
             _buildWellbeingBar('Pain Level', wellbeing.pain / 10, Colors.red),
           ],
         ),
@@ -688,7 +689,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
 
   Widget _buildClinicalInsights(ProviderAnalytics analytics) {
     final insights = <String>[];
-    
+
     if (analytics.averageCycleLength != null) {
       final avgLength = analytics.averageCycleLength!;
       if (avgLength < 21) {
@@ -697,11 +698,11 @@ class _ProviderDashboardState extends State<ProviderDashboard>
         insights.add('Cycles appear longer than typical range (21-35 days)');
       }
     }
-    
+
     if (analytics.cycleRegularity < 0.7) {
       insights.add('Cycle regularity may warrant clinical attention');
     }
-    
+
     if (analytics.commonSymptoms.length > 5) {
       insights.add('Patient reports diverse symptom patterns');
     }
@@ -729,18 +730,25 @@ class _ProviderDashboardState extends State<ProviderDashboard>
             ),
             const SizedBox(height: 12),
             if (insights.isEmpty)
-              const Text('No specific clinical insights detected based on available data.')
+              const Text(
+                'No specific clinical insights detected based on available data.',
+              )
             else
-              ...insights.map((insight) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('• ', style: TextStyle(color: Colors.orange.shade700)),
-                    Expanded(child: Text(insight)),
-                  ],
+              ...insights.map(
+                (insight) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '• ',
+                        style: TextStyle(color: Colors.orange.shade700),
+                      ),
+                      Expanded(child: Text(insight)),
+                    ],
+                  ),
                 ),
-              )),
+              ),
           ],
         ),
       ),
@@ -764,7 +772,7 @@ class _ProviderDashboardState extends State<ProviderDashboard>
 
   Widget _buildClinicalSummary() {
     final analytics = _sharedData!.analytics!;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -778,7 +786,11 @@ class _ProviderDashboardState extends State<ProviderDashboard>
             const SizedBox(height: 16),
             Text(
               'Based on ${analytics.totalCycles} cycles tracked over ${analytics.dateRange.duration.inDays} days, '
-              'the patient demonstrates ${analytics.cycleRegularity > 0.8 ? 'regular' : analytics.cycleRegularity > 0.6 ? 'moderately regular' : 'irregular'} '
+              'the patient demonstrates ${analytics.cycleRegularity > 0.8
+                  ? 'regular'
+                  : analytics.cycleRegularity > 0.6
+                  ? 'moderately regular'
+                  : 'irregular'} '
               'menstrual patterns with an average cycle length of ${analytics.averageCycleLength?.toStringAsFixed(1) ?? 'N/A'} days.',
             ),
             const SizedBox(height: 12),
@@ -900,11 +912,9 @@ class _ProviderDashboardState extends State<ProviderDashboard>
   }
 
   void _exportData(String format) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Exporting data as $format...'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Exporting data as $format...')));
     // Implementation would generate and download the file
   }
 

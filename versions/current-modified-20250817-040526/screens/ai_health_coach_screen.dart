@@ -2171,13 +2171,13 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
 
   // Placeholder methods for clinical tabs (implement these based on your needs)
   Widget _buildClinicalSymptomCard(SymptomInsight insight) => _buildSymptomInsightCard(insight);
-  Widget _buildHormonalIndicatorsCard() => Container(height: 100, child: Center(child: Text('Hormonal Indicators')));
+  Widget _buildHormonalIndicatorsCard() => SizedBox(height: 100, child: Center(child: Text('Hormonal Indicators')));
   Widget _buildClinicalRecommendationCard(PersonalizedRecommendation rec) => _buildRecommendationCard(rec);
-  Widget _buildRiskFactorsCard() => Container(height: 100, child: Center(child: Text('Risk Factors')));
+  Widget _buildRiskFactorsCard() => SizedBox(height: 100, child: Center(child: Text('Risk Factors')));
   Widget _buildClinicalAlertCard(PredictiveAlert alert) => _buildAlertCard(alert);
-  Widget _buildPrimaryTreatmentCard() => Container(height: 100, child: Center(child: Text('Primary Treatment')));
-  Widget _buildPharmacologicalCard() => Container(height: 100, child: Center(child: Text('Pharmacological Recommendations')));
+  Widget _buildPrimaryTreatmentCard() => SizedBox(height: 100, child: Center(child: Text('Primary Treatment')));
+  Widget _buildPharmacologicalCard() => SizedBox(height: 100, child: Center(child: Text('Pharmacological Recommendations')));
   Widget _buildLifestyleMedicineCard(List<String> adjustments) => _buildLifestyleCard(adjustments);
-  Widget _buildMonitoringProtocolCard() => Container(height: 100, child: Center(child: Text('Monitoring Protocol')));
-  Widget _buildFollowUpScheduleCard() => Container(height: 100, child: Center(child: Text('Follow-up Schedule')));
+  Widget _buildMonitoringProtocolCard() => SizedBox(height: 100, child: Center(child: Text('Monitoring Protocol')));
+  Widget _buildFollowUpScheduleCard() => SizedBox(height: 100, child: Center(child: Text('Follow-up Schedule')));
 }

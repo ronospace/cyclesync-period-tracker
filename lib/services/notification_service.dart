@@ -6,7 +6,8 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io';
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
   static bool _initialized = false;
 
   // Notification IDs
@@ -22,27 +23,29 @@ class NotificationService {
     try {
       // Initialize timezone data
       tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('America/New_York')); // Default timezone
+      tz.setLocalLocation(
+        tz.getLocation('America/New_York'),
+      ); // Default timezone
 
       // Android initialization settings
       const AndroidInitializationSettings androidSettings =
           AndroidInitializationSettings('@mipmap/ic_launcher');
 
-      // iOS initialization settings  
+      // iOS initialization settings
       const DarwinInitializationSettings iosSettings =
           DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      );
+            requestAlertPermission: true,
+            requestBadgePermission: true,
+            requestSoundPermission: true,
+          );
 
       // macOS initialization settings
       const DarwinInitializationSettings macOSSettings =
           DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      );
+            requestAlertPermission: true,
+            requestBadgePermission: true,
+            requestSoundPermission: true,
+          );
 
       const InitializationSettings initSettings = InitializationSettings(
         android: androidSettings,
@@ -78,12 +81,10 @@ class NotificationService {
     } else if (Platform.isIOS || Platform.isMacOS) {
       // Request permissions through the plugin for iOS/macOS
       final bool? result = await _notifications
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
       return result ?? false;
     }
     return true;
@@ -95,7 +96,9 @@ class NotificationService {
       return await Permission.notification.isGranted;
     } else if (Platform.isIOS || Platform.isMacOS) {
       final result = await _notifications
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.checkPermissions();
       return result?.isEnabled ?? false;
     }
@@ -116,14 +119,16 @@ class NotificationService {
     }
 
     try {
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'cycle_reminders',
-        'Cycle Reminders',
-        channelDescription: 'Notifications for cycle tracking and reminders',
-        importance: Importance.high,
-        priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
-      );
+      const AndroidNotificationDetails androidDetails =
+          AndroidNotificationDetails(
+            'cycle_reminders',
+            'Cycle Reminders',
+            channelDescription:
+                'Notifications for cycle tracking and reminders',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          );
 
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
         presentAlert: true,
@@ -147,7 +152,9 @@ class NotificationService {
         payload: payload,
       );
 
-      debugPrint('Scheduled notification: $title for ${scheduledDate.toString()}');
+      debugPrint(
+        'Scheduled notification: $title for ${scheduledDate.toString()}',
+      );
     } catch (e) {
       debugPrint('Error scheduling notification: $e');
     }
@@ -164,10 +171,12 @@ class NotificationService {
   }
 
   /// Schedule cycle start reminder
-  static Future<void> scheduleCycleStartReminder(DateTime predictedStart) async {
+  static Future<void> scheduleCycleStartReminder(
+    DateTime predictedStart,
+  ) async {
     // Schedule reminder 1 day before predicted start
     final reminderDate = predictedStart.subtract(const Duration(days: 1));
-    
+
     if (reminderDate.isAfter(DateTime.now())) {
       await _scheduleNotification(
         id: _cycleStartPredictionID,
@@ -180,10 +189,12 @@ class NotificationService {
   }
 
   /// Schedule ovulation prediction
-  static Future<void> scheduleOvulationReminder(DateTime predictedOvulation) async {
+  static Future<void> scheduleOvulationReminder(
+    DateTime predictedOvulation,
+  ) async {
     // Schedule reminder 1 day before predicted ovulation
     final reminderDate = predictedOvulation.subtract(const Duration(days: 1));
-    
+
     if (reminderDate.isAfter(DateTime.now())) {
       await _scheduleNotification(
         id: _ovulationPredictionID,
@@ -198,13 +209,15 @@ class NotificationService {
   /// Schedule cycle logging reminder
   static Future<void> scheduleCycleLoggingReminder() async {
     // Schedule daily reminder at 9 AM if no cycle logged recently
-    final tomorrow9AM = DateTime.now().add(const Duration(days: 1)).copyWith(
-      hour: 9,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-      microsecond: 0,
-    );
+    final tomorrow9AM = DateTime.now()
+        .add(const Duration(days: 1))
+        .copyWith(
+          hour: 9,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+          microsecond: 0,
+        );
 
     await _scheduleNotification(
       id: _cycleReminderID,
@@ -216,15 +229,19 @@ class NotificationService {
   }
 
   /// Schedule cycle end reminder
-  static Future<void> scheduleCycleEndReminder(DateTime cycleStart, int averageCycleLength) async {
+  static Future<void> scheduleCycleEndReminder(
+    DateTime cycleStart,
+    int averageCycleLength,
+  ) async {
     final predictedEnd = cycleStart.add(Duration(days: averageCycleLength));
     final reminderDate = predictedEnd.subtract(const Duration(days: 1));
-    
+
     if (reminderDate.isAfter(DateTime.now())) {
       await _scheduleNotification(
         id: _cycleEndReminderID,
         title: 'Cycle Ending Soon',
-        body: 'Your current cycle is expected to end tomorrow. Don\'t forget to log it!',
+        body:
+            'Your current cycle is expected to end tomorrow. Don\'t forget to log it!',
         scheduledDate: reminderDate,
         payload: 'cycle_end_reminder',
       );
@@ -232,12 +249,15 @@ class NotificationService {
   }
 
   /// Get pending notifications (for debugging/info)
-  static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+  static Future<List<PendingNotificationRequest>>
+  getPendingNotifications() async {
     return await _notifications.pendingNotificationRequests();
   }
 
   /// Update notifications based on cycle data
-  static Future<void> updateCycleNotifications(List<Map<String, dynamic>> cycles) async {
+  static Future<void> updateCycleNotifications(
+    List<Map<String, dynamic>> cycles,
+  ) async {
     if (cycles.isEmpty) return;
 
     try {
@@ -248,11 +268,11 @@ class NotificationService {
 
       // Calculate predictions based on recent cycles
       final predictions = _calculateCyclePredictions(cycles);
-      
+
       if (predictions['nextCycleStart'] != null) {
         await scheduleCycleStartReminder(predictions['nextCycleStart']);
       }
-      
+
       if (predictions['nextOvulation'] != null) {
         await scheduleOvulationReminder(predictions['nextOvulation']);
       }
@@ -266,16 +286,20 @@ class NotificationService {
         } else {
           startDate = (currentCycle['start'] as dynamic).toDate();
         }
-        await scheduleCycleEndReminder(startDate, predictions['averageCycleLength']);
+        await scheduleCycleEndReminder(
+          startDate,
+          predictions['averageCycleLength'],
+        );
       }
-
     } catch (e) {
       debugPrint('Error updating cycle notifications: $e');
     }
   }
 
   /// Calculate cycle predictions based on historical data
-  static Map<String, dynamic> _calculateCyclePredictions(List<Map<String, dynamic>> cycles) {
+  static Map<String, dynamic> _calculateCyclePredictions(
+    List<Map<String, dynamic>> cycles,
+  ) {
     if (cycles.length < 2) return {};
 
     try {
@@ -288,13 +312,13 @@ class NotificationService {
 
       for (final cycle in completedCycles) {
         DateTime startDate, endDate;
-        
+
         if (cycle['start'] is DateTime) {
           startDate = cycle['start'];
         } else {
           startDate = (cycle['start'] as dynamic).toDate();
         }
-        
+
         if (cycle['end'] is DateTime) {
           endDate = cycle['end'];
         } else {
@@ -302,16 +326,17 @@ class NotificationService {
         }
 
         final cycleDays = endDate.difference(startDate).inDays + 1;
-        if (cycleDays > 0 && cycleDays < 60) { // Sanity check
+        if (cycleDays > 0 && cycleDays < 60) {
+          // Sanity check
           totalDays += cycleDays;
           cycleCount++;
         }
       }
 
       if (cycleCount == 0) return {};
-      
+
       final averageCycleLength = (totalDays / cycleCount).round();
-      
+
       // Predict next cycle start
       DateTime? lastCycleEnd;
       final lastCompletedCycle = completedCycles.first;
@@ -320,9 +345,11 @@ class NotificationService {
       } else {
         lastCycleEnd = (lastCompletedCycle['end'] as dynamic).toDate();
       }
-      
-      final nextCycleStart = lastCycleEnd?.add(Duration(days: averageCycleLength));
-      
+
+      final nextCycleStart = lastCycleEnd?.add(
+        Duration(days: averageCycleLength),
+      );
+
       // Predict ovulation (typically 14 days before next cycle)
       final nextOvulation = nextCycleStart?.subtract(const Duration(days: 14));
 

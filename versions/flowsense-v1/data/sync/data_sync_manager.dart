@@ -427,7 +427,7 @@ class DataSyncManager {
       mood: primary.mood ?? secondary.mood,
       energyLevel: primary.energyLevel ?? secondary.energyLevel,
       sleepQuality: primary.sleepQuality ?? secondary.sleepQuality,
-      tags: [...primary.tags, ...secondary.tags].toSet().toList(),
+      tags: <dynamic>{...primary.tags, ...secondary.tags}.toList(),
       lastUpdated: DateTime.now(),
     );
 

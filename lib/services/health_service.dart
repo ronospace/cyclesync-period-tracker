@@ -45,7 +45,7 @@ class HealthService {
   static Future<HealthIntegrationStatus> getIntegrationStatus() async {
     try {
       final isSupported = PlatformConfig.supportsHealthIntegration;
-      
+
       if (!isSupported) {
         return HealthIntegrationStatus(
           isSupported: false,
@@ -54,7 +54,7 @@ class HealthService {
           canSync: false,
         );
       }
-      
+
       return HealthIntegrationStatus(
         isSupported: true,
         hasPermissions: true,
@@ -136,15 +136,19 @@ class HealthService {
       int failureCount = 0;
 
       // Convert Map<String, dynamic> to CycleData objects
-      final cycles = cycleData.map((data) {
-        try {
-          return CycleData.fromFirestore(data);
-        } catch (e) {
-          // Skip invalid cycle data
-          debugPrint('Warning: Skipping invalid cycle data: $e');
-          return null;
-        }
-      }).where((cycle) => cycle != null).cast<CycleData>().toList();
+      final cycles = cycleData
+          .map((data) {
+            try {
+              return CycleData.fromFirestore(data);
+            } catch (e) {
+              // Skip invalid cycle data
+              debugPrint('Warning: Skipping invalid cycle data: $e');
+              return null;
+            }
+          })
+          .where((cycle) => cycle != null)
+          .cast<CycleData>()
+          .toList();
 
       for (final cycle in cycles) {
         final result = await syncCycleToHealth(cycle);
@@ -160,8 +164,8 @@ class HealthService {
         syncedDataTypes: ['bulk_sync'],
         failedDataTypes: failureCount > 0 ? ['some_cycles'] : [],
         errors: [],
-        summary: cycles.isEmpty 
-            ? 'No cycles to sync' 
+        summary: cycles.isEmpty
+            ? 'No cycles to sync'
             : 'Bulk sync completed: $successCount successful, $failureCount failed',
         syncedCount: successCount,
         exportedData: {
@@ -183,4 +187,3 @@ class HealthService {
     }
   }
 }
-

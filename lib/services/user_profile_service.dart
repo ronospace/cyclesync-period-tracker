@@ -13,10 +13,7 @@ class UserProfileService {
       final user = _auth.currentUser;
       if (user == null) return false;
 
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
       if (!userDoc.exists) return false;
 
@@ -40,16 +37,13 @@ class UserProfileService {
       }
 
       // Check Firestore profile as backup
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
       if (!userDoc.exists) return false;
 
       final data = userDoc.data() as Map<String, dynamic>;
       final displayName = data['displayName'] as String?;
-      
+
       return displayName != null && displayName.isNotEmpty;
     } catch (e) {
       debugPrint('Error checking display name: $e');
@@ -69,10 +63,7 @@ class UserProfileService {
       }
 
       // Check Firestore profile as backup
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
       if (!userDoc.exists) return null;
 
@@ -90,10 +81,7 @@ class UserProfileService {
       final user = _auth.currentUser;
       if (user == null) return null;
 
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
       if (!userDoc.exists) {
         // Create basic profile if it doesn't exist
@@ -126,8 +114,8 @@ class UserProfileService {
         'onboardingCompleted': false,
         'profileSetup': {
           'displayNameSet': displayName != null || user.displayName != null,
-          'completedAt': displayName != null || user.displayName != null 
-              ? FieldValue.serverTimestamp() 
+          'completedAt': displayName != null || user.displayName != null
+              ? FieldValue.serverTimestamp()
               : null,
         },
         'preferences': {
@@ -147,7 +135,6 @@ class UserProfileService {
           .collection('users')
           .doc(user.uid)
           .set(profileData, SetOptions(merge: true));
-
     } catch (e) {
       debugPrint('Error creating user profile: $e');
       rethrow;
@@ -164,10 +151,7 @@ class UserProfileService {
       await user.updateDisplayName(displayName);
 
       // Update Firestore profile
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .set({
+      await _firestore.collection('users').doc(user.uid).set({
         'displayName': displayName,
         'profileSetup': {
           'displayNameSet': true,
@@ -175,7 +159,6 @@ class UserProfileService {
         },
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-
     } catch (e) {
       debugPrint('Error updating display name: $e');
       rethrow;
@@ -188,15 +171,11 @@ class UserProfileService {
       final user = _auth.currentUser;
       if (user == null) return;
 
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .set({
+      await _firestore.collection('users').doc(user.uid).set({
         'onboardingCompleted': true,
         'onboardingCompletedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-
     } catch (e) {
       debugPrint('Error completing onboarding: $e');
       rethrow;
@@ -204,19 +183,17 @@ class UserProfileService {
   }
 
   /// Update user preferences
-  static Future<void> updatePreferences(Map<String, dynamic> preferences) async {
+  static Future<void> updatePreferences(
+    Map<String, dynamic> preferences,
+  ) async {
     try {
       final user = _auth.currentUser;
       if (user == null) return;
 
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .set({
+      await _firestore.collection('users').doc(user.uid).set({
         'preferences': preferences,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-
     } catch (e) {
       debugPrint('Error updating preferences: $e');
       rethrow;
@@ -229,16 +206,12 @@ class UserProfileService {
       final user = _auth.currentUser;
       if (user == null) return;
 
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .set({
+      await _firestore.collection('users').doc(user.uid).set({
         'stats': {
           'lastActive': FieldValue.serverTimestamp(),
           'totalLogins': FieldValue.increment(1),
         },
       }, SetOptions(merge: true));
-
     } catch (e) {
       debugPrint('Error recording activity: $e');
       // Don't rethrow as this is not critical
@@ -252,14 +225,10 @@ class UserProfileService {
       if (user == null) return;
 
       // Delete Firestore profile
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .delete();
+      await _firestore.collection('users').doc(user.uid).delete();
 
       // Delete Firebase Auth account
       await user.delete();
-
     } catch (e) {
       debugPrint('Error deleting user profile: $e');
       rethrow;
@@ -289,10 +258,7 @@ class UserProfileService {
       if (user == null) return;
 
       // Check if profile already exists
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
       if (userDoc.exists) {
         // Profile exists, just record activity
@@ -302,11 +268,9 @@ class UserProfileService {
 
       // Create new profile
       await createUserProfile();
-      
     } catch (e) {
       debugPrint('Error initializing new user: $e');
       rethrow;
     }
   }
 }
-

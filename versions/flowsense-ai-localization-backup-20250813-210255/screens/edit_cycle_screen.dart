@@ -358,13 +358,13 @@ class _EditCycleScreenState extends State<EditCycleScreen> {
                   
                   OutlinedButton(
                     onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+                    child: const Text('Cancel'),
                   ),
                 ],
               ),

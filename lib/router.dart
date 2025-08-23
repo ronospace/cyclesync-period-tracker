@@ -30,6 +30,7 @@ import 'screens/social/social_feed_screen.dart'; // 📱 SOCIAL FEED
 import 'screens/social/gamification_screen.dart'; // 🎮 GAMIFICATION
 import 'screens/splash_screen.dart'; // 🌟 SPLASH SCREEN
 import 'screens/onboarding/display_name_setup_screen.dart'; // 👤 DISPLAY NAME SETUP
+import 'screens/onboarding_completion_screen.dart'; // 🎉 ONBOARDING COMPLETION
 import 'screens/feedback_screen.dart'; // 💬 FEEDBACK SCREEN
 import 'screens/share_ideas_screen.dart'; // 💡 SHARE IDEAS SCREEN
 import 'screens/flowsense_coming_soon_screen.dart'; // 🔮 FLOWSENSE COMING SOON
@@ -88,10 +89,7 @@ class AppRouter {
         return null;
       },
       routes: [
-        GoRoute(
-          path: '/',
-          redirect: (context, state) => '/splash',
-        ),
+        GoRoute(path: '/', redirect: (context, state) => '/splash'),
         GoRoute(
           path: '/splash',
           builder: (context, state) => const SplashScreen(),
@@ -107,6 +105,10 @@ class AppRouter {
         GoRoute(
           path: '/display-name-setup',
           builder: (context, state) => const DisplayNameSetupScreen(),
+        ),
+        GoRoute(
+          path: '/onboarding-complete',
+          builder: (context, state) => const OnboardingCompletionScreen(),
         ),
         GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
         GoRoute(

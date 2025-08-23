@@ -183,7 +183,7 @@ class HealthMetricsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withAlpha(60),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withAlpha(40),
@@ -257,7 +257,7 @@ class HealthMetricsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withAlpha(60),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

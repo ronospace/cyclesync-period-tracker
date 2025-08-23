@@ -18,18 +18,18 @@ enum ErrorType {
 
 /// Retry strategies
 enum RetryStrategy {
-  fixed,           // Fixed delay between retries
-  exponential,     // Exponential backoff
-  linear,          // Linear increase in delay
-  fibonacci,       // Fibonacci sequence delays
-  custom,          // Custom strategy
+  fixed, // Fixed delay between retries
+  exponential, // Exponential backoff
+  linear, // Linear increase in delay
+  fibonacci, // Fibonacci sequence delays
+  custom, // Custom strategy
 }
 
 /// Circuit breaker states
 enum CircuitBreakerState {
-  closed,    // Normal operation
-  open,      // Failing fast
-  halfOpen,  // Testing if service recovered
+  closed, // Normal operation
+  open, // Failing fast
+  halfOpen, // Testing if service recovered
 }
 
 /// Error classification and metadata
@@ -67,7 +67,10 @@ class CycleSyncError {
     }
   }
 
-  factory CycleSyncError.fromException(Exception exception, {Map<String, dynamic>? metadata}) {
+  factory CycleSyncError.fromException(
+    Exception exception, {
+    Map<String, dynamic>? metadata,
+  }) {
     ErrorType type = ErrorType.unknown;
     int? statusCode;
     String message = exception.toString();
@@ -81,7 +84,7 @@ class CycleSyncError {
     } else if (exception is HttpException) {
       final httpException = exception;
       statusCode = int.tryParse(httpException.message.split(' ').first);
-      
+
       if (statusCode != null) {
         if (statusCode == 401) {
           type = ErrorType.authentication;
@@ -191,7 +194,8 @@ class CircuitBreaker {
       case CircuitBreakerState.closed:
         return true;
       case CircuitBreakerState.open:
-        if (_nextAttemptTime != null && DateTime.now().isAfter(_nextAttemptTime!)) {
+        if (_nextAttemptTime != null &&
+            DateTime.now().isAfter(_nextAttemptTime!)) {
           _state = CircuitBreakerState.halfOpen;
           return true;
         }
@@ -241,22 +245,26 @@ class RetryService {
   final Map<String, CircuitBreaker> _circuitBreakers = {};
   final List<CycleSyncError> _errorHistory = [];
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-  
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   bool _isOnline = true;
   static const int _maxErrorHistory = 1000;
 
   /// Initialize the retry service
   Future<void> initialize() async {
     // Monitor connectivity
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((result) {
-      _isOnline = result != ConnectivityResult.none;
-      debugPrint('🌐 Connectivity changed: ${_isOnline ? "Online" : "Offline"}');
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+      results,
+    ) {
+      _isOnline = !results.contains(ConnectivityResult.none);
+      debugPrint(
+        '🌐 Connectivity changed: ${_isOnline ? "Online" : "Offline"}',
+      );
     });
 
     // Check initial connectivity
-    final result = await _connectivity.checkConnectivity();
-    _isOnline = result != ConnectivityResult.none;
+    final results = await _connectivity.checkConnectivity();
+    _isOnline = !results.contains(ConnectivityResult.none);
   }
 
   /// Execute a function with retry logic and error handling
@@ -266,7 +274,9 @@ class RetryService {
     RetryConfig config = const RetryConfig(),
     bool useCircuitBreaker = true,
   }) async {
-    final circuitBreaker = useCircuitBreaker ? _getOrCreateCircuitBreaker(operationName) : null;
+    final circuitBreaker = useCircuitBreaker
+        ? _getOrCreateCircuitBreaker(operationName)
+        : null;
 
     // Check circuit breaker
     if (circuitBreaker != null && !circuitBreaker.canExecute) {
@@ -288,25 +298,27 @@ class RetryService {
         }
 
         final result = await operation();
-        
+
         // Record success
         circuitBreaker?.recordSuccess();
-        
+
         if (attempt > 0) {
           debugPrint('✅ $operationName succeeded after $attempt retries');
         }
-        
+
         return result;
       } catch (e) {
-        final error = e is CycleSyncError ? e : CycleSyncError.fromException(e as Exception);
+        final error = e is CycleSyncError
+            ? e
+            : CycleSyncError.fromException(e as Exception);
         lastError = error;
-        
+
         // Log error
         _logError(error, operationName, attempt);
-        
+
         // Check if error is retryable
         final shouldRetry = _shouldRetry(error, attempt, config.maxRetries);
-        
+
         if (!shouldRetry) {
           circuitBreaker?.recordFailure();
           break;
@@ -315,7 +327,9 @@ class RetryService {
         // Calculate delay for next retry
         if (attempt < config.maxRetries) {
           final delay = _calculateDelay(config, attempt, random);
-          debugPrint('⏳ Retrying $operationName in ${delay.inMilliseconds}ms (attempt ${attempt + 1}/${config.maxRetries})');
+          debugPrint(
+            '⏳ Retrying $operationName in ${delay.inMilliseconds}ms (attempt ${attempt + 1}/${config.maxRetries})',
+          );
           await Future.delayed(delay);
         }
       }
@@ -347,7 +361,7 @@ class RetryService {
     bool continueOnError = true,
   }) async {
     final results = <T?>[];
-    
+
     for (int i = 0; i < operations.length; i++) {
       try {
         final result = await execute(
@@ -361,7 +375,7 @@ class RetryService {
         results.add(null);
       }
     }
-    
+
     return results;
   }
 
@@ -375,12 +389,16 @@ class RetryService {
     try {
       return await execute(operationName, primaryOperation, config: config);
     } catch (primaryError) {
-      debugPrint('🔄 Primary operation failed, trying fallback for $operationName');
-      
+      debugPrint(
+        '🔄 Primary operation failed, trying fallback for $operationName',
+      );
+
       try {
         return await execute('${operationName}_fallback', fallbackOperation);
       } catch (fallbackError) {
-        debugPrint('❌ Both primary and fallback operations failed for $operationName');
+        debugPrint(
+          '❌ Both primary and fallback operations failed for $operationName',
+        );
         rethrow;
       }
     }
@@ -389,26 +407,29 @@ class RetryService {
   /// Get circuit breaker status
   Map<String, dynamic> getCircuitBreakerStatus(String operationName) {
     final breaker = _circuitBreakers[operationName];
-    return breaker?.getStatus() ?? {'name': operationName, 'state': 'not_exists'};
+    return breaker?.getStatus() ??
+        {'name': operationName, 'state': 'not_exists'};
   }
 
   /// Get all circuit breaker statuses
   Map<String, Map<String, dynamic>> getAllCircuitBreakersStatus() {
-    return _circuitBreakers.map((key, breaker) => MapEntry(key, breaker.getStatus()));
+    return _circuitBreakers.map(
+      (key, breaker) => MapEntry(key, breaker.getStatus()),
+    );
   }
 
   /// Get error history
   List<CycleSyncError> getErrorHistory({int? limit, ErrorType? type}) {
     var errors = _errorHistory.reversed.toList();
-    
+
     if (type != null) {
       errors = errors.where((e) => e.type == type).toList();
     }
-    
+
     if (limit != null && errors.length > limit) {
       errors = errors.take(limit).toList();
     }
-    
+
     return errors;
   }
 
@@ -446,52 +467,58 @@ class RetryService {
   bool _shouldRetry(CycleSyncError error, int attempt, int maxRetries) {
     if (attempt >= maxRetries) return false;
     if (!error.isRetryable) return false;
-    
+
     // Don't retry auth errors immediately
-    if (error.type == ErrorType.authentication || error.type == ErrorType.authorization) {
+    if (error.type == ErrorType.authentication ||
+        error.type == ErrorType.authorization) {
       return false;
     }
-    
+
     // Special handling for rate limiting
     if (error.type == ErrorType.rateLimited) {
       return attempt < 2; // Only retry rate limited requests twice
     }
-    
+
     return true;
   }
 
   Duration _calculateDelay(RetryConfig config, int attempt, Random random) {
     Duration delay;
-    
+
     switch (config.strategy) {
       case RetryStrategy.fixed:
         delay = config.initialDelay;
         break;
-      
+
       case RetryStrategy.linear:
         delay = Duration(
           milliseconds: config.initialDelay.inMilliseconds * (attempt + 1),
         );
         break;
-      
+
       case RetryStrategy.exponential:
         delay = Duration(
-          milliseconds: (config.initialDelay.inMilliseconds * 
-                        pow(config.backoffMultiplier, attempt)).round(),
+          milliseconds:
+              (config.initialDelay.inMilliseconds *
+                      pow(config.backoffMultiplier, attempt))
+                  .round(),
         );
         break;
-      
+
       case RetryStrategy.fibonacci:
         delay = Duration(
-          milliseconds: config.initialDelay.inMilliseconds * _fibonacci(attempt + 1),
+          milliseconds:
+              config.initialDelay.inMilliseconds * _fibonacci(attempt + 1),
         );
         break;
-      
+
       case RetryStrategy.custom:
         // For custom strategies, use exponential as default
         delay = Duration(
-          milliseconds: (config.initialDelay.inMilliseconds * 
-                        pow(config.backoffMultiplier, attempt)).round(),
+          milliseconds:
+              (config.initialDelay.inMilliseconds *
+                      pow(config.backoffMultiplier, attempt))
+                  .round(),
         );
         break;
     }
@@ -503,7 +530,8 @@ class RetryService {
 
     // Apply jitter to avoid thundering herd
     if (config.jitter > 0) {
-      final jitterMs = (delay.inMilliseconds * config.jitter * random.nextDouble()).round();
+      final jitterMs =
+          (delay.inMilliseconds * config.jitter * random.nextDouble()).round();
       delay = Duration(milliseconds: delay.inMilliseconds + jitterMs);
     }
 
@@ -531,24 +559,26 @@ class RetryService {
       'authenticate',
       'fetch',
     ];
-    
-    return networkOperations.any((op) => operationName.toLowerCase().contains(op));
+
+    return networkOperations.any(
+      (op) => operationName.toLowerCase().contains(op),
+    );
   }
 
   Future<void> _waitForConnectivity() async {
     if (_isOnline) return;
-    
+
     final completer = Completer<void>();
-    late StreamSubscription<ConnectivityResult> subscription;
-    
-    subscription = _connectivity.onConnectivityChanged.listen((result) {
-      if (result != ConnectivityResult.none) {
+    late StreamSubscription<List<ConnectivityResult>> subscription;
+
+    subscription = _connectivity.onConnectivityChanged.listen((results) {
+      if (!results.contains(ConnectivityResult.none)) {
         _isOnline = true;
         subscription.cancel();
         completer.complete();
       }
     });
-    
+
     // Timeout after 30 seconds
     Timer(const Duration(seconds: 30), () {
       if (!completer.isCompleted) {
@@ -562,19 +592,19 @@ class RetryService {
         );
       }
     });
-    
+
     return completer.future;
   }
 
   void _logError(CycleSyncError error, String operationName, int attempt) {
     // Add to error history
     _errorHistory.add(error);
-    
+
     // Keep history size manageable
     if (_errorHistory.length > _maxErrorHistory) {
       _errorHistory.removeAt(0);
     }
-    
+
     // Log error details
     debugPrint('''
 ❌ Error in $operationName (attempt ${attempt + 1}):
@@ -592,24 +622,28 @@ class RetryService {
 }
 
 /// Convenience extensions for common retry patterns
-extension RetryExtensions on Future<T> Function() {
+extension RetryExtensions<T> on Future<T> Function() {
   /// Execute with default retry configuration
-  Future<T> withRetry<T>(String operationName) {
+  Future<T> withRetry(String operationName) {
     return RetryService().execute(operationName, this);
   }
 
   /// Execute with network retry configuration
-  Future<T> withNetworkRetry<T>(String operationName) {
-    return RetryService().execute(operationName, this, config: RetryConfig.network);
+  Future<T> withNetworkRetry(String operationName) {
+    return RetryService().execute(
+      operationName,
+      this,
+      config: RetryConfig.network,
+    );
   }
 
   /// Execute with API retry configuration
-  Future<T> withApiRetry<T>(String operationName) {
+  Future<T> withApiRetry(String operationName) {
     return RetryService().execute(operationName, this, config: RetryConfig.api);
   }
 
   /// Execute with timeout and retry
-  Future<T> withTimeoutAndRetry<T>(String operationName, Duration timeout) {
+  Future<T> withTimeoutAndRetry(String operationName, Duration timeout) {
     return RetryService().executeWithTimeout(operationName, this, timeout);
   }
 }

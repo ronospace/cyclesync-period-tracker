@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'dart:io' show Platform;
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/app_logo.dart';
 import '../theme/app_theme.dart';
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Auto-login for development
     _emailController.text = 'test@cyclesync.dev';
     _passwordController.text = 'testpassword123';
-    
+
     // Check if already logged in
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (FirebaseAuth.instance.currentUser != null) {
@@ -58,21 +58,25 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Initialize GoogleSignIn if needed
+      await GoogleSignIn.instance.initialize();
       
-      if (googleUser == null) {
-        setState(() => _isLoading = false);
-        return; // User cancelled the sign-in
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      // Authenticate user
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate(
+        scopeHint: ['email', 'profile'],
       );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        // Note: GoogleSignIn 7.x+ doesn't provide accessToken in authentication
+        // For Firebase Auth, idToken is usually sufficient
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
       final user = userCredential.user;
 
       if (user != null) {
@@ -109,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -134,10 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Compact Logo and Welcome
                     Column(
                       children: [
-                        const AppLogo(
-                          size: 80,
-                          showText: false,
-                        ),
+                        const AppLogo(size: 80, showText: false),
                         const SizedBox(height: 16),
                         Text(
                           l10n?.appTitle ?? 'CycleSync',
@@ -148,7 +149,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          l10n?.homeWelcomeSubtitle ?? 'Your personal health companion',
+                          l10n?.homeWelcomeSubtitle ??
+                              'Your personal health companion',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -156,13 +158,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 32),
-              
+
                     // Compact Sign-in Options Card
                     Card(
                       elevation: 8,
-      shadowColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                      shadowColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.2,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -174,30 +178,41 @@ class _LoginScreenState extends State<LoginScreen> {
                             _buildModernSignInButton(
                               onPressed: _signInWithGoogle,
                               icon: Icons.email,
-                              label: l10n?.signInWithGoogle ?? 'Continue with Google',
+                              label:
+                                  l10n?.signInWithGoogle ??
+                                  'Continue with Google',
                               backgroundColor: theme.colorScheme.surface,
                               textColor: theme.colorScheme.onSurface,
                               borderColor: theme.colorScheme.outline,
                             ),
-                            
+
                             const SizedBox(height: 12),
-                            
+
                             // Apple Sign-in (iOS only)
-                            if (Platform.isIOS) ...[
+                            if (!kIsWeb &&
+                                defaultTargetPlatform ==
+                                    TargetPlatform.iOS) ...[
                               _buildModernSignInButton(
                                 onPressed: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(l10n?.comingSoon ?? 'Apple Sign-In coming soon!')),
+                                    SnackBar(
+                                      content: Text(
+                                        l10n?.comingSoon ??
+                                            'Apple Sign-In coming soon!',
+                                      ),
+                                    ),
                                   );
                                 },
                                 icon: Icons.apple,
-                                label: l10n?.signInWithApple ?? 'Continue with Apple',
+                                label:
+                                    l10n?.signInWithApple ??
+                                    'Continue with Apple',
                                 backgroundColor: theme.colorScheme.onSurface,
                                 textColor: theme.colorScheme.surface,
                               ),
                               const SizedBox(height: 12),
                             ],
-                            
+
                             // Guest User Button
                             _buildModernSignInButton(
                               onPressed: _signInAnonymously,
@@ -206,15 +221,21 @@ class _LoginScreenState extends State<LoginScreen> {
                               backgroundColor: theme.colorScheme.secondary,
                               textColor: theme.colorScheme.onSecondary,
                             ),
-                            
+
                             const SizedBox(height: 20),
-                            
+
                             // Compact Divider
                             Row(
                               children: [
-                                Expanded(child: Divider(color: theme.colorScheme.outline)),
+                                Expanded(
+                                  child: Divider(
+                                    color: theme.colorScheme.outline,
+                                  ),
+                                ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   child: Text(
                                     l10n?.orContinueWithEmail ?? 'or email',
                                     style: theme.textTheme.bodySmall?.copyWith(
@@ -222,12 +243,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
-                                Expanded(child: Divider(color: theme.colorScheme.outline)),
+                                Expanded(
+                                  child: Divider(
+                                    color: theme.colorScheme.outline,
+                                  ),
+                                ),
                               ],
                             ),
-                            
+
                             const SizedBox(height: 20),
-                            
+
                             // Compact Email/Password Form
                             TextField(
                               controller: _emailController,
@@ -239,12 +264,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 prefixIcon: const Icon(Icons.email_outlined),
                                 filled: true,
-                fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+                                fillColor: theme.colorScheme.surfaceVariant
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 12),
-                            
+
                             TextField(
                               controller: _passwordController,
                               obscureText: true,
@@ -255,12 +281,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 prefixIcon: const Icon(Icons.lock_outlined),
                                 filled: true,
-                fillColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+                                fillColor: theme.colorScheme.surfaceVariant
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 20),
-                            
+
                             // Login Button
                             SizedBox(
                               width: double.infinity,
@@ -269,43 +296,47 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: theme.colorScheme.primary,
                                   foregroundColor: theme.colorScheme.onPrimary,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   elevation: 2,
                                 ),
-                                child: _isLoading 
-                                  ? SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: theme.colorScheme.onPrimary, 
-                                        strokeWidth: 2,
+                                child: _isLoading
+                                    ? SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          color: theme.colorScheme.onPrimary,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(
+                                        l10n?.signIn ?? 'Sign In',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    )
-                                  : Text(
-                                      l10n?.signIn ?? 'Sign In',
-                                      style: const TextStyle(
-                                        fontSize: 16, 
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Compact Sign Up Link
                     TextButton(
                       onPressed: () => context.go('/signup'),
                       child: RichText(
                         text: TextSpan(
-                          text: l10n?.dontHaveAccount ?? "Don't have an account? ",
+                          text:
+                              l10n?.dontHaveAccount ??
+                              "Don't have an account? ",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -321,7 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    
+
                     // Compact Error Display
                     if (_error != null)
                       Container(
@@ -331,13 +362,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: theme.colorScheme.errorContainer,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: theme.colorScheme.error.withValues(alpha: 0.3),
+                            color: theme.colorScheme.error.withValues(
+                              alpha: 0.3,
+                            ),
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
-                              Icons.error_outline, 
+                              Icons.error_outline,
                               color: theme.colorScheme.error,
                               size: 20,
                             ),
@@ -362,7 +395,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-  
+
   Widget _buildModernSignInButton({
     required VoidCallback onPressed,
     required IconData icon,
@@ -381,7 +414,9 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: borderColor != null ? BorderSide(color: borderColor) : BorderSide.none,
+            side: borderColor != null
+                ? BorderSide(color: borderColor)
+                : BorderSide.none,
           ),
           elevation: 1,
         ),
@@ -393,10 +428,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(width: 12),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
           ],
         ),

@@ -41,7 +41,9 @@ class NavigationContext {
       arguments: Map<String, dynamic>.from(map['arguments'] ?? {}),
       formData: Map<String, dynamic>.from(map['formData'] ?? {}),
       scrollPositions: Map<String, dynamic>.from(map['scrollPositions'] ?? {}),
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       previousRoute: map['previousRoute'],
     );
   }
@@ -92,7 +94,9 @@ class NavigationHistoryEntry {
     return NavigationHistoryEntry(
       routeName: map['routeName'] ?? '',
       arguments: Map<String, dynamic>.from(map['arguments'] ?? {}),
-      timestamp: DateTime.parse(map['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp: DateTime.parse(
+        map['timestamp'] ?? DateTime.now().toIso8601String(),
+      ),
       index: map['index'] ?? 0,
     );
   }
@@ -119,25 +123,26 @@ class NavigationService {
   factory NavigationService() => _instance;
   NavigationService._internal();
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   SharedPreferences? _prefs;
   final List<NavigationContext> _navigationStack = [];
   final List<NavigationHistoryEntry> _history = [];
   final Map<String, Timer> _routeTimers = {};
   final Map<String, DateTime> _routeStartTimes = {};
-  
+
   // Form data preservation
   final Map<String, Map<String, dynamic>> _preservedFormData = {};
   final Map<String, Map<String, double>> _preservedScrollPositions = {};
-  
+
   // Navigation analytics
   final Map<String, int> _routeVisitCount = {};
   final Map<String, Duration> _routeTimeSpent = {};
-  
+
   bool _initialized = false;
   int _navigationIndex = 0;
-  
+
   // Cache keys
   static const String _navigationStackKey = 'navigation_stack';
   static const String _navigationHistoryKey = 'navigation_history';
@@ -152,7 +157,7 @@ class NavigationService {
       _prefs = await SharedPreferences.getInstance();
       await _loadNavigationState();
       _setupSystemBackHandler();
-      
+
       _initialized = true;
       debugPrint('✅ NavigationService initialized');
     } catch (e) {
@@ -189,7 +194,7 @@ class NavigationService {
 
     try {
       _recordRouteVisit(routeName);
-      
+
       if (preserveContext && currentRouteName != null) {
         await _preserveCurrentContext();
       }
@@ -206,7 +211,7 @@ class NavigationService {
         timestamp: DateTime.now(),
         previousRoute: currentRouteName,
       );
-      
+
       _navigationStack.add(context);
       _addToHistory(routeName, arguments);
 
@@ -249,17 +254,17 @@ class NavigationService {
         routeName: routeName,
         arguments: arguments,
         timestamp: DateTime.now(),
-        previousRoute: _navigationStack.isNotEmpty ? _navigationStack.last.routeName : null,
+        previousRoute: _navigationStack.isNotEmpty
+            ? _navigationStack.last.routeName
+            : null,
       );
-      
+
       _navigationStack.add(context);
       _addToHistory(routeName, arguments);
       _startRouteTimer(routeName);
 
-      final result = await navigatorKey.currentState?.pushReplacementNamed<T, dynamic>(
-        routeName,
-        arguments: arguments,
-      );
+      final result = await navigatorKey.currentState
+          ?.pushReplacementNamed<T, dynamic>(routeName, arguments: arguments);
 
       await _saveNavigationState();
       return result;
@@ -291,7 +296,7 @@ class NavigationService {
       }
 
       final previousContext = _navigationStack.last;
-      
+
       // Restore previous context if requested
       if (restoreContext) {
         await _restoreContext(previousContext.routeName);
@@ -324,7 +329,7 @@ class NavigationService {
 
     try {
       final targetEntry = _history[index];
-      
+
       // Clear stack and navigate to target
       await navigateTo(
         targetEntry.routeName,
@@ -337,7 +342,10 @@ class NavigationService {
   }
 
   /// Preserve form data for a route
-  Future<void> preserveFormData(String routeName, Map<String, dynamic> formData) async {
+  Future<void> preserveFormData(
+    String routeName,
+    Map<String, dynamic> formData,
+  ) async {
     _preservedFormData[routeName] = Map<String, dynamic>.from(formData);
     await _saveFormData();
   }
@@ -348,7 +356,11 @@ class NavigationService {
   }
 
   /// Preserve scroll position for a route
-  Future<void> preserveScrollPosition(String routeName, String scrollKey, double position) async {
+  Future<void> preserveScrollPosition(
+    String routeName,
+    String scrollKey,
+    double position,
+  ) async {
     _preservedScrollPositions[routeName] ??= {};
     _preservedScrollPositions[routeName]![scrollKey] = position;
     await _saveScrollPositions();
@@ -371,7 +383,7 @@ class NavigationService {
   NavigationAnalytics getAnalytics() {
     final commonPaths = _calculateCommonPaths();
     final exitRates = _calculateExitRates();
-    
+
     return NavigationAnalytics(
       routeVisitCount: Map.unmodifiable(_routeVisitCount),
       routeTimeSpent: Map.unmodifiable(_routeTimeSpent),
@@ -388,7 +400,7 @@ class NavigationService {
     _preservedScrollPositions.clear();
     _routeVisitCount.clear();
     _routeTimeSpent.clear();
-    
+
     await _saveNavigationState();
     await _saveFormData();
     await _saveScrollPositions();
@@ -430,19 +442,17 @@ class NavigationService {
 
     // This would be implemented with route-specific context preservation
     // For now, we save the current state
-    await CacheService().set(
-      'context:$routeName',
-      {
-        'timestamp': DateTime.now().toIso8601String(),
-        'preserved': true,
-      },
-      policy: CacheExpiryPolicy.session,
-    );
+    await CacheService().set('context:$routeName', {
+      'timestamp': DateTime.now().toIso8601String(),
+      'preserved': true,
+    }, policy: CacheExpiryPolicy.session);
   }
 
   Future<void> _restoreContext(String routeName) async {
     try {
-      final context = await CacheService().get<Map<String, dynamic>>('context:$routeName');
+      final context = await CacheService().get<Map<String, dynamic>>(
+        'context:$routeName',
+      );
       if (context != null) {
         debugPrint('Restoring context for $routeName');
         // Context restoration would be handled by individual route widgets
@@ -459,9 +469,9 @@ class NavigationService {
       timestamp: DateTime.now(),
       index: _navigationIndex++,
     );
-    
+
     _history.add(entry);
-    
+
     // Keep history size manageable
     if (_history.length > 100) {
       _history.removeAt(0);
@@ -480,31 +490,32 @@ class NavigationService {
     final startTime = _routeStartTimes[routeName];
     if (startTime != null) {
       final duration = DateTime.now().difference(startTime);
-      _routeTimeSpent[routeName] = (_routeTimeSpent[routeName] ?? Duration.zero) + duration;
+      _routeTimeSpent[routeName] =
+          (_routeTimeSpent[routeName] ?? Duration.zero) + duration;
       _routeStartTimes.remove(routeName);
     }
   }
 
   List<String> _calculateCommonPaths() {
     final pathCounts = <String, int>{};
-    
+
     for (int i = 0; i < _history.length - 1; i++) {
       final current = _history[i].routeName;
       final next = _history[i + 1].routeName;
       final path = '$current->$next';
       pathCounts[path] = (pathCounts[path] ?? 0) + 1;
     }
-    
+
     final sortedPaths = pathCounts.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
+
     return sortedPaths.take(10).map((e) => e.key).toList();
   }
 
   Map<String, double> _calculateExitRates() {
     final exitRates = <String, double>{};
     final routeExits = <String, int>{};
-    
+
     for (final route in _routeVisitCount.keys) {
       final visits = _routeVisitCount[route] ?? 0;
       final exits = routeExits[route] ?? 0;
@@ -512,7 +523,7 @@ class NavigationService {
         exitRates[route] = exits / visits;
       }
     }
-    
+
     return exitRates;
   }
 
@@ -542,7 +553,6 @@ class NavigationService {
       await _loadFormData();
       await _loadScrollPositions();
       await _loadAnalytics();
-
     } catch (e) {
       debugPrint('Error loading navigation state: $e');
     }
@@ -551,10 +561,10 @@ class NavigationService {
   Future<void> _saveNavigationState() async {
     try {
       // Save navigation stack (keep only recent entries)
-      final recentStack = _navigationStack.length > 20 
+      final recentStack = _navigationStack.length > 20
           ? _navigationStack.sublist(_navigationStack.length - 20)
           : _navigationStack;
-      
+
       await _prefs?.setString(
         _navigationStackKey,
         jsonEncode(recentStack.map((c) => c.toMap()).toList()),
@@ -564,7 +574,7 @@ class NavigationService {
       final recentHistory = _history.length > 50
           ? _history.sublist(_history.length - 50)
           : _history;
-      
+
       await _prefs?.setString(
         _navigationHistoryKey,
         jsonEncode(recentHistory.map((h) => h.toMap()).toList()),
@@ -614,7 +624,10 @@ class NavigationService {
 
   Future<void> _saveScrollPositions() async {
     try {
-      await _prefs?.setString('scroll_positions', jsonEncode(_preservedScrollPositions));
+      await _prefs?.setString(
+        'scroll_positions',
+        jsonEncode(_preservedScrollPositions),
+      );
     } catch (e) {
       debugPrint('Error saving scroll positions: $e');
     }
@@ -625,7 +638,7 @@ class NavigationService {
       final analyticsJson = _prefs?.getString(_analyticsKey);
       if (analyticsJson != null) {
         final Map<String, dynamic> data = jsonDecode(analyticsJson);
-        
+
         // Load visit counts
         if (data['routeVisitCount'] != null) {
           _routeVisitCount.clear();
@@ -653,10 +666,11 @@ class NavigationService {
     try {
       final analyticsData = {
         'routeVisitCount': _routeVisitCount,
-        'routeTimeSpent': _routeTimeSpent.map((key, value) => 
-            MapEntry(key, value.inMilliseconds)),
+        'routeTimeSpent': _routeTimeSpent.map(
+          (key, value) => MapEntry(key, value.inMilliseconds),
+        ),
       };
-      
+
       await _prefs?.setString(_analyticsKey, jsonEncode(analyticsData));
     } catch (e) {
       debugPrint('Error saving analytics: $e');
@@ -669,8 +683,9 @@ extension NavigationAnalyticsExtension on NavigationAnalytics {
   Map<String, dynamic> toMap() {
     return {
       'routeVisitCount': routeVisitCount,
-      'routeTimeSpent': routeTimeSpent.map((key, value) => 
-          MapEntry(key, value.inMilliseconds)),
+      'routeTimeSpent': routeTimeSpent.map(
+        (key, value) => MapEntry(key, value.inMilliseconds),
+      ),
       'commonPaths': commonPaths,
       'exitRates': exitRates,
     };
@@ -704,7 +719,11 @@ mixin NavigationStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Preserve scroll position
   Future<void> preserveScrollPosition(String scrollKey, double position) async {
-    await NavigationService().preserveScrollPosition(routeName, scrollKey, position);
+    await NavigationService().preserveScrollPosition(
+      routeName,
+      scrollKey,
+      position,
+    );
   }
 
   /// Get preserved scroll position

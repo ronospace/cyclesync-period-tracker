@@ -28,12 +28,24 @@ class ExportService {
   }) async {
     final pdf = pw.Document();
     final now = DateTime.now();
-    
+
     // Calculate analytics for the report
-    final wellbeingTrends = EnhancedAnalyticsService.calculateWellbeingTrends(cycles, dailyLogs);
-    final correlationMatrix = EnhancedAnalyticsService.calculateSymptomCorrelations(cycles, dailyLogs);
-    final healthScore = EnhancedAnalyticsService.calculateHealthScore(cycles, dailyLogs);
-    final prediction = EnhancedAnalyticsService.generateAdvancedPredictions(cycles);
+    final wellbeingTrends = EnhancedAnalyticsService.calculateWellbeingTrends(
+      cycles,
+      dailyLogs,
+    );
+    final correlationMatrix =
+        EnhancedAnalyticsService.calculateSymptomCorrelations(
+          cycles,
+          dailyLogs,
+        );
+    final healthScore = EnhancedAnalyticsService.calculateHealthScore(
+      cycles,
+      dailyLogs,
+    );
+    final prediction = EnhancedAnalyticsService.generateAdvancedPredictions(
+      cycles,
+    );
 
     // Cover Page
     pdf.addPage(
@@ -115,10 +127,11 @@ class ExportService {
 
     // Save the PDF
     final output = await getApplicationDocumentsDirectory();
-    final fileName = 'CycleSync_Report_${DateFormat('yyyy-MM-dd').format(now)}.pdf';
+    final fileName =
+        'CycleSync_Report_${DateFormat('yyyy-MM-dd').format(now)}.pdf';
     final file = File('${output.path}/$fileName');
     await file.writeAsBytes(await pdf.save());
-    
+
     return file.path;
   }
 
@@ -129,52 +142,59 @@ class ExportService {
     bool includeDailyLogs = true,
   }) async {
     final buffer = StringBuffer();
-    
+
     // CSV Header for cycles
     buffer.writeln('Type,Date,Cycle_Length,Mood,Energy,Pain,Symptoms,Notes');
-    
+
     // Write cycle data
     for (final cycle in cycles) {
-      final symptoms = cycle.symptoms.map((s) => '${s.name}(${s.severity})').join(';');
+      final symptoms = cycle.symptoms
+          .map((s) => '${s.name}(${s.severity})')
+          .join(';');
       final notes = cycle.notes.replaceAll(',', ';').replaceAll('\n', ' ');
-      
-      buffer.writeln([
-        'Cycle',
-        DateFormat('yyyy-MM-dd').format(cycle.startDate),
-        cycle.lengthInDays,
-        cycle.wellbeing.mood,
-        cycle.wellbeing.energy,
-        cycle.wellbeing.pain,
-        '"$symptoms"',
-        '"$notes"',
-      ].join(','));
+
+      buffer.writeln(
+        [
+          'Cycle',
+          DateFormat('yyyy-MM-dd').format(cycle.startDate),
+          cycle.lengthInDays,
+          cycle.wellbeing.mood,
+          cycle.wellbeing.energy,
+          cycle.wellbeing.pain,
+          '"$symptoms"',
+          '"$notes"',
+        ].join(','),
+      );
     }
-    
+
     // Write daily log data if requested
     if (includeDailyLogs) {
       for (final log in dailyLogs) {
         final symptoms = log.symptoms.join(';');
         final notes = log.notes.replaceAll(',', ';').replaceAll('\n', ' ');
-        
-        buffer.writeln([
-          'DailyLog',
-          DateFormat('yyyy-MM-dd').format(log.date),
-          '', // No cycle length for daily logs
-          log.mood ?? '',
-          log.energy ?? '',
-          log.pain ?? '',
-          '"$symptoms"',
-          '"$notes"',
-        ].join(','));
+
+        buffer.writeln(
+          [
+            'DailyLog',
+            DateFormat('yyyy-MM-dd').format(log.date),
+            '', // No cycle length for daily logs
+            log.mood ?? '',
+            log.energy ?? '',
+            log.pain ?? '',
+            '"$symptoms"',
+            '"$notes"',
+          ].join(','),
+        );
       }
     }
-    
+
     // Save CSV file
     final output = await getApplicationDocumentsDirectory();
-    final fileName = 'CycleSync_Data_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.csv';
+    final fileName =
+        'CycleSync_Data_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.csv';
     final file = File('${output.path}/$fileName');
     await file.writeAsString(buffer.toString());
-    
+
     return file.path;
   }
 
@@ -192,21 +212,25 @@ class ExportService {
       'cycles': cycles.map((c) => c.toJson()).toList(),
       'daily_logs': dailyLogs.map((l) => l.toJson()).toList(),
       'analytics': {
-        'health_score': EnhancedAnalyticsService.calculateHealthScore(cycles, dailyLogs).toJson(),
+        'health_score': EnhancedAnalyticsService.calculateHealthScore(
+          cycles,
+          dailyLogs,
+        ).toJson(),
         'wellbeing_trends': _serializeWellbeingTrends(
-          EnhancedAnalyticsService.calculateWellbeingTrends(cycles, dailyLogs)
+          EnhancedAnalyticsService.calculateWellbeingTrends(cycles, dailyLogs),
         ),
       },
     };
-    
+
     final jsonString = const JsonEncoder.withIndent('  ').convert(backup);
-    
+
     // Save JSON file
     final output = await getApplicationDocumentsDirectory();
-    final fileName = 'CycleSync_Backup_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.json';
+    final fileName =
+        'CycleSync_Backup_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.json';
     final file = File('${output.path}/$fileName');
     await file.writeAsString(jsonString);
-    
+
     return file.path;
   }
 
@@ -222,20 +246,20 @@ class ExportService {
       final file = File(filePath);
       final jsonString = await file.readAsString();
       final data = jsonDecode(jsonString) as Map<String, dynamic>;
-      
+
       // Validate backup format
       if (data['app_name'] != _appName) {
         throw FormatException('Invalid backup format');
       }
-      
+
       final cycles = (data['cycles'] as List<dynamic>)
           .map((c) => CycleData.fromJson(c as Map<String, dynamic>))
           .toList();
-      
+
       final dailyLogs = (data['daily_logs'] as List<dynamic>)
           .map((l) => DailyLogEntry.fromJson(l as Map<String, dynamic>))
           .toList();
-      
+
       return ImportResult(
         success: true,
         cyclesImported: cycles.length,
@@ -264,7 +288,7 @@ class ExportService {
   }) async {
     final now = DateTime.now();
     late DateRange dateRange;
-    
+
     switch (reportType) {
       case ReportType.monthly:
         dateRange = DateRange(
@@ -273,7 +297,11 @@ class ExportService {
         );
         break;
       case ReportType.quarterly:
-        final quarterStart = DateTime(now.year, ((now.month - 1) ~/ 3) * 3 + 1, 1);
+        final quarterStart = DateTime(
+          now.year,
+          ((now.month - 1) ~/ 3) * 3 + 1,
+          1,
+        );
         dateRange = DateRange(
           start: DateTime(quarterStart.year, quarterStart.month - 3, 1),
           end: DateTime(quarterStart.year, quarterStart.month, 0),
@@ -286,16 +314,23 @@ class ExportService {
         );
         break;
     }
-    
+
     // Filter data by date range
-    final filteredCycles = cycles.where((c) => 
-      c.startDate.isAfter(dateRange.start) && c.startDate.isBefore(dateRange.end)
-    ).toList();
-    
-    final filteredLogs = dailyLogs.where((l) => 
-      l.date.isAfter(dateRange.start) && l.date.isBefore(dateRange.end)
-    ).toList();
-    
+    final filteredCycles = cycles
+        .where(
+          (c) =>
+              c.startDate.isAfter(dateRange.start) &&
+              c.startDate.isBefore(dateRange.end),
+        )
+        .toList();
+
+    final filteredLogs = dailyLogs
+        .where(
+          (l) =>
+              l.date.isAfter(dateRange.start) && l.date.isBefore(dateRange.end),
+        )
+        .toList();
+
     return await exportPDFReport(
       cycles: filteredCycles,
       dailyLogs: filteredLogs,
@@ -307,7 +342,11 @@ class ExportService {
 
   // PDF Building Helper Methods
 
-  static pw.Widget _buildCoverPage(DateRange dateRange, int cycleCount, DateTime generateDate) {
+  static pw.Widget _buildCoverPage(
+    DateRange dateRange,
+    int cycleCount,
+    DateTime generateDate,
+  ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -333,10 +372,7 @@ class ExportService {
               pw.SizedBox(height: 10),
               pw.Text(
                 'Personal Health Report',
-                style: pw.TextStyle(
-                  fontSize: 24,
-                  color: PdfColors.white,
-                ),
+                style: pw.TextStyle(fontSize: 24, color: PdfColors.white),
               ),
             ],
           ),
@@ -349,7 +385,10 @@ class ExportService {
             children: [
               pw.Text(
                 'Report Period',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 8),
               pw.Text(
@@ -359,10 +398,16 @@ class ExportService {
               pw.SizedBox(height: 24),
               pw.Text(
                 'Data Summary',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 8),
-              pw.Text('Total Cycles Analyzed: $cycleCount', style: const pw.TextStyle(fontSize: 14)),
+              pw.Text(
+                'Total Cycles Analyzed: $cycleCount',
+                style: const pw.TextStyle(fontSize: 14),
+              ),
               pw.SizedBox(height: 4),
               pw.Text(
                 'Generated: ${DateFormat.yMMMd().add_jm().format(generateDate)}',
@@ -377,7 +422,7 @@ class ExportService {
   }
 
   static pw.Widget _buildExecutiveSummary(
-    List<CycleData> cycles, 
+    List<CycleData> cycles,
     HealthScore healthScore,
     AdvancedPrediction prediction,
   ) {
@@ -403,17 +448,26 @@ class ExportService {
             children: [
               pw.Text(
                 'Overall Health Score: ${healthScore.overall.toInt()}/100 (${healthScore.overallGrade})',
-                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 12),
-              ...healthScore.breakdown.entries.map((entry) => 
-                pw.Padding(
+              ...healthScore.breakdown.entries.map(
+                (entry) => pw.Padding(
                   padding: const pw.EdgeInsets.symmetric(vertical: 2),
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text(entry.key, style: const pw.TextStyle(fontSize: 14)),
-                      pw.Text('${entry.value.toInt()}%', style: const pw.TextStyle(fontSize: 14)),
+                      pw.Text(
+                        entry.key,
+                        style: const pw.TextStyle(fontSize: 14),
+                      ),
+                      pw.Text(
+                        '${entry.value.toInt()}%',
+                        style: const pw.TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                 ),
@@ -428,15 +482,25 @@ class ExportService {
             style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
           ),
           pw.SizedBox(height: 10),
-          pw.Bullet(text: 'Next cycle predicted: ${DateFormat.yMMMd().format(prediction.nextCycleStart)}'),
-          pw.Bullet(text: 'Confidence level: ${(prediction.confidence * 100).toInt()}%'),
-          pw.Bullet(text: 'Based on ${prediction.basedOnCycles} completed cycles'),
+          pw.Bullet(
+            text:
+                'Next cycle predicted: ${DateFormat.yMMMd().format(prediction.nextCycleStart)}',
+          ),
+          pw.Bullet(
+            text: 'Confidence level: ${(prediction.confidence * 100).toInt()}%',
+          ),
+          pw.Bullet(
+            text: 'Based on ${prediction.basedOnCycles} completed cycles',
+          ),
         ],
       ],
     );
   }
 
-  static pw.Widget _buildHealthInsights(WellbeingTrends trends, HealthScore score) {
+  static pw.Widget _buildHealthInsights(
+    WellbeingTrends trends,
+    HealthScore score,
+  ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -461,37 +525,75 @@ class ExportService {
               children: [
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
-                  child: pw.Text('Metric', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  child: pw.Text(
+                    'Metric',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
-                  child: pw.Text('Average', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  child: pw.Text(
+                    'Average',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
-                  child: pw.Text('Rating', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  child: pw.Text(
+                    'Rating',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
                 ),
               ],
             ),
             pw.TableRow(
               children: [
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Mood')),
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('${trends.averageMood.toStringAsFixed(1)}/5')),
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(_getRating(trends.averageMood))),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('Mood'),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('${trends.averageMood.toStringAsFixed(1)}/5'),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(_getRating(trends.averageMood)),
+                ),
               ],
             ),
             pw.TableRow(
               children: [
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Energy')),
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('${trends.averageEnergy.toStringAsFixed(1)}/5')),
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(_getRating(trends.averageEnergy))),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('Energy'),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(
+                    '${trends.averageEnergy.toStringAsFixed(1)}/5',
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(_getRating(trends.averageEnergy)),
+                ),
               ],
             ),
             pw.TableRow(
               children: [
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('Pain Level')),
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('${trends.averagePain.toStringAsFixed(1)}/5')),
-                pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(_getRating(5 - trends.averagePain))), // Invert for pain
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('Pain Level'),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('${trends.averagePain.toStringAsFixed(1)}/5'),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(_getRating(5 - trends.averagePain)),
+                ), // Invert for pain
               ],
             ),
           ],
@@ -506,8 +608,9 @@ class ExportService {
     }
 
     final completedCycles = cycles.where((c) => c.isCompleted).toList();
-    final avgLength = completedCycles.isNotEmpty 
-        ? completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a + b) / completedCycles.length
+    final avgLength = completedCycles.isNotEmpty
+        ? completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a + b) /
+              completedCycles.length
         : 0.0;
 
     return pw.Column(
@@ -532,15 +635,24 @@ class ExportService {
             children: [
               pw.Text(
                 'Cycle Statistics',
-                style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 8),
               pw.Text('Total Cycles Tracked: ${cycles.length}'),
               pw.Text('Completed Cycles: ${completedCycles.length}'),
               if (completedCycles.isNotEmpty) ...[
-                pw.Text('Average Cycle Length: ${avgLength.toStringAsFixed(1)} days'),
-                pw.Text('Shortest Cycle: ${completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a < b ? a : b)} days'),
-                pw.Text('Longest Cycle: ${completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a > b ? a : b)} days'),
+                pw.Text(
+                  'Average Cycle Length: ${avgLength.toStringAsFixed(1)} days',
+                ),
+                pw.Text(
+                  'Shortest Cycle: ${completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a < b ? a : b)} days',
+                ),
+                pw.Text(
+                  'Longest Cycle: ${completedCycles.map((c) => c.lengthInDays).reduce((a, b) => a > b ? a : b)} days',
+                ),
               ],
             ],
           ),
@@ -569,16 +681,24 @@ class ExportService {
         pw.Wrap(
           spacing: 8,
           runSpacing: 4,
-          children: matrix.symptoms.map((symptom) => 
-            pw.Container(
-              padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: pw.BoxDecoration(
-                color: PdfColors.blue100,
-                borderRadius: pw.BorderRadius.circular(4),
-              ),
-              child: pw.Text(symptom, style: const pw.TextStyle(fontSize: 12)),
-            ),
-          ).toList(),
+          children: matrix.symptoms
+              .map(
+                (symptom) => pw.Container(
+                  padding: const pw.EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.blue100,
+                    borderRadius: pw.BorderRadius.circular(4),
+                  ),
+                  child: pw.Text(
+                    symptom,
+                    style: const pw.TextStyle(fontSize: 12),
+                  ),
+                ),
+              )
+              .toList(),
         ),
         pw.SizedBox(height: 20),
         pw.Text(
@@ -612,15 +732,28 @@ class ExportService {
             children: [
               pw.Text(
                 'Next Cycle Predictions',
-                style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 8),
-              pw.Text('Expected Start: ${DateFormat.yMMMd().format(prediction.nextCycleStart)}'),
-              pw.Text('Confidence Range: ${DateFormat.MMMd().format(prediction.confidenceLowerBound)} - ${DateFormat.MMMd().format(prediction.confidenceUpperBound)}'),
-              pw.Text('Confidence Level: ${(prediction.confidence * 100).toInt()}%'),
+              pw.Text(
+                'Expected Start: ${DateFormat.yMMMd().format(prediction.nextCycleStart)}',
+              ),
+              pw.Text(
+                'Confidence Range: ${DateFormat.MMMd().format(prediction.confidenceLowerBound)} - ${DateFormat.MMMd().format(prediction.confidenceUpperBound)}',
+              ),
+              pw.Text(
+                'Confidence Level: ${(prediction.confidence * 100).toInt()}%',
+              ),
               pw.SizedBox(height: 12),
-              pw.Text('Expected Ovulation: ${DateFormat.yMMMd().format(prediction.ovulationDate)}'),
-              pw.Text('Fertile Window: ${DateFormat.MMMd().format(prediction.fertileWindowStart)} - ${DateFormat.MMMd().format(prediction.fertileWindowEnd)}'),
+              pw.Text(
+                'Expected Ovulation: ${DateFormat.yMMMd().format(prediction.ovulationDate)}',
+              ),
+              pw.Text(
+                'Fertile Window: ${DateFormat.MMMd().format(prediction.fertileWindowStart)} - ${DateFormat.MMMd().format(prediction.fertileWindowEnd)}',
+              ),
             ],
           ),
         ),
@@ -628,7 +761,10 @@ class ExportService {
     );
   }
 
-  static pw.Widget _buildRawDataPage(List<CycleData> cycles, List<DailyLogEntry> dailyLogs) {
+  static pw.Widget _buildRawDataPage(
+    List<CycleData> cycles,
+    List<DailyLogEntry> dailyLogs,
+  ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -640,7 +776,9 @@ class ExportService {
           ),
         ),
         pw.SizedBox(height: 20),
-        pw.Text('This section contains your complete cycle and daily log data for reference.'),
+        pw.Text(
+          'This section contains your complete cycle and daily log data for reference.',
+        ),
         pw.SizedBox(height: 10),
         pw.Text('Cycle Count: ${cycles.length}'),
         pw.Text('Daily Log Count: ${dailyLogs.length}'),
@@ -663,7 +801,9 @@ class ExportService {
     return 'Very Poor';
   }
 
-  static Map<String, dynamic> _serializeWellbeingTrends(WellbeingTrends trends) {
+  static Map<String, dynamic> _serializeWellbeingTrends(
+    WellbeingTrends trends,
+  ) {
     return {
       'average_mood': trends.averageMood,
       'average_energy': trends.averageEnergy,
@@ -712,7 +852,9 @@ extension CycleDataJson on CycleData {
     'id': id,
     'start_date': startDate.toIso8601String(),
     'end_date': endDate?.toIso8601String(),
-    'symptoms': symptoms.map((s) => {'name': s.name, 'severity': s.severity}).toList(),
+    'symptoms': symptoms
+        .map((s) => {'name': s.name, 'severity': s.severity})
+        .toList(),
     'wellbeing': {
       'mood': wellbeing.mood,
       'energy': wellbeing.energy,
@@ -720,7 +862,6 @@ extension CycleDataJson on CycleData {
     },
     'notes': notes,
   };
-
 }
 
 extension DailyLogEntryJson on DailyLogEntry {
@@ -732,7 +873,6 @@ extension DailyLogEntryJson on DailyLogEntry {
     'symptoms': symptoms,
     'notes': notes,
   };
-
 }
 
 extension HealthScoreJson on HealthScore {

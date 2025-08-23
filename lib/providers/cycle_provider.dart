@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/cycle_models.dart';
 
 class CycleProvider extends ChangeNotifier {
-  List<CycleData> _cycles = [];
+  final List<CycleData> _cycles = [];
   CycleData? _currentCycle;
   bool _isLoading = false;
   String? _error;
@@ -40,7 +40,8 @@ class CycleProvider extends ChangeNotifier {
     final now = DateTime.now();
     _currentCycle = _cycles.where((cycle) {
       final endDate = cycle.endDate ?? now;
-      return now.isAfter(cycle.startDate) && now.isBefore(endDate.add(const Duration(days: 1)));
+      return now.isAfter(cycle.startDate) &&
+          now.isBefore(endDate.add(const Duration(days: 1)));
     }).firstOrNull;
   }
 
@@ -53,7 +54,7 @@ class CycleProvider extends ChangeNotifier {
     try {
       // Simulate loading delay
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       // In a real app, this would load from a database or service
       // For now, just ensure we have a current cycle for testing
       if (_cycles.isEmpty) {
@@ -63,11 +64,7 @@ class CycleProvider extends ChangeNotifier {
           symptoms: [],
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-          wellbeing: WellbeingData(
-            mood: 3.5,
-            energy: 3.0,
-            pain: 2.0,
-          ),
+          wellbeing: WellbeingData(mood: 3.5, energy: 3.0, pain: 2.0),
         );
         _cycles.add(testCycle);
         _updateCurrentCycle();

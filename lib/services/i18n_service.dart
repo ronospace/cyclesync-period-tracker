@@ -50,16 +50,16 @@ enum SupportedLanguage {
 
 /// Translation context for better accuracy
 enum TranslationContext {
-  medical,      // Medical/health terminology
-  ui,          // User interface elements
-  symptoms,    // Symptom descriptions
-  emotions,    // Mood and emotional states
-  general,     // General app content
+  medical, // Medical/health terminology
+  ui, // User interface elements
+  symptoms, // Symptom descriptions
+  emotions, // Mood and emotional states
+  general, // General app content
   notifications, // Push notifications
-  errors,      // Error messages
-  onboarding,  // Onboarding flow
-  cycle,       // Menstrual cycle specific
-  fertility,   // Fertility tracking
+  errors, // Error messages
+  onboarding, // Onboarding flow
+  cycle, // Menstrual cycle specific
+  fertility, // Fertility tracking
 }
 
 /// Translation request for batch processing
@@ -90,12 +90,15 @@ class TranslationRequest {
 }
 
 /// Localization delegate for Flutter
-class CycleSyncLocalizationsDelegate extends LocalizationsDelegate<CycleSyncLocalizations> {
+class CycleSyncLocalizationsDelegate
+    extends LocalizationsDelegate<CycleSyncLocalizations> {
   const CycleSyncLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) {
-    return SupportedLanguage.values.any((lang) => lang.code == locale.languageCode);
+    return SupportedLanguage.values.any(
+      (lang) => lang.code == locale.languageCode,
+    );
   }
 
   @override
@@ -117,7 +120,10 @@ class CycleSyncLocalizations {
   CycleSyncLocalizations(this.locale);
 
   static CycleSyncLocalizations? of(BuildContext context) {
-    return Localizations.of<CycleSyncLocalizations>(context, CycleSyncLocalizations);
+    return Localizations.of<CycleSyncLocalizations>(
+      context,
+      CycleSyncLocalizations,
+    );
   }
 
   Future<void> load() async {
@@ -127,13 +133,13 @@ class CycleSyncLocalizations {
 
   String translate(String key, {Map<String, String>? variables}) {
     String text = _localizedStrings[key] ?? key;
-    
+
     if (variables != null) {
       variables.forEach((key, value) {
         text = text.replaceAll('{$key}', value);
       });
     }
-    
+
     return text;
   }
 
@@ -178,13 +184,14 @@ class I18nService {
   final Map<SupportedLanguage, Map<String, String>> _translations = {};
   final Map<String, Timer> _translationTimers = {};
   final Set<String> _pendingTranslations = {};
-  
+
   SharedPreferences? _prefs;
   bool _autoTranslateEnabled = true;
   bool _initialized = false;
 
   // Translation API configuration (would use real service in production)
-  static const String _translationApiUrl = 'https://api.translate.service.com/v1/translate';
+  static const String _translationApiUrl =
+      'https://api.translate.service.com/v1/translate';
   static const String _translationApiKey = 'your_api_key_here';
 
   SupportedLanguage get currentLanguage => _currentLanguage;
@@ -197,7 +204,7 @@ class I18nService {
 
     try {
       _prefs = await SharedPreferences.getInstance();
-      
+
       // Load saved language preference
       final languageCode = _prefs?.getString(_languagePrefsKey);
       if (languageCode != null) {
@@ -220,7 +227,9 @@ class I18nService {
       await _loadLanguageTranslations(_currentLanguage);
 
       _initialized = true;
-      debugPrint('✅ I18nService initialized with language: ${_currentLanguage.name}');
+      debugPrint(
+        '✅ I18nService initialized with language: ${_currentLanguage.name}',
+      );
     } catch (e) {
       debugPrint('❌ Failed to initialize I18nService: $e');
       rethrow;
@@ -244,7 +253,9 @@ class I18nService {
   }
 
   /// Get translations for a specific language
-  Future<Map<String, String>> getTranslations(SupportedLanguage language) async {
+  Future<Map<String, String>> getTranslations(
+    SupportedLanguage language,
+  ) async {
     if (!_translations.containsKey(language)) {
       await _loadLanguageTranslations(language);
     }
@@ -261,14 +272,14 @@ class I18nService {
     bool forceRefresh = false,
   }) async {
     final target = targetLanguage ?? _currentLanguage;
-    
+
     // Return immediately if target is English and we have the base text
     if (target == SupportedLanguage.english) {
       return _interpolateVariables(text, variables);
     }
 
     final cacheKey = '${target.code}:$key';
-    
+
     // Check cache first
     if (!forceRefresh) {
       final cached = await CacheService().get<String>(cacheKey);
@@ -285,13 +296,15 @@ class I18nService {
 
     // Auto-translate if enabled
     if (_autoTranslateEnabled && !_pendingTranslations.contains(cacheKey)) {
-      _scheduleTranslation(TranslationRequest(
-        key: key,
-        text: text,
-        context: context,
-        targetLanguage: target,
-        variables: variables,
-      ));
+      _scheduleTranslation(
+        TranslationRequest(
+          key: key,
+          text: text,
+          context: context,
+          targetLanguage: target,
+          variables: variables,
+        ),
+      );
     }
 
     // Return original text as fallback
@@ -311,7 +324,7 @@ class I18nService {
     for (final request in requests) {
       final cacheKey = '${request.targetLanguage.code}:${request.key}';
       final cached = await CacheService().get<String>(cacheKey);
-      
+
       if (cached != null) {
         results[request.key] = _interpolateVariables(cached, request.variables);
       } else {
@@ -365,7 +378,9 @@ class I18nService {
   }
 
   /// Export all translations for a language
-  Future<Map<String, dynamic>> exportTranslations(SupportedLanguage language) async {
+  Future<Map<String, dynamic>> exportTranslations(
+    SupportedLanguage language,
+  ) async {
     final translations = await getTranslations(language);
     return {
       'language': language.code,
@@ -383,7 +398,7 @@ class I18nService {
   ) async {
     try {
       _translations[language] = translations;
-      
+
       // Cache translations
       for (final entry in translations.entries) {
         final cacheKey = '${language.code}:${entry.key}';
@@ -395,7 +410,9 @@ class I18nService {
       }
 
       await _saveTranslationsToDevice(language, translations);
-      debugPrint('✅ Imported ${translations.length} translations for ${language.name}');
+      debugPrint(
+        '✅ Imported ${translations.length} translations for ${language.name}',
+      );
       return true;
     } catch (e) {
       debugPrint('❌ Failed to import translations: $e');
@@ -448,7 +465,9 @@ class I18nService {
   Future<void> _loadBaseTranslations() async {
     try {
       // Load English as base language
-      final englishTranslations = await _loadTranslationsFromAssets(SupportedLanguage.english);
+      final englishTranslations = await _loadTranslationsFromAssets(
+        SupportedLanguage.english,
+      );
       _translations[SupportedLanguage.english] = englishTranslations;
     } catch (e) {
       debugPrint('❌ Failed to load base translations: $e');
@@ -463,7 +482,7 @@ class I18nService {
     try {
       // Try to load from device storage first
       var translations = await _loadTranslationsFromDevice(language);
-      
+
       if (translations.isEmpty) {
         // Load from assets
         translations = await _loadTranslationsFromAssets(language);
@@ -482,18 +501,26 @@ class I18nService {
     }
   }
 
-  Future<Map<String, String>> _loadTranslationsFromAssets(SupportedLanguage language) async {
+  Future<Map<String, String>> _loadTranslationsFromAssets(
+    SupportedLanguage language,
+  ) async {
     try {
-      final String jsonString = await rootBundle.loadString('assets/i18n/${language.code}.json');
+      final String jsonString = await rootBundle.loadString(
+        'assets/i18n/${language.code}.json',
+      );
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
       return jsonMap.map((key, value) => MapEntry(key, value.toString()));
     } catch (e) {
-      debugPrint('Could not load translations from assets for ${language.code}: $e');
+      debugPrint(
+        'Could not load translations from assets for ${language.code}: $e',
+      );
       return {};
     }
   }
 
-  Future<Map<String, String>> _loadTranslationsFromDevice(SupportedLanguage language) async {
+  Future<Map<String, String>> _loadTranslationsFromDevice(
+    SupportedLanguage language,
+  ) async {
     try {
       final key = 'translations_${language.code}';
       final jsonString = _prefs?.getString(key);
@@ -502,31 +529,44 @@ class I18nService {
         return jsonMap.map((key, value) => MapEntry(key, value.toString()));
       }
     } catch (e) {
-      debugPrint('Could not load translations from device for ${language.code}: $e');
+      debugPrint(
+        'Could not load translations from device for ${language.code}: $e',
+      );
     }
     return {};
   }
 
-  Future<void> _saveTranslationsToDevice(SupportedLanguage language, Map<String, String> translations) async {
+  Future<void> _saveTranslationsToDevice(
+    SupportedLanguage language,
+    Map<String, String> translations,
+  ) async {
     try {
       final key = 'translations_${language.code}';
       final jsonString = jsonEncode(translations);
       await _prefs?.setString(key, jsonString);
     } catch (e) {
-      debugPrint('Could not save translations to device for ${language.code}: $e');
+      debugPrint(
+        'Could not save translations to device for ${language.code}: $e',
+      );
     }
   }
 
-  Future<Map<String, String>> _autoTranslateFromEnglish(SupportedLanguage targetLanguage) async {
+  Future<Map<String, String>> _autoTranslateFromEnglish(
+    SupportedLanguage targetLanguage,
+  ) async {
     final englishTranslations = _translations[SupportedLanguage.english] ?? {};
     if (englishTranslations.isEmpty) return {};
 
-    final requests = englishTranslations.entries.map((entry) => TranslationRequest(
-      key: entry.key,
-      text: entry.value,
-      context: _inferContext(entry.key),
-      targetLanguage: targetLanguage,
-    )).toList();
+    final requests = englishTranslations.entries
+        .map(
+          (entry) => TranslationRequest(
+            key: entry.key,
+            text: entry.value,
+            context: _inferContext(entry.key),
+            targetLanguage: targetLanguage,
+          ),
+        )
+        .toList();
 
     try {
       return await _performBatchTranslation(requests);
@@ -544,38 +584,47 @@ class I18nService {
     _translationTimers[cacheKey]?.cancel();
 
     // Schedule translation with debouncing
-    _translationTimers[cacheKey] = Timer(const Duration(milliseconds: 500), () async {
-      try {
-        final result = await _performSingleTranslation(request);
-        if (result.isNotEmpty) {
-          await CacheService().set(
-            cacheKey,
-            result,
-            policy: CacheExpiryPolicy.weekly,
-          );
-          
-          // Update in-memory cache
-          _translations[request.targetLanguage] ??= {};
-          _translations[request.targetLanguage]![request.key] = result;
+    _translationTimers[cacheKey] = Timer(
+      const Duration(milliseconds: 500),
+      () async {
+        try {
+          final result = await _performSingleTranslation(request);
+          if (result.isNotEmpty) {
+            await CacheService().set(
+              cacheKey,
+              result,
+              policy: CacheExpiryPolicy.weekly,
+            );
+
+            // Update in-memory cache
+            _translations[request.targetLanguage] ??= {};
+            _translations[request.targetLanguage]![request.key] = result;
+          }
+        } catch (e) {
+          debugPrint('❌ Scheduled translation failed: $e');
+        } finally {
+          _pendingTranslations.remove(cacheKey);
+          _translationTimers.remove(cacheKey);
         }
-      } catch (e) {
-        debugPrint('❌ Scheduled translation failed: $e');
-      } finally {
-        _pendingTranslations.remove(cacheKey);
-        _translationTimers.remove(cacheKey);
-      }
-    });
+      },
+    );
   }
 
   Future<String> _performSingleTranslation(TranslationRequest request) async {
     return await RetryService().execute(
       'translate_single',
-      () => _callTranslationApi(request.text, request.targetLanguage, request.context),
+      () => _callTranslationApi(
+        request.text,
+        request.targetLanguage,
+        request.context,
+      ),
       config: RetryConfig.network,
     );
   }
 
-  Future<Map<String, String>> _performBatchTranslation(List<TranslationRequest> requests) async {
+  Future<Map<String, String>> _performBatchTranslation(
+    List<TranslationRequest> requests,
+  ) async {
     return await RetryService().execute(
       'translate_batch',
       () => _callBatchTranslationApi(requests),
@@ -616,13 +665,16 @@ class I18nService {
     }
   }
 
-  Future<Map<String, String>> _callBatchTranslationApi(List<TranslationRequest> requests) async {
+  Future<Map<String, String>> _callBatchTranslationApi(
+    List<TranslationRequest> requests,
+  ) async {
     // Mock batch translation for demo
     if (kDebugMode) {
       await Future.delayed(const Duration(milliseconds: 200));
       final results = <String, String>{};
       for (final request in requests) {
-        results[request.key] = '[${request.targetLanguage.code.toUpperCase()}] ${request.text}';
+        results[request.key] =
+            '[${request.targetLanguage.code.toUpperCase()}] ${request.text}';
       }
       return results;
     }
@@ -633,20 +685,19 @@ class I18nService {
         'Authorization': 'Bearer $_translationApiKey',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'requests': requests.map((r) => r.toMap()).toList(),
-      }),
+      body: jsonEncode({'requests': requests.map((r) => r.toMap()).toList()}),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<dynamic> translations = data['translations'] ?? [];
       final results = <String, String>{};
-      
+
       for (int i = 0; i < requests.length && i < translations.length; i++) {
-        results[requests[i].key] = translations[i]['translated_text'] ?? requests[i].text;
+        results[requests[i].key] =
+            translations[i]['translated_text'] ?? requests[i].text;
       }
-      
+
       return results;
     } else {
       throw Exception('Batch translation API error: ${response.statusCode}');
@@ -655,17 +706,19 @@ class I18nService {
 
   String _interpolateVariables(String text, Map<String, String>? variables) {
     if (variables == null) return text;
-    
+
     String result = text;
     variables.forEach((key, value) {
       result = result.replaceAll('{$key}', value);
     });
-    
+
     return result;
   }
 
   TranslationContext _inferContext(String key) {
-    if (key.contains('symptom') || key.contains('pain') || key.contains('flow')) {
+    if (key.contains('symptom') ||
+        key.contains('pain') ||
+        key.contains('flow')) {
       return TranslationContext.symptoms;
     } else if (key.contains('mood') || key.contains('emotion')) {
       return TranslationContext.emotions;
@@ -679,10 +732,12 @@ class I18nService {
       return TranslationContext.notifications;
     } else if (key.contains('medical') || key.contains('health')) {
       return TranslationContext.medical;
-    } else if (key.contains('button') || key.contains('menu') || key.contains('title')) {
+    } else if (key.contains('button') ||
+        key.contains('menu') ||
+        key.contains('title')) {
       return TranslationContext.ui;
     }
-    
+
     return TranslationContext.general;
   }
 
@@ -740,6 +795,9 @@ class I18nService {
 /// Helper extension for easy translation access
 extension TranslationExtension on String {
   String tr([Map<String, String>? variables]) {
-    return I18nService().translate(this, this, variables: variables).then((result) => result) as String;
+    return I18nService()
+            .translate(this, this, variables: variables)
+            .then((result) => result)
+        as String;
   }
 }

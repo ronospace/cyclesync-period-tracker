@@ -25,12 +25,11 @@ class EnterpriseHomeScreen extends StatefulWidget {
   State<EnterpriseHomeScreen> createState() => _EnterpriseHomeScreenState();
 }
 
-class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen> 
+class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  
+
   @override
   bool get wantKeepAlive => true;
 
@@ -39,7 +38,7 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     super.initState();
     _initializeAnimations();
     _logScreenView();
-    
+
     // Initialize enterprise data if needed
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dataProvider = context.read<EnterpriseDataProvider>();
@@ -72,18 +71,20 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     _fadeController.dispose();
     super.dispose();
   }
-  
+
   int _getCycleNumber(CycleData cycle) {
     // Generate a simple cycle number based on the cycle start date
     // This is a placeholder - in a real app you might store this in the database
-    final daysSinceEpoch = cycle.startDate.difference(DateTime(2024, 1, 1)).inDays;
+    final daysSinceEpoch = cycle.startDate
+        .difference(DateTime(2024, 1, 1))
+        .inDays;
     return (daysSinceEpoch / 28).floor() + 1; // Assume 28-day cycles
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Consumer<EnterpriseDataProvider>(
@@ -101,7 +102,10 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     );
   }
 
-  Widget _buildContent(BuildContext context, EnterpriseDataProvider dataProvider) {
+  Widget _buildContent(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
     if (dataProvider.isLoading && !dataProvider.hasData) {
       return _buildLoadingState();
     }
@@ -140,7 +144,10 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     );
   }
 
-  Widget _buildAppBar(BuildContext context, EnterpriseDataProvider dataProvider) {
+  Widget _buildAppBar(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
     return SliverAppBar(
       expandedHeight: 120,
       floating: false,
@@ -151,11 +158,7 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
         titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
         title: Row(
           children: [
-            Icon(
-              Icons.favorite,
-              color: Colors.white,
-              size: 20,
-            ),
+            Icon(Icons.favorite, color: Colors.white, size: 20),
             const SizedBox(width: 8),
             Text(
               'CycleSync',
@@ -215,10 +218,13 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     }
   }
 
-  Widget _buildWelcomeSection(BuildContext context, EnterpriseDataProvider dataProvider) {
+  Widget _buildWelcomeSection(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
     final now = DateTime.now();
     final greeting = _getTimeBasedGreeting();
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -229,9 +235,9 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
           children: [
             Text(
               greeting,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -243,7 +249,10 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
             if (dataProvider.totalCycles > 0) ...[
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(20),
@@ -270,9 +279,12 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     return 'Good evening! 🌙';
   }
 
-  Widget _buildCycleStatusCard(BuildContext context, EnterpriseDataProvider dataProvider) {
+  Widget _buildCycleStatusCard(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
     final currentCycle = dataProvider.currentCycle;
-    
+
     return CycleStatusCard(
       cycle: currentCycle,
       predictions: dataProvider.predictions?.nextCyclePrediction,
@@ -318,16 +330,19 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
           children: [
             Text(
               'Quick Actions',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: actions.map((action) => Expanded(
-                child: _buildActionButton(context, action),
-              )).toList(),
+              children: actions
+                  .map(
+                    (action) =>
+                        Expanded(child: _buildActionButton(context, action)),
+                  )
+                  .toList(),
             ),
           ],
         ),
@@ -349,11 +364,7 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
           ),
           child: Column(
             children: [
-              Icon(
-                action.icon,
-                color: action.color,
-                size: 28,
-              ),
+              Icon(action.icon, color: action.color, size: 28),
               const SizedBox(height: 8),
               Text(
                 action.label,
@@ -370,22 +381,54 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     );
   }
 
-  Widget _buildPredictionsSection(BuildContext context, EnterpriseDataProvider dataProvider) {
-    final predictions = dataProvider.predictions;
-    
-    if (predictions == null) {
+  Widget _buildPredictionsSection(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
+    final analytics = dataProvider.analytics;
+
+    if (analytics == null) {
       return const SizedBox.shrink();
     }
 
-    return PredictionCard(
-      predictions: predictions,
-      onViewDetails: () => context.push('/predictions'),
+    // TODO: Create appropriate widget for analytics display
+    // Currently PredictionCard expects CyclePrediction but we have CycleAnalytics
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Analytics Overview',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'View detailed analytics and predictions',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => context.push('/analytics'),
+              child: const Text('View Analytics'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildHealthInsightsSection(BuildContext context, EnterpriseDataProvider dataProvider) {
+  Widget _buildHealthInsightsSection(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
     final analytics = dataProvider.analytics;
-    
+
     if (analytics == null) return const SizedBox.shrink();
 
     return HealthMetricsCard(
@@ -394,9 +437,12 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
     );
   }
 
-  Widget _buildRecentActivitySection(BuildContext context, EnterpriseDataProvider dataProvider) {
+  Widget _buildRecentActivitySection(
+    BuildContext context,
+    EnterpriseDataProvider dataProvider,
+  ) {
     final recentCycles = dataProvider.recentCycles.take(3).toList();
-    
+
     if (recentCycles.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -456,14 +502,16 @@ class _EnterpriseHomeScreenState extends State<EnterpriseHomeScreen>
               children: [
                 Text(
                   'Cycle #${_getCycleNumber(cycle)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 Text(
                   DateFormat('MMM d, y').format(cycle.startDate),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withAlpha(150),
                   ),
                 ),
               ],
@@ -553,7 +601,7 @@ class _ActionItem {
 
 class _ShimmerCard extends StatelessWidget {
   final double height;
-  
+
   const _ShimmerCard({required this.height});
 
   @override

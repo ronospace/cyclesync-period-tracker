@@ -7,20 +7,22 @@ class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   bool _notificationsEnabled = false;
   bool _cycleStartReminders = true;
   bool _ovulationReminders = true;
   bool _cycleEndReminders = true;
   bool _dailyLoggingReminders = false;
-  
+
   bool _isLoading = true;
   bool _isUpdatingPermissions = false;
   String? _error;
-  
+
   List<String> _pendingNotifications = [];
 
   @override
@@ -37,7 +39,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         _cycleStartReminders = prefs.getBool('cycle_start_reminders') ?? true;
         _ovulationReminders = prefs.getBool('ovulation_reminders') ?? true;
         _cycleEndReminders = prefs.getBool('cycle_end_reminders') ?? true;
-        _dailyLoggingReminders = prefs.getBool('daily_logging_reminders') ?? false;
+        _dailyLoggingReminders =
+            prefs.getBool('daily_logging_reminders') ?? false;
       });
     } catch (e) {
       setState(() {
@@ -54,10 +57,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     try {
       final enabled = await NotificationService.areNotificationsEnabled();
       final pending = await NotificationService.getPendingNotifications();
-      
+
       setState(() {
         _notificationsEnabled = enabled;
-        _pendingNotifications = pending.map((n) => n.title ?? 'Untitled').toList();
+        _pendingNotifications = pending
+            .map((n) => n.title ?? 'Untitled')
+            .toList();
       });
     } catch (e) {
       debugPrint('Error checking notification status: $e');
@@ -71,12 +76,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       await prefs.setBool('ovulation_reminders', _ovulationReminders);
       await prefs.setBool('cycle_end_reminders', _cycleEndReminders);
       await prefs.setBool('daily_logging_reminders', _dailyLoggingReminders);
-      
+
       // Update notifications based on current settings
       if (_notificationsEnabled) {
         await _updateNotifications();
       }
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Settings saved successfully!')),
@@ -84,9 +89,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving settings: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error saving settings: $e')));
       }
     }
   }
@@ -96,12 +101,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       // Get cycles to update predictions
       final cycles = await FirebaseService.getCycles();
       await NotificationService.updateCycleNotifications(cycles);
-      
+
       // Schedule daily logging reminder if enabled
       if (_dailyLoggingReminders) {
         await NotificationService.scheduleCycleLoggingReminder();
       }
-      
+
       await _checkNotificationStatus(); // Refresh pending notifications
     } catch (e) {
       debugPrint('Error updating notifications: $e');
@@ -152,9 +157,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       setState(() {
@@ -174,7 +179,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             Row(
               children: [
                 Icon(
-                  _notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
+                  _notificationsEnabled
+                      ? Icons.notifications_active
+                      : Icons.notifications_off,
                   color: _notificationsEnabled ? Colors.green : Colors.grey,
                 ),
                 const SizedBox(width: 12),
@@ -184,14 +191,15 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     children: [
                       Text(
                         'Push Notifications',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         _notificationsEnabled ? 'Enabled' : 'Disabled',
                         style: TextStyle(
-                          color: _notificationsEnabled ? Colors.green : Colors.grey,
+                          color: _notificationsEnabled
+                              ? Colors.green
+                              : Colors.grey,
                           fontSize: 12,
                         ),
                       ),
@@ -215,10 +223,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   'Enable notifications to receive cycle reminders and predictions',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                 ),
               ),
           ],
@@ -239,9 +244,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           children: [
             Text(
               'Reminder Types',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildReminderTile(
@@ -321,10 +326,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 ),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                 ),
               ],
             ),
@@ -353,9 +355,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           children: [
             Text(
               'Upcoming Notifications (${_pendingNotifications.length})',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             for (String title in _pendingNotifications.take(3))
@@ -413,9 +415,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             await _checkNotificationStatus();
           } catch (e) {
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error: $e')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Error: $e')));
             }
           }
         },
@@ -433,20 +435,14 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Notification Settings'),
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        appBar: AppBar(title: const Text('Notification Settings')),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Notification Settings'),
-        ),
+        appBar: AppBar(title: const Text('Notification Settings')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

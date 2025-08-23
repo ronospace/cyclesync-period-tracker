@@ -1,14 +1,14 @@
-# CycleSync - App Store Metadata
+# FlowSense - App Store Metadata
 
 ## App Name
-CycleSync - Menstrual Cycle Tracker
+FlowSense - Menstrual Cycle Tracker
 
 ## Short Description (30 characters max)
 Track periods & fertility
 
 ## Description (4000 characters max)
 
-CycleSync is your comprehensive menstrual health companion, designed to help you understand and track your cycle with precision and privacy. Whether you're managing your reproductive health, planning for pregnancy, or simply staying in tune with your body, CycleSync provides the tools and insights you need.
+FlowSense is your comprehensive menstrual health companion, designed to help you understand and track your cycle with precision and privacy. Whether you're managing your reproductive health, planning for pregnancy, or simply staying in tune with your body, FlowSense provides the tools and insights you need.
 
 **Key Features:**
 
@@ -74,9 +74,9 @@ CycleSync is your comprehensive menstrual health companion, designed to help you
 - Advanced analytics and professional health reports
 - Telehealth integration for expert consultations
 
-CycleSync respects your privacy and puts you in control of your health data. Our app is designed by women's health experts and follows the latest medical guidelines for cycle tracking and fertility awareness.
+FlowSense respects your privacy and puts you in control of your health data. Our app is designed by women's health experts and follows the latest medical guidelines for cycle tracking and fertility awareness.
 
-Download CycleSync today and start your journey to better reproductive health awareness!
+Download FlowSense today and start your journey to better reproductive health awareness!
 
 **Important:** This app is for informational purposes only and should not be used as a sole method of contraception or for medical diagnosis. Always consult with healthcare professionals for medical advice.
 
@@ -93,7 +93,7 @@ Ages 12+ (Infrequent/Mild Medical/Treatment Information)
 
 **Version 1.0 - Initial Release**
 
-Welcome to CycleSync! We're excited to bring you a comprehensive menstrual health tracking experience with privacy and user control at its core.
+Welcome to FlowSense! We're excited to bring you a comprehensive menstrual health tracking experience with privacy and user control at its core.
 
 ✨ **New Features:**
 - Complete cycle tracking with flow intensity monitoring
@@ -117,22 +117,22 @@ Welcome to CycleSync! We're excited to bring you a comprehensive menstrual healt
 - Support for multiple languages
 
 🚀 **Coming Soon:**
-We're constantly working to improve CycleSync with exciting features in development:
+We're constantly working to improve FlowSense with exciting features in development:
 - AI-powered health insights
 - Voice assistant capabilities
 - Advanced analytics and reports
 - Professional healthcare provider tools
 
-Thank you for choosing CycleSync for your reproductive health journey. We'd love to hear your feedback and suggestions at support@cyclesync.app!
+Thank you for choosing FlowSense for your reproductive health journey. We'd love to hear your feedback and suggestions at support@flowsense.app!
 
 ## Support Information
 
-**Support URL:** https://cyclesync.app/support
-**Marketing URL:** https://cyclesync.app
-**Privacy Policy URL:** https://cyclesync.app/privacy
+**Support URL:** https://flowsense.app/support
+**Marketing URL:** https://flowsense.app
+**Privacy Policy URL:** https://flowsense.app/privacy
 
 **Support Contact:**
-- Email: support@cyclesync.app
+- Email: support@flowsense.app
 - Response time: 24-48 hours
 - Languages: English, Spanish, French (more coming soon)
 
@@ -145,7 +145,7 @@ Thank you for choosing CycleSync for your reproductive health journey. We'd love
 - User-generated data entry (symptoms, moods, notes)
 
 ## Promotional Text (170 characters max)
-Take control of your reproductive health with CycleSync - the privacy-focused period tracker designed by women's health experts.
+Take control of your reproductive health with FlowSense - the privacy-focused period tracker designed by women's health experts.
 
 ## Subtitle (30 characters max)
 Your Personal Health Companion
@@ -153,7 +153,7 @@ Your Personal Health Companion
 ## App Review Information
 
 **Demo Account:**
-- Email: demo@cyclesync.app
+- Email: demo@flowsense.app
 - Password: Demo123!
 - Note: This account contains sample cycle data for review purposes
 

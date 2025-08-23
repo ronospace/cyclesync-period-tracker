@@ -760,8 +760,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get signOutDescription => 'Se déconnecter de votre compte';
 
   @override
-  String get getHelpUsingCycleSync =>
-      'Obtenir de l\'aide pour utiliser CycleSync';
+  String get getHelpUsingFlowSense => 'Get help using FlowSense';
 
   @override
   String get viewSymptomPatterns => 'Voir les modèles de symptômes et aperçus';
@@ -787,10 +786,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get aboutCycleSync => 'À propos de CycleSync';
+  String get aboutFlowSense => 'About FlowSense';
 
   @override
-  String get cycleSyncVersion => 'CycleSync v1.0.0';
+  String get flowSenseVersion => 'FlowSense v1.0.0';
 
   @override
   String get modernCycleTrackingApp =>
@@ -898,7 +897,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get createAccount => 'Create Account';
 
   @override
-  String get joinCycleSyncCommunity => 'Join the CycleSync community';
+  String get joinFlowSenseCommunity => 'Join the FlowSense community';
 
   @override
   String get passwordHelp => 'At least 6 characters';

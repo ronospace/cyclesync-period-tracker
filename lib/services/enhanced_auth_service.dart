@@ -12,12 +12,7 @@ import 'retry_service.dart';
 import 'cache_service.dart';
 
 /// Authentication provider types
-enum AuthProvider {
-  email,
-  google,
-  apple,
-  biometric,
-}
+enum AuthProvider { email, google, apple, biometric }
 
 /// User registration data
 class UserRegistrationData {
@@ -65,7 +60,11 @@ class AuthResult {
     this.additionalInfo,
   });
 
-  factory AuthResult.success(User user, AuthProvider provider, [Map<String, dynamic>? info]) {
+  factory AuthResult.success(
+    User user,
+    AuthProvider provider, [
+    Map<String, dynamic>? info,
+  ]) {
     return AuthResult(
       success: true,
       user: user,
@@ -75,11 +74,7 @@ class AuthResult {
   }
 
   factory AuthResult.failure(String error, [AuthProvider? provider]) {
-    return AuthResult(
-      success: false,
-      error: error,
-      provider: provider,
-    );
+    return AuthResult(success: false, error: error, provider: provider);
   }
 }
 
@@ -91,11 +86,10 @@ class EnhancedAuthService {
 
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
-  
-  final BiometricAuthService _biometricService = BiometricAuthService();
+  // GoogleSignIn instance (singleton in v7.x+)
+  static GoogleSignIn get _googleSignIn => GoogleSignIn.instance;
+
+  final BiometricAuthService _biometricService = BiometricAuthService.instance;
   SharedPreferences? _prefs;
   bool _biometricEnabled = false;
   bool _initialized = false;
@@ -112,12 +106,12 @@ class EnhancedAuthService {
     try {
       _prefs = await SharedPreferences.getInstance();
       _biometricEnabled = _prefs?.getBool(_biometricEnabledKey) ?? false;
-      
+
       // Load user preferences if signed in
       if (currentUser != null) {
         await _loadUserPreferences();
       }
-      
+
       _initialized = true;
       debugPrint('✅ EnhancedAuthService initialized');
     } catch (e) {
@@ -127,13 +121,13 @@ class EnhancedAuthService {
 
   /// Current user getter
   User? get currentUser => _auth.currentUser;
-  
+
   /// User ID getter
   String? get userId => _auth.currentUser?.uid;
 
   /// Check if biometric is available and enabled
   Future<bool> get isBiometricEnabled async {
-    if (!await _biometricService.isAvailable()) return false;
+    if (!await _biometricService.isBiometricAvailable()) return false;
     return _biometricEnabled;
   }
 
@@ -156,7 +150,7 @@ class EnhancedAuthService {
     }
 
     // Check biometric availability
-    if (await _biometricService.isAvailable()) {
+    if (await _biometricService.isBiometricAvailable()) {
       methods.add(AuthProvider.biometric);
     }
 
@@ -169,7 +163,7 @@ class EnhancedAuthService {
 
     try {
       UserCredential? result;
-      
+
       switch (data.provider) {
         case AuthProvider.email:
           result = await _registerWithEmail(data);
@@ -181,24 +175,26 @@ class EnhancedAuthService {
           result = await _registerWithApple(data);
           break;
         case AuthProvider.biometric:
-          return AuthResult.failure('Cannot register with biometric authentication');
+          return AuthResult.failure(
+            'Cannot register with biometric authentication',
+          );
       }
-      
+
       if (result?.user != null) {
         // Create enhanced user profile
         await _createEnhancedUserProfile(result!.user!, data);
-        
+
         // Initialize biometric if requested
         if (data.additionalData?['enableBiometric'] == true) {
-          await _setupBiometricAuth();
+          await enableBiometricAuth();
         }
 
         // Cache authentication info
         await _cacheAuthInfo(data.provider);
-        
+
         return AuthResult.success(result.user!, data.provider);
       }
-      
+
       return AuthResult.failure('Registration failed');
     } catch (e) {
       debugPrint('User registration error: $e');
@@ -208,7 +204,7 @@ class EnhancedAuthService {
 
   /// Enhanced sign in with multiple authentication methods
   Future<AuthResult> signIn(
-    String email, 
+    String email,
     String password, {
     bool tryBiometric = false,
   }) async {
@@ -225,15 +221,16 @@ class EnhancedAuthService {
 
       final result = await RetryService().execute(
         'email_sign_in',
-        () => _auth.signInWithEmailAndPassword(email: email, password: password),
+        () =>
+            _auth.signInWithEmailAndPassword(email: email, password: password),
       );
-      
+
       if (result.user != null) {
         await _updateLastSignIn(result.user!);
         await _cacheAuthInfo(AuthProvider.email);
         return AuthResult.success(result.user!, AuthProvider.email);
       }
-      
+
       return AuthResult.failure('Sign in failed');
     } catch (e) {
       debugPrint('Sign in error: $e');
@@ -246,30 +243,35 @@ class EnhancedAuthService {
     if (!_initialized) await initialize();
 
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        return AuthResult.failure('Google sign in cancelled');
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      // Initialize if needed
+      await _googleSignIn.initialize();
+      
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'],
       );
 
-      final UserCredential result = await _auth.signInWithCredential(credential);
-      
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        // Note: GoogleSignIn 7.x+ authentication doesn't provide accessToken
+        // For Firebase Auth, idToken is usually sufficient
+      );
+
+      final UserCredential result = await _auth.signInWithCredential(
+        credential,
+      );
+
       if (result.user != null) {
         // Create or update user profile
         await _createOrUpdateGoogleUserProfile(result.user!, googleUser);
         await _cacheAuthInfo(AuthProvider.google);
-        
+
         return AuthResult.success(result.user!, AuthProvider.google, {
           'googleUser': googleUser,
           'isNewUser': result.additionalUserInfo?.isNewUser ?? false,
         });
       }
-      
+
       return AuthResult.failure('Google authentication failed');
     } catch (e) {
       debugPrint('Google sign in error: $e');
@@ -283,7 +285,10 @@ class EnhancedAuthService {
 
     try {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
         webAuthenticationOptions: WebAuthenticationOptions(
           clientId: 'com.cyclesync.app', // Replace with your client ID
           redirectUri: Uri.parse('https://cyclesync.app/auth/callback'),
@@ -295,19 +300,21 @@ class EnhancedAuthService {
         accessToken: appleCredential.authorizationCode,
       );
 
-      final UserCredential result = await _auth.signInWithCredential(oauthCredential);
-      
+      final UserCredential result = await _auth.signInWithCredential(
+        oauthCredential,
+      );
+
       if (result.user != null) {
         // Create or update user profile
         await _createOrUpdateAppleUserProfile(result.user!, appleCredential);
         await _cacheAuthInfo(AuthProvider.apple);
-        
+
         return AuthResult.success(result.user!, AuthProvider.apple, {
           'appleCredential': appleCredential,
           'isNewUser': result.additionalUserInfo?.isNewUser ?? false,
         });
       }
-      
+
       return AuthResult.failure('Apple authentication failed');
     } catch (e) {
       debugPrint('Apple sign in error: $e');
@@ -320,9 +327,9 @@ class EnhancedAuthService {
     if (!_biometricEnabled) {
       return AuthResult.failure('Biometric authentication not enabled');
     }
-    
+
     try {
-      final success = await _biometricService.authenticate();
+      final success = await _biometricService.authenticateWithBiometric();
       if (success) {
         final storedEmail = await _getStoredEmail();
         if (storedEmail != null && currentUser?.email == storedEmail) {
@@ -331,7 +338,9 @@ class EnhancedAuthService {
           return AuthResult.success(currentUser!, AuthProvider.biometric);
         } else if (storedEmail != null) {
           // Try to sign in with stored credentials (would need secure storage for this)
-          return AuthResult.failure('Biometric verification successful but re-authentication required');
+          return AuthResult.failure(
+            'Biometric verification successful but re-authentication required',
+          );
         }
       }
       return AuthResult.failure('Biometric authentication failed');
@@ -344,9 +353,12 @@ class EnhancedAuthService {
   /// Check if username is unique
   Future<bool> isUsernameAvailable(String username) async {
     if (username.isEmpty || username.length < 3) return false;
-    
+
     try {
-      final doc = await _firestore.collection('usernames').doc(username.toLowerCase()).get();
+      final doc = await _firestore
+          .collection('usernames')
+          .doc(username.toLowerCase())
+          .get();
       return !doc.exists;
     } catch (e) {
       debugPrint('Error checking username availability: $e');
@@ -357,7 +369,7 @@ class EnhancedAuthService {
   /// Update user username
   Future<bool> updateUsername(String newUsername) async {
     if (userId == null) return false;
-    
+
     try {
       final isAvailable = await isUsernameAvailable(newUsername);
       if (!isAvailable) return false;
@@ -373,14 +385,17 @@ class EnhancedAuthService {
       });
 
       // Update username mapping
-      await _firestore.collection('usernames').doc(newUsername.toLowerCase()).set({
-        'uid': userId,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      await _firestore
+          .collection('usernames')
+          .doc(newUsername.toLowerCase())
+          .set({'uid': userId, 'createdAt': FieldValue.serverTimestamp()});
 
       // Remove old username mapping if exists
       if (currentUsername != null) {
-        await _firestore.collection('usernames').doc(currentUsername.toLowerCase()).delete();
+        await _firestore
+            .collection('usernames')
+            .doc(currentUsername.toLowerCase())
+            .delete();
       }
 
       return true;
@@ -393,20 +408,20 @@ class EnhancedAuthService {
   /// Setup biometric authentication
   Future<bool> enableBiometricAuth() async {
     try {
-      final isAvailable = await _biometricService.isAvailable();
+      final isAvailable = await _biometricService.isBiometricAvailable();
       if (!isAvailable) return false;
 
-      final success = await _biometricService.enableBiometric();
+      final success = await _biometricService.enableBiometricAuth();
       if (success) {
         _biometricEnabled = true;
         await _prefs?.setBool(_biometricEnabledKey, true);
-        
+
         // Store email for biometric login
         final user = currentUser;
         if (user?.email != null) {
           await _storeEmailForBiometric(user!.email!);
         }
-        
+
         // Update user preferences
         if (userId != null) {
           await _firestore.collection('users').doc(userId).update({
@@ -416,7 +431,7 @@ class EnhancedAuthService {
           });
         }
       }
-      
+
       return success;
     } catch (e) {
       debugPrint('Error setting up biometric auth: $e');
@@ -427,11 +442,11 @@ class EnhancedAuthService {
   /// Disable biometric authentication
   Future<bool> disableBiometricAuth() async {
     try {
-      await _biometricService.disableBiometric();
+      await _biometricService.disableBiometricAuth();
       _biometricEnabled = false;
       await _prefs?.setBool(_biometricEnabledKey, false);
       await _prefs?.remove(_storedEmailKey);
-      
+
       // Update user preferences
       if (userId != null) {
         await _firestore.collection('users').doc(userId).update({
@@ -440,7 +455,7 @@ class EnhancedAuthService {
           'updatedAt': FieldValue.serverTimestamp(),
         });
       }
-      
+
       return true;
     } catch (e) {
       debugPrint('Error disabling biometric auth: $e');
@@ -495,13 +510,13 @@ class EnhancedAuthService {
       final user = currentUser;
       if (user != null) {
         await user.updateDisplayName(displayName);
-        
+
         // Update in Firestore
         await _firestore.collection('users').doc(user.uid).update({
           'displayName': displayName,
           'updatedAt': FieldValue.serverTimestamp(),
         });
-        
+
         return true;
       }
       return false;
@@ -514,20 +529,18 @@ class EnhancedAuthService {
   /// Enhanced sign out with cleanup
   Future<void> signOut() async {
     try {
-      // Sign out from Google if used
-      if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.signOut();
-      }
-      
+      // Sign out from Google
+      await _googleSignIn.signOut();
+
       // Clear biometric data if needed (but keep enabled status)
       // await _biometricService.clearBiometricData();
-      
+
       // Clear cached auth info
       await _clearAuthCache();
-      
+
       // Sign out from Firebase
       await _auth.signOut();
-      
+
       debugPrint('User signed out successfully');
     } catch (e) {
       debugPrint('Sign out error: $e');
@@ -539,39 +552,40 @@ class EnhancedAuthService {
     try {
       final user = currentUser;
       if (user == null) return false;
-      
+
       // Get user data first
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       final userData = userDoc.data();
       final username = userData?['username'];
-      
+
       // Delete related data
       await _deleteUserRelatedData(user.uid);
-      
+
       // Delete username mapping if exists
       if (username != null) {
-        await _firestore.collection('usernames').doc(username.toLowerCase()).delete();
+        await _firestore
+            .collection('usernames')
+            .doc(username.toLowerCase())
+            .delete();
       }
-      
+
       // Delete user profile
       await _firestore.collection('users').doc(user.uid).delete();
-      
+
       // Clear biometric data
       await _biometricService.clearBiometricData();
       await disableBiometricAuth();
-      
+
       // Sign out from third-party providers
-      if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.disconnect();
-      }
-      
+      await _googleSignIn.disconnect();
+
       // Clear all cached data
       await _clearAuthCache();
       await CacheService().removePattern('user:${user.uid}:.*');
-      
+
       // Delete Firebase Auth account
       await user.delete();
-      
+
       debugPrint('User account deleted successfully');
       return true;
     } catch (e) {
@@ -592,11 +606,15 @@ class EnhancedAuthService {
 
       final doc = await _firestore.collection('users').doc(targetUid).get();
       final data = doc.data();
-      
+
       if (data != null) {
-        await CacheService().set(cacheKey, data, policy: CacheExpiryPolicy.hourly);
+        await CacheService().set(
+          cacheKey,
+          data,
+          policy: CacheExpiryPolicy.hourly,
+        );
       }
-      
+
       return data;
     } catch (e) {
       debugPrint('Error getting user profile: $e');
@@ -615,34 +633,47 @@ class EnhancedAuthService {
 
   Future<UserCredential> _registerWithGoogle(UserRegistrationData data) async {
     // For Google registration, we use the sign-in flow
-    final result = await signInWithGoogle();
-    if (result.success && result.user != null) {
-      // This creates a "mock" UserCredential for consistency
-      return UserCredential(
-        user: result.user,
-        credential: null,
-        additionalUserInfo: null,
-        operationType: 'signIn',
-      );
-    }
-    throw Exception(result.error ?? 'Google registration failed');
+    // Initialize if needed
+    await _googleSignIn.initialize();
+    
+    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+      scopeHint: ['email', 'profile'],
+    );
+
+    final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+      // Note: GoogleSignIn 7.x+ authentication doesn't provide accessToken
+    );
+
+    return await _auth.signInWithCredential(credential);
   }
 
   Future<UserCredential> _registerWithApple(UserRegistrationData data) async {
     // For Apple registration, we use the sign-in flow
-    final result = await signInWithApple();
-    if (result.success && result.user != null) {
-      return UserCredential(
-        user: result.user,
-        credential: null,
-        additionalUserInfo: null,
-        operationType: 'signIn',
-      );
-    }
-    throw Exception(result.error ?? 'Apple registration failed');
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      webAuthenticationOptions: WebAuthenticationOptions(
+        clientId: 'com.cyclesync.app', // Replace with your client ID
+        redirectUri: Uri.parse('https://cyclesync.app/auth/callback'),
+      ),
+    );
+
+    final oauthCredential = OAuthProvider('apple.com').credential(
+      idToken: appleCredential.identityToken,
+      accessToken: appleCredential.authorizationCode,
+    );
+
+    return await _auth.signInWithCredential(oauthCredential);
   }
 
-  Future<void> _createEnhancedUserProfile(User user, UserRegistrationData data) async {
+  Future<void> _createEnhancedUserProfile(
+    User user,
+    UserRegistrationData data,
+  ) async {
     try {
       // Check if username is unique
       if (data.username != null) {
@@ -677,21 +708,18 @@ class EnhancedAuthService {
           'theme': 'system',
           'biometricAuth': data.additionalData?['enableBiometric'] ?? false,
         },
-        'socialProfile': {
-          'isPublic': false,
-          'allowPartnerInvitations': true,
-        },
+        'socialProfile': {'isPublic': false, 'allowPartnerInvitations': true},
         'additionalData': data.additionalData ?? {},
       });
-      
+
       // Create username mapping if provided
       if (data.username != null) {
-        await _firestore.collection('usernames').doc(data.username!.toLowerCase()).set({
-          'uid': user.uid,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+        await _firestore
+            .collection('usernames')
+            .doc(data.username!.toLowerCase())
+            .set({'uid': user.uid, 'createdAt': FieldValue.serverTimestamp()});
       }
-      
+
       debugPrint('Enhanced user profile created for ${user.uid}');
     } catch (e) {
       debugPrint('Error creating enhanced user profile: $e');
@@ -699,10 +727,13 @@ class EnhancedAuthService {
     }
   }
 
-  Future<void> _createOrUpdateGoogleUserProfile(User user, GoogleSignInAccount googleUser) async {
+  Future<void> _createOrUpdateGoogleUserProfile(
+    User user,
+    GoogleSignInAccount googleUser,
+  ) async {
     try {
       final doc = await _firestore.collection('users').doc(user.uid).get();
-      
+
       if (doc.exists) {
         // Update existing profile
         await _firestore.collection('users').doc(user.uid).update({
@@ -726,15 +757,20 @@ class EnhancedAuthService {
     }
   }
 
-  Future<void> _createOrUpdateAppleUserProfile(User user, AuthorizationCredentialAppleID appleCredential) async {
+  Future<void> _createOrUpdateAppleUserProfile(
+    User user,
+    AuthorizationCredentialAppleID appleCredential,
+  ) async {
     try {
       final doc = await _firestore.collection('users').doc(user.uid).get();
-      
+
       String displayName = user.displayName ?? 'User';
-      if (appleCredential.givenName != null && appleCredential.familyName != null) {
-        displayName = '${appleCredential.givenName} ${appleCredential.familyName}';
+      if (appleCredential.givenName != null &&
+          appleCredential.familyName != null) {
+        displayName =
+            '${appleCredential.givenName} ${appleCredential.familyName}';
       }
-      
+
       if (doc.exists) {
         // Update existing profile
         await _firestore.collection('users').doc(user.uid).update({
@@ -762,7 +798,7 @@ class EnhancedAuthService {
       await _firestore.collection('users').doc(user.uid).update({
         'lastSignIn': FieldValue.serverTimestamp(),
       });
-      
+
       // Invalidate user profile cache
       await CacheService().remove('user_profile:${user.uid}');
     } catch (e) {
@@ -805,7 +841,7 @@ class EnhancedAuthService {
           .collection('cycles')
           .where('userId', isEqualTo: uid)
           .get();
-      
+
       for (final doc in cyclesQuery.docs) {
         await doc.reference.delete();
       }
@@ -815,7 +851,7 @@ class EnhancedAuthService {
           .collection('partnerships')
           .where('userId', isEqualTo: uid)
           .get();
-      
+
       for (final doc in partnershipsQuery.docs) {
         await doc.reference.delete();
       }
@@ -825,7 +861,7 @@ class EnhancedAuthService {
           .collection('memberships')
           .where('userId', isEqualTo: uid)
           .get();
-      
+
       for (final doc in membershipsQuery.docs) {
         await doc.reference.delete();
       }

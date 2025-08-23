@@ -18,15 +18,15 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _messageController = TextEditingController();
-  
+
   late ReminderType _selectedType;
   late ReminderFrequency _selectedFrequency;
   late ReminderPriority _selectedPriority;
   late NotificationSound _selectedSound;
-  
+
   DateTime? _scheduledFor;
   List<DateTime> _notificationTimes = [];
-  List<WeekDay> _selectedWeekDays = [];
+  final List<WeekDay> _selectedWeekDays = [];
   int? _customIntervalDays;
   int? _customIntervalHours;
   bool _vibrate = true;
@@ -78,13 +78,13 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveReminder,
-            child: _isLoading 
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Save'),
+            child: _isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Save'),
           ),
         ],
       ),
@@ -118,9 +118,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           children: [
             Text(
               'Basic Information',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -162,9 +162,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           children: [
             Text(
               'Reminder Type',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Wrap(
@@ -207,9 +207,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           children: [
             Text(
               'Schedule',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             _buildFrequencySelection(),
@@ -268,9 +268,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       leading: const Icon(Icons.calendar_today),
       title: const Text('Date & Time'),
       subtitle: Text(
-        _scheduledFor != null 
-          ? DateFormat.yMMMd().add_jm().format(_scheduledFor!)
-          : 'Tap to select',
+        _scheduledFor != null
+            ? DateFormat.yMMMd().add_jm().format(_scheduledFor!)
+            : 'Tap to select',
       ),
       onTap: _selectDateTime,
     );
@@ -284,8 +284,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           title: const Text('Notification Times'),
           subtitle: Text(
             _notificationTimes.isEmpty
-              ? 'Add notification times'
-              : '${_notificationTimes.length} time(s) set',
+                ? 'Add notification times'
+                : '${_notificationTimes.length} time(s) set',
           ),
           trailing: IconButton(
             icon: const Icon(Icons.add),
@@ -387,7 +387,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -400,11 +402,11 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           const SizedBox(height: 8),
           Text(
             _selectedFrequency == ReminderFrequency.cycleStart
-              ? 'AI-Predicted Period Reminders'
-              : 'AI-Predicted Fertility Reminders',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+                ? 'AI-Predicted Period Reminders'
+                : 'AI-Predicted Fertility Reminders',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -426,9 +428,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           children: [
             Text(
               'Notification Settings',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<ReminderPriority>(
@@ -508,9 +510,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           children: [
             Text(
               'Advanced Options',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -587,7 +589,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
 
   Future<void> _saveReminder() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     // Additional validation based on frequency
     if (!_validateFrequencySpecificFields()) return;
 
@@ -600,9 +602,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
         id: '',
         userId: '',
         title: _titleController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty 
-          ? null 
-          : _descriptionController.text.trim(),
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
         type: _selectedType,
         frequency: _selectedFrequency,
         priority: _selectedPriority,
@@ -614,13 +616,13 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
         customIntervalHours: _customIntervalHours,
         sound: _selectedSound,
         vibrate: _vibrate,
-        customMessage: _messageController.text.trim().isEmpty 
-          ? null 
-          : _messageController.text.trim(),
+        customMessage: _messageController.text.trim().isEmpty
+            ? null
+            : _messageController.text.trim(),
       );
 
       final id = await _reminderService.createReminder(reminder);
-      
+
       if (id != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -700,7 +702,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
         }
         break;
       case ReminderFrequency.custom:
-        if ((_customIntervalDays ?? 0) <= 0 && (_customIntervalHours ?? 0) <= 0) {
+        if ((_customIntervalDays ?? 0) <= 0 &&
+            (_customIntervalHours ?? 0) <= 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Please set a valid custom interval'),
@@ -719,89 +722,137 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
   // Helper methods for display names and styling
   String _getReminderEmoji(ReminderType type) {
     switch (type) {
-      case ReminderType.cyclePrediction: return '🌸';
-      case ReminderType.medication: return '💊';
-      case ReminderType.appointment: return '📅';
-      case ReminderType.symptomTracking: return '📝';
-      case ReminderType.waterIntake: return '💧';
-      case ReminderType.exercise: return '🏃‍♀️';
-      case ReminderType.selfCare: return '🧘‍♀️';
-      case ReminderType.custom: return '⏰';
+      case ReminderType.cyclePrediction:
+        return '🌸';
+      case ReminderType.medication:
+        return '💊';
+      case ReminderType.appointment:
+        return '📅';
+      case ReminderType.symptomTracking:
+        return '📝';
+      case ReminderType.waterIntake:
+        return '💧';
+      case ReminderType.exercise:
+        return '🏃‍♀️';
+      case ReminderType.selfCare:
+        return '🧘‍♀️';
+      case ReminderType.custom:
+        return '⏰';
     }
   }
 
   String _getReminderTypeName(ReminderType type) {
     switch (type) {
-      case ReminderType.cyclePrediction: return 'Cycle';
-      case ReminderType.medication: return 'Medication';
-      case ReminderType.appointment: return 'Appointment';
-      case ReminderType.symptomTracking: return 'Tracking';
-      case ReminderType.waterIntake: return 'Hydration';
-      case ReminderType.exercise: return 'Exercise';
-      case ReminderType.selfCare: return 'Self Care';
-      case ReminderType.custom: return 'Custom';
+      case ReminderType.cyclePrediction:
+        return 'Cycle';
+      case ReminderType.medication:
+        return 'Medication';
+      case ReminderType.appointment:
+        return 'Appointment';
+      case ReminderType.symptomTracking:
+        return 'Tracking';
+      case ReminderType.waterIntake:
+        return 'Hydration';
+      case ReminderType.exercise:
+        return 'Exercise';
+      case ReminderType.selfCare:
+        return 'Self Care';
+      case ReminderType.custom:
+        return 'Custom';
     }
   }
 
   String _getFrequencyDisplayName(ReminderFrequency frequency) {
     switch (frequency) {
-      case ReminderFrequency.once: return 'Once';
-      case ReminderFrequency.daily: return 'Daily';
-      case ReminderFrequency.weekly: return 'Weekly';
-      case ReminderFrequency.monthly: return 'Monthly';
-      case ReminderFrequency.cycleStart: return 'Each Cycle Start';
-      case ReminderFrequency.ovulation: return 'Ovulation Period';
-      case ReminderFrequency.custom: return 'Custom Interval';
+      case ReminderFrequency.once:
+        return 'Once';
+      case ReminderFrequency.daily:
+        return 'Daily';
+      case ReminderFrequency.weekly:
+        return 'Weekly';
+      case ReminderFrequency.monthly:
+        return 'Monthly';
+      case ReminderFrequency.cycleStart:
+        return 'Each Cycle Start';
+      case ReminderFrequency.ovulation:
+        return 'Ovulation Period';
+      case ReminderFrequency.custom:
+        return 'Custom Interval';
     }
   }
 
   String _getWeekDayName(WeekDay day) {
     switch (day) {
-      case WeekDay.monday: return 'Mon';
-      case WeekDay.tuesday: return 'Tue';
-      case WeekDay.wednesday: return 'Wed';
-      case WeekDay.thursday: return 'Thu';
-      case WeekDay.friday: return 'Fri';
-      case WeekDay.saturday: return 'Sat';
-      case WeekDay.sunday: return 'Sun';
+      case WeekDay.monday:
+        return 'Mon';
+      case WeekDay.tuesday:
+        return 'Tue';
+      case WeekDay.wednesday:
+        return 'Wed';
+      case WeekDay.thursday:
+        return 'Thu';
+      case WeekDay.friday:
+        return 'Fri';
+      case WeekDay.saturday:
+        return 'Sat';
+      case WeekDay.sunday:
+        return 'Sun';
     }
   }
 
   String _getPriorityName(ReminderPriority priority) {
     switch (priority) {
-      case ReminderPriority.low: return 'Low';
-      case ReminderPriority.medium: return 'Medium';
-      case ReminderPriority.high: return 'High';
-      case ReminderPriority.critical: return 'Critical';
+      case ReminderPriority.low:
+        return 'Low';
+      case ReminderPriority.medium:
+        return 'Medium';
+      case ReminderPriority.high:
+        return 'High';
+      case ReminderPriority.critical:
+        return 'Critical';
     }
   }
 
   IconData _getPriorityIcon(ReminderPriority priority) {
     switch (priority) {
-      case ReminderPriority.low: return Icons.low_priority;
-      case ReminderPriority.medium: return Icons.priority_high;
-      case ReminderPriority.high: return Icons.priority_high;
-      case ReminderPriority.critical: return Icons.warning;
+      case ReminderPriority.low:
+        return Icons.low_priority;
+      case ReminderPriority.medium:
+        return Icons.priority_high;
+      case ReminderPriority.high:
+        return Icons.priority_high;
+      case ReminderPriority.critical:
+        return Icons.warning;
     }
   }
 
   Color _getPriorityColor(ReminderPriority priority) {
     switch (priority) {
-      case ReminderPriority.low: return Colors.green;
-      case ReminderPriority.medium: return Colors.orange;
-      case ReminderPriority.high: return Colors.red;
-      case ReminderPriority.critical: return Colors.red.shade800;
+      case ReminderPriority.low:
+        return Colors.green;
+      case ReminderPriority.medium:
+        return Colors.orange;
+      case ReminderPriority.high:
+        return Colors.red;
+      case ReminderPriority.critical:
+        return Colors.red.shade800;
     }
   }
 
   String _getSoundName(NotificationSound sound) {
     switch (sound) {
-      case NotificationSound.defaultSound: return 'Default';
-      case NotificationSound.gentle: return 'Gentle';
-      case NotificationSound.chime: return 'Chime';
-      case NotificationSound.bell: return 'Bell';
-      case NotificationSound.nature: return 'Nature';
-      case NotificationSound.silent: return 'Silent';
+      case NotificationSound.defaultSound:
+        return 'Default';
+      case NotificationSound.gentle:
+        return 'Gentle';
+      case NotificationSound.chime:
+        return 'Chime';
+      case NotificationSound.bell:
+        return 'Bell';
+      case NotificationSound.nature:
+        return 'Nature';
+      case NotificationSound.silent:
+        return 'Silent';
     }
   }
 }

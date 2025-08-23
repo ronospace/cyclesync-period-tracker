@@ -12,50 +12,95 @@ class EnhancedCycleLoggingScreen extends StatefulWidget {
   const EnhancedCycleLoggingScreen({super.key});
 
   @override
-  State<EnhancedCycleLoggingScreen> createState() => _EnhancedCycleLoggingScreenState();
+  State<EnhancedCycleLoggingScreen> createState() =>
+      _EnhancedCycleLoggingScreenState();
 }
 
-class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen> with TickerProviderStateMixin {
+class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
+    with TickerProviderStateMixin {
   late PageController _pageController;
   int _currentStep = 0;
   final _notesController = TextEditingController();
-  
+
   // Basic cycle data
   DateTime? _startDate;
   DateTime? _endDate;
   bool _isSaving = false;
-  
+
   // Flow tracking
   String _flowIntensity = 'Medium';
   final List<String> _flowOptions = ['Light', 'Medium', 'Heavy', 'Very Heavy'];
-  
+
   // Mood tracking (1-5 scale)
   double _moodLevel = 3.0;
-  final List<String> _moodLabels = ['Very Low', 'Low', 'Neutral', 'Good', 'Excellent'];
-  
+  final List<String> _moodLabels = [
+    'Very Low',
+    'Low',
+    'Neutral',
+    'Good',
+    'Excellent',
+  ];
+
   // Energy tracking (1-5 scale)
   double _energyLevel = 3.0;
-  final List<String> _energyLabels = ['Exhausted', 'Low', 'Normal', 'High', 'Energetic'];
-  
+  final List<String> _energyLabels = [
+    'Exhausted',
+    'Low',
+    'Normal',
+    'High',
+    'Energetic',
+  ];
+
   // Pain tracking (1-5 scale)
   double _painLevel = 1.0;
-  final List<String> _painLabels = ['None', 'Mild', 'Moderate', 'Severe', 'Extreme'];
-  
+  final List<String> _painLabels = [
+    'None',
+    'Mild',
+    'Moderate',
+    'Severe',
+    'Extreme',
+  ];
+
   // Symptoms tracking
   final Set<String> _selectedSymptoms = <String>{};
   final List<SymptomOption> _symptomOptions = [
     SymptomOption('cramps', 'Cramps', Icons.healing, Colors.red),
     SymptomOption('headache', 'Headache', Icons.psychology_alt, Colors.orange),
-    SymptomOption('mood_swings', 'Mood Swings', Icons.sentiment_very_dissatisfied, Colors.purple),
+    SymptomOption(
+      'mood_swings',
+      'Mood Swings',
+      Icons.sentiment_very_dissatisfied,
+      Colors.purple,
+    ),
     SymptomOption('fatigue', 'Fatigue', Icons.battery_0_bar, Colors.grey),
     SymptomOption('bloating', 'Bloating', Icons.expand, Colors.blue),
-    SymptomOption('breast_tenderness', 'Breast Tenderness', Icons.favorite_border, Colors.pink),
+    SymptomOption(
+      'breast_tenderness',
+      'Breast Tenderness',
+      Icons.favorite_border,
+      Colors.pink,
+    ),
     SymptomOption('nausea', 'Nausea', Icons.sick, Colors.green),
-    SymptomOption('back_pain', 'Back Pain', Icons.accessibility_new, Colors.brown),
+    SymptomOption(
+      'back_pain',
+      'Back Pain',
+      Icons.accessibility_new,
+      Colors.brown,
+    ),
     SymptomOption('acne', 'Acne', Icons.face_retouching_natural, Colors.amber),
-    SymptomOption('food_cravings', 'Food Cravings', Icons.restaurant, Colors.deepOrange),
+    SymptomOption(
+      'food_cravings',
+      'Food Cravings',
+      Icons.restaurant,
+      Colors.deepOrange,
+    ),
     SymptomOption('insomnia', 'Sleep Issues', Icons.bedtime_off, Colors.indigo),
-    SymptomOption('hot_flashes', 'Hot Flashes', Icons.whatshot, Colors.deepOrange),
+    SymptomOption(
+      'hot_flashes',
+      'Hot Flashes',
+      Icons.whatshot,
+      Colors.deepOrange,
+    ),
   ];
 
   @override
@@ -100,11 +145,16 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
   bool get _canContinueFromDates => _startDate != null && _endDate != null;
   bool get _isCurrentStepComplete {
     switch (_currentStep) {
-      case 0: return _canContinueFromDates;
-      case 1: return true; // Wellbeing always has defaults
-      case 2: return true; // Symptoms are optional
-      case 3: return true; // Notes are optional
-      default: return false;
+      case 0:
+        return _canContinueFromDates;
+      case 1:
+        return true; // Wellbeing always has defaults
+      case 2:
+        return true; // Symptoms are optional
+      case 3:
+        return true; // Notes are optional
+      default:
+        return false;
     }
   }
 
@@ -140,11 +190,13 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
       );
 
       // Health sync and notifications would be implemented here
-      debugPrint('Cycle saved successfully - health sync and notifications disabled for now');
+      debugPrint(
+        'Cycle saved successfully - health sync and notifications disabled for now',
+      );
 
       // Clear form and show success
       _clearForm();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -158,7 +210,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Navigate back to home after successful save
         context.go('/home');
       }
@@ -211,14 +263,16 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
   Future<void> _pickDate(bool isStart) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: isStart ? (_startDate ?? DateTime.now()) : (_endDate ?? DateTime.now()),
+      initialDate: isStart
+          ? (_startDate ?? DateTime.now())
+          : (_endDate ?? DateTime.now()),
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 30)),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-          ),
+          data: Theme.of(
+            context,
+          ).copyWith(colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink)),
           child: child!,
         );
       },
@@ -237,7 +291,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
 
   Widget _buildDateStep() {
     final dateFormat = DateFormat.yMMMd();
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -267,13 +321,15 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             ),
           ),
           const SizedBox(height: 32),
-          
+
           // Start Date - Prominent Button
           Container(
             width: double.infinity,
             child: Card(
               elevation: _startDate != null ? 0 : 2,
-              color: _startDate != null ? Theme.of(context).colorScheme.primaryContainer : null,
+              color: _startDate != null
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : null,
               child: InkWell(
                 onTap: () async {
                   await _pickDate(true);
@@ -317,16 +373,22 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: _startDate != null ? Theme.of(context).colorScheme.primary : null,
+                                color: _startDate != null
+                                    ? Theme.of(context).colorScheme.primary
+                                    : null,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              _startDate != null 
+                              _startDate != null
                                   ? dateFormat.format(_startDate!)
                                   : 'Tap to select when your cycle started',
                               style: TextStyle(
-                                color: _startDate != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: _startDate != null
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                 fontSize: 14,
                               ),
                             ),
@@ -334,8 +396,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                         ),
                       ),
                       Icon(
-                        _startDate != null ? Icons.check_circle : Icons.calendar_today,
-                        color: _startDate != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                        _startDate != null
+                            ? Icons.check_circle
+                            : Icons.calendar_today,
+                        color: _startDate != null
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ],
                   ),
@@ -343,15 +409,17 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // End Date - Prominent Button
           Container(
             width: double.infinity,
             child: Card(
               elevation: _endDate != null ? 0 : 2,
-              color: _endDate != null ? Theme.of(context).colorScheme.primaryContainer : null,
+              color: _endDate != null
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : null,
               child: InkWell(
                 onTap: () async {
                   if (_startDate == null) {
@@ -400,18 +468,24 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: _endDate != null ? Theme.of(context).colorScheme.primary : null,
+                                color: _endDate != null
+                                    ? Theme.of(context).colorScheme.primary
+                                    : null,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              _endDate != null 
+                              _endDate != null
                                   ? dateFormat.format(_endDate!)
-                                  : _startDate != null 
-                                      ? 'Tap to select when your cycle ended'
-                                      : 'Select start date first',
+                                  : _startDate != null
+                                  ? 'Tap to select when your cycle ended'
+                                  : 'Select start date first',
                               style: TextStyle(
-                                color: _endDate != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: _endDate != null
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                 fontSize: 14,
                               ),
                             ),
@@ -419,8 +493,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                         ),
                       ),
                       Icon(
-                        _endDate != null ? Icons.check_circle : Icons.calendar_today,
-                        color: _endDate != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                        _endDate != null
+                            ? Icons.check_circle
+                            : Icons.calendar_today,
+                        color: _endDate != null
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ],
                   ),
@@ -428,7 +506,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               ),
             ),
           ),
-          
+
           // Cycle length display
           if (_startDate != null && _endDate != null) ...[
             const SizedBox(height: 24),
@@ -438,11 +516,18 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.timeline, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.timeline,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 12),
                   Text(
                     'Cycle Length: ${_endDate!.difference(_startDate!).inDays + 1} days',
@@ -459,13 +544,13 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             Text(
               '✨ Great! Moving to flow intensity in a moment...',
               style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
             ),
           ],
-          
+
           const SizedBox(height: 32),
         ],
       ),
@@ -497,15 +582,18 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 8),
           Text(
             'How would you describe your flow during this cycle?',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: 32),
-          
+
           // Flow Options as Cards
           ...List.generate(_flowOptions.length, (index) {
             final flow = _flowOptions[index];
             final isSelected = _flowIntensity == flow;
-            
+
             return Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: 12),
@@ -534,13 +622,23 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                           height: 24,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: isSelected ? Colors.pink.shade600 : Colors.transparent,
+                            color: isSelected
+                                ? Colors.pink.shade600
+                                : Colors.transparent,
                             border: Border.all(
-                              color: isSelected ? Colors.pink.shade600 : Colors.grey.shade400,
+                              color: isSelected
+                                  ? Colors.pink.shade600
+                                  : Colors.grey.shade400,
                               width: 2,
                             ),
                           ),
-                          child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 16) : null,
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 16,
+                                )
+                              : null,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -548,7 +646,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                             flow,
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                               color: isSelected ? Colors.pink.shade700 : null,
                             ),
                           ),
@@ -598,10 +698,13 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 8),
           Text(
             'Help us understand your wellbeing during this cycle.',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: 32),
-          
+
           // Mood Level
           _buildLevelCard(
             title: 'Mood Level',
@@ -611,9 +714,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             labels: _moodLabels,
             onChanged: (value) => setState(() => _moodLevel = value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Energy Level
           _buildLevelCard(
             title: 'Energy Level',
@@ -623,9 +726,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             labels: _energyLabels,
             onChanged: (value) => setState(() => _energyLevel = value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Pain Level
           _buildLevelCard(
             title: 'Pain Level',
@@ -635,9 +738,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             labels: _painLabels,
             onChanged: (value) => setState(() => _painLevel = value),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Continue Button
           SizedBox(
             width: double.infinity,
@@ -688,7 +791,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Current level display
             Center(
               child: Column(
@@ -715,9 +818,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Slider
             Slider(
               value: value,
@@ -727,7 +830,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               activeColor: color,
               onChanged: onChanged,
             ),
-            
+
             // Scale labels
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -767,10 +870,13 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 8),
           Text(
             'Select any symptoms and add optional notes (both are optional).',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 16),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: 32),
-          
+
           // Symptoms Section
           Text(
             'Symptoms (Optional)',
@@ -783,10 +889,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 8),
           Text(
             'Tap any symptoms you experienced:',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 16),
-          
+
           // Selected symptoms count
           if (_selectedSymptoms.isNotEmpty)
             Container(
@@ -805,9 +913,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                 ),
               ),
             ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Symptoms grid
           GridView.builder(
             shrinkWrap: true,
@@ -822,7 +930,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
             itemBuilder: (context, index) {
               final symptom = _symptomOptions[index];
               final isSelected = _selectedSymptoms.contains(symptom.id);
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -835,10 +943,14 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isSelected ? symptom.color.withOpacity(0.1) : Theme.of(context).colorScheme.surfaceContainer,
+                    color: isSelected
+                        ? symptom.color.withValues(alpha: 0.1)
+                        : Theme.of(context).colorScheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected ? symptom.color : Theme.of(context).colorScheme.outline,
+                      color: isSelected
+                          ? symptom.color
+                          : Theme.of(context).colorScheme.outline,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -847,7 +959,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                       const SizedBox(width: 12),
                       Icon(
                         symptom.icon,
-                        color: isSelected ? symptom.color : Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: isSelected
+                            ? symptom.color
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -855,8 +969,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                         child: Text(
                           symptom.name,
                           style: TextStyle(
-                            color: isSelected ? symptom.color : Theme.of(context).colorScheme.onSurface,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected
+                                ? symptom.color
+                                : Theme.of(context).colorScheme.onSurface,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             fontSize: 13,
                           ),
                         ),
@@ -867,9 +985,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               );
             },
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Notes Section
           Text(
             'Notes (Optional)',
@@ -882,10 +1000,12 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           const SizedBox(height: 8),
           Text(
             'Add any additional notes about this cycle:',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 16),
-          
+
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -893,15 +1013,16 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                 controller: _notesController,
                 maxLines: 4,
                 decoration: const InputDecoration(
-                  hintText: 'e.g., Had unusual stress, traveled, medication changes...',
+                  hintText:
+                      'e.g., Had unusual stress, traveled, medication changes...',
                   border: InputBorder.none,
                 ),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Summary Card
           Card(
             color: Colors.pink.shade50,
@@ -925,22 +1046,22 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                     ],
                   ),
                   const SizedBox(height: 12),
-                  
+
                   if (_startDate != null && _endDate != null)
                     Text(
                       'Duration: ${_endDate!.difference(_startDate!).inDays + 1} days (${DateFormat.yMMMd().format(_startDate!)} - ${DateFormat.yMMMd().format(_endDate!)})',
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
-                  
+
                   const SizedBox(height: 4),
                   Text('Flow: $_flowIntensity'),
                   Text('Mood: ${_moodLabels[_moodLevel.round() - 1]}'),
                   Text('Energy: ${_energyLabels[_energyLevel.round() - 1]}'),
                   Text('Pain: ${_painLabels[_painLevel.round() - 1]}'),
-                  
+
                   if (_selectedSymptoms.isNotEmpty)
                     Text('Symptoms: ${_selectedSymptoms.length} selected'),
-                  
+
                   if (_notesController.text.trim().isNotEmpty)
                     Text('Notes: ${_notesController.text.length} characters'),
                 ],
@@ -960,17 +1081,19 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
         children: [
           Text(
             'Additional Notes',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             'Add any additional notes about this cycle:',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 16),
-          
+
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -978,15 +1101,16 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                 controller: _notesController,
                 maxLines: 8,
                 decoration: const InputDecoration(
-                  hintText: 'e.g., Had unusual stress this cycle, traveled, medication changes, etc.',
+                  hintText:
+                      'e.g., Had unusual stress this cycle, traveled, medication changes, etc.',
                   border: InputBorder.none,
                 ),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Summary Card
           Card(
             color: Colors.pink.shade50,
@@ -1010,21 +1134,21 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                     ],
                   ),
                   const SizedBox(height: 12),
-                  
+
                   if (_startDate != null && _endDate != null)
                     Text(
                       'Duration: ${_endDate!.difference(_startDate!).inDays + 1} days',
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
-                  
+
                   Text('Flow: $_flowIntensity'),
                   Text('Mood: ${_moodLabels[_moodLevel.round() - 1]}'),
                   Text('Energy: ${_energyLabels[_energyLevel.round() - 1]}'),
                   Text('Pain: ${_painLabels[_painLevel.round() - 1]}'),
-                  
+
                   if (_selectedSymptoms.isNotEmpty)
                     Text('Symptoms: ${_selectedSymptoms.length}'),
-                  
+
                   if (_notesController.text.trim().isNotEmpty)
                     Text('Notes: ${_notesController.text.length} characters'),
                 ],
@@ -1046,7 +1170,10 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => context.go('/home'),
         ),
         actions: [
@@ -1069,7 +1196,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               color: Colors.pink.shade50,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -1079,7 +1206,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               children: List.generate(4, (index) {
                 final isCompleted = index < _currentStep;
                 final isCurrent = index == _currentStep;
-                
+
                 return Expanded(
                   child: Container(
                     margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
@@ -1100,7 +1227,9 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
                           ['Dates', 'Flow', 'Wellbeing', 'Finish'][index],
                           style: TextStyle(
                             fontSize: 12,
-                            fontWeight: isCompleted || isCurrent ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isCompleted || isCurrent
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             color: isCompleted || isCurrent
                                 ? Colors.pink.shade700
                                 : Colors.grey.shade600,
@@ -1113,12 +1242,13 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
               }),
             ),
           ),
-          
+
           // Page content
           Expanded(
             child: PageView(
               controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(), // Disable swipe to control navigation
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable swipe to control navigation
               onPageChanged: (index) {
                 setState(() {
                   _currentStep = index;
@@ -1140,7 +1270,7 @@ class _EnhancedCycleLoggingScreenState extends State<EnhancedCycleLoggingScreen>
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, -2),
             ),

@@ -119,9 +119,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
           const SizedBox(height: 16),
           Text(
             'No Partners Yet',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -160,7 +160,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
                   child: Text(
                     (partner.partnerName?.isNotEmpty == true)
                         ? partner.partnerName![0].toUpperCase()
@@ -177,19 +179,21 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (partner.partnerName?.isEmpty ?? true) 
+                        (partner.partnerName?.isEmpty ?? true)
                             ? partner.partnerEmail
                             : partner.partnerName!,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       if (partner.partnerName?.isNotEmpty == true)
                         Text(
                           partner.partnerEmail,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       Text(
                         'Connected ${_getTimeAgo(partner.createdAt)}',
@@ -201,7 +205,10 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -235,7 +242,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                       child: const Text('View Data'),
                     ),
                     PopupMenuButton<String>(
-                      onSelected: (value) => _handlePartnerAction(value, partner),
+                      onSelected: (value) =>
+                          _handlePartnerAction(value, partner),
                       itemBuilder: (context) => [
                         const PopupMenuItem(
                           value: 'edit',
@@ -248,7 +256,10 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                         const PopupMenuItem(
                           value: 'remove',
                           child: ListTile(
-                            leading: Icon(Icons.remove_circle, color: Colors.red),
+                            leading: Icon(
+                              Icons.remove_circle,
+                              color: Colors.red,
+                            ),
                             title: Text('Remove Partner'),
                             contentPadding: EdgeInsets.zero,
                           ),
@@ -277,7 +288,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
               _getDataTypeTitle(dataType),
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
           );
         }),
         if (dataTypes.length > 3)
@@ -286,7 +299,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
               '+${dataTypes.length - 3} more',
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
           ),
       ],
     );
@@ -305,10 +320,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
           ),
           Expanded(
             child: TabBarView(
-              children: [
-                _buildSentInvitations(),
-                _buildReceivedInvitations(),
-              ],
+              children: [_buildSentInvitations(), _buildReceivedInvitations()],
             ),
           ),
         ],
@@ -377,9 +389,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
           const SizedBox(height: 16),
           Text(
             type == 'sent' ? 'No Sent Invitations' : 'No Received Invitations',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -396,7 +408,10 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     );
   }
 
-  Widget _buildInvitationCard(PartnerInvitation invitation, {required bool isSent}) {
+  Widget _buildInvitationCard(
+    PartnerInvitation invitation, {
+    required bool isSent,
+  }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -420,10 +435,11 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isSent ? invitation.inviteeEmail : invitation.inviterEmail,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        isSent
+                            ? invitation.inviteeEmail
+                            : invitation.inviterEmail,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Text(
                         _getStatusText(invitation.status),
@@ -435,9 +451,14 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -453,14 +474,14 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   invitation.personalMessage!,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
                 ),
               ),
             ],
@@ -566,18 +587,11 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.share_outlined,
-            size: 60,
-            color: Colors.grey,
-          ),
+          Icon(Icons.share_outlined, size: 60, color: Colors.grey),
           SizedBox(height: 16),
           Text(
             'No Shared Data',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 8),
           Text(
@@ -814,7 +828,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
     if (confirmed == true) {
       try {
-        final success = await PartnerSharingService.instance.removePartner(partner.id);
+        final success = await PartnerSharingService.instance.removePartner(
+          partner.id,
+        );
         if (success && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -825,11 +841,9 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error removing partner: $e'),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error removing partner: $e')));
         }
       }
     }
@@ -837,7 +851,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Future<void> _acceptInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService.instance.acceptPartnerInvitation(invitationId);
+      final success = await PartnerSharingService.instance
+          .acceptPartnerInvitation(invitationId);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -849,9 +864,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error accepting invitation: $e'),
-          ),
+          SnackBar(content: Text('Error accepting invitation: $e')),
         );
       }
     }
@@ -859,7 +872,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Future<void> _declineInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService.instance.declinePartnerInvitation(invitationId);
+      final success = await PartnerSharingService.instance
+          .declinePartnerInvitation(invitationId);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -871,9 +885,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error declining invitation: $e'),
-          ),
+          SnackBar(content: Text('Error declining invitation: $e')),
         );
       }
     }
@@ -881,7 +893,8 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
 
   Future<void> _cancelInvitation(String invitationId) async {
     try {
-      final success = await PartnerSharingService.instance.cancelPartnerInvitation(invitationId);
+      final success = await PartnerSharingService.instance
+          .cancelPartnerInvitation(invitationId);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -893,9 +906,7 @@ class _PartnerDashboardScreenState extends State<PartnerDashboardScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error cancelling invitation: $e'),
-          ),
+          SnackBar(content: Text('Error cancelling invitation: $e')),
         );
       }
     }

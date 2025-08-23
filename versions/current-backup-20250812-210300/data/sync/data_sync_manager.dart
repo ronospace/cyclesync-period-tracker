@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../../models/cycle_models.dart';
-import '../../models/daily_log_models.dart';
-import '../../services/firebase_service.dart';
 import '../cache/data_cache_manager.dart';
 import '../providers/data_change_notifier.dart';
 

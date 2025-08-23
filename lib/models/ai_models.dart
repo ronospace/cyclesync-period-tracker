@@ -31,10 +31,7 @@ class PredictionRange {
   final int min;
   final int max;
 
-  const PredictionRange({
-    required this.min,
-    required this.max,
-  });
+  const PredictionRange({required this.min, required this.max});
 }
 
 class NextCyclePrediction {
@@ -112,13 +109,7 @@ class SymptomOccurrence {
   });
 }
 
-enum SeasonalPattern {
-  none,
-  spring,
-  summer,
-  autumn,
-  winter,
-}
+enum SeasonalPattern { none, spring, summer, autumn, winter }
 
 // Wellbeing prediction models
 class WellbeingPrediction {
@@ -137,17 +128,9 @@ class WellbeingPrediction {
   });
 }
 
-enum WellbeingType {
-  mood,
-  energy,
-  pain,
-}
+enum WellbeingType { mood, energy, pain }
 
-enum WellbeingTrend {
-  improving,
-  stable,
-  declining,
-}
+enum WellbeingTrend { improving, stable, declining }
 
 // Insight and recommendation models
 class PersonalizedInsight {
@@ -179,12 +162,7 @@ enum InsightType {
   lifestyle,
 }
 
-enum InsightSeverity {
-  positive,
-  neutral,
-  warning,
-  critical,
-}
+enum InsightSeverity { positive, neutral, warning, critical }
 
 class AIRecommendation {
   final RecommendationType type;
@@ -212,12 +190,7 @@ enum RecommendationType {
   tracking,
 }
 
-enum RecommendationPriority {
-  low,
-  medium,
-  high,
-  critical,
-}
+enum RecommendationPriority { low, medium, high, critical }
 
 // Correlation analysis models
 class CorrelationInsight {
@@ -296,21 +269,9 @@ class HealthRiskAssessment {
   });
 }
 
-enum RiskType {
-  irregularity,
-  pcos,
-  endometriosis,
-  thyroid,
-  fertility,
-  other,
-}
+enum RiskType { irregularity, pcos, endometriosis, thyroid, fertility, other }
 
-enum RiskLevel {
-  low,
-  medium,
-  high,
-  critical,
-}
+enum RiskLevel { low, medium, high, critical }
 
 // Advanced analytics models
 class CyclePhaseAnalysis {
@@ -325,12 +286,7 @@ class CyclePhaseAnalysis {
   });
 }
 
-enum CyclePhase {
-  menstrual,
-  follicular,
-  ovulatory,
-  luteal,
-}
+enum CyclePhase { menstrual, follicular, ovulatory, luteal }
 
 class WellbeingProfile {
   final CyclePhase phase;
@@ -407,12 +363,7 @@ class TrendAnalysis {
   });
 }
 
-enum TrendDirection {
-  increasing,
-  decreasing,
-  stable,
-  cyclical,
-}
+enum TrendDirection { increasing, decreasing, stable, cyclical }
 
 class SeasonalityAnalysis {
   final bool hasSeasonality;
@@ -699,4 +650,45 @@ class DataQuality {
 }
 
 enum RegularityStatus { regular, somewhatRegular, irregular, insufficient }
+
 enum QualityLevel { poor, fair, good, excellent }
+
+// Prediction model for UI widgets
+class CyclePrediction {
+  final double confidence;
+  final DateTime? nextPeriodDate;
+  final DateTime? fertilityWindowStart;
+  final DateTime? fertilityWindowEnd;
+  final DateTime? ovulationDate;
+  final List<String> insights;
+  final DateTime createdAt;
+
+  CyclePrediction({
+    required this.confidence,
+    this.nextPeriodDate,
+    this.fertilityWindowStart,
+    this.fertilityWindowEnd,
+    this.ovulationDate,
+    this.insights = const [],
+    required this.createdAt,
+  });
+
+  factory CyclePrediction.fromNextCyclePrediction(SimpleNextCyclePrediction prediction) {
+    return CyclePrediction(
+      confidence: prediction.confidencePercentage / 100.0,
+      nextPeriodDate: prediction.predictedStartDate,
+      fertilityWindowStart: prediction.fertilityWindowStart,
+      fertilityWindowEnd: prediction.fertilityWindowEnd,
+      ovulationDate: prediction.ovulationDay,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  factory CyclePrediction.empty() {
+    return CyclePrediction(
+      confidence: 0.0,
+      createdAt: DateTime.now(),
+      insights: ['Not enough data for predictions'],
+    );
+  }
+}

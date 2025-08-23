@@ -41,7 +41,7 @@ class PerformanceService {
   static Future<void> cachePersistently(String key, String data) async {
     try {
       await _prefs?.setString('$_cacheKeyPrefix$key', data);
-      await _prefs?.setInt('${_cacheKeyPrefix}${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
+      await _prefs?.setInt('$_cacheKeyPrefix${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
     } catch (e) {
       debugPrint('❌ PerformanceService: Failed to cache data persistently: $e');
     }
@@ -50,14 +50,14 @@ class PerformanceService {
   /// Retrieve cached data if still valid
   static Future<String?> getPersistentCache(String key, {Duration maxAge = const Duration(hours: 24)}) async {
     try {
-      final timestamp = _prefs?.getInt('${_cacheKeyPrefix}${key}_timestamp');
+      final timestamp = _prefs?.getInt('$_cacheKeyPrefix${key}_timestamp');
       if (timestamp == null) return null;
 
       final cacheDate = DateTime.fromMillisecondsSinceEpoch(timestamp);
       if (DateTime.now().difference(cacheDate) > maxAge) {
         // Cache expired, clean it up
         await _prefs?.remove('$_cacheKeyPrefix$key');
-        await _prefs?.remove('${_cacheKeyPrefix}${key}_timestamp');
+        await _prefs?.remove('$_cacheKeyPrefix${key}_timestamp');
         return null;
       }
 

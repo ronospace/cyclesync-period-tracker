@@ -15,7 +15,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
 
   Future<void> _exportAsJson() async {
     setState(() => _isExporting = true);
-    
+
     try {
       await DataExportService.exportAsJsonFile();
       if (mounted) {
@@ -44,7 +44,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
 
   Future<void> _exportAsCsv() async {
     setState(() => _isExporting = true);
-    
+
     try {
       await DataExportService.exportAsCsvFile();
       if (mounted) {
@@ -73,15 +73,17 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
 
   Future<void> _importData() async {
     setState(() => _isImporting = true);
-    
+
     try {
       final importData = await DataExportService.importFromJsonFile();
-      
+
       if (mounted) {
         final result = await _showImportConfirmDialog(importData);
         if (result == true) {
-          final importedCount = await DataExportService.restoreFromImport(importData);
-          
+          final importedCount = await DataExportService.restoreFromImport(
+            importData,
+          );
+
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -111,7 +113,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
   Future<bool?> _showImportConfirmDialog(Map<String, dynamic> importData) {
     final cycles = importData['data']['cycles'] as List<dynamic>;
     final statistics = importData['statistics'] as Map<String, dynamic>;
-    
+
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -123,7 +125,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
             Text('Import ${cycles.length} cycles?'),
             const SizedBox(height: 12),
             Card(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
@@ -138,10 +140,14 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                     const SizedBox(height: 8),
                     Text('• Total cycles: ${cycles.length}'),
                     if (statistics['average_length'] != null)
-                      Text('• Average length: ${statistics['average_length'].toStringAsFixed(1)} days'),
+                      Text(
+                        '• Average length: ${statistics['average_length'].toStringAsFixed(1)} days',
+                      ),
                     if (statistics['date_range'] != null)
                       Text('• Date range: ${statistics['date_range']}'),
-                    Text('• Export date: ${importData['export_date']?.substring(0, 10)}'),
+                    Text(
+                      '• Export date: ${importData['export_date']?.substring(0, 10)}',
+                    ),
                   ],
                 ),
               ),
@@ -184,9 +190,9 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'Export Your Data',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -195,13 +201,15 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
               'Create a backup of all your cycle data. Choose the format that works best for you.',
             ),
             const SizedBox(height: 16),
-            
+
             // JSON Export
             ListTile(
               leading: const Icon(Icons.code, color: Colors.green),
               title: const Text('JSON Backup'),
-              subtitle: const Text('Complete backup with all data - recommended for backup'),
-              trailing: _isExporting 
+              subtitle: const Text(
+                'Complete backup with all data - recommended for backup',
+              ),
+              trailing: _isExporting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -210,15 +218,15 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                   : const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: _isExporting ? null : _exportAsJson,
             ),
-            
+
             const Divider(),
-            
+
             // CSV Export
             ListTile(
               leading: const Icon(Icons.table_chart, color: Colors.orange),
               title: const Text('CSV Export'),
               subtitle: const Text('Spreadsheet format - great for analysis'),
-              trailing: _isExporting 
+              trailing: _isExporting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -246,9 +254,9 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'Import Data',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -257,12 +265,12 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
               'Restore your data from a previous backup. Only JSON backups from CycleSync are supported.',
             ),
             const SizedBox(height: 16),
-            
+
             ListTile(
               leading: const Icon(Icons.folder_open, color: Colors.purple),
               title: const Text('Import from File'),
               subtitle: const Text('Select a CycleSync JSON backup file'),
-              trailing: _isImporting 
+              trailing: _isImporting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -299,13 +307,29 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            _buildTip('💾', 'Regular Backups', 'Export your data regularly to avoid data loss'),
+            _buildTip(
+              '💾',
+              'Regular Backups',
+              'Export your data regularly to avoid data loss',
+            ),
             const SizedBox(height: 8),
-            _buildTip('📱', 'Device Transfer', 'Use JSON backups to transfer data between devices'),
+            _buildTip(
+              '📱',
+              'Device Transfer',
+              'Use JSON backups to transfer data between devices',
+            ),
             const SizedBox(height: 8),
-            _buildTip('📊', 'External Analysis', 'Use CSV exports for analysis in spreadsheet apps'),
+            _buildTip(
+              '📊',
+              'External Analysis',
+              'Use CSV exports for analysis in spreadsheet apps',
+            ),
             const SizedBox(height: 8),
-            _buildTip('🔒', 'Privacy', 'Your data stays private - backups are stored locally on your device'),
+            _buildTip(
+              '🔒',
+              'Privacy',
+              'Your data stays private - backups are stored locally on your device',
+            ),
           ],
         ),
       ),
@@ -322,16 +346,10 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.blue.shade700,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
               ),
             ],
           ),
@@ -360,22 +378,22 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
           children: [
             Text(
               'Backup & Restore',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
               'Keep your cycle data safe with regular backups. Export to share with healthcare providers or for your own analysis.',
             ),
             const SizedBox(height: 24),
-            
+
             _buildExportSection(),
             const SizedBox(height: 16),
-            
+
             _buildImportSection(),
             const SizedBox(height: 16),
-            
+
             _buildInfoSection(),
             const SizedBox(height: 32),
           ],

@@ -105,7 +105,7 @@ class SettingsScreen extends StatelessWidget {
 
             // Appearance Section
             Text(
-              l10n?.appearanceTitle ?? 'Appearance',
+              l10n.appearanceTitle ?? 'Appearance',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -120,8 +120,8 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       _buildThemeOption(
                         context: context,
-                        title: l10n?.lightMode ?? 'Light Mode',
-                        subtitle: l10n?.lightModeDescription ?? 'Use light theme',
+                        title: l10n.lightMode ?? 'Light Mode',
+                        subtitle: l10n.lightModeDescription ?? 'Use light theme',
                         icon: Icons.light_mode,
                         isSelected: themeService.themeMode == ThemeMode.light,
                         onTap: () => themeService.setThemeMode(ThemeMode.light),
@@ -129,8 +129,8 @@ class SettingsScreen extends StatelessWidget {
                       const Divider(height: 1),
                       _buildThemeOption(
                         context: context,
-                        title: l10n?.darkMode ?? 'Dark Mode',
-                        subtitle: l10n?.darkModeDescription ?? 'Use dark theme',
+                        title: l10n.darkMode ?? 'Dark Mode',
+                        subtitle: l10n.darkModeDescription ?? 'Use dark theme',
                         icon: Icons.dark_mode,
                         isSelected: themeService.themeMode == ThemeMode.dark,
                         onTap: () => themeService.setThemeMode(ThemeMode.dark),
@@ -138,8 +138,8 @@ class SettingsScreen extends StatelessWidget {
                       const Divider(height: 1),
                       _buildThemeOption(
                         context: context,
-                        title: l10n?.systemDefault ?? 'System Default',
-                        subtitle: l10n?.systemDefaultDescription ?? 'Follow system settings',
+                        title: l10n.systemDefault ?? 'System Default',
+                        subtitle: l10n.systemDefaultDescription ?? 'Follow system settings',
                         icon: Icons.settings_brightness,
                         isSelected: themeService.themeMode == ThemeMode.system,
                         onTap: () => themeService.setThemeMode(ThemeMode.system),
@@ -158,7 +158,7 @@ class SettingsScreen extends StatelessWidget {
                 return Card(
                   child: ListTile(
                     leading: const Icon(Icons.language, color: Colors.blue),
-                    title: Text(l10n?.languageTitle ?? 'Language'),
+                    title: Text(l10n.languageTitle ?? 'Language'),
                     subtitle: Text('${localizationService.currentLanguageName} • 36 languages available'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -193,7 +193,7 @@ class SettingsScreen extends StatelessWidget {
 
             // Tools Section
             Text(
-              l10n?.tools ?? 'Tools',
+              l10n.tools ?? 'Tools',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -205,48 +205,48 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.notifications),
-                    title: Text(l10n?.settingsNotifications ?? 'Notifications'),
-                    subtitle: Text(l10n?.notificationsManage ?? 'Manage cycle reminders and alerts'),
+                    title: Text(l10n.settingsNotifications ?? 'Notifications'),
+                    subtitle: Text(l10n.notificationsManage ?? 'Manage cycle reminders and alerts'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/notification-settings'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.psychology, color: Colors.purple),
-                    title: Text(l10n?.smartNotifications ?? 'Smart Notifications'),
-                    subtitle: Text(l10n?.smartNotificationsDescription ?? 'AI-powered insights and predictions'),
+                    title: Text(l10n.smartNotifications ?? 'Smart Notifications'),
+                    subtitle: Text(l10n.smartNotificationsDescription ?? 'AI-powered insights and predictions'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/smart-notifications'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.science),
-                    title: Text(l10n?.diagnosticsTitle ?? 'Diagnostics'),
-                    subtitle: Text(l10n?.testFirebaseConnection ?? 'Test Firebase connection'),
+                    title: Text(l10n.diagnosticsTitle ?? 'Diagnostics'),
+                    subtitle: Text(l10n.testFirebaseConnection ?? 'Test Firebase connection'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/diagnostics'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.analytics),
-                    title: Text(l10n?.homeAnalytics ?? 'Analytics'),
-                    subtitle: Text(l10n?.viewCycleInsights ?? 'View cycle insights'),
+                    title: Text(l10n.homeAnalytics ?? 'Analytics'),
+                    subtitle: Text(l10n.viewCycleInsights ?? 'View cycle insights'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/analytics'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.history),
-                    title: Text(l10n?.profileCycleHistory ?? 'Cycle History'),
-                    subtitle: Text(l10n?.viewAllCycles ?? 'View all cycles'),
+                    title: Text(l10n.profileCycleHistory ?? 'Cycle History'),
+                    subtitle: Text(l10n.viewAllCycles ?? 'View all cycles'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/cycle-history'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.trending_up),
-                    title: Text(l10n?.homeSymptomTrends ?? 'Symptom Trends'),
-                    subtitle: Text(l10n?.viewSymptomPatterns ?? 'View symptom patterns and insights'),
+                    title: Text(l10n.homeSymptomTrends ?? 'Symptom Trends'),
+                    subtitle: Text(l10n.viewSymptomPatterns ?? 'View symptom patterns and insights'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/symptom-trends'),
                   ),
@@ -258,7 +258,7 @@ class SettingsScreen extends StatelessWidget {
 
             // Data Section
             Text(
-              l10n?.dataManagement ?? 'Data Management',
+              l10n.dataManagement ?? 'Data Management',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -270,40 +270,40 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.health_and_safety, color: Colors.purple),
-                    title: Text(l10n?.healthIntegration ?? 'Health Integration'),
-                    subtitle: Text(l10n?.healthIntegrationDescription ?? 'Sync with HealthKit and Google Fit'),
+                    title: Text(l10n.healthIntegration ?? 'Health Integration'),
+                    subtitle: Text(l10n.healthIntegrationDescription ?? 'Sync with HealthKit and Google Fit'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/health-integration'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.backup, color: Colors.blue),
-                    title: Text(l10n?.dataManagement ?? 'Data Management'),
-                    subtitle: Text(l10n?.dataManagementDescription ?? 'Export, import, and backup your data'),
+                    title: Text(l10n.dataManagement ?? 'Data Management'),
+                    subtitle: Text(l10n.dataManagementDescription ?? 'Export, import, and backup your data'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/data-management'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.file_download, color: Colors.indigo),
-                    title: Text(l10n?.exportBackup ?? 'Export & Backup'),
-                    subtitle: Text(l10n?.exportBackupDescription ?? 'Generate reports and backup your data'),
+                    title: Text(l10n.exportBackup ?? 'Export & Backup'),
+                    subtitle: Text(l10n.exportBackupDescription ?? 'Generate reports and backup your data'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/export'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.share, color: Colors.orange),
-                    title: Text(l10n?.socialSharing ?? 'Social Sharing'),
-                    subtitle: Text(l10n?.socialSharingDescription ?? 'Share data with providers and partners'),
+                    title: Text(l10n.socialSharing ?? 'Social Sharing'),
+                    subtitle: Text(l10n.socialSharingDescription ?? 'Share data with providers and partners'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/social-sharing'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.cloud_sync, color: Colors.green),
-                    title: Text(l10n?.syncStatus ?? 'Sync Status'),
-                    subtitle: Text(l10n?.syncStatusDescription ?? 'Check cloud synchronization'),
+                    title: Text(l10n.syncStatus ?? 'Sync Status'),
+                    subtitle: Text(l10n.syncStatusDescription ?? 'Check cloud synchronization'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => _showSyncStatusDialog(context),
                   ),
@@ -315,7 +315,7 @@ class SettingsScreen extends StatelessWidget {
 
             // Account Section
             Text(
-              l10n?.account ?? 'Account',
+              l10n.account ?? 'Account',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -327,24 +327,24 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.help_outline, color: Colors.blue),
-                    title: Text(l10n?.settingsHelp ?? 'Help & Support'),
-                    subtitle: Text(l10n?.getHelpUsingCycleSync ?? 'Get help using CycleSync'),
+                    title: Text(l10n.settingsHelp ?? 'Help & Support'),
+                    subtitle: Text(l10n.getHelpUsingCycleSync ?? 'Get help using CycleSync'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => context.push('/help-support'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.info_outline, color: Colors.green),
-                    title: Text(l10n?.about ?? 'About'),
-                    subtitle: Text(l10n?.aboutDescription ?? 'App version and credits'),
+                    title: Text(l10n.about ?? 'About'),
+                    subtitle: Text(l10n.aboutDescription ?? 'App version and credits'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => _showAboutDialog(context),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.red),
-                    title: Text(l10n?.signOut ?? 'Sign Out'),
-                    subtitle: Text(l10n?.signOutDescription ?? 'Sign out of your account'),
+                    title: Text(l10n.signOut ?? 'Sign Out'),
+                    subtitle: Text(l10n.signOutDescription ?? 'Sign out of your account'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () => _showSignOutDialog(context),
                   ),

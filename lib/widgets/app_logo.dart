@@ -2,23 +2,18 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 /// CycleSync app logo widget
-/// A beautiful, theme-aware logo that represents menstrual health and cycle tracking
+/// A beautiful, theme-aware logo with blood drop design representing menstrual health and cycle tracking
 class AppLogo extends StatelessWidget {
   final double size;
   final bool showText;
   final Color? color;
 
-  const AppLogo({
-    super.key,
-    this.size = 60,
-    this.showText = false,
-    this.color,
-  });
+  const AppLogo({super.key, this.size = 60, this.showText = false, this.color});
 
   @override
   Widget build(BuildContext context) {
     final logoColor = color ?? Theme.of(context).colorScheme.primary;
-    
+
     if (showText) {
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -37,7 +32,7 @@ class AppLogo extends StatelessWidget {
         ],
       );
     }
-    
+
     return _buildLogoIcon(logoColor);
   }
 
@@ -50,10 +45,7 @@ class AppLogo extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            logoColor.withAlpha(230),
-            logoColor.withAlpha(180),
-          ],
+          colors: [logoColor.withAlpha(230), logoColor.withAlpha(180)],
         ),
         boxShadow: [
           BoxShadow(
@@ -64,97 +56,116 @@ class AppLogo extends StatelessWidget {
           ),
         ],
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Outer ring representing the cycle
-          Container(
-            width: size * 0.85,
-            height: size * 0.85,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withAlpha(179),
-                width: size * 0.04,
-              ),
-            ),
+      child: Center(
+        child: CustomPaint(
+          size: Size(size * 0.45, size * 0.54),
+          painter: BloodDropPainter(
+            color: Colors.white,
+            shadowColor: logoColor.withValues(alpha: 0.3),
           ),
-          
-          // Inner flower/bloom symbol
-          Container(
-            width: size * 0.5,
-            height: size * 0.5,
-            child: CustomPaint(
-              painter: FlowerPainter(
-                color: Colors.white,
-                strokeWidth: size * 0.04,
-              ),
-            ),
-          ),
-          
-          // Center dot
-          Container(
-            width: size * 0.15,
-            height: size * 0.15,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-/// Custom painter for the flower/bloom symbol in the center
-class FlowerPainter extends CustomPainter {
+/// Custom painter for the blood drop symbol representing menstrual health
+class BloodDropPainter extends CustomPainter {
   final Color color;
-  final double strokeWidth;
+  final Color shadowColor;
 
-  FlowerPainter({
-    required this.color,
-    required this.strokeWidth,
-  });
+  BloodDropPainter({required this.color, required this.shadowColor});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+      ..style = PaintingStyle.fill;
 
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width * 0.35;
+    final shadowPaint = Paint()
+      ..color = shadowColor
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
 
-    // Draw 5 petals forming a flower
-    for (int i = 0; i < 5; i++) {
-      final angle = (i * 72) * (3.14159 / 180); // 72 degrees apart
-      final petalEnd = Offset(
-        center.dx + radius * 0.8 * math.cos(angle),
-        center.dy + radius * 0.8 * math.sin(angle),
-      );
-      
-      // Draw petal as a curved path
-      final path = Path();
-      path.moveTo(center.dx, center.dy);
-      
-      // Control points for smooth curves
-      final control1 = Offset(
-        center.dx + radius * 0.3 * math.cos(angle - 0.5),
-        center.dy + radius * 0.3 * math.sin(angle - 0.5),
-      );
-      final control2 = Offset(
-        center.dx + radius * 0.3 * math.cos(angle + 0.5),
-        center.dy + radius * 0.3 * math.sin(angle + 0.5),
-      );
-      
-      path.quadraticBezierTo(control1.dx, control1.dy, petalEnd.dx, petalEnd.dy);
-      path.quadraticBezierTo(control2.dx, control2.dy, center.dx, center.dy);
-      
-      canvas.drawPath(path, paint);
-    }
+    // Draw shadow first
+    final shadowPath = _createDropPath(size, offset: const Offset(1, 2));
+    canvas.drawPath(shadowPath, shadowPaint);
+
+    // Draw main drop
+    final path = _createDropPath(size);
+    canvas.drawPath(path, paint);
+
+    // Draw inner highlight curve
+    final highlightPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.4)
+      ..style = PaintingStyle.fill;
+
+    final highlightPath = Path();
+    highlightPath.moveTo(size.width * 0.3, size.height * 0.2);
+    highlightPath.quadraticBezierTo(
+      size.width * 0.4,
+      size.height * 0.15,
+      size.width * 0.5,
+      size.height * 0.25,
+    );
+    highlightPath.quadraticBezierTo(
+      size.width * 0.45,
+      size.height * 0.4,
+      size.width * 0.35,
+      size.height * 0.5,
+    );
+    highlightPath.quadraticBezierTo(
+      size.width * 0.25,
+      size.height * 0.35,
+      size.width * 0.3,
+      size.height * 0.2,
+    );
+
+    canvas.drawPath(highlightPath, highlightPaint);
+  }
+
+  Path _createDropPath(Size size, {Offset offset = Offset.zero}) {
+    final path = Path();
+    final width = size.width;
+    final height = size.height;
+
+    // Start at the top point of the drop
+    path.moveTo(width / 2 + offset.dx, 0 + offset.dy);
+
+    // Left side curve
+    path.quadraticBezierTo(
+      width * 0.1 + offset.dx,
+      height * 0.3 + offset.dy,
+      width * 0.15 + offset.dx,
+      height * 0.6 + offset.dy,
+    );
+
+    // Bottom curve
+    path.quadraticBezierTo(
+      width * 0.2 + offset.dx,
+      height * 0.9 + offset.dy,
+      width / 2 + offset.dx,
+      height + offset.dy,
+    );
+
+    // Right side curve
+    path.quadraticBezierTo(
+      width * 0.8 + offset.dx,
+      height * 0.9 + offset.dy,
+      width * 0.85 + offset.dx,
+      height * 0.6 + offset.dy,
+    );
+
+    // Top right curve back to start
+    path.quadraticBezierTo(
+      width * 0.9 + offset.dx,
+      height * 0.3 + offset.dy,
+      width / 2 + offset.dx,
+      0 + offset.dy,
+    );
+
+    path.close();
+    return path;
   }
 
   @override
@@ -177,7 +188,7 @@ class SimpleAppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logoColor = color ?? Theme.of(context).colorScheme.primary;
-    
+
     if (showText) {
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -196,7 +207,7 @@ class SimpleAppLogo extends StatelessWidget {
         ],
       );
     }
-    
+
     return _buildSimpleIcon(logoColor);
   }
 
@@ -209,10 +220,7 @@ class SimpleAppLogo extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            logoColor,
-            logoColor.withAlpha(204),
-          ],
+          colors: [logoColor, logoColor.withAlpha(204)],
         ),
         boxShadow: [
           BoxShadow(
@@ -271,21 +279,13 @@ class _AnimatedAppLogoState extends State<AnimatedAppLogo>
       vsync: this,
     )..repeat(reverse: true);
 
-    _rotationAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: Curves.linear,
-    ));
+    _rotationAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -315,4 +315,3 @@ class _AnimatedAppLogoState extends State<AnimatedAppLogo>
     );
   }
 }
-

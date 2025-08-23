@@ -32,16 +32,12 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: Colors.blue.shade600,
-                        ),
+                        Icon(Icons.info_outline, color: Colors.blue.shade600),
                         const SizedBox(width: 8),
                         Text(
                           'Firebase Connection Tester',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -58,18 +54,23 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: _isRunning ? null : _runDiagnostics,
-                icon: _isRunning 
+                icon: _isRunning
                     ? const SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.play_arrow),
-                label: Text(_isRunning ? 'Running Tests...' : 'Run Diagnostics'),
+                label: Text(
+                  _isRunning ? 'Running Tests...' : 'Run Diagnostics',
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ),
@@ -77,31 +78,22 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
             if (_results != null) ...[
               Text(
                 'Test Results',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              Expanded(
-                child: _buildResultsView(),
-              ),
+              Expanded(child: _buildResultsView()),
             ] else if (!_isRunning) ...[
               const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.science,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
+                    Icon(Icons.science, size: 64, color: Colors.grey),
                     SizedBox(height: 16),
                     Text(
                       'Ready to run diagnostics',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -142,13 +134,15 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     if (_results == null) return const SizedBox.shrink();
 
     final tests = _results!['tests'] as Map<String, dynamic>;
-    
+
     return SingleChildScrollView(
       child: Column(
         children: [
           _buildSummaryCard(tests),
           const SizedBox(height: 16),
-          ...tests.entries.map((entry) => _buildTestCard(entry.key, entry.value)),
+          ...tests.entries.map(
+            (entry) => _buildTestCard(entry.key, entry.value),
+          ),
         ],
       ),
     );
@@ -184,7 +178,9 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   Text(
                     '$passed/$total tests passed',
                     style: TextStyle(
-                      color: allPassed ? Colors.green.shade700 : Colors.orange.shade700,
+                      color: allPassed
+                          ? Colors.green.shade700
+                          : Colors.orange.shade700,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

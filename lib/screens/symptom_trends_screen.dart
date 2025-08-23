@@ -12,16 +12,22 @@ class SymptomTrendsScreen extends StatefulWidget {
   State<SymptomTrendsScreen> createState() => _SymptomTrendsScreenState();
 }
 
-class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerProviderStateMixin {
+class _SymptomTrendsScreenState extends State<SymptomTrendsScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   List<CycleData> _cycles = [];
   bool _isLoading = true;
   String? _error;
-  
+
   // Chart configurations
   String _selectedTimeRange = '6 months';
-  final List<String> _timeRangeOptions = ['3 months', '6 months', '1 year', 'All time'];
-  
+  final List<String> _timeRangeOptions = [
+    '3 months',
+    '6 months',
+    '1 year',
+    'All time',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +50,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
     try {
       final rawCycles = await FirebaseService.getCycles(limit: 100);
       final cycles = rawCycles.map((raw) => _convertToCycleData(raw)).toList();
-      
+
       setState(() {
         _cycles = cycles;
         _isLoading = false;
@@ -92,9 +98,12 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
     if (flow == null) return FlowIntensity.medium;
     if (flow is String) {
       switch (flow.toLowerCase()) {
-        case 'light': return FlowIntensity.light;
-        case 'heavy': return FlowIntensity.heavy;
-        default: return FlowIntensity.medium;
+        case 'light':
+          return FlowIntensity.light;
+        case 'heavy':
+          return FlowIntensity.heavy;
+        default:
+          return FlowIntensity.medium;
       }
     }
     return FlowIntensity.medium;
@@ -103,7 +112,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
   List<Symptom> _parseSymptoms(dynamic symptoms) {
     if (symptoms == null) return [];
     if (symptoms is! List) return [];
-    
+
     return symptoms
         .map((name) => Symptom.fromName(name.toString()))
         .where((symptom) => symptom != null)
@@ -114,7 +123,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
   List<CycleData> _getFilteredCycles() {
     final now = DateTime.now();
     final DateTime cutoffDate;
-    
+
     switch (_selectedTimeRange) {
       case '3 months':
         cutoffDate = now.subtract(const Duration(days: 90));
@@ -128,8 +137,10 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
       default:
         return _cycles;
     }
-    
-    return _cycles.where((cycle) => cycle.startDate.isAfter(cutoffDate)).toList();
+
+    return _cycles
+        .where((cycle) => cycle.startDate.isAfter(cutoffDate))
+        .toList();
   }
 
   Widget _buildHeader() {
@@ -142,7 +153,11 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
           children: [
             Row(
               children: [
-                Icon(Icons.trending_up, color: Theme.of(context).colorScheme.primary, size: 28),
+                Icon(
+                  Icons.trending_up,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -165,7 +180,11 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Icon(Icons.expand_more, color: Theme.of(context).colorScheme.primary, size: 20),
+                      Icon(
+                        Icons.expand_more,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 20,
+                      ),
                     ],
                   ),
                   onSelected: (value) {
@@ -174,10 +193,10 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                     });
                   },
                   itemBuilder: (context) => _timeRangeOptions
-                      .map((option) => PopupMenuItem(
-                            value: option,
-                            child: Text(option),
-                          ))
+                      .map(
+                        (option) =>
+                            PopupMenuItem(value: option, child: Text(option)),
+                      )
                       .toList(),
                 ),
               ],
@@ -198,7 +217,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
 
   Widget _buildSymptomFrequencyTab() {
     final filteredCycles = _getFilteredCycles();
-    
+
     if (filteredCycles.isEmpty) {
       return _buildEmptyState('No data available for the selected time range');
     }
@@ -206,14 +225,14 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
     // Calculate symptom frequency
     final Map<String, int> symptomCounts = {};
     final Map<String, Symptom> symptomDetails = {};
-    
+
     for (final cycle in filteredCycles) {
       for (final symptom in cycle.symptoms) {
         symptomCounts[symptom.name] = (symptomCounts[symptom.name] ?? 0) + 1;
         symptomDetails[symptom.name] = symptom;
       }
     }
-    
+
     if (symptomCounts.isEmpty) {
       return _buildEmptyState('No symptoms tracked in this time period');
     }
@@ -269,8 +288,10 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                               showTitles: true,
                               reservedSize: 60,
                               getTitlesWidget: (value, meta) {
-                                if (value.toInt() >= sortedSymptoms.length) return const Text('');
-                                final symptomName = sortedSymptoms[value.toInt()].key;
+                                if (value.toInt() >= sortedSymptoms.length)
+                                  return const Text('');
+                                final symptomName =
+                                    sortedSymptoms[value.toInt()].key;
                                 final symptom = symptomDetails[symptomName];
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 8),
@@ -284,7 +305,8 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        symptom?.displayName.split(' ').first ?? '',
+                                        symptom?.displayName.split(' ').first ??
+                                            '',
                                         style: const TextStyle(fontSize: 10),
                                         textAlign: TextAlign.center,
                                       ),
@@ -294,15 +316,19 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                               },
                             ),
                           ),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
                         ),
                         borderData: FlBorderData(show: false),
                         barGroups: sortedSymptoms.asMap().entries.map((entry) {
                           final index = entry.key;
                           final symptomEntry = entry.value;
                           final symptom = symptomDetails[symptomEntry.key];
-                          
+
                           return BarChartGroupData(
                             x: index,
                             barRods: [
@@ -310,7 +336,9 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                                 toY: symptomEntry.value.toDouble(),
                                 color: symptom?.color ?? Colors.purple,
                                 width: 20,
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(4),
+                                ),
                               ),
                             ],
                           );
@@ -322,9 +350,9 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Detailed list
           Card(
             child: Padding(
@@ -341,8 +369,9 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                   const SizedBox(height: 12),
                   ...sortedSymptoms.map((entry) {
                     final symptom = symptomDetails[entry.key];
-                    final percentage = (entry.value / filteredCycles.length * 100);
-                    
+                    final percentage =
+                        (entry.value / filteredCycles.length * 100);
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(
@@ -359,7 +388,9 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                               children: [
                                 Text(
                                   symptom?.displayName ?? entry.key,
-                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 Text(
                                   '${entry.value} cycles (${percentage.toStringAsFixed(1)}%)',
@@ -372,9 +403,14 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: symptom?.color.withOpacity(0.1) ?? Colors.grey.shade100,
+                              color:
+                                  symptom?.color.withValues(alpha: 0.1) ??
+                                  Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -401,9 +437,11 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
 
   Widget _buildWellbeingTrendsTab() {
     final filteredCycles = _getFilteredCycles();
-    
+
     if (filteredCycles.isEmpty) {
-      return _buildEmptyState('No wellbeing data available for the selected time range');
+      return _buildEmptyState(
+        'No wellbeing data available for the selected time range',
+      );
     }
 
     // Sort cycles by date
@@ -417,7 +455,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
     for (int i = 0; i < filteredCycles.length; i++) {
       final cycle = filteredCycles[i];
       final x = i.toDouble();
-      
+
       moodSpots.add(FlSpot(x, cycle.wellbeing.mood));
       energySpots.add(FlSpot(x, cycle.wellbeing.energy));
       painSpots.add(FlSpot(x, cycle.wellbeing.pain));
@@ -462,8 +500,16 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                               reservedSize: 40,
                               interval: 1,
                               getTitlesWidget: (value, meta) {
-                                const labels = ['', 'Poor', 'Low', 'Okay', 'Good', 'Great'];
-                                if (value.toInt() >= labels.length) return const Text('');
+                                const labels = [
+                                  '',
+                                  'Poor',
+                                  'Low',
+                                  'Okay',
+                                  'Good',
+                                  'Great',
+                                ];
+                                if (value.toInt() >= labels.length)
+                                  return const Text('');
                                 return Text(
                                   labels[value.toInt()],
                                   style: const TextStyle(fontSize: 10),
@@ -475,9 +521,11 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                             sideTitles: SideTitles(
                               showTitles: true,
                               reservedSize: 30,
-                              interval: (filteredCycles.length / 6).ceilToDouble(),
+                              interval: (filteredCycles.length / 6)
+                                  .ceilToDouble(),
                               getTitlesWidget: (value, meta) {
-                                if (value.toInt() >= filteredCycles.length) return const Text('');
+                                if (value.toInt() >= filteredCycles.length)
+                                  return const Text('');
                                 final cycle = filteredCycles[value.toInt()];
                                 return Text(
                                   DateFormat.MMMd().format(cycle.startDate),
@@ -486,8 +534,12 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                               },
                             ),
                           ),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
                         ),
                         borderData: FlBorderData(show: true),
                         minX: 0,
@@ -500,17 +552,20 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                             isCurved: true,
                             color: Colors.purple,
                             barWidth: 3,
-                            dotData: FlDotData(show: true, getDotPainter: (spot, percent, barData, index) {
-                              return FlDotCirclePainter(
-                                radius: 3,
-                                color: Colors.purple,
-                                strokeWidth: 1,
-                                strokeColor: Colors.white,
-                              );
-                            }),
+                            dotData: FlDotData(
+                              show: true,
+                              getDotPainter: (spot, percent, barData, index) {
+                                return FlDotCirclePainter(
+                                  radius: 3,
+                                  color: Colors.purple,
+                                  strokeWidth: 1,
+                                  strokeColor: Colors.white,
+                                );
+                              },
+                            ),
                             belowBarData: BarAreaData(
                               show: true,
-                              color: Colors.purple.withOpacity(0.1),
+                              color: Colors.purple.withValues(alpha: 0.1),
                             ),
                           ),
                           LineChartBarData(
@@ -518,28 +573,34 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                             isCurved: true,
                             color: Colors.orange,
                             barWidth: 3,
-                            dotData: FlDotData(show: true, getDotPainter: (spot, percent, barData, index) {
-                              return FlDotCirclePainter(
-                                radius: 3,
-                                color: Colors.orange,
-                                strokeWidth: 1,
-                                strokeColor: Colors.white,
-                              );
-                            }),
+                            dotData: FlDotData(
+                              show: true,
+                              getDotPainter: (spot, percent, barData, index) {
+                                return FlDotCirclePainter(
+                                  radius: 3,
+                                  color: Colors.orange,
+                                  strokeWidth: 1,
+                                  strokeColor: Colors.white,
+                                );
+                              },
+                            ),
                           ),
                           LineChartBarData(
                             spots: painSpots,
                             isCurved: true,
                             color: Colors.red,
                             barWidth: 3,
-                            dotData: FlDotData(show: true, getDotPainter: (spot, percent, barData, index) {
-                              return FlDotCirclePainter(
-                                radius: 3,
-                                color: Colors.red,
-                                strokeWidth: 1,
-                                strokeColor: Colors.white,
-                              );
-                            }),
+                            dotData: FlDotData(
+                              show: true,
+                              getDotPainter: (spot, percent, barData, index) {
+                                return FlDotCirclePainter(
+                                  radius: 3,
+                                  color: Colors.red,
+                                  strokeWidth: 1,
+                                  strokeColor: Colors.white,
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -559,9 +620,9 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Averages card
           Card(
             child: Padding(
@@ -578,19 +639,31 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                   const SizedBox(height: 12),
                   _buildAverageRow(
                     'Mood',
-                    filteredCycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / filteredCycles.length,
+                    filteredCycles.fold(
+                          0.0,
+                          (sum, c) => sum + c.wellbeing.mood,
+                        ) /
+                        filteredCycles.length,
                     Colors.purple,
                   ),
                   const SizedBox(height: 8),
                   _buildAverageRow(
                     'Energy',
-                    filteredCycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) / filteredCycles.length,
+                    filteredCycles.fold(
+                          0.0,
+                          (sum, c) => sum + c.wellbeing.energy,
+                        ) /
+                        filteredCycles.length,
                     Colors.orange,
                   ),
                   const SizedBox(height: 8),
                   _buildAverageRow(
                     'Pain',
-                    filteredCycles.fold(0.0, (sum, c) => sum + c.wellbeing.pain) / filteredCycles.length,
+                    filteredCycles.fold(
+                          0.0,
+                          (sum, c) => sum + c.wellbeing.pain,
+                        ) /
+                        filteredCycles.length,
                     Colors.red,
                   ),
                 ],
@@ -609,10 +682,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
         Text(
@@ -626,20 +696,13 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
   Widget _buildAverageRow(String label, double average, Color color) {
     return Row(
       children: [
-        Icon(
-          _getIconForWellbeingType(label),
-          color: color,
-          size: 20,
-        ),
+        Icon(_getIconForWellbeingType(label), color: color, size: 20),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
+              Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
               Row(
                 children: List.generate(5, (index) {
                   return Icon(
@@ -679,7 +742,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
 
   Widget _buildCorrelationsTab() {
     final filteredCycles = _getFilteredCycles();
-    
+
     if (filteredCycles.length < 5) {
       return _buildEmptyState('Need at least 5 cycles to show correlations');
     }
@@ -706,12 +769,12 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Most common symptom combinations
                   _buildSymptomCombinations(filteredCycles),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Wellbeing impact
                   _buildWellbeingImpact(filteredCycles),
                 ],
@@ -726,7 +789,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
   Widget _buildSymptomCombinations(List<CycleData> cycles) {
     // Find common symptom pairs
     final Map<String, int> combinations = {};
-    
+
     for (final cycle in cycles) {
       final symptoms = cycle.symptoms;
       for (int i = 0; i < symptoms.length; i++) {
@@ -741,7 +804,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
 
     final sortedCombinations = combinations.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
+
     if (sortedCombinations.isEmpty) {
       return const Text('No symptom combinations found');
     }
@@ -751,9 +814,9 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
       children: [
         Text(
           'Most Common Symptom Combinations',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         ...sortedCombinations.take(5).map((entry) {
@@ -763,9 +826,12 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -808,45 +874,48 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
     // Calculate average wellbeing scores when specific symptoms are present
     final Map<String, List<double>> symptomMoodMap = {};
     final Map<String, List<double>> symptomEnergyMap = {};
-    
+
     for (final cycle in cycles) {
       for (final symptom in cycle.symptoms) {
         symptomMoodMap[symptom.displayName] ??= [];
         symptomMoodMap[symptom.displayName]!.add(cycle.wellbeing.mood);
-        
+
         symptomEnergyMap[symptom.displayName] ??= [];
         symptomEnergyMap[symptom.displayName]!.add(cycle.wellbeing.energy);
       }
     }
 
-    final overallMoodAvg = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / cycles.length;
-    final overallEnergyAvg = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) / cycles.length;
+    final overallMoodAvg =
+        cycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / cycles.length;
+    final overallEnergyAvg =
+        cycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) / cycles.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Symptom Impact on Wellbeing',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         ...symptomMoodMap.entries.take(5).map((entry) {
           final symptomName = entry.key;
           final moodScores = entry.value;
           final energyScores = symptomEnergyMap[symptomName] ?? [];
-          
+
           if (moodScores.length < 2) return const SizedBox.shrink();
-          
-          final avgMood = moodScores.reduce((a, b) => a + b) / moodScores.length;
-          final avgEnergy = energyScores.isNotEmpty 
-              ? energyScores.reduce((a, b) => a + b) / energyScores.length 
+
+          final avgMood =
+              moodScores.reduce((a, b) => a + b) / moodScores.length;
+          final avgEnergy = energyScores.isNotEmpty
+              ? energyScores.reduce((a, b) => a + b) / energyScores.length
               : 0.0;
-          
+
           final moodDiff = avgMood - overallMoodAvg;
           final energyDiff = avgEnergy - overallEnergyAvg;
-          
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Container(
@@ -876,7 +945,11 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Icon(Icons.battery_charging_full, size: 16, color: Colors.orange),
+                      Icon(
+                        Icons.battery_charging_full,
+                        size: 16,
+                        color: Colors.orange,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Energy: ${energyDiff.toStringAsFixed(1)}',
@@ -899,7 +972,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
 
   Widget _buildInsightsTab() {
     final filteredCycles = _getFilteredCycles();
-    
+
     if (filteredCycles.isEmpty) {
       return _buildEmptyState('No data available for insights');
     }
@@ -934,77 +1007,79 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 16),
-                  
-                  ...insights.map((insight) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: insight.color.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: insight.color.withOpacity(0.2),
+
+                  ...insights.map(
+                    (insight) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: insight.color.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: insight.color.withValues(alpha: 0.2),
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                insight.icon,
-                                color: insight.color,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                insight.title,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  insight.icon,
                                   color: insight.color,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  insight.title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: insight.color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              insight.description,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            if (insight.recommendation != null) ...[
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.tips_and_updates,
+                                      size: 16,
+                                      color: Colors.blue.shade600,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        insight.recommendation!,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.blue.shade700,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            insight.description,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          if (insight.recommendation != null) ...[
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.tips_and_updates,
-                                    size: 16,
-                                    color: Colors.blue.shade600,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      insight.recommendation!,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.blue.shade700,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
-                        ],
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -1016,74 +1091,100 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
 
   List<TrendInsight> _generateInsights(List<CycleData> cycles) {
     final insights = <TrendInsight>[];
-    
+
     // Most frequent symptom
     final Map<String, int> symptomCounts = {};
     for (final cycle in cycles) {
       for (final symptom in cycle.symptoms) {
-        symptomCounts[symptom.displayName] = (symptomCounts[symptom.displayName] ?? 0) + 1;
+        symptomCounts[symptom.displayName] =
+            (symptomCounts[symptom.displayName] ?? 0) + 1;
       }
     }
-    
+
     if (symptomCounts.isNotEmpty) {
-      final mostFrequent = symptomCounts.entries.reduce((a, b) => a.value > b.value ? a : b);
+      final mostFrequent = symptomCounts.entries.reduce(
+        (a, b) => a.value > b.value ? a : b,
+      );
       final percentage = (mostFrequent.value / cycles.length * 100);
-      
-      insights.add(TrendInsight(
-        title: 'Most Common Symptom',
-        description: '${mostFrequent.key} appears in ${percentage.toStringAsFixed(1)}% of your cycles (${mostFrequent.value} out of ${cycles.length}).',
-        icon: Icons.trending_up,
-        color: Colors.blue,
-        recommendation: 'Consider tracking what might trigger this symptom - diet, stress, sleep patterns, or cycle phase.',
-      ));
+
+      insights.add(
+        TrendInsight(
+          title: 'Most Common Symptom',
+          description:
+              '${mostFrequent.key} appears in ${percentage.toStringAsFixed(1)}% of your cycles (${mostFrequent.value} out of ${cycles.length}).',
+          icon: Icons.trending_up,
+          color: Colors.blue,
+          recommendation:
+              'Consider tracking what might trigger this symptom - diet, stress, sleep patterns, or cycle phase.',
+        ),
+      );
     }
-    
+
     // Mood patterns
-    final avgMood = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / cycles.length;
+    final avgMood =
+        cycles.fold(0.0, (sum, c) => sum + c.wellbeing.mood) / cycles.length;
     if (avgMood >= 4.0) {
-      insights.add(TrendInsight(
-        title: 'Great Mood Stability',
-        description: 'Your average mood score is ${avgMood.toStringAsFixed(1)}/5, showing excellent emotional wellbeing during cycles.',
-        icon: Icons.sentiment_very_satisfied,
-        color: Colors.green,
-      ));
+      insights.add(
+        TrendInsight(
+          title: 'Great Mood Stability',
+          description:
+              'Your average mood score is ${avgMood.toStringAsFixed(1)}/5, showing excellent emotional wellbeing during cycles.',
+          icon: Icons.sentiment_very_satisfied,
+          color: Colors.green,
+        ),
+      );
     } else if (avgMood < 2.5) {
-      insights.add(TrendInsight(
-        title: 'Mood Support Needed',
-        description: 'Your average mood score is ${avgMood.toStringAsFixed(1)}/5. Consider strategies to support emotional wellbeing.',
-        icon: Icons.sentiment_dissatisfied,
-        color: Colors.orange,
-        recommendation: 'Try mindfulness, regular exercise, adequate sleep, or consider speaking with a healthcare provider.',
-      ));
+      insights.add(
+        TrendInsight(
+          title: 'Mood Support Needed',
+          description:
+              'Your average mood score is ${avgMood.toStringAsFixed(1)}/5. Consider strategies to support emotional wellbeing.',
+          icon: Icons.sentiment_dissatisfied,
+          color: Colors.orange,
+          recommendation:
+              'Try mindfulness, regular exercise, adequate sleep, or consider speaking with a healthcare provider.',
+        ),
+      );
     }
-    
+
     // Energy patterns
-    final avgEnergy = cycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) / cycles.length;
+    final avgEnergy =
+        cycles.fold(0.0, (sum, c) => sum + c.wellbeing.energy) / cycles.length;
     if (avgEnergy < 2.5) {
-      insights.add(TrendInsight(
-        title: 'Energy Management',
-        description: 'Your average energy level is ${avgEnergy.toStringAsFixed(1)}/5 during cycles.',
-        icon: Icons.battery_2_bar,
-        color: Colors.red,
-        recommendation: 'Focus on iron-rich foods, adequate sleep, and gentle exercise. Low energy during cycles is common but manageable.',
-      ));
+      insights.add(
+        TrendInsight(
+          title: 'Energy Management',
+          description:
+              'Your average energy level is ${avgEnergy.toStringAsFixed(1)}/5 during cycles.',
+          icon: Icons.battery_2_bar,
+          color: Colors.red,
+          recommendation:
+              'Focus on iron-rich foods, adequate sleep, and gentle exercise. Low energy during cycles is common but manageable.',
+        ),
+      );
     }
-    
+
     // Cycle length insights
     final completedCycles = cycles.where((c) => c.isCompleted).toList();
     if (completedCycles.isNotEmpty) {
-      final avgLength = completedCycles.fold(0, (sum, c) => sum + c.lengthInDays) / completedCycles.length;
+      final avgLength =
+          completedCycles.fold(0, (sum, c) => sum + c.lengthInDays) /
+          completedCycles.length;
       if (avgLength < 21 || avgLength > 35) {
-        insights.add(TrendInsight(
-          title: 'Cycle Length Pattern',
-          description: 'Your average cycle length is ${avgLength.toStringAsFixed(1)} days, which is ${avgLength < 21 ? "shorter" : "longer"} than typical.',
-          icon: Icons.schedule,
-          color: Colors.purple,
-          recommendation: 'This could be normal for you, but consider discussing with a healthcare provider if you have concerns.',
-        ));
+        insights.add(
+          TrendInsight(
+            title: 'Cycle Length Pattern',
+            description:
+                'Your average cycle length is ${avgLength.toStringAsFixed(1)} days, which is ${avgLength < 21 ? "shorter" : "longer"} than typical.',
+            icon: Icons.schedule,
+            color: Colors.purple,
+            recommendation:
+                'This could be normal for you, but consider discussing with a healthcare provider if you have concerns.',
+          ),
+        );
       }
     }
-    
+
     return insights;
   }
 
@@ -1092,11 +1193,7 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.insights,
-            size: 64,
-            color: Colors.grey.shade300,
-          ),
+          Icon(Icons.insights, size: 64, color: Colors.grey.shade300),
           const SizedBox(height: 16),
           Text(
             message,
@@ -1138,7 +1235,10 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
                 tabs: const [
                   Tab(text: 'Frequency', icon: Icon(Icons.bar_chart, size: 16)),
                   Tab(text: 'Wellbeing', icon: Icon(Icons.favorite, size: 16)),
-                  Tab(text: 'Patterns', icon: Icon(Icons.scatter_plot, size: 16)),
+                  Tab(
+                    text: 'Patterns',
+                    icon: Icon(Icons.scatter_plot, size: 16),
+                  ),
                   Tab(text: 'Insights', icon: Icon(Icons.lightbulb, size: 16)),
                 ],
               ),
@@ -1146,42 +1246,49 @@ class _SymptomTrendsScreenState extends State<SymptomTrendsScreen> with TickerPr
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.red.shade300,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load data',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(_error!, textAlign: TextAlign.center),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _loadCycleData,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              ),
+            )
+          : _cycles.isEmpty
+          ? _buildEmptyState('No cycle data available')
+          : Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
                     children: [
-                      Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
-                      const SizedBox(height: 16),
-                      Text('Failed to load data', style: Theme.of(context).textTheme.headlineSmall),
-                      const SizedBox(height: 8),
-                      Text(_error!, textAlign: TextAlign.center),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _loadCycleData,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                      ),
+                      _buildSymptomFrequencyTab(),
+                      _buildWellbeingTrendsTab(),
+                      _buildCorrelationsTab(),
+                      _buildInsightsTab(),
                     ],
                   ),
-                )
-              : _cycles.isEmpty
-                  ? _buildEmptyState('No cycle data available')
-                  : Column(
-                      children: [
-                        _buildHeader(),
-                        Expanded(
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                              _buildSymptomFrequencyTab(),
-                              _buildWellbeingTrendsTab(),
-                              _buildCorrelationsTab(),
-                              _buildInsightsTab(),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                ),
+              ],
+            ),
     );
   }
 }

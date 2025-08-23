@@ -45,21 +45,17 @@ class _AIAssistantChatState extends State<AIAssistantChat>
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
-    _suggestionAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _suggestionController,
-      curve: Curves.easeOutQuart,
-    ));
+    _suggestionAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _suggestionController,
+        curve: Curves.easeOutQuart,
+      ),
+    );
 
     // Start animations
     _slideController.forward();
@@ -123,9 +119,11 @@ class _AIAssistantChatState extends State<AIAssistantChat>
     if (suggestion.action != null) {
       suggestion.action!();
     } else {
-      widget.assistantService.sendMessage('${suggestion.actionText}: ${suggestion.title}');
+      widget.assistantService.sendMessage(
+        '${suggestion.actionText}: ${suggestion.title}',
+      );
     }
-    
+
     setState(() {
       _showSuggestions = false;
     });
@@ -155,16 +153,15 @@ class _AIAssistantChatState extends State<AIAssistantChat>
           children: [
             // Header
             _buildHeader(),
-            
+
             // Suggestions (if visible and available)
-            if (_showSuggestions && widget.assistantService.currentSuggestions.isNotEmpty)
+            if (_showSuggestions &&
+                widget.assistantService.currentSuggestions.isNotEmpty)
               _buildSuggestions(),
-            
+
             // Chat messages
-            Expanded(
-              child: _buildMessageList(),
-            ),
-            
+            Expanded(child: _buildMessageList()),
+
             // Input area
             _buildInputArea(),
           ],
@@ -203,15 +200,11 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 ],
               ),
             ),
-            child: const Icon(
-              Icons.psychology,
-              color: Colors.white,
-              size: 22,
-            ),
+            child: const Icon(Icons.psychology, color: Colors.white, size: 22),
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // Title and status
           Expanded(
             child: Column(
@@ -234,14 +227,14 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 else
                   Text(
                     'Online',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.green,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.green),
                   ),
               ],
             ),
           ),
-          
+
           // Action buttons
           IconButton(
             onPressed: () {
@@ -253,7 +246,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
             icon: const Icon(Icons.refresh),
             tooltip: 'New Conversation',
           ),
-          
+
           IconButton(
             onPressed: widget.onClose,
             icon: const Icon(Icons.close),
@@ -278,7 +271,8 @@ class _AIAssistantChatState extends State<AIAssistantChat>
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: widget.assistantService.currentSuggestions.length,
               itemBuilder: (context, index) {
-                final suggestion = widget.assistantService.currentSuggestions[index];
+                final suggestion =
+                    widget.assistantService.currentSuggestions[index];
                 return _buildSuggestionCard(suggestion);
               },
             ),
@@ -326,24 +320,26 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Text(
                   suggestion.title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
+
                 const SizedBox(height: 4),
-                
+
                 Text(
                   suggestion.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -392,28 +388,26 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 ],
               ),
             ),
-            child: const Icon(
-              Icons.psychology,
-              size: 40,
-              color: Colors.blue,
-            ),
+            child: const Icon(Icons.psychology, size: 40, color: Colors.blue),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           Text(
             'AI Assistant Ready',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             'Ask me anything about CycleSync\nor your cycle tracking journey!',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+              color: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -427,13 +421,10 @@ class _AIAssistantChatState extends State<AIAssistantChat>
     final isSystem = message.type == AIMessageType.system;
 
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: 8,
-        top: index == 0 ? 8 : 0,
-      ),
+      padding: EdgeInsets.only(bottom: 8, top: index == 0 ? 8 : 0),
       child: Row(
-        mainAxisAlignment: isUser 
-            ? MainAxisAlignment.end 
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -461,7 +452,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
             ),
             const SizedBox(width: 8),
           ],
-          
+
           // Message content
           Flexible(
             child: Container(
@@ -472,8 +463,12 @@ class _AIAssistantChatState extends State<AIAssistantChat>
               decoration: BoxDecoration(
                 color: _getMessageBackgroundColor(message),
                 borderRadius: BorderRadius.circular(18).copyWith(
-                  bottomLeft: isUser ? const Radius.circular(18) : const Radius.circular(4),
-                  bottomRight: isUser ? const Radius.circular(4) : const Radius.circular(18),
+                  bottomLeft: isUser
+                      ? const Radius.circular(18)
+                      : const Radius.circular(4),
+                  bottomRight: isUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(18),
                 ),
               ),
               child: Column(
@@ -488,13 +483,15 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                         color: _getMessageTextColor(message),
                       ),
                     ),
-                  
+
                   if (!message.isTyping) ...[
                     const SizedBox(height: 4),
                     Text(
                       _formatMessageTime(message.timestamp),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: _getMessageTextColor(message)?.withValues(alpha: 0.6),
+                        color: _getMessageTextColor(
+                          message,
+                        )?.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
                     ),
@@ -503,7 +500,7 @@ class _AIAssistantChatState extends State<AIAssistantChat>
               ),
             ),
           ),
-          
+
           if (isUser) ...[
             const SizedBox(width: 8),
             // User Avatar
@@ -554,7 +551,9 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                 height: 8,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             );
@@ -566,7 +565,12 @@ class _AIAssistantChatState extends State<AIAssistantChat>
 
   Widget _buildInputArea() {
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 16 + MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        16 + MediaQuery.of(context).viewInsets.bottom,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
@@ -603,15 +607,17 @@ class _AIAssistantChatState extends State<AIAssistantChat>
                     vertical: 12,
                   ),
                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                   ),
                 ),
               ),
             ),
           ),
-          
+
           const SizedBox(width: 8),
-          
+
           // Send button
           Container(
             width: 48,

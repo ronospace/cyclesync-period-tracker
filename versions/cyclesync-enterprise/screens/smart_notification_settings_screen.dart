@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/smart_notification_service.dart';
 import '../services/notification_service.dart';
-import '../widgets/custom_app_bar.dart';
 
 /// 🚀 Smart Notification Settings Screen
 /// Nova-level notification controls with AI preferences

@@ -40,7 +40,11 @@ class PlatformAdapter {
         'heart_rate': _generateMockHealthData('heart_rate', startDate, endDate),
         'steps': _generateMockHealthData('steps', startDate, endDate),
         'sleep': _generateMockHealthData('sleep', startDate, endDate),
-        'body_temperature': _generateMockHealthData('temperature', startDate, endDate),
+        'body_temperature': _generateMockHealthData(
+          'temperature',
+          startDate,
+          endDate,
+        ),
       },
       'permissions': {
         'granted': true,
@@ -82,9 +86,21 @@ class PlatformAdapter {
   }) async {
     try {
       if (Platform.isIOS) {
-        return await _scheduleiOSNotification(id, title, body, scheduledDate, payload);
+        return await _scheduleiOSNotification(
+          id,
+          title,
+          body,
+          scheduledDate,
+          payload,
+        );
       } else if (Platform.isAndroid) {
-        return await _scheduleAndroidNotification(id, title, body, scheduledDate, payload);
+        return await _scheduleAndroidNotification(
+          id,
+          title,
+          body,
+          scheduledDate,
+          payload,
+        );
       }
       return false;
     } catch (e) {
@@ -115,13 +131,9 @@ class PlatformAdapter {
           'minute': scheduledDate.minute,
         },
       },
-      'content': {
-        'sound': 'default',
-        'badge': 1,
-        'userInfo': payload ?? {},
-      },
+      'content': {'sound': 'default', 'badge': 1, 'userInfo': payload ?? {}},
     };
-    
+
     debugPrint('iOS Notification scheduled: $notification');
     return true; // Mock implementation
   }
@@ -144,7 +156,7 @@ class PlatformAdapter {
       'importance': 'high',
       'priority': 'high',
     };
-    
+
     debugPrint('Android Notification scheduled: $notification');
     return true; // Mock implementation
   }
@@ -215,7 +227,7 @@ class PlatformAdapter {
       'url': filePath,
       'subject': title,
     };
-    
+
     debugPrint('iOS Share: $shareData');
     return true; // Mock implementation
   }
@@ -234,7 +246,7 @@ class PlatformAdapter {
       'mimeType': mimeType ?? 'text/plain',
       'chooserTitle': 'Share via CycleSync',
     };
-    
+
     debugPrint('Android Share: $shareData');
     return true; // Mock implementation
   }
@@ -250,7 +262,10 @@ class PlatformAdapter {
       } else if (Platform.isAndroid) {
         return await _authenticateAndroid(reason, fallbackToCredentials);
       }
-      return {'success': false, 'message': 'Biometric authentication not supported'};
+      return {
+        'success': false,
+        'message': 'Biometric authentication not supported',
+      };
     } catch (e) {
       return {'success': false, 'error': e.toString()};
     }
@@ -324,12 +339,12 @@ class PlatformAdapter {
   ) {
     final data = <Map<String, dynamic>>[];
     final days = endDate.difference(startDate).inDays;
-    
+
     for (int i = 0; i < days; i++) {
       final date = startDate.add(Duration(days: i));
       double value;
       String unit;
-      
+
       switch (type) {
         case 'heart_rate':
           value = 65 + (i % 15) + (DateTime.now().millisecond % 10);
@@ -340,7 +355,8 @@ class PlatformAdapter {
           unit = 'steps';
           break;
         case 'sleep':
-          value = 420 + (DateTime.now().millisecond % 60); // ~7 hours in minutes
+          value =
+              420 + (DateTime.now().millisecond % 60); // ~7 hours in minutes
           unit = 'minutes';
           break;
         case 'temperature':
@@ -355,7 +371,7 @@ class PlatformAdapter {
           value = DateTime.now().millisecond % 100;
           unit = 'count';
       }
-      
+
       data.add({
         'date': date.toIso8601String(),
         'value': value,
@@ -363,7 +379,7 @@ class PlatformAdapter {
         'source': Platform.isIOS ? 'HealthKit' : 'Google Fit',
       });
     }
-    
+
     return data;
   }
 

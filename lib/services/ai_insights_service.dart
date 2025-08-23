@@ -27,7 +27,9 @@ class AIInsightsService {
     );
   }
 
-  static CycleLengthAnalysis _simpleCycleLengthAnalysis(List<Map<String, dynamic>> cycles) {
+  static CycleLengthAnalysis _simpleCycleLengthAnalysis(
+    List<Map<String, dynamic>> cycles,
+  ) {
     final completedCycles = cycles.where((c) => c['end'] != null).toList();
     if (completedCycles.isEmpty) return CycleLengthAnalysis.empty();
 
@@ -56,7 +58,9 @@ class AIInsightsService {
     );
   }
 
-  static SimpleNextCyclePrediction _simpleNextCyclePrediction(List<Map<String, dynamic>> cycles) {
+  static SimpleNextCyclePrediction _simpleNextCyclePrediction(
+    List<Map<String, dynamic>> cycles,
+  ) {
     if (cycles.length < 3) {
       return SimpleNextCyclePrediction.insufficient();
     }
@@ -84,14 +88,17 @@ class AIInsightsService {
     );
   }
 
-  static SymptomPatterns _simpleSymptomPatterns(List<Map<String, dynamic>> cycles) {
+  static SymptomPatterns _simpleSymptomPatterns(
+    List<Map<String, dynamic>> cycles,
+  ) {
     final symptoms = <String, int>{};
-    
+
     for (final cycle in cycles) {
       final cycleSymptoms = cycle['symptoms'] as List?;
       if (cycleSymptoms != null) {
         for (final symptom in cycleSymptoms) {
-          symptoms[symptom.toString()] = (symptoms[symptom.toString()] ?? 0) + 1;
+          symptoms[symptom.toString()] =
+              (symptoms[symptom.toString()] ?? 0) + 1;
         }
       }
     }
@@ -108,18 +115,24 @@ class AIInsightsService {
     );
   }
 
-  static List<HealthRecommendation> _simpleHealthRecommendations(List<Map<String, dynamic>> cycles) {
+  static List<HealthRecommendation> _simpleHealthRecommendations(
+    List<Map<String, dynamic>> cycles,
+  ) {
     final recommendations = <HealthRecommendation>[];
 
     // Basic recommendation for tracking consistency
     if (cycles.length < 6) {
-      recommendations.add(HealthRecommendation(
-        type: RecommendationType.tracking,
-        priority: RecommendationPriority.medium,
-        title: 'Build Your Data History',
-        description: 'Track more cycles for personalized insights and accurate predictions.',
-        actionable: 'Aim to log at least 6 cycles for the most accurate AI recommendations.',
-      ));
+      recommendations.add(
+        HealthRecommendation(
+          type: RecommendationType.tracking,
+          priority: RecommendationPriority.medium,
+          title: 'Build Your Data History',
+          description:
+              'Track more cycles for personalized insights and accurate predictions.',
+          actionable:
+              'Aim to log at least 6 cycles for the most accurate AI recommendations.',
+        ),
+      );
     }
 
     return recommendations;
@@ -155,9 +168,11 @@ class AIInsightsService {
   static DataQuality _simpleDataQuality(List<Map<String, dynamic>> cycles) {
     if (cycles.isEmpty) return DataQuality.poor();
 
-    final hasSymptoms = cycles.where((c) => 
-      c['symptoms'] != null && (c['symptoms'] as List).isNotEmpty
-    ).length;
+    final hasSymptoms = cycles
+        .where(
+          (c) => c['symptoms'] != null && (c['symptoms'] as List).isNotEmpty,
+        )
+        .length;
 
     final completeness = hasSymptoms / cycles.length;
 
@@ -174,9 +189,9 @@ class AIInsightsService {
       level: level,
       completeness: completeness,
       consistency: cycles.length >= 3 ? 0.8 : 0.5,
-      suggestions: completeness < 0.7 
-        ? ['Track symptoms more consistently for better insights']
-        : ['Great job tracking your cycles!'],
+      suggestions: completeness < 0.7
+          ? ['Track symptoms more consistently for better insights']
+          : ['Great job tracking your cycles!'],
     );
   }
 

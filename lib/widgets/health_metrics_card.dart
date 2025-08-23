@@ -58,9 +58,9 @@ class HealthMetricsCard extends StatelessWidget {
             children: [
               Text(
                 'Health Metrics',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               Text(
                 'Today\'s wellness indicators',
@@ -79,7 +79,7 @@ class HealthMetricsCard extends StatelessWidget {
   Widget _buildHealthScore(BuildContext context) {
     final score = _calculateHealthScore();
     final color = _getScoreColor(score);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -90,11 +90,7 @@ class HealthMetricsCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.star,
-            color: color,
-            size: 16,
-          ),
+          Icon(Icons.star, color: color, size: 16),
           const SizedBox(width: 4),
           Text(
             '$score',
@@ -112,49 +108,57 @@ class HealthMetricsCard extends StatelessWidget {
     final metricItems = <Widget>[];
 
     // Cycle length metric
-    metricItems.add(_buildMetricItem(
-      context,
-      icon: Icons.timeline,
-      iconColor: Colors.blue.shade400,
-      title: 'Avg Cycle Length',
-      value: '${analytics.averageCycleLength.toStringAsFixed(1)} days',
-      trend: MetricTrend.stable,
-    ));
+    metricItems.add(
+      _buildMetricItem(
+        context,
+        icon: Icons.timeline,
+        iconColor: Colors.blue.shade400,
+        title: 'Avg Cycle Length',
+        value: '${analytics.averageCycleLength.toStringAsFixed(1)} days',
+        trend: MetricTrend.stable,
+      ),
+    );
 
     // Regularity score
-    metricItems.add(_buildMetricItem(
-      context,
-      icon: Icons.track_changes,
-      iconColor: Colors.green.shade400,
-      title: 'Regularity',
-      value: '${analytics.regularityScore.toStringAsFixed(0)}%',
-      trend: _getRegularityTrend(),
-    ));
+    metricItems.add(
+      _buildMetricItem(
+        context,
+        icon: Icons.track_changes,
+        iconColor: Colors.green.shade400,
+        title: 'Regularity',
+        value: '${analytics.regularityScore.toStringAsFixed(0)}%',
+        trend: _getRegularityTrend(),
+      ),
+    );
 
     // Mood average from wellbeing
     final avgMood = analytics.wellbeingAverages['mood'];
     if (avgMood != null) {
-      metricItems.add(_buildMetricItem(
-        context,
-        icon: Icons.mood,
-        iconColor: Colors.purple.shade400,
-        title: 'Avg Mood',
-        value: _getMoodText(avgMood),
-        trend: null,
-      ));
+      metricItems.add(
+        _buildMetricItem(
+          context,
+          icon: Icons.mood,
+          iconColor: Colors.purple.shade400,
+          title: 'Avg Mood',
+          value: _getMoodText(avgMood),
+          trend: null,
+        ),
+      );
     }
 
     // Energy average from wellbeing
     final avgEnergy = analytics.wellbeingAverages['energy'];
     if (avgEnergy != null) {
-      metricItems.add(_buildMetricItem(
-        context,
-        icon: Icons.battery_charging_full,
-        iconColor: Colors.orange.shade400,
-        title: 'Avg Energy',
-        value: _getEnergyLevelText(avgEnergy),
-        trend: null,
-      ));
+      metricItems.add(
+        _buildMetricItem(
+          context,
+          icon: Icons.battery_charging_full,
+          iconColor: Colors.orange.shade400,
+          title: 'Avg Energy',
+          value: _getEnergyLevelText(avgEnergy),
+          trend: null,
+        ),
+      );
     }
 
     if (metricItems.isEmpty) {
@@ -183,7 +187,9 @@ class HealthMetricsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withAlpha(60),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withAlpha(40),
@@ -195,17 +201,15 @@ class HealthMetricsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: iconColor,
-                size: 18,
-              ),
+              Icon(icon, color: iconColor, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withAlpha(180),
                     fontSize: 12,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -246,18 +250,16 @@ class HealthMetricsCard extends StatelessWidget {
         break;
     }
 
-    return Icon(
-      icon,
-      color: color,
-      size: 16,
-    );
+    return Icon(icon, color: color, size: 16);
   }
 
   Widget _buildNoMetricsMessage(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withAlpha(60),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withAlpha(60),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -270,9 +272,9 @@ class HealthMetricsCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'No Health Data',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(
@@ -376,7 +378,7 @@ class HealthMetricsCard extends StatelessWidget {
     // For now, return a mock trend
     return MetricTrend.stable;
   }
-  
+
   MetricTrend? _getRegularityTrend() {
     // Calculate regularity trend based on score
     final regularity = analytics.regularityScore;

@@ -9,20 +9,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 /// Cache levels for different types of data
 enum CacheLevel {
-  memory,      // In-memory cache (fastest, limited)
-  persistent,  // Disk cache (fast, larger capacity)
-  database,    // SQLite cache (structured, queryable)
+  memory, // In-memory cache (fastest, limited)
+  persistent, // Disk cache (fast, larger capacity)
+  database, // SQLite cache (structured, queryable)
 }
 
 /// Cache expiry policies
-enum CacheExpiryPolicy {
-  never,
-  session,
-  hourly,
-  daily,
-  weekly,
-  custom,
-}
+enum CacheExpiryPolicy { never, session, hourly, daily, weekly, custom }
 
 /// Cache entry metadata
 class CacheEntry<T> {
@@ -48,10 +41,7 @@ class CacheEntry<T> {
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
-  CacheEntry<T> copyWith({
-    int? accessCount,
-    DateTime? lastAccessed,
-  }) {
+  CacheEntry<T> copyWith({int? accessCount, DateTime? lastAccessed}) {
     return CacheEntry<T>(
       key: key,
       data: data,
@@ -125,16 +115,16 @@ class CacheService {
   final Map<String, CacheEntry> _memoryCache = {};
   SharedPreferences? _prefs;
   Database? _database;
-  
+
   // Configuration
   static const int _maxMemorySize = 50 * 1024 * 1024; // 50MB
   static const int _maxMemoryEntries = 1000;
   static const int _maxDiskSize = 200 * 1024 * 1024; // 200MB
-  
+
   // Performance tracking
   final CacheMetrics _metrics = CacheMetrics();
   final Connectivity _connectivity = Connectivity();
-  
+
   // Timers for cleanup
   Timer? _cleanupTimer;
   Timer? _metricsTimer;
@@ -148,16 +138,16 @@ class CacheService {
     try {
       // Initialize shared preferences
       _prefs = await SharedPreferences.getInstance();
-      
+
       // Initialize SQLite database
       await _initializeDatabase();
-      
+
       // Start periodic cleanup
       _startCleanupTimer();
-      
+
       // Start metrics collection
       _startMetricsTimer();
-      
+
       _initialized = true;
       debugPrint('✅ CacheService initialized successfully');
     } catch (e) {
@@ -201,7 +191,7 @@ class CacheService {
 
   /// Store data in cache with automatic level selection
   Future<void> set<T>(
-    String key, 
+    String key,
     T data, {
     Duration? expiry,
     CacheExpiryPolicy policy = CacheExpiryPolicy.daily,
@@ -226,7 +216,7 @@ class CacheService {
 
     try {
       await _storeEntry(entry);
-      debugPrint('🔄 Cached $key at level ${level.name} (${dataSize} bytes)');
+      debugPrint('🔄 Cached $key at level ${level.name} ($dataSize bytes)');
     } catch (e) {
       debugPrint('❌ Failed to cache $key: $e');
     }
@@ -246,7 +236,8 @@ class CacheService {
           _updateAccessCount(entry);
           _metrics.hits++;
           stopwatch.stop();
-          _metrics.averageAccessTime = (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) / 2;
+          _metrics.averageAccessTime =
+              (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) / 2;
           return entry.data;
         } else {
           _memoryCache.remove(key);
@@ -266,7 +257,9 @@ class CacheService {
             _updateAccessCount(entry);
             _metrics.hits++;
             stopwatch.stop();
-            _metrics.averageAccessTime = (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) / 2;
+            _metrics.averageAccessTime =
+                (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) /
+                2;
             return entry.data;
           } else {
             _prefs?.remove('cache_$key');
@@ -294,14 +287,20 @@ class CacheService {
               } else if (entry.accessCount > 3) {
                 _prefs?.setString('cache_$key', jsonEncode(entry.toMap()));
               }
-              
+
               _updateAccessCount(entry);
               _metrics.hits++;
               stopwatch.stop();
-              _metrics.averageAccessTime = (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) / 2;
+              _metrics.averageAccessTime =
+                  (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) /
+                  2;
               return entry.data;
             } else {
-              await _database!.delete('cache_entries', where: 'key = ?', whereArgs: [key]);
+              await _database!.delete(
+                'cache_entries',
+                where: 'key = ?',
+                whereArgs: [key],
+              );
             }
           } catch (e) {
             debugPrint('Error parsing database cached data for $key: $e');
@@ -311,7 +310,8 @@ class CacheService {
 
       _metrics.misses++;
       stopwatch.stop();
-      _metrics.averageAccessTime = (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) / 2;
+      _metrics.averageAccessTime =
+          (_metrics.averageAccessTime + stopwatch.elapsedMicroseconds) / 2;
       return null;
     } catch (e) {
       debugPrint('❌ Error retrieving cached data for $key: $e');
@@ -328,7 +328,11 @@ class CacheService {
     _memoryCache.remove(key);
     _prefs?.remove('cache_$key');
     if (_database != null) {
-      await _database!.delete('cache_entries', where: 'key = ?', whereArgs: [key]);
+      await _database!.delete(
+        'cache_entries',
+        where: 'key = ?',
+        whereArgs: [key],
+      );
     }
   }
 
@@ -343,7 +347,9 @@ class CacheService {
 
     // Clear shared preferences
     if (_prefs != null) {
-      final keys = _prefs!.getKeys().where((key) => key.startsWith('cache_') && regex.hasMatch(key.substring(6)));
+      final keys = _prefs!.getKeys().where(
+        (key) => key.startsWith('cache_') && regex.hasMatch(key.substring(6)),
+      );
       for (final key in keys) {
         _prefs!.remove(key);
       }
@@ -356,9 +362,13 @@ class CacheService {
           .where((row) => regex.hasMatch(row['key'] as String))
           .map((row) => row['key'] as String)
           .toList();
-      
+
       for (final key in keysToDelete) {
-        await _database!.delete('cache_entries', where: 'key = ?', whereArgs: [key]);
+        await _database!.delete(
+          'cache_entries',
+          where: 'key = ?',
+          whereArgs: [key],
+        );
       }
     }
   }
@@ -368,9 +378,11 @@ class CacheService {
     if (!_initialized) await initialize();
 
     _memoryCache.clear();
-    
+
     if (_prefs != null) {
-      final cacheKeys = _prefs!.getKeys().where((key) => key.startsWith('cache_'));
+      final cacheKeys = _prefs!.getKeys().where(
+        (key) => key.startsWith('cache_'),
+      );
       for (final key in cacheKeys) {
         _prefs!.remove(key);
       }
@@ -388,7 +400,10 @@ class CacheService {
   /// Get cache statistics
   CacheMetrics getMetrics() {
     _metrics.totalEntries = _memoryCache.length;
-    _metrics.totalSize = _memoryCache.values.fold(0, (sum, entry) => sum + entry.size);
+    _metrics.totalSize = _memoryCache.values.fold(
+      0,
+      (sum, entry) => sum + entry.size,
+    );
     return _metrics;
   }
 
@@ -412,7 +427,13 @@ class CacheService {
     }
 
     final computed = await compute();
-    await set(key, computed, expiry: expiry, policy: policy, preferredLevel: preferredLevel);
+    await set(
+      key,
+      computed,
+      expiry: expiry,
+      policy: policy,
+      preferredLevel: preferredLevel,
+    );
     return computed;
   }
 
@@ -457,7 +478,11 @@ class CacheService {
 
   // Private helper methods
 
-  DateTime _calculateExpiryDate(DateTime now, Duration? expiry, CacheExpiryPolicy policy) {
+  DateTime _calculateExpiryDate(
+    DateTime now,
+    Duration? expiry,
+    CacheExpiryPolicy policy,
+  ) {
     if (expiry != null) return now.add(expiry);
 
     switch (policy) {
@@ -485,9 +510,11 @@ class CacheService {
   }
 
   CacheLevel _selectOptimalLevel(int size) {
-    if (size < 10 * 1024) { // < 10KB
+    if (size < 10 * 1024) {
+      // < 10KB
       return CacheLevel.memory;
-    } else if (size < 100 * 1024) { // < 100KB
+    } else if (size < 100 * 1024) {
+      // < 100KB
       return CacheLevel.persistent;
     } else {
       return CacheLevel.database;
@@ -500,13 +527,16 @@ class CacheService {
         _ensureMemoryCapacity();
         _memoryCache[entry.key] = entry;
         break;
-      
+
       case CacheLevel.persistent:
         if (_prefs != null) {
-          await _prefs!.setString('cache_${entry.key}', jsonEncode(entry.toMap()));
+          await _prefs!.setString(
+            'cache_${entry.key}',
+            jsonEncode(entry.toMap()),
+          );
         }
         break;
-      
+
       case CacheLevel.database:
         if (_database != null) {
           await _database!.insert(
@@ -522,7 +552,10 @@ class CacheService {
   void _ensureMemoryCapacity() {
     while (_memoryCache.length >= _maxMemoryEntries) {
       final oldestKey = _memoryCache.entries
-          .reduce((a, b) => a.value.lastAccessed.isBefore(b.value.lastAccessed) ? a : b)
+          .reduce(
+            (a, b) =>
+                a.value.lastAccessed.isBefore(b.value.lastAccessed) ? a : b,
+          )
           .key;
       _memoryCache.remove(oldestKey);
       _metrics.evictions++;
@@ -541,12 +574,18 @@ class CacheService {
         _memoryCache[entry.key] = updatedEntry;
         break;
       case CacheLevel.persistent:
-        _prefs?.setString('cache_${entry.key}', jsonEncode(updatedEntry.toMap()));
+        _prefs?.setString(
+          'cache_${entry.key}',
+          jsonEncode(updatedEntry.toMap()),
+        );
         break;
       case CacheLevel.database:
         _database?.update(
           'cache_entries',
-          {'accessCount': updatedEntry.accessCount, 'lastAccessed': updatedEntry.lastAccessed.toIso8601String()},
+          {
+            'accessCount': updatedEntry.accessCount,
+            'lastAccessed': updatedEntry.lastAccessed.toIso8601String(),
+          },
           where: 'key = ?',
           whereArgs: [entry.key],
         );
@@ -568,7 +607,7 @@ class CacheService {
 
   Future<void> _performCleanup() async {
     final now = DateTime.now();
-    
+
     // Clean expired memory entries
     _memoryCache.removeWhere((key, entry) {
       final expired = entry.isExpired;
@@ -578,7 +617,9 @@ class CacheService {
 
     // Clean expired persistent entries
     if (_prefs != null) {
-      final cacheKeys = _prefs!.getKeys().where((key) => key.startsWith('cache_'));
+      final cacheKeys = _prefs!.getKeys().where(
+        (key) => key.startsWith('cache_'),
+      );
       for (final key in cacheKeys) {
         try {
           final data = _prefs!.getString(key);
@@ -606,10 +647,15 @@ class CacheService {
     }
   }
 
-  Future<void> _conditionalCleanup({DateTime? olderThan, CacheLevel? level}) async {
+  Future<void> _conditionalCleanup({
+    DateTime? olderThan,
+    CacheLevel? level,
+  }) async {
     if (level != null && level == CacheLevel.memory) {
       if (olderThan != null) {
-        _memoryCache.removeWhere((key, entry) => entry.lastAccessed.isBefore(olderThan));
+        _memoryCache.removeWhere(
+          (key, entry) => entry.lastAccessed.isBefore(olderThan),
+        );
       }
     }
 
@@ -623,7 +669,11 @@ class CacheService {
       }
 
       if (whereClause.isNotEmpty) {
-        await _database!.delete('cache_entries', where: whereClause, whereArgs: whereArgs);
+        await _database!.delete(
+          'cache_entries',
+          where: whereClause,
+          whereArgs: whereArgs,
+        );
       }
     }
   }

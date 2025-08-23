@@ -4,7 +4,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -47,26 +47,16 @@ class SimpleHomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              Icons.favorite,
-              size: 120,
-              color: Colors.pink,
-            ),
+            Icon(Icons.favorite, size: 120, color: Colors.pink),
             SizedBox(height: 24),
             Text(
               'Welcome to CycleSync',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             Text(
               'Your personal cycle tracking companion',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 32),
             Card(
@@ -75,11 +65,7 @@ class SimpleHomeScreen extends StatelessWidget {
                 padding: EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 60,
-                      color: Colors.green,
-                    ),
+                    Icon(Icons.check_circle, size: 60, color: Colors.green),
                     SizedBox(height: 16),
                     Text(
                       'App Successfully Deployed!',
@@ -91,9 +77,7 @@ class SimpleHomeScreen extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       'Firebase integration is active and ready to use.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                   ],

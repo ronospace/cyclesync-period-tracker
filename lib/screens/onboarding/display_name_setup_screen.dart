@@ -15,17 +15,17 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
     with TickerProviderStateMixin {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
   late AnimationController _animationController;
   late AnimationController _buttonAnimationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _buttonScaleAnimation;
-  
+
   bool _isLoading = false;
   bool _isNameValid = false;
   String? _nameError;
-  
+
   final List<String> _suggestedNames = [
     'CycleQueen',
     'FlowGuru',
@@ -44,7 +44,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
     super.initState();
     _setupAnimations();
     _startAnimations();
-    
+
     _nameController.addListener(() {
       _validateName(_nameController.text);
     });
@@ -55,35 +55,30 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _buttonAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-    
-    _buttonScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _buttonAnimationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+    _buttonScaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(
+        parent: _buttonAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   void _startAnimations() async {
@@ -104,7 +99,8 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
         _nameError = 'Name must be 30 characters or less';
       } else if (!RegExp(r'^[a-zA-Z0-9\s._-]+$').hasMatch(name.trim())) {
         _isNameValid = false;
-        _nameError = 'Only letters, numbers, spaces, dots, underscores, and dashes allowed';
+        _nameError =
+            'Only letters, numbers, spaces, dots, underscores, and dashes allowed';
       } else {
         _isNameValid = true;
         _nameError = null;
@@ -114,27 +110,24 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
 
   Future<void> _saveDisplayName() async {
     if (!_isNameValid || _isLoading) return;
-    
+
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
-    
+
     setState(() => _isLoading = true);
     _buttonAnimationController.forward();
-    
+
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         throw Exception('No user logged in');
       }
-      
+
       // Update user profile
       await user.updateDisplayName(name);
-      
+
       // Save to Firestore user profile
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set({
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'displayName': name,
         'email': user.email,
         'createdAt': FieldValue.serverTimestamp(),
@@ -144,15 +137,14 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
           'completedAt': FieldValue.serverTimestamp(),
         },
       }, SetOptions(merge: true));
-      
+
       // Show success animation
       await _showSuccessAnimation();
-      
+
       // Navigate to home
       if (mounted) {
         context.go('/home');
       }
-      
     } catch (e) {
       debugPrint('Error saving display name: $e');
       if (mounted) {
@@ -162,9 +154,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
               children: [
                 const Icon(Icons.error, color: Colors.white),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text('Error saving name: ${e.toString()}'),
-                ),
+                Expanded(child: Text('Error saving name: ${e.toString()}')),
               ],
             ),
             backgroundColor: Colors.red,
@@ -190,7 +180,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
       barrierDismissible: false,
       builder: (context) => const SuccessDialog(),
     );
-    
+
     await Future.delayed(const Duration(milliseconds: 1500));
     if (mounted) {
       Navigator.of(context).pop();
@@ -241,16 +231,16 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 40),
-                        
+
                         // Welcome Header
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -258,10 +248,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                           ),
                           child: Column(
                             children: [
-                              Text(
-                                '🌸',
-                                style: TextStyle(fontSize: 60),
-                              ),
+                              Text('🌸', style: TextStyle(fontSize: 60)),
                               const SizedBox(height: 16),
                               Text(
                                 'Welcome to CycleSync!',
@@ -284,9 +271,9 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 40),
-                        
+
                         // Display Name Form
                         Container(
                           padding: const EdgeInsets.all(24),
@@ -295,7 +282,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 15,
                                 offset: const Offset(0, 5),
                               ),
@@ -322,48 +309,66 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                                     color: Colors.grey.shade600,
                                   ),
                                 ),
-                                
+
                                 const SizedBox(height: 24),
-                                
+
                                 // Name Input Field
                                 TextField(
                                   controller: _nameController,
                                   decoration: InputDecoration(
                                     labelText: 'Display Name',
                                     hintText: 'Enter your preferred name',
-                                    prefixIcon: Icon(Icons.person_outline, color: Colors.pink.shade400),
+                                    prefixIcon: Icon(
+                                      Icons.person_outline,
+                                      color: Colors.pink.shade400,
+                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(color: Colors.pink.shade400, width: 2),
+                                      borderSide: BorderSide(
+                                        color: Colors.pink.shade400,
+                                        width: 2,
+                                      ),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Colors.red, width: 2),
+                                      borderSide: const BorderSide(
+                                        color: Colors.red,
+                                        width: 2,
+                                      ),
                                     ),
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Colors.red, width: 2),
+                                      borderSide: const BorderSide(
+                                        color: Colors.red,
+                                        width: 2,
+                                      ),
                                     ),
                                     filled: true,
                                     fillColor: Colors.grey.shade50,
                                     errorText: _nameError,
                                     suffixIcon: _isNameValid
-                                        ? Icon(Icons.check_circle, color: Colors.green)
+                                        ? Icon(
+                                            Icons.check_circle,
+                                            color: Colors.green,
+                                          )
                                         : null,
                                   ),
                                   textInputAction: TextInputAction.done,
                                   onSubmitted: (_) => _saveDisplayName(),
                                 ),
-                                
+
                                 const SizedBox(height: 16),
-                                
+
                                 // Character Counter
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Anonymous & Private',
@@ -377,8 +382,8 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                                       '${_nameController.text.length}/30',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: _nameController.text.length > 30 
-                                            ? Colors.red 
+                                        color: _nameController.text.length > 30
+                                            ? Colors.red
                                             : Colors.grey.shade500,
                                       ),
                                     ),
@@ -388,9 +393,9 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Suggested Names
                         Container(
                           padding: const EdgeInsets.all(20),
@@ -399,7 +404,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 3),
                               ),
@@ -410,8 +415,11 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.lightbulb_outline, 
-                                       color: Colors.amber.shade600, size: 20),
+                                  Icon(
+                                    Icons.lightbulb_outline,
+                                    color: Colors.amber.shade600,
+                                    size: 20,
+                                  ),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Need inspiration?',
@@ -424,7 +432,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              
+
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
@@ -464,25 +472,26 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 40),
-                        
+
                         // Continue Button
                         AnimatedBuilder(
                           animation: _buttonAnimationController,
                           builder: (context, child) {
                             return Transform.scale(
                               scale: _buttonScaleAnimation.value,
-                              child: Container(
+                              child: SizedBox(
                                 width: double.infinity,
                                 height: 56,
                                 child: ElevatedButton(
-                                  onPressed: _isNameValid && !_isLoading 
-                                      ? _saveDisplayName 
+                                  onPressed: _isNameValid && !_isLoading
+                                      ? _saveDisplayName
                                       : null,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.pink.shade400,
-                                    disabledBackgroundColor: Colors.grey.shade300,
+                                    disabledBackgroundColor:
+                                        Colors.grey.shade300,
                                     foregroundColor: Colors.white,
                                     elevation: _isNameValid ? 8 : 2,
                                     shadowColor: Colors.pink.shade200,
@@ -492,16 +501,18 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                                   ),
                                   child: _isLoading
                                       ? Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             SizedBox(
                                               width: 20,
                                               height: 20,
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(
-                                                  Colors.white,
-                                                ),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Colors.white),
                                               ),
                                             ),
                                             const SizedBox(width: 12),
@@ -515,7 +526,8 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                                           ],
                                         )
                                       : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             const Text(
                                               'Continue to CycleSync',
@@ -533,9 +545,9 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                             );
                           },
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         // Privacy Note
                         Text(
                           '🔒 Your display name is private and can be changed anytime in settings',
@@ -545,7 +557,7 @@ class _DisplayNameSetupScreenState extends State<DisplayNameSetupScreen>
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        
+
                         const SizedBox(height: 40),
                       ],
                     ),
@@ -580,23 +592,19 @@ class _SuccessDialogState extends State<SuccessDialog>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
-    ));
-    
-    _checkAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+
+    _checkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeOut),
+      ),
+    );
+
     _controller.forward();
   }
 
@@ -622,7 +630,7 @@ class _SuccessDialogState extends State<SuccessDialog>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.green.withOpacity(0.3),
+                    color: Colors.green.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
@@ -634,11 +642,7 @@ class _SuccessDialogState extends State<SuccessDialog>
                   builder: (context, child) {
                     return Opacity(
                       opacity: _checkAnimation.value,
-                      child: Icon(
-                        Icons.check,
-                        color: Colors.green,
-                        size: 60,
-                      ),
+                      child: Icon(Icons.check, color: Colors.green, size: 60),
                     );
                   },
                 ),

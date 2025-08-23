@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../services/advanced_health_kit_service.dart';
 import '../services/enhanced_ai_service.dart';
 import '../services/firebase_service.dart';
 import '../services/sample_health_data.dart';
+import '../services/theme_service.dart';
 import '../widgets/advanced_health_charts.dart';
+import '../theme/dimensional_theme.dart';
 
 class HealthInsightsScreen extends StatefulWidget {
   const HealthInsightsScreen({Key? key}) : super(key: key);
@@ -22,14 +25,15 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
   bool _isLoading = true;
   bool _healthKitAvailable = false;
   String _statusMessage = '';
-  
+  int _currentTabIndex = 0;
+
   // Health data
   List<HealthDataPoint> _heartRateData = [];
   List<HealthDataPoint> _hrvData = [];
   List<SleepData> _sleepData = [];
   List<HealthDataPoint> _temperatureData = [];
   List<ActivityData> _activityData = [];
-  
+
   // AI Insights
   EnhancedCycleInsights? _cycleInsights;
 
@@ -37,7 +41,42 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_onTabChanged);
     _initializeHealthKit();
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return;
+
+    final newIndex = _tabController.index;
+    if (newIndex != _currentTabIndex) {
+      setState(() {
+        _currentTabIndex = newIndex;
+        debugPrint('📊 Tab changed to index: $_currentTabIndex');
+      });
+
+      // Optional: Load specific data for the new tab if needed
+      _loadTabSpecificData(newIndex);
+    }
+  }
+
+  void _loadTabSpecificData(int tabIndex) {
+    // This method can be used to load specific data when a tab is selected
+    // For now, we'll just ensure the UI rebuilds
+    switch (tabIndex) {
+      case 0: // Heart tab
+        debugPrint('💓 Loading Heart tab data');
+        break;
+      case 1: // Sleep tab
+        debugPrint('😴 Loading Sleep tab data');
+        break;
+      case 2: // Temperature tab
+        debugPrint('🌡️ Loading Temperature tab data');
+        break;
+      case 3: // Activity tab
+        debugPrint('🏃 Loading Activity tab data');
+        break;
+    }
   }
 
   @override
@@ -54,21 +93,22 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
 
     try {
       final initialized = await _healthKit.initialize();
-      
+
       if (initialized) {
         setState(() {
           _healthKitAvailable = true;
           _statusMessage = 'HealthKit connected successfully!';
         });
-        
+
         await _loadHealthData();
         await _generateAIInsights();
       } else {
         setState(() {
           _healthKitAvailable = false;
-          _statusMessage = 'HealthKit not available - using sample data for demo';
+          _statusMessage =
+              'HealthKit not available - using sample data for demo';
         });
-        
+
         // Load sample data for demonstration
         await _loadSampleData();
         await _generateAIInsights();
@@ -88,7 +128,7 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
   Future<void> _loadHealthData() async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(const Duration(days: 7));
-    
+
     setState(() {
       _statusMessage = 'Loading health data...';
     });
@@ -148,13 +188,13 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
     try {
       // Get user's cycle data
       final cycles = await FirebaseService.getCycles();
-      
+
       // Generate enhanced insights
       final insights = await _aiService.generateEnhancedInsights(
         cycles: cycles,
         analysisDate: DateTime.now(),
       );
-      
+
       setState(() {
         _cycleInsights = insights;
         _statusMessage = 'AI insights generated successfully!';
@@ -168,35 +208,92 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final themeService = Provider.of<ThemeService>(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Health Insights'),
-        backgroundColor: const Color(0xFF6366F1),
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            } else {
-              context.go('/home');
-            }
-          },
-        ),
-        bottom: !_isLoading && (_heartRateData.isNotEmpty || _hrvData.isNotEmpty || _sleepData.isNotEmpty || _temperatureData.isNotEmpty || _activityData.isNotEmpty) ? TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(icon: Icon(Icons.favorite), text: 'Heart'),
-            Tab(icon: Icon(Icons.bedtime), text: 'Sleep'),
-            Tab(icon: Icon(Icons.device_thermostat), text: 'Temperature'),
-            Tab(icon: Icon(Icons.directions_run), text: 'Activity'),
-          ],
-        ) : null,
+      backgroundColor: themeService.getBackgroundColor(context),
+      body: Column(
+        children: [
+          // Dimensional Header
+          DimensionalTheme.getDimensionalHeader(
+            title: 'Health Insights',
+            subtitle: _healthKitAvailable
+                ? 'Real-time data from HealthKit'
+                : 'Sample data visualization',
+            icon: Icons.health_and_safety,
+            gradient: DimensionalTheme.gradients['health'],
+            trailing: IconButton(
+              onPressed: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                } else {
+                  context.go('/home');
+                }
+              },
+              icon: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 20),
+              ),
+            ),
+          ),
+
+          // Enhanced Tab Bar (if data available)
+          if (!_isLoading &&
+              (_heartRateData.isNotEmpty ||
+                  _hrvData.isNotEmpty ||
+                  _sleepData.isNotEmpty ||
+                  _temperatureData.isNotEmpty ||
+                  _activityData.isNotEmpty))
+            Container(
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: DimensionalTheme.getElevatedShadow(2),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                onTap: (index) {
+                  setState(() {
+                    _currentTabIndex = index;
+                    debugPrint('📊 Manual tab tap to index: $index');
+                  });
+                  _loadTabSpecificData(index);
+                },
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: DimensionalTheme.gradients['health']!
+                        .take(2)
+                        .toList(),
+                  ),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.white,
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+                tabs: const [
+                  Tab(icon: Icon(Icons.favorite), text: 'Heart'),
+                  Tab(icon: Icon(Icons.bedtime), text: 'Sleep'),
+                  Tab(icon: Icon(Icons.device_thermostat), text: 'Temp'),
+                  Tab(icon: Icon(Icons.directions_run), text: 'Activity'),
+                ],
+              ),
+            ),
+
+          Expanded(child: _buildBody()),
+        ],
       ),
-      body: _buildBody(),
     );
   }
 
@@ -215,9 +312,13 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
     }
 
     // Show charts if we have any data (real or sample)
-    final hasData = _heartRateData.isNotEmpty || _hrvData.isNotEmpty || 
-                   _sleepData.isNotEmpty || _temperatureData.isNotEmpty || _activityData.isNotEmpty;
-    
+    final hasData =
+        _heartRateData.isNotEmpty ||
+        _hrvData.isNotEmpty ||
+        _sleepData.isNotEmpty ||
+        _temperatureData.isNotEmpty ||
+        _activityData.isNotEmpty;
+
     if (!hasData) {
       return _buildUnavailableView();
     }
@@ -230,19 +331,33 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.orange.shade50,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.orange.withValues(alpha: 0.2)
+                  : Colors.orange.shade50,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange.shade200),
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.orange.withValues(alpha: 0.4)
+                    : Colors.orange.shade200,
+              ),
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.orange.shade700, size: 20),
+                Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.orange.shade300
+                      : Colors.orange.shade700,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Demo Mode: Showing sample health data for visualization',
                     style: TextStyle(
-                      color: Colors.orange.shade700,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.orange.shade300
+                          : Colors.orange.shade700,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -252,8 +367,8 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
             ),
           ),
         Expanded(
-          child: TabBarView(
-            controller: _tabController,
+          child: IndexedStack(
+            index: _currentTabIndex,
             children: [
               _buildHeartDataTab(),
               _buildSleepDataTab(),
@@ -299,7 +414,10 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF6366F1),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
               child: const Text('Retry Setup'),
             ),
@@ -307,10 +425,7 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
             const Text(
               'This feature requires:\n• iOS device with HealthKit\n• Health app with data\n• Permissions granted',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),
@@ -320,51 +435,159 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
 
   Widget _buildAIInsightsCard() {
     if (_cycleInsights == null) return Container();
-    
-    return Container(
+
+    return DimensionalTheme.getDimensionalCard(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      padding: const EdgeInsets.all(24),
+      gradient: DimensionalTheme.gradients['primary']!,
+      elevation: 4,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header with animated icon
           Row(
             children: [
-              const Icon(Icons.psychology, color: Colors.white, size: 28),
-              const SizedBox(width: 12),
-              const Text(
-                'AI Health Insights',
-                style: TextStyle(
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      offset: const Offset(0, 2),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.psychology,
                   color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'AI Health Insights',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      'Powered by FlowSense AI',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
+
+          const SizedBox(height: 24),
+
+          // Insights Grid
+          Row(
+            children: [
+              Expanded(
+                child: _buildInsightMetric(
+                  'Current Phase',
+                  _cycleInsights!.currentPhase.displayName,
+                  Icons.calendar_today,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildInsightMetric(
+                  'Energy Level',
+                  _formatPercentage(_cycleInsights!.energyLevel),
+                  Icons.battery_charging_full,
+                ),
+              ),
+            ],
+          ),
+
           const SizedBox(height: 16),
-          _buildInsightRow('Current Phase', _cycleInsights!.currentPhase.displayName),
-          _buildInsightRow('Stress Level', _formatPercentage(_cycleInsights!.stressLevel)),
-          _buildInsightRow('Sleep Quality', _formatPercentage(_cycleInsights!.sleepQuality)),
-          _buildInsightRow('Energy Level', _formatPercentage(_cycleInsights!.energyLevel)),
-          if (_cycleInsights!.ovulationPrediction != null)
-            _buildInsightRow('Next Ovulation', _formatDate(_cycleInsights!.ovulationPrediction!)),
-          if (_cycleInsights!.nextPeriodPrediction != null)
-            _buildInsightRow('Next Period', _formatDate(_cycleInsights!.nextPeriodPrediction!)),
-          const SizedBox(height: 12),
-          Text(
-            'Confidence: ${(_cycleInsights!.confidence * 100).toInt()}%',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
+
+          Row(
+            children: [
+              Expanded(
+                child: _buildInsightMetric(
+                  'Sleep Quality',
+                  _formatPercentage(_cycleInsights!.sleepQuality),
+                  Icons.bedtime,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildInsightMetric(
+                  'Stress Level',
+                  _formatPercentage(_cycleInsights!.stressLevel),
+                  Icons.favorite,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // Predictions Section
+          if (_cycleInsights!.ovulationPrediction != null ||
+              _cycleInsights!.nextPeriodPrediction != null) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '🔮 Predictions',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_cycleInsights!.ovulationPrediction != null)
+                    _buildPredictionRow(
+                      'Next Ovulation',
+                      _formatDate(_cycleInsights!.ovulationPrediction!),
+                      Icons.eco,
+                    ),
+                  if (_cycleInsights!.nextPeriodPrediction != null)
+                    _buildPredictionRow(
+                      'Next Period',
+                      _formatDate(_cycleInsights!.nextPeriodPrediction!),
+                      Icons.water_drop,
+                    ),
+                ],
+              ),
             ),
+            const SizedBox(height: 16),
+          ],
+
+          // Confidence Indicator
+          DimensionalTheme.getDimensionalProgress(
+            label: 'AI Confidence Level',
+            value: _cycleInsights!.confidence,
+            valueText: '${(_cycleInsights!.confidence * 100).toInt()}%',
+            gradient: [Colors.white.withValues(alpha: 0.9), Colors.white],
+            height: 8,
           ),
         ],
       ),
@@ -379,10 +602,7 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           Text(
             value,
@@ -472,7 +692,9 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
       return _buildNoDataMessage('Activity data');
     }
 
-    final avgSteps = _activityData.map((a) => a.steps).reduce((a, b) => a + b) / _activityData.length;
+    final avgSteps =
+        _activityData.map((a) => a.steps).reduce((a, b) => a + b) /
+        _activityData.length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -490,35 +712,87 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
   }
 
   Widget _buildDataCard(String title, String subtitle, Widget chart) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+    final themeService = Provider.of<ThemeService>(context);
+
+    return DimensionalTheme.getDimensionalCard(
+      elevation: 3,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Card Header
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: DimensionalTheme.gradients['health']!
+                        .take(2)
+                        .toList(),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: DimensionalTheme.getColoredShadow(
+                    DimensionalTheme.gradients['health']![0],
+                    opacity: 0.3,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.analytics,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: themeService.getTextColor(context),
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: themeService
+                            .getTextColor(context)
+                            .withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Chart Container with dimensional styling
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: themeService.isDarkModeEnabled(context)
+                  ? Colors.grey.shade800.withValues(alpha: 0.3)
+                  : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: themeService.isDarkModeEnabled(context)
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade200,
               ),
             ),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF6B7280),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
               child: chart,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -528,11 +802,7 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.data_usage_outlined,
-            size: 64,
-            color: Colors.grey,
-          ),
+          const Icon(Icons.data_usage_outlined, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
           Text(
             'No $dataType available',
@@ -545,10 +815,7 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
           const SizedBox(height: 8),
           const Text(
             'Make sure to sync your Health app data',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
       ),
@@ -557,7 +824,10 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
 
   // Advanced chart widgets using fl_chart
   Widget _buildHeartRateChart() {
-    return AdvancedHealthCharts.buildHeartRateChart(_heartRateData, height: 300);
+    return AdvancedHealthCharts.buildHeartRateChart(
+      _heartRateData,
+      height: 300,
+    );
   }
 
   Widget _buildHRVChart() {
@@ -569,7 +839,10 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
   }
 
   Widget _buildTemperatureChart() {
-    return AdvancedHealthCharts.buildTemperatureChart(_temperatureData, height: 300);
+    return AdvancedHealthCharts.buildTemperatureChart(
+      _temperatureData,
+      height: 300,
+    );
   }
 
   Widget _buildActivityChart() {
@@ -586,10 +859,81 @@ class _HealthInsightsScreenState extends State<HealthInsightsScreen>
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final diff = date.difference(now).inDays;
-    
+
     if (diff == 0) return 'Today';
     if (diff == 1) return 'Tomorrow';
     if (diff > 0) return 'In $diff days';
     return '${-diff} days ago';
+  }
+
+  Widget _buildInsightMetric(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPredictionRow(String title, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 16),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

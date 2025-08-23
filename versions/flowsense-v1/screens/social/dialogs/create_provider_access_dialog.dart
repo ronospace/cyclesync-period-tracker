@@ -21,7 +21,7 @@ class _CreateProviderAccessDialogState extends State<CreateProviderAccessDialog>
   final _notesController = TextEditingController();
 
   ProviderType _selectedProviderType = ProviderType.gynecologist;
-  Set<DataType> _authorizedDataTypes = {
+  final Set<DataType> _authorizedDataTypes = {
     DataType.cyclePattern,
     DataType.symptoms,
     DataType.wellbeing,

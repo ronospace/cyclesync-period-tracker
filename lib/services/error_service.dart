@@ -9,19 +9,19 @@ class ErrorService {
   static const int _maxErrorLogs = 50;
   static SharedPreferences? _prefs;
   static final List<ErrorReport> _errorQueue = [];
-  
+
   /// Initialize error service
   static Future<void> initialize() async {
     try {
       _prefs = await SharedPreferences.getInstance();
-      
+
       // Set global error handlers
       FlutterError.onError = _handleFlutterError;
       PlatformDispatcher.instance.onError = _handlePlatformError;
-      
+
       // Load existing error logs
       await _loadErrorLogs();
-      
+
       debugPrint('✅ ErrorService: Initialized successfully');
     } catch (e) {
       debugPrint('❌ ErrorService: Initialization failed: $e');
@@ -40,7 +40,7 @@ class ErrorService {
     );
 
     _logError(error);
-    
+
     // In debug mode, show the red screen
     if (kDebugMode) {
       FlutterError.presentError(details);
@@ -123,7 +123,7 @@ class ErrorService {
   static void _logError(ErrorReport error) {
     _errorQueue.add(error);
     _persistErrorLog(error);
-    
+
     // Print to console in debug mode
     if (kDebugMode) {
       final emoji = _getErrorEmoji(error.severity);
@@ -158,12 +158,12 @@ class ErrorService {
   /// Handle fatal errors
   static void _handleFatalError(ErrorReport error) {
     debugPrint('💥 FATAL ERROR: ${error.error}');
-    
+
     // In a real app, you might:
     // 1. Send crash report to analytics service
     // 2. Show user-friendly error dialog
     // 3. Attempt graceful app recovery
-    
+
     // For now, just ensure it's logged
     _persistErrorLog(error);
   }
@@ -173,12 +173,12 @@ class ErrorService {
     try {
       final existingLogs = await _loadErrorLogs();
       existingLogs.add(error);
-      
+
       // Keep only the most recent errors
       if (existingLogs.length > _maxErrorLogs) {
         existingLogs.removeRange(0, existingLogs.length - _maxErrorLogs);
       }
-      
+
       final jsonLogs = existingLogs.map((e) => e.toJson()).toList();
       await _prefs?.setString(_errorLogKey, jsonEncode(jsonLogs));
     } catch (e) {
@@ -191,7 +191,7 @@ class ErrorService {
     try {
       final logsJson = _prefs?.getString(_errorLogKey);
       if (logsJson == null) return [];
-      
+
       final logsList = jsonDecode(logsJson) as List;
       return logsList.map((json) => ErrorReport.fromJson(json)).toList();
     } catch (e) {
@@ -210,10 +210,10 @@ class ErrorService {
   static Future<ErrorStatistics> getErrorStatistics() async {
     final logs = await _loadErrorLogs();
     final now = DateTime.now();
-    final last24Hours = logs.where((e) => 
-      now.difference(e.timestamp) < const Duration(hours: 24)
-    ).toList();
-    
+    final last24Hours = logs
+        .where((e) => now.difference(e.timestamp) < const Duration(hours: 24))
+        .toList();
+
     return ErrorStatistics(
       totalErrors: logs.length,
       errorsLast24Hours: last24Hours.length,
@@ -226,18 +226,16 @@ class ErrorService {
 
   static String? _getMostCommonError(List<ErrorReport> logs) {
     if (logs.isEmpty) return null;
-    
+
     final errorCounts = <String, int>{};
     for (final log in logs) {
-      final error = log.error.length > 100 
-        ? '${log.error.substring(0, 100)}...'
-        : log.error;
+      final error = log.error.length > 100
+          ? '${log.error.substring(0, 100)}...'
+          : log.error;
       errorCounts[error] = (errorCounts[error] ?? 0) + 1;
     }
-    
-    return errorCounts.entries
-      .reduce((a, b) => a.value > b.value ? a : b)
-      .key;
+
+    return errorCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
   }
 
   static Map<ErrorType, int> _getErrorsByType(List<ErrorReport> logs) {
@@ -277,7 +275,7 @@ class ErrorService {
         'total_errors': logs.length,
         'errors': logs.map((e) => e.toJson()).toList(),
       };
-      
+
       return jsonEncode(export);
     } catch (e) {
       debugPrint('❌ ErrorService: Failed to export error logs: $e');
@@ -371,7 +369,9 @@ class ErrorReport {
     stackTrace: json['stackTrace'],
     timestamp: DateTime.parse(json['timestamp']),
     context: json['context'],
-    severity: ErrorSeverity.values.firstWhere((e) => e.name == json['severity']),
+    severity: ErrorSeverity.values.firstWhere(
+      (e) => e.name == json['severity'],
+    ),
     metadata: json['metadata'],
     fatal: json['fatal'] ?? false,
   );
@@ -408,9 +408,4 @@ enum ErrorType {
 }
 
 /// Error severity levels
-enum ErrorSeverity {
-  fatal,
-  error,
-  warning,
-  info,
-}
+enum ErrorSeverity { fatal, error, warning, info }

@@ -10,7 +10,7 @@ import '../providers/user_provider.dart';
 /// Phase 2 Enhanced AI Analytics Dashboard with TensorFlow Predictions
 /// Extraordinary biometric analysis and machine learning insights
 class AIAnalyticsDashboard extends StatefulWidget {
-  const AIAnalyticsDashboard({Key? key}) : super(key: key);
+  const AIAnalyticsDashboard({super.key});
 
   @override
   State<AIAnalyticsDashboard> createState() => _AIAnalyticsDashboardState();
@@ -679,7 +679,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
         border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
-        '${percentage}%',
+        '$percentage%',
         style: TextStyle(
           color: color,
           fontSize: 12,
@@ -898,7 +898,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 ),
               ],
             ),
-          )).toList(),
+          )),
           const SizedBox(height: 8),
         ],
       ),
@@ -1173,7 +1173,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
               entry.key.replaceAll('_', ' ').toUpperCase(),
               entry.value.toStringAsFixed(1),
             ),
-          )).toList(),
+          )),
           const SizedBox(height: 8),
         ],
       ),
@@ -1281,7 +1281,7 @@ class _AIAnalyticsDashboardState extends State<AIAnalyticsDashboard>
                 ),
               ],
             ),
-          )).toList(),
+          )),
           const SizedBox(height: 8),
         ],
       ),

@@ -110,11 +110,23 @@ class CycleOptimization {
 }
 
 enum SymptomTrend { increasing, stable, decreasing }
-enum RecommendationCategory { lifestyle, nutrition, exercise, mentalHealth, painRelief, tracking, medical }
+
+enum RecommendationCategory {
+  lifestyle,
+  nutrition,
+  exercise,
+  mentalHealth,
+  painRelief,
+  tracking,
+  medical,
+}
+
 enum RecommendationPriority { low, medium, high, urgent }
+
 enum AlertSeverity { low, medium, high, critical }
 
-class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerProviderStateMixin {
+class _AIHealthCoachScreenState extends State<AIHealthCoachScreen>
+    with TickerProviderStateMixin {
   bool _isLoading = true;
   String? _error;
   AIHealthInsights? _insights;
@@ -145,7 +157,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
 
   Future<void> _loadAIInsights() async {
     if (!mounted) return;
-    
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -181,23 +193,24 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
     return AIHealthInsights(
       confidenceScore: 0.85,
       wellbeingCoaching: WellbeingCoaching(
-        motivationalMessage: "You're doing great with your tracking! Your consistent data helps our AI provide better insights for your health journey.",
+        motivationalMessage:
+            "You're doing great with your tracking! Your consistent data helps our AI provide better insights for your health journey.",
         progressInsights: [
           "Your cycle regularity has improved by 15% over the past 3 months",
           "You've successfully reduced symptom severity through lifestyle changes",
-          "Your wellness tracking consistency is excellent - 92% completion rate"
+          "Your wellness tracking consistency is excellent - 92% completion rate",
         ],
         weeklyGoals: [
           "Track daily mood and energy levels",
           "Maintain consistent sleep schedule",
           "Practice stress-reduction techniques 3x this week",
-          "Stay hydrated with 8+ glasses of water daily"
+          "Stay hydrated with 8+ glasses of water daily",
         ],
         dailyHabits: [
           "Morning stretching or yoga (10 minutes)",
           "Mindful check-in with body signals",
           "Evening reflection and symptom logging",
-          "Limit caffeine after 2 PM for better sleep"
+          "Limit caffeine after 2 PM for better sleep",
         ],
       ),
       symptomInsights: [
@@ -205,21 +218,24 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
           symptomName: "Headaches",
           frequency: 65,
           trend: SymptomTrend.decreasing,
-          recommendation: "Your headaches are showing a positive decreasing trend. Consider continuing your current stress management routine.",
+          recommendation:
+              "Your headaches are showing a positive decreasing trend. Consider continuing your current stress management routine.",
           correlatedSymptoms: ["fatigue", "mood_changes"],
         ),
         SymptomInsight(
           symptomName: "Energy Levels",
           frequency: 80,
           trend: SymptomTrend.stable,
-          recommendation: "Your energy levels are stable. Focus on maintaining your current sleep and nutrition habits.",
+          recommendation:
+              "Your energy levels are stable. Focus on maintaining your current sleep and nutrition habits.",
           correlatedSymptoms: ["sleep_quality", "exercise"],
         ),
       ],
       personalizedRecommendations: [
         PersonalizedRecommendation(
           title: "Optimize Sleep Schedule",
-          description: "Your energy patterns suggest better sleep could improve your overall wellbeing.",
+          description:
+              "Your energy patterns suggest better sleep could improve your overall wellbeing.",
           category: RecommendationCategory.lifestyle,
           priority: RecommendationPriority.high,
           aiConfidence: 0.85,
@@ -227,12 +243,13 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             "Set a consistent bedtime 30 minutes earlier",
             "Create a wind-down routine",
             "Limit screen time before bed",
-            "Track sleep quality in daily logs"
+            "Track sleep quality in daily logs",
           ],
         ),
         PersonalizedRecommendation(
           title: "Stress Management Techniques",
-          description: "Based on your mood patterns, stress reduction could help improve your cycle experience.",
+          description:
+              "Based on your mood patterns, stress reduction could help improve your cycle experience.",
           category: RecommendationCategory.mentalHealth,
           priority: RecommendationPriority.medium,
           aiConfidence: 0.78,
@@ -240,21 +257,22 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             "Practice 10-minute daily meditation",
             "Try deep breathing exercises",
             "Consider journaling before bed",
-            "Schedule regular breaks during the day"
+            "Schedule regular breaks during the day",
           ],
         ),
       ],
       predictiveAlerts: [
         PredictiveAlert(
           title: "High Symptom Day Predicted",
-          description: "Based on your patterns, you may experience increased symptoms in 3-4 days.",
+          description:
+              "Based on your patterns, you may experience increased symptoms in 3-4 days.",
           severity: AlertSeverity.medium,
           predictedDate: DateTime.now().add(const Duration(days: 3)),
           recommendedActions: [
             "Ensure adequate rest",
             "Stay hydrated",
             "Have pain relief options ready",
-            "Consider lighter activities"
+            "Consider lighter activities",
           ],
         ),
       ],
@@ -268,20 +286,44 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         optimalActivities: {
           "Menstrual": ["Gentle yoga", "Walking", "Meditation", "Rest"],
           "Follicular": ["Cardio", "Dancing", "Social activities", "Planning"],
-          "Ovulatory": ["High-intensity workouts", "Presentations", "Social events"],
-          "Luteal": ["Strength training", "Organizing", "Self-care", "Preparation"],
+          "Ovulatory": [
+            "High-intensity workouts",
+            "Presentations",
+            "Social events",
+          ],
+          "Luteal": [
+            "Strength training",
+            "Organizing",
+            "Self-care",
+            "Preparation",
+          ],
         },
         nutritionTiming: {
-          "Menstrual": ["Iron-rich foods", "Warm beverages", "Comfort foods", "Magnesium"],
-          "Follicular": ["Fresh fruits", "Lean proteins", "Complex carbs", "Probiotics"],
-          "Ovulatory": ["Antioxidant-rich foods", "Healthy fats", "Fiber", "Hydration"],
+          "Menstrual": [
+            "Iron-rich foods",
+            "Warm beverages",
+            "Comfort foods",
+            "Magnesium",
+          ],
+          "Follicular": [
+            "Fresh fruits",
+            "Lean proteins",
+            "Complex carbs",
+            "Probiotics",
+          ],
+          "Ovulatory": [
+            "Antioxidant-rich foods",
+            "Healthy fats",
+            "Fiber",
+            "Hydration",
+          ],
           "Luteal": ["B-vitamins", "Calcium", "Omega-3s", "Limit caffeine"],
         },
         lifestyleAdjustments: [
           "Adjust exercise intensity based on cycle phase",
           "Schedule important meetings during high-energy phases",
           "Plan self-care activities during low-energy periods",
-          "Maintain consistent sleep schedule throughout cycle"
+          "Maintain consistent sleep schedule throughout cycle",
         ],
       ),
     );
@@ -294,7 +336,11 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.psychology, color: Theme.of(context).colorScheme.primary, size: 24),
+            Icon(
+              Icons.psychology,
+              color: Theme.of(context).colorScheme.primary,
+              size: 24,
+            ),
             const SizedBox(width: 8),
             const Text('AI Health Coach'),
           ],
@@ -303,7 +349,10 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => context.go('/home'),
         ),
       ),
@@ -315,7 +364,8 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             ComingSoonFeatures.voiceAssistant,
             const ComingSoonWidget(
               title: 'Personalized Health Coaching',
-              description: 'AI-driven personalized coaching based on your unique cycle patterns and health data',
+              description:
+                  'AI-driven personalized coaching based on your unique cycle patterns and health data',
               icon: Icons.psychology,
               estimatedDate: 'Q2 2024',
               status: 'In Development',
@@ -331,7 +381,8 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             ),
             const ComingSoonWidget(
               title: 'Smart Health Alerts',
-              description: 'Proactive health monitoring with predictive alerts for optimal cycle management',
+              description:
+                  'Proactive health monitoring with predictive alerts for optimal cycle management',
               icon: Icons.notification_important,
               estimatedDate: 'Q3 2024',
               status: 'Design Phase',
@@ -347,7 +398,8 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             ),
             const ComingSoonWidget(
               title: 'Cycle Optimization Engine',
-              description: 'Advanced AI algorithms to optimize your lifestyle based on your unique cycle patterns',
+              description:
+                  'Advanced AI algorithms to optimize your lifestyle based on your unique cycle patterns',
               icon: Icons.tune,
               estimatedDate: 'Q4 2024',
               status: 'Research Phase',
@@ -379,7 +431,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             const SizedBox(height: 8),
             Text(
               'This may take a moment',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -391,7 +445,11 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error.withOpacity(0.7)),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7),
+            ),
             const SizedBox(height: 16),
             const Text('Failed to load AI insights'),
             const SizedBox(height: 8),
@@ -408,9 +466,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
     }
 
     if (_insights == null) {
-      return const Center(
-        child: Text('No insights available'),
-      );
+      return const Center(child: Text('No insights available'));
     }
 
     return FadeTransition(
@@ -429,7 +485,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
 
   Widget _buildCoachingTab() {
     final coaching = _insights!.wellbeingCoaching;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -450,11 +506,21 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
           ],
 
           // Weekly Goals
-          _buildGoalsCard('This Week\'s Goals', coaching.weeklyGoals, Icons.flag, Colors.blue),
+          _buildGoalsCard(
+            'This Week\'s Goals',
+            coaching.weeklyGoals,
+            Icons.flag,
+            Colors.blue,
+          ),
           const SizedBox(height: 20),
 
           // Daily Habits
-          _buildGoalsCard('Daily Habits', coaching.dailyHabits, Icons.wb_sunny, Colors.orange),
+          _buildGoalsCard(
+            'Daily Habits',
+            coaching.dailyHabits,
+            Icons.wb_sunny,
+            Colors.orange,
+          ),
           const SizedBox(height: 20),
 
           // Personalized Recommendations
@@ -474,24 +540,28 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
           if (_insights!.symptomInsights.isNotEmpty) ...[
             Text(
               'Symptom Insights',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ..._insights!.symptomInsights.map((insight) => _buildSymptomInsightCard(insight)),
+            ..._insights!.symptomInsights.map(
+              (insight) => _buildSymptomInsightCard(insight),
+            ),
             const SizedBox(height: 24),
           ],
 
           // Personalized Recommendations
           Text(
             'Personalized Recommendations',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          ..._insights!.personalizedRecommendations.map((rec) => _buildRecommendationCard(rec)),
+          ..._insights!.personalizedRecommendations.map(
+            (rec) => _buildRecommendationCard(rec),
+          ),
         ],
       ),
     );
@@ -505,7 +575,13 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle_outline, size: 64, color: Theme.of(context).colorScheme.primary.withOpacity(0.7)),
+            Icon(
+              Icons.check_circle_outline,
+              size: 64,
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.7),
+            ),
             const SizedBox(height: 16),
             Text(
               'All Clear!',
@@ -518,7 +594,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             Text(
               'No predictive health alerts at this time.\nKeep up the great tracking!',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -555,13 +633,18 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
           if (optimization.optimalActivities.isNotEmpty) ...[
             Text(
               'Optimal Activities by Cycle Phase',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ...optimization.optimalActivities.entries.map((entry) => 
-              _buildPhaseCard(entry.key, entry.value, Icons.fitness_center, Colors.green)
+            ...optimization.optimalActivities.entries.map(
+              (entry) => _buildPhaseCard(
+                entry.key,
+                entry.value,
+                Icons.fitness_center,
+                Colors.green,
+              ),
             ),
             const SizedBox(height: 20),
           ],
@@ -570,13 +653,18 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
           if (optimization.nutritionTiming.isNotEmpty) ...[
             Text(
               'Nutrition Recommendations',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ...optimization.nutritionTiming.entries.map((entry) => 
-              _buildPhaseCard(entry.key, entry.value, Icons.restaurant, Colors.orange)
+            ...optimization.nutritionTiming.entries.map(
+              (entry) => _buildPhaseCard(
+                entry.key,
+                entry.value,
+                Icons.restaurant,
+                Colors.orange,
+              ),
             ),
             const SizedBox(height: 20),
           ],
@@ -593,7 +681,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
   Widget _buildConfidenceCard() {
     final confidence = _insights!.confidenceScore;
     final percentage = (confidence * 100).round();
-    
+
     return Card(
       elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -615,12 +703,14 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
                 child: CircularProgressIndicator(
                   value: confidence,
                   backgroundColor: Colors.grey.shade300,
-                  valueColor: AlwaysStoppedAnimation(Colors.deepPurple.shade600),
+                  valueColor: AlwaysStoppedAnimation(
+                    Colors.deepPurple.shade600,
+                  ),
                   strokeWidth: 6,
                 ),
               ),
@@ -642,9 +732,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      confidence > 0.8 
-                        ? 'High-quality insights based on your data'
-                        : confidence > 0.6 
+                      confidence > 0.8
+                          ? 'High-quality insights based on your data'
+                          : confidence > 0.6
                           ? 'Good insights - more data will improve accuracy'
                           : 'Building insights - keep tracking for better results',
                       style: TextStyle(
@@ -679,11 +769,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
         ),
         child: Column(
           children: [
-            Icon(
-              Icons.favorite,
-              color: Colors.pink.shade400,
-              size: 32,
-            ),
+            Icon(Icons.favorite, color: Colors.pink.shade400, size: 32),
             const SizedBox(height: 12),
             Text(
               message,
@@ -722,23 +808,34 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               ],
             ),
             const SizedBox(height: 12),
-            ...insights.map((insight) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Icon(Icons.celebration, color: Colors.orange.shade500, size: 16),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(insight)),
-                ],
+            ...insights.map(
+              (insight) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.celebration,
+                      color: Colors.orange.shade500,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(insight)),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGoalsCard(String title, List<String> items, IconData icon, Color color) {
+  Widget _buildGoalsCard(
+    String title,
+    List<String> items,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -760,23 +857,25 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               ],
             ),
             const SizedBox(height: 12),
-            ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: color,
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(item)),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(item)),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -785,7 +884,7 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
 
   Widget _buildRecommendationsPreview() {
     final topRecommendations = _insights!.personalizedRecommendations.take(2);
-    
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -810,7 +909,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               ],
             ),
             const SizedBox(height: 12),
-            ...topRecommendations.map((rec) => _buildMiniRecommendationCard(rec)),
+            ...topRecommendations.map(
+              (rec) => _buildMiniRecommendationCard(rec),
+            ),
           ],
         ),
       ),
@@ -822,12 +923,15 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _getCategoryColor(rec.category).withOpacity(0.1),
+        color: _getCategoryColor(rec.category).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Icon(_getCategoryIcon(rec.category), color: _getCategoryColor(rec.category)),
+          Icon(
+            _getCategoryIcon(rec.category),
+            color: _getCategoryColor(rec.category),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -839,7 +943,10 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 ),
                 Text(
                   rec.description,
-                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -864,9 +971,14 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: _getSymptomTrendColor(insight.trend).withOpacity(0.2),
+                    color: _getSymptomTrendColor(
+                      insight.trend,
+                    ).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -888,9 +1000,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
             const SizedBox(height: 12),
             Text(
               _formatSymptomName(insight.symptomName),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(insight.recommendation),
@@ -907,15 +1019,21 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               const SizedBox(height: 4),
               Wrap(
                 spacing: 8,
-                children: insight.correlatedSymptoms.map((symptom) => Chip(
-                  label: Text(
-                    _formatSymptomName(symptom),
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-                  side: BorderSide.none,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                )).toList(),
+                children: insight.correlatedSymptoms
+                    .map(
+                      (symptom) => Chip(
+                        label: Text(
+                          _formatSymptomName(symptom),
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainer,
+                        side: BorderSide.none,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    )
+                    .toList(),
               ),
             ],
           ],
@@ -939,7 +1057,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(rec.category).withOpacity(0.2),
+                    color: _getCategoryColor(
+                      rec.category,
+                    ).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -971,9 +1091,14 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: _getPriorityColor(rec.priority).withOpacity(0.2),
+                    color: _getPriorityColor(
+                      rec.priority,
+                    ).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -999,20 +1124,27 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 ),
               ),
               const SizedBox(height: 8),
-              ...rec.suggestedActions.map((action) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_right,
-                      color: _getCategoryColor(rec.category),
-                      size: 16,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(action, style: const TextStyle(fontSize: 14))),
-                  ],
+              ...rec.suggestedActions.map(
+                (action) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.arrow_right,
+                        color: _getCategoryColor(rec.category),
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          action,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ],
         ),
@@ -1054,9 +1186,14 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: _getAlertSeverityColor(alert.severity).withOpacity(0.2),
+                      color: _getAlertSeverityColor(
+                        alert.severity,
+                      ).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -1089,20 +1226,27 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
                 ),
               ),
               const SizedBox(height: 8),
-              ...alert.recommendedActions.map((action) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: _getAlertSeverityColor(alert.severity),
-                      size: 16,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(action, style: const TextStyle(fontSize: 14))),
-                  ],
+              ...alert.recommendedActions.map(
+                (action) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: _getAlertSeverityColor(alert.severity),
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          action,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),
@@ -1121,48 +1265,59 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
           children: [
             Text(
               'Energy Predictions by Cycle Phase',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ...predictions.entries.map((entry) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      entry.key,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+            ...predictions.entries.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        entry.key,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: LinearProgressIndicator(
-                      value: entry.value / 5.0,
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-                      valueColor: AlwaysStoppedAnimation(_getEnergyColor(entry.value)),
+                    Expanded(
+                      flex: 3,
+                      child: LinearProgressIndicator(
+                        value: entry.value / 5.0,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainer,
+                        valueColor: AlwaysStoppedAnimation(
+                          _getEnergyColor(entry.value),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${entry.value.toStringAsFixed(1)}/5',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: _getEnergyColor(entry.value),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${entry.value.toStringAsFixed(1)}/5',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: _getEnergyColor(entry.value),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPhaseCard(String phase, List<String> items, IconData icon, Color color) {
+  Widget _buildPhaseCard(
+    String phase,
+    List<String> items,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -1186,23 +1341,27 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               ],
             ),
             const SizedBox(height: 12),
-            ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: color,
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(item, style: const TextStyle(fontSize: 14))),
-                ],
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(item, style: const TextStyle(fontSize: 14)),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -1231,16 +1390,18 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
               ],
             ),
             const SizedBox(height: 12),
-            ...adjustments.map((adjustment) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Icon(Icons.star, color: Colors.amber.shade600, size: 16),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(adjustment)),
-                ],
+            ...adjustments.map(
+              (adjustment) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber.shade600, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(adjustment)),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
@@ -1355,7 +1516,9 @@ class _AIHealthCoachScreenState extends State<AIHealthCoachScreen> with TickerPr
   }
 
   String _formatSymptomName(String symptom) {
-    return symptom.split('_').map((word) => 
-        word[0].toUpperCase() + word.substring(1)).join(' ');
+    return symptom
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 }

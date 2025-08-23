@@ -56,9 +56,9 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load data: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load data: $e')));
       }
     }
   }
@@ -93,9 +93,7 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
 
   Widget _buildMySharesTab() {
     if (_mySharedData == null || !_mySharedData!.success) {
-      return const Center(
-        child: Text('Unable to load shared data'),
-      );
+      return const Center(child: Text('Unable to load shared data'));
     }
 
     final activeShares = _mySharedData!.activeShares ?? [];
@@ -109,25 +107,41 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
         children: [
           _buildStatsCard(),
           const SizedBox(height: 16),
-          
+
           if (activeShares.isNotEmpty) ...[
-            _buildSectionHeader('Active Shares', Icons.share, activeShares.length),
+            _buildSectionHeader(
+              'Active Shares',
+              Icons.share,
+              activeShares.length,
+            ),
             ...activeShares.map((share) => _buildShareCard(share)),
             const SizedBox(height: 16),
           ],
-          
+
           if (providerAccess.isNotEmpty) ...[
-            _buildSectionHeader('Provider Access', Icons.local_hospital, providerAccess.length),
+            _buildSectionHeader(
+              'Provider Access',
+              Icons.local_hospital,
+              providerAccess.length,
+            ),
             ...providerAccess.map((access) => _buildProviderAccessCard(access)),
             const SizedBox(height: 16),
           ],
-          
+
           if (expiredShares.isNotEmpty) ...[
-            _buildSectionHeader('Expired Shares', Icons.history, expiredShares.length),
-            ...expiredShares.map((share) => _buildShareCard(share, isExpired: true)),
+            _buildSectionHeader(
+              'Expired Shares',
+              Icons.history,
+              expiredShares.length,
+            ),
+            ...expiredShares.map(
+              (share) => _buildShareCard(share, isExpired: true),
+            ),
           ],
-          
-          if (activeShares.isEmpty && expiredShares.isEmpty && providerAccess.isEmpty)
+
+          if (activeShares.isEmpty &&
+              expiredShares.isEmpty &&
+              providerAccess.isEmpty)
             _buildEmptyState(),
         ],
       ),
@@ -152,9 +166,21 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem(totalShares.toString(), 'Total Shares', Icons.share),
-                _buildStatItem(activeCount.toString(), 'Active', Icons.check_circle),
-                _buildStatItem(providerCount.toString(), 'Providers', Icons.local_hospital),
+                _buildStatItem(
+                  totalShares.toString(),
+                  'Total Shares',
+                  Icons.share,
+                ),
+                _buildStatItem(
+                  activeCount.toString(),
+                  'Active',
+                  Icons.check_circle,
+                ),
+                _buildStatItem(
+                  providerCount.toString(),
+                  'Providers',
+                  Icons.local_hospital,
+                ),
               ],
             ),
           ],
@@ -191,7 +217,9 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
           const Spacer(),
           Chip(
             label: Text('$count'),
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            backgroundColor: Theme.of(
+              context,
+            ).primaryColor.withValues(alpha: 0.1),
           ),
         ],
       ),
@@ -203,9 +231,9 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: isExpired 
-              ? Colors.grey 
-              : Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: isExpired
+              ? Colors.grey
+              : Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             isExpired ? Icons.history : Icons.share,
             color: isExpired ? Colors.grey : Theme.of(context).primaryColor,
@@ -253,7 +281,9 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(
+            context,
+          ).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             Icons.local_hospital,
             color: Theme.of(context).primaryColor,
@@ -272,9 +302,9 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
         ),
         trailing: Chip(
           label: Text(access.status.toUpperCase()),
-          backgroundColor: access.isActive 
-              ? Colors.green.withOpacity(0.1)
-              : Colors.orange.withOpacity(0.1),
+          backgroundColor: access.isActive
+              ? Colors.green.withValues(alpha: 0.1)
+              : Colors.orange.withValues(alpha: 0.1),
         ),
       ),
     );
@@ -348,19 +378,19 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
                 ),
               ],
             ),
-          const SizedBox(height: 12),
-          const Text(
-            'Create secure, long-term access for your healthcare providers with customizable permissions and automatic expiration.',
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _showProviderAccessDialog(),
-              icon: const Icon(Icons.add),
-              label: const Text('Create Provider Access'),
+            const SizedBox(height: 12),
+            const Text(
+              'Create secure, long-term access for your healthcare providers with customizable permissions and automatic expiration.',
             ),
-          ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _showProviderAccessDialog(),
+                icon: const Icon(Icons.add),
+                label: const Text('Create Provider Access'),
+              ),
+            ),
           ],
         ),
       ),
@@ -383,19 +413,19 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
                 ),
               ],
             ),
-          const SizedBox(height: 12),
-          const Text(
-            'Share your cycle information with your partner for better understanding and support.',
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => _showPartnerSharingDialog(),
-              icon: const Icon(Icons.share),
-              label: const Text('Share with Partner'),
+            const SizedBox(height: 12),
+            const Text(
+              'Share your cycle information with your partner for better understanding and support.',
             ),
-          ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => _showPartnerSharingDialog(),
+                icon: const Icon(Icons.share),
+                label: const Text('Share with Partner'),
+              ),
+            ),
           ],
         ),
       ),
@@ -436,30 +466,30 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
                 ),
               ],
             ),
-          const SizedBox(height: 12),
-          Text(
-            _communityParticipant
-                ? 'You are contributing to community insights. Thank you!'
-                : 'Join thousands of users contributing anonymous data to help improve menstrual health understanding.',
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _communityParticipant
-                    ? OutlinedButton.icon(
-                        onPressed: () => _showCommunityPreferencesDialog(),
-                        icon: const Icon(Icons.settings),
-                        label: const Text('Manage Preferences'),
-                      )
-                    : ElevatedButton.icon(
-                        onPressed: () => _showJoinCommunityDialog(),
-                        icon: const Icon(Icons.add_circle),
-                        label: const Text('Join Community'),
-                      ),
-              ),
-            ],
-          ),
+            const SizedBox(height: 12),
+            Text(
+              _communityParticipant
+                  ? 'You are contributing to community insights. Thank you!'
+                  : 'Join thousands of users contributing anonymous data to help improve menstrual health understanding.',
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _communityParticipant
+                      ? OutlinedButton.icon(
+                          onPressed: () => _showCommunityPreferencesDialog(),
+                          icon: const Icon(Icons.settings),
+                          label: const Text('Manage Preferences'),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: () => _showJoinCommunityDialog(),
+                          icon: const Icon(Icons.add_circle),
+                          label: const Text('Join Community'),
+                        ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -468,7 +498,8 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
 
   Widget _buildCommunityInsightsCard() {
     final insights = _communityInsights!.insights!;
-    final participantCount = (_communityInsights as dynamic)?.participantCount ?? 0;
+    final participantCount =
+        (_communityInsights as dynamic)?.participantCount ?? 0;
 
     return Card(
       child: Padding(
@@ -485,13 +516,13 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
                 ),
               ],
             ),
-          const SizedBox(height: 8),
-          Text(
-            'Based on $participantCount anonymous participants',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 16),
-          ...insights.map((insight) => _buildInsightItem(insight)),
+            const SizedBox(height: 8),
+            Text(
+              'Based on $participantCount anonymous participants',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 16),
+            ...insights.map((insight) => _buildInsightItem(insight)),
           ],
         ),
       ),
@@ -567,11 +598,7 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
         padding: const EdgeInsets.all(32),
         child: Column(
           children: [
-            Icon(
-              Icons.share,
-              size: 64,
-              color: Colors.grey.shade400,
-            ),
+            Icon(Icons.share, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             Text(
               'No Shared Data',
@@ -714,4 +741,3 @@ class _SocialSharingScreenState extends State<SocialSharingScreen>
     return '${date.day}/${date.month}/${date.year}';
   }
 }
-

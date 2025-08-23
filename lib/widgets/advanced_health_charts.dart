@@ -7,9 +7,11 @@ import 'dart:math' as math;
 /// Advanced health data visualization widgets using fl_chart
 /// Creates beautiful, interactive charts for health metrics
 class AdvancedHealthCharts {
-  
   /// Heart Rate Line Chart with gradient and interactive tooltips
-  static Widget buildHeartRateChart(List<HealthDataPoint> data, {double height = 300}) {
+  static Widget buildHeartRateChart(
+    List<HealthDataPoint> data, {
+    double height = 300,
+  }) {
     if (data.isEmpty) {
       return _buildNoDataChart('No heart rate data available');
     }
@@ -17,10 +19,13 @@ class AdvancedHealthCharts {
     // Prepare data points for the chart
     final spots = <FlSpot>[];
     final minTime = data.first.date.millisecondsSinceEpoch.toDouble();
-    
+
     for (int i = 0; i < data.length; i++) {
-      final timeOffset = data[i].date.millisecondsSinceEpoch.toDouble() - minTime;
-      spots.add(FlSpot(timeOffset / (1000 * 60 * 60), data[i].value)); // Hours on X-axis
+      final timeOffset =
+          data[i].date.millisecondsSinceEpoch.toDouble() - minTime;
+      spots.add(
+        FlSpot(timeOffset / (1000 * 60 * 60), data[i].value),
+      ); // Hours on X-axis
     }
 
     final minY = data.map((d) => d.value).reduce(math.min);
@@ -57,7 +62,7 @@ class AdvancedHealthCharts {
                 interval: 6,
                 getTitlesWidget: (double value, TitleMeta meta) {
                   return SideTitleWidget(
-                    axisSide: meta.axisSide,
+                    meta: meta,
                     child: Text(
                       '${value.toInt()}h',
                       style: TextStyle(
@@ -139,8 +144,8 @@ class AdvancedHealthCharts {
           lineTouchData: LineTouchData(
             enabled: true,
             touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: Colors.red.withValues(alpha: 0.9),
-              tooltipRoundedRadius: 8,
+              getTooltipColor: (touchedSpot) => Colors.red.withValues(alpha: 0.9),
+              tooltipBorderRadius: BorderRadius.circular(8),
               getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                 return touchedBarSpots.map((barSpot) {
                   final flSpot = barSpot;
@@ -162,7 +167,10 @@ class AdvancedHealthCharts {
   }
 
   /// HRV (Heart Rate Variability) Bar Chart with stress level indicators
-  static Widget buildHRVChart(List<HealthDataPoint> data, {double height = 300}) {
+  static Widget buildHRVChart(
+    List<HealthDataPoint> data, {
+    double height = 300,
+  }) {
     if (data.isEmpty) {
       return _buildNoDataChart('No HRV data available');
     }
@@ -171,7 +179,7 @@ class AdvancedHealthCharts {
     for (int i = 0; i < data.length && i < 12; i++) {
       final hrv = data[i].value;
       Color barColor;
-      
+
       // Color coding based on HRV values (stress levels)
       if (hrv >= 40) {
         barColor = Colors.green; // Low stress
@@ -228,16 +236,20 @@ class AdvancedHealthCharts {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Colors.blueGrey,
-                    tooltipRoundedRadius: 8,
+                    getTooltipColor: (group) => Colors.blueGrey,
+                    tooltipBorderRadius: BorderRadius.circular(8),
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final hrv = rod.toY;
                       String stressLevel;
-                      if (hrv >= 40) stressLevel = 'Low Stress';
-                      else if (hrv >= 30) stressLevel = 'Moderate';
-                      else if (hrv >= 20) stressLevel = 'Elevated';
-                      else stressLevel = 'High Stress';
-                      
+                      if (hrv >= 40)
+                        stressLevel = 'Low Stress';
+                      else if (hrv >= 30)
+                        stressLevel = 'Moderate';
+                      else if (hrv >= 20)
+                        stressLevel = 'Elevated';
+                      else
+                        stressLevel = 'High Stress';
+
                       return BarTooltipItem(
                         '${hrv.round()}ms\n$stressLevel',
                         const TextStyle(
@@ -251,8 +263,12 @@ class AdvancedHealthCharts {
                 ),
                 titlesData: FlTitlesData(
                   show: true,
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -279,7 +295,7 @@ class AdvancedHealthCharts {
                       interval: 10,
                       getTitlesWidget: (double value, TitleMeta meta) {
                         return SideTitleWidget(
-                          axisSide: meta.axisSide,
+                          meta: meta,
                           child: Text(
                             '${value.toInt()}',
                             style: TextStyle(
@@ -369,8 +385,8 @@ class AdvancedHealthCharts {
             children: stageDurations.entries.map((entry) {
               final color = colors[entry.key] ?? Colors.grey;
               return _buildLegendItem(
-                color, 
-                '${entry.key.toUpperCase()}: ${entry.value.toStringAsFixed(1)}h'
+                color,
+                '${entry.key.toUpperCase()}: ${entry.value.toStringAsFixed(1)}h',
               );
             }).toList(),
           ),
@@ -395,7 +411,10 @@ class AdvancedHealthCharts {
   }
 
   /// Temperature Trend Chart with ovulation detection
-  static Widget buildTemperatureChart(List<HealthDataPoint> data, {double height = 300}) {
+  static Widget buildTemperatureChart(
+    List<HealthDataPoint> data, {
+    double height = 300,
+  }) {
     if (data.isEmpty) {
       return _buildNoDataChart('No temperature data available');
     }
@@ -407,7 +426,8 @@ class AdvancedHealthCharts {
 
     final minY = data.map((d) => d.value).reduce(math.min);
     final maxY = data.map((d) => d.value).reduce(math.max);
-    final avgTemp = data.map((d) => d.value).reduce((a, b) => a + b) / data.length;
+    final avgTemp =
+        data.map((d) => d.value).reduce((a, b) => a + b) / data.length;
 
     return Container(
       height: height,
@@ -439,7 +459,7 @@ class AdvancedHealthCharts {
                 interval: 1,
                 getTitlesWidget: (double value, TitleMeta meta) {
                   return SideTitleWidget(
-                    axisSide: meta.axisSide,
+                    meta: meta,
                     child: Text(
                       'D${value.toInt() + 1}',
                       style: TextStyle(
@@ -501,11 +521,14 @@ class AdvancedHealthCharts {
                   bool isOvulationPoint = false;
                   if (index > 2 && index < data.length - 1) {
                     final current = data[index].value;
-                    final recent = data.sublist(index - 3, index).map((d) => d.value);
-                    final recentAvg = recent.reduce((a, b) => a + b) / recent.length;
+                    final recent = data
+                        .sublist(index - 3, index)
+                        .map((d) => d.value);
+                    final recentAvg =
+                        recent.reduce((a, b) => a + b) / recent.length;
                     isOvulationPoint = current - recentAvg >= 0.2;
                   }
-                  
+
                   return FlDotCirclePainter(
                     radius: isOvulationPoint ? 6 : 4,
                     color: isOvulationPoint ? Colors.purple : Colors.orange,
@@ -543,8 +566,8 @@ class AdvancedHealthCharts {
           lineTouchData: LineTouchData(
             enabled: true,
             touchTooltipData: LineTouchTooltipData(
-              tooltipBgColor: Colors.orange.withValues(alpha: 0.9),
-              tooltipRoundedRadius: 8,
+              getTooltipColor: (touchedSpot) => Colors.orange.withValues(alpha: 0.9),
+              tooltipBorderRadius: BorderRadius.circular(8),
               getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                 return touchedBarSpots.map((barSpot) {
                   final flSpot = barSpot;
@@ -571,11 +594,9 @@ class AdvancedHealthCharts {
                   show: true,
                   alignment: Alignment.topRight,
                   padding: const EdgeInsets.only(right: 5, bottom: 5),
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 10,
-                  ),
-                  labelResolver: (line) => 'Avg: ${avgTemp.toStringAsFixed(2)}°C',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 10),
+                  labelResolver: (line) =>
+                      'Avg: ${avgTemp.toStringAsFixed(2)}°C',
                 ),
               ),
             ],
@@ -586,14 +607,19 @@ class AdvancedHealthCharts {
   }
 
   /// Activity Radar Chart showing daily activity metrics
-  static Widget buildActivityChart(List<ActivityData> data, {double height = 300}) {
+  static Widget buildActivityChart(
+    List<ActivityData> data, {
+    double height = 300,
+  }) {
     if (data.isEmpty) {
       return _buildNoDataChart('No activity data available');
     }
 
     // Calculate averages and create sections
-    final avgSteps = data.map((d) => d.steps).reduce((a, b) => a + b) / data.length;
-    final avgEnergy = data.map((d) => d.activeEnergy).reduce((a, b) => a + b) / data.length;
+    final avgSteps =
+        data.map((d) => d.steps).reduce((a, b) => a + b) / data.length;
+    final avgEnergy =
+        data.map((d) => d.activeEnergy).reduce((a, b) => a + b) / data.length;
 
     return Container(
       height: height,
@@ -632,8 +658,8 @@ class AdvancedHealthCharts {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Colors.blue.withValues(alpha: 0.9),
-                    tooltipRoundedRadius: 8,
+                    getTooltipColor: (group) => Colors.blue.withValues(alpha: 0.9),
+                    tooltipBorderRadius: BorderRadius.circular(8),
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${rod.toY.toInt()} steps\nDay ${groupIndex + 1}',
@@ -648,8 +674,12 @@ class AdvancedHealthCharts {
                 ),
                 titlesData: FlTitlesData(
                   show: true,
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -675,9 +705,11 @@ class AdvancedHealthCharts {
                       reservedSize: 50,
                       getTitlesWidget: (double value, TitleMeta meta) {
                         return SideTitleWidget(
-                          axisSide: meta.axisSide,
+                          meta: meta,
                           child: Text(
-                            value >= 1000 ? '${(value / 1000).toStringAsFixed(1)}k' : '${value.toInt()}',
+                            value >= 1000
+                                ? '${(value / 1000).toStringAsFixed(1)}k'
+                                : '${value.toInt()}',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w300,
@@ -736,18 +768,11 @@ class AdvancedHealthCharts {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.bar_chart,
-              size: 48,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.bar_chart, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 12),
             Text(
               message,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -768,15 +793,17 @@ class AdvancedHealthCharts {
           ),
         ),
         const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(fontSize: 11),
-        ),
+        Text(text, style: const TextStyle(fontSize: 11)),
       ],
     );
   }
 
-  static Widget _buildActivityCard(String title, String value, IconData icon, Color color) {
+  static Widget _buildActivityCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(

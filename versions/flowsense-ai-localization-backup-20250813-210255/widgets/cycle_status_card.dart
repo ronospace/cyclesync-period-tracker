@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/cycle_models.dart';
-import '../models/ai_models.dart';
 
 class CycleStatusCard extends StatelessWidget {
   final CycleData? cycle;
